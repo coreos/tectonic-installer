@@ -21,7 +21,7 @@ assets <platform> <assets-dir>\Modify the given assets for the given platform.
 
 function tfvars {
     case "$1" in
-        openstack-*|aws-*)
+        openstack-*|aws-*|vmware)
             local cloud_formation="${2}"
             local az_count=$(jq '.Resources.AutoScaleController.Properties.AvailabilityZones|length' "${cloud_formation}")
             local worker_count=$(jq -r .Resources.AutoScaleWorker.Properties.MinSize "${cloud_formation}")
@@ -61,7 +61,7 @@ function assets {
     local assets="${2}"
 
     case "$1" in
-        openstack-*)
+        openstack-*|vmware)
             local cloud_formation="${assets}/cloud-formation.json"
             local tectonic_domain=$(jq -r .Resources.TectonicDomain.Properties.Name "${cloud_formation}")
 
