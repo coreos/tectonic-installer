@@ -33,9 +33,11 @@ Prerequsities:
 Ensure you have a configured `aws` CLI installation.
 1. Ensure you have OpenStack credentials set up, i.e. the environment variables `OS_TENANT_NAME`, `OS_USERNAME`, `OS_PASSWORD`, `OS_AUTH_URL`, `OS_REGION_NAME` are set.
 
+Execute convert.sh script with syntax below
+
 ```
-$ ./convert.sh tfvars openstack assets/cloud-formation.json >config.tfvars
-$ ./convert.sh assets openstack assets/
+$ ./convert.sh tfvars openstack-neutron assets/cloud-formation.json >config.tfvars
+$ ./convert.sh assets openstack-neutron assets/
 ```
 
 Next, set the image id from Glance in the config.tfvars file. Then invoke:
@@ -82,6 +84,30 @@ To clean up run `make destroy PLATFORM=aws-asg CLUSTER=<cluster-name>`
 To clean up run `make destroy PLATFORM=aws-noasg CLUSTER=<cluster-name>`
 
 **TODO(alexsomesan)**
+
+## VMware
+
+Prerequsities:
+
+1. Download the latest Container [Linux Stable OVA](https://stable.release.core-os.net/amd64-usr/current/) and [deploy a Virtual Machine with the OVA file](https://pubs.vmware.com/vsphere-60/index.jsp#com.vmware.vsphere.vm_admin.doc/GUID-AFEDC48B-C96F-4088-9C1F-4F0A30E965DE.html) and keep default settings.
+1. Convert the Virtual Machine deployed into a [Virtual Machine template](https://pubs.vmware.com/vsphere-60/index.jsp#com.vmware.vsphere.vm_admin.doc/GUID-FE6DE4DF-FAD0-4BB0-A1FD-AFE9A40F4BFE_copy.html)
+1. Since VMware doesn't provide any DNS registration service, AWS Route53 is being used.
+Ensure you have a configured `aws` CLI installation.
+1. Ensure you have vSphere credentials set up correctly (refer to vsphere.tf)
+
+Execute convert.sh script with syntax below
+
+```
+$ ./convert.sh tfvars vmware assets/cloud-formation.json >config.tfvars
+$ ./convert.sh assets vmware assets/
+```
+Next, set the CoreOS template name in the config.tfvars file. Then invoke:
+
+```
+$ terraform apply -var-file="config.tfvars" vmware
+```
+
+The tectonic cluster will be reachable under `https://<name>.<base_domain>:32000`.
 
 ## Roadmap
 
