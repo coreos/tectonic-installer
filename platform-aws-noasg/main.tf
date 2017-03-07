@@ -25,7 +25,7 @@ data "aws_ami" "coreos_ami" {
 }
 
 module "vpc" {
-  source                       = "./vpc"
+  source                       = "../modules/aws-vpc"
   tectonic_aws_external_vpc_id = "${var.tectonic_aws_external_vpc_id}"
   tectonic_aws_vpc_cidr_block  = "${var.tectonic_aws_vpc_cidr_block}"
   tectonic_cluster_name        = "${var.tectonic_cluster_name}"
