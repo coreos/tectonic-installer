@@ -97,7 +97,7 @@ resource "azurerm_virtual_machine" "tectonic_master_vm" {
         disable_password_authentication = true
         ssh_keys {
             path = "/home/jimzim/.ssh/authorized_keys"
-            key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxhYI+tUw45GSXLusEx4shqO0bUP8jsvMDBZl2J/4Yot39CyBkMtBA7hI9shvu2cTHjC+CRZDB1RGMu5xwZwYu+7VyX8CXuOSVlWpc2bpP0Aksz4TzexkkRkvfqGw2aaX+Hsu+c0eEX4l2NuB488AqMKTXelkesX+ayx6wEws3IlL2ofAkQNfc0Vi0Sv5+1F5TosKmQaT5fEJQiqhOC6Csx6JIk1L8pz9rO06EVHflqxVNTP1pgiPIrdTfPYV6p5Y8ZUX4XNjYYO0UCguWxIxyOqak8GGiz/buR8htAAS48eY/saVibhi/Oc5G9QLMsfbEJ1r90slHk4X6MyPnZqQl jimzimmerman@Jims-MacBook-Pro.local"
+            key_data = ""
         }
     }
 
