@@ -1,9 +1,8 @@
 resource "openstack_compute_instance_v2" "etcd_node" {
-  count           = "${var.tectonic_etcd_count}"
-  name            = "${var.tectonic_cluster_name}_etcd_node_${count.index}"
-  image_id        = "${var.tectonic_openstack_image_id}"
-  flavor_id       = "${var.tectonic_openstack_flavor_id}"
-  key_pair        = "${openstack_compute_keypair_v2.k8s_keypair.name}"
+  count           = "${var.count}"
+  name            = "${var.cluster_name}_etcd_node_${count.index}"
+  image_id        = "${var.image_id}"
+  flavor_id       = "${var.flavor_id}"
   security_groups = ["${openstack_compute_secgroup_v2.etcd_group.name}"]
 
   metadata {
@@ -12,14 +11,29 @@ resource "openstack_compute_instance_v2" "etcd_node" {
 
   user_data    = "${ignition_config.etcd.*.rendered[count.index]}"
   config_drive = false
+}
+
+resource "openstack_compute_instance_v2" "etcd_node_internal" {
+  count           = "${var.count_internal}"
+  name            = "${var.cluster_name}_etcd_node_${count.index}"
+  image_id        = "${var.image_id}"
+  flavor_id       = "${var.flavor_id}"
+  security_groups = ["${openstack_compute_secgroup_v2.etcd_group.name}"]
+
+  metadata {
+    role = "etcd"
+  }
 
   network {
-    uuid = "${openstack_networking_network_v2.network.id}"
+    uuid = "${var.network_id_internal}"
   }
+
+  user_data    = "${ignition_config.etcd.*.rendered[count.index]}"
+  config_drive = false
 }
 
 resource "openstack_compute_secgroup_v2" "etcd_group" {
-  name        = "${var.tectonic_cluster_name}_etcd_group"
+  name        = "${var.cluster_name}_etcd_group"
   description = "security group for etcd: SSH and etcd client / cluster"
 
   rule {
