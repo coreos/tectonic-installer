@@ -1,18 +1,18 @@
 resource "vsphere_virtual_machine" "master-vm"   {
-  name   = "${var.master_name}"
+  name   = "${var.tectonic_cluster_name}-master-node-${count.index}"
   folder = "${vsphere_folder.tectonic-folder.path}"
-  datacenter = "${var.vsphere_datacenter}"
-  cluster = "${var.tectonic_cluster}"
-  vcpu   = 1
-  memory = 2048
+  datacenter = "${var.tectonic_vsphere_datacenter}"
+  cluster = "${var.tectonic_vsphere_cluster}"
+  vcpu   = 2
+  memory = 4096
 
   network_interface {
-    label = "${var.tectonic_network}"
+    label = "${var.tectonic_vsphere_network}"
   }
 
   disk {
-    datastore = "${var.vsphere_datastore}"  
-    template = "${var.coreos_template}"
+    datastore = "${var.tectonic_vsphere_datastore}"  
+    template = "${var.tectonic_vsphere_coreos_template}"
   }
 
   custom_configuration_parameters {

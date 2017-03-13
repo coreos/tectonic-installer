@@ -1,13 +1,3 @@
-variable "vsphere_user" {
-  type    = "string"
-  default = "administrator@vsphere.local"
-}
-
-variable "vsphere_password" {
-  type    = "string"
-  default = "VMware123!"
-}
-
 resource "tls_private_key" "core" {
   algorithm = "RSA"
 }
