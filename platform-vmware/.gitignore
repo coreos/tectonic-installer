@@ -1,0 +1,6 @@
+assets
+terraform.tfstate
+terraform.tfstate.backup
+id_rsa_core
+id_rsa_core.pub
+*.tfvars
