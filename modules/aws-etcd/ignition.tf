@@ -52,8 +52,8 @@ ExecStart=
 ExecStart=/usr/lib/coreos/etcd-wrapper \
   --name=etcd \
   --discovery-srv=${var.tectonic_base_domain} \
-  --advertise-client-urls=http://etcd-${count.index}.${var.tectonic_base_domain}:2379 \
-  --initial-advertise-peer-urls=http://etcd-${count.index}.${var.tectonic_base_domain}:2380 \
+  --advertise-client-urls=http://${var.tectonic_cluster_name}-etcd-${count.index}.${var.tectonic_base_domain}:2379 \
+  --initial-advertise-peer-urls=http://${var.tectonic_cluster_name}-etcd-${count.index}.${var.tectonic_base_domain}:2380 \
   --listen-client-urls=http://0.0.0.0:2379 \
   --listen-peer-urls=http://0.0.0.0:2380
 EOF

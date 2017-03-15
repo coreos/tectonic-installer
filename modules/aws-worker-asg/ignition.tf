@@ -57,7 +57,7 @@ resource "ignition_systemd_unit" "locksmithd" {
 resource "ignition_systemd_unit" "kubelet-master" {
   name    = "kubelet.service"
   enable  = true
-  content = "${file("${path.module}/resources/master-kubelet.service")}"
+  content = "${file("${path.module}/resources/worker-kubelet.service")}"
 }
 
 resource "ignition_systemd_unit" "kubelet-worker" {
@@ -125,7 +125,7 @@ resource "ignition_file" "etcd-endpoints" {
   mode       = "420"
 
   content {
-    content = "TECTONIC_ETCD_ENDPOINTS=${join(",",module.etcd.endpoints)}"
+    content = "TECTONIC_ETCD_ENDPOINTS=${join(",",formatlist("%s:2379",var.etcd_endpoints))}"
   }
 }
 

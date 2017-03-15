@@ -1,6 +1,6 @@
 resource "aws_elb" "api-internal" {
   name            = "${var.tectonic_cluster_name}-api-internal"
-  subnets         = ["${aws_subnet.master_subnet.*.id}"]
+  subnets         = ["${var.master_subnet_ids}"]
   internal        = true
   security_groups = ["${aws_security_group.master_sec_group.id}"]
 
@@ -34,7 +34,7 @@ resource "aws_elb" "api-internal" {
 
 resource "aws_elb" "api-external" {
   name            = "${var.tectonic_cluster_name}-api-external"
-  subnets         = ["${aws_subnet.az_subnet_pub.*.id}"]
+  subnets         = ["${var.master_subnet_ids}"]
   internal        = false
   security_groups = ["${aws_security_group.master_sec_group.id}"]
 
@@ -68,7 +68,7 @@ resource "aws_elb" "api-external" {
 
 resource "aws_elb" "console" {
   name            = "${var.tectonic_cluster_name}-console"
-  subnets         = ["${aws_subnet.az_subnet_pub.*.id}"]
+  subnets         = ["${var.master_subnet_ids}"]
   internal        = false
   security_groups = ["${aws_security_group.master_sec_group.id}"]
 

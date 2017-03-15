@@ -1,14 +1,4 @@
-variable "tectonic_aws_external_vpc_id" {
-  type = "string"
-}
-
-variable "tectonic_aws_vpc_cidr_block" {
-  type = "string"
-}
-
-variable "tectonic_cluster_name" {
-  type = "string"
-}
+data "aws_availability_zones" "azs" {}
 
 resource "aws_vpc" "new_vpc" {
   count                = "${length(var.tectonic_aws_external_vpc_id) > 0 ? 0 : 1}"
@@ -17,11 +7,11 @@ resource "aws_vpc" "new_vpc" {
   enable_dns_support   = true
 
   tags {
-    Name = "${var.tectonic_cluster_name}"
+    Name              = "${var.tectonic_cluster_name}"
     KubernetesCluster = "${var.tectonic_cluster_name}"
   }
 }
 
-output "vpc_id" {
-  value = "${length(var.tectonic_aws_external_vpc_id) > 0 ? var.tectonic_aws_external_vpc_id : aws_vpc.new_vpc.id}"
+data "aws_vpc" "cluster_vpc" {
+  id = "${var.tectonic_aws_external_vpc_id == "" ? aws_vpc.new_vpc.id : var.tectonic_aws_external_vpc_id }"
 }

@@ -1,49 +1,66 @@
 data "aws_availability_zones" "azs" {}
 
-data "aws_ami" "coreos_ami" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["CoreOS-stable-*"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  filter {
-    name   = "owner-id"
-    values = ["595879546273"]
-  }
-}
-
 module "vpc" {
   source                       = "../modules/aws-vpc"
   tectonic_aws_external_vpc_id = "${var.tectonic_aws_external_vpc_id}"
   tectonic_aws_vpc_cidr_block  = "${var.tectonic_aws_vpc_cidr_block}"
   tectonic_cluster_name        = "${var.tectonic_cluster_name}"
-}
-
-data "aws_vpc" "cluster_vpc" {
-  id = "${module.vpc.vpc_id}"
+  tectonic_aws_az_count        = "${var.tectonic_aws_az_count}"
 }
 
 module "etcd" {
   source = "../modules/aws-etcd"
 
-  vpc_id                = "${data.aws_vpc.cluster_vpc.id}"
+  vpc_id                = "${module.vpc.vpc_id}"
   node_count            = "${var.tectonic_aws_az_count == 5 ? 5 : 3}"
-  ssh_key               = "${aws_key_pair.ssh-key.id}"
-  dns_zone              = "${aws_route53_zone.tectonic-int.zone_id}"
-  coreos_ami            = "${data.aws_ami.coreos_ami.id}"
-  etcd_subnets          = ["${aws_subnet.etcd_subnet.*.id}"]
+  ssh_key               = "${var.tectonic_aws_ssh_key}"
+  dns_zone              = "${module.dns.int_zone_id}"
+  etcd_subnets          = ["${module.vpc.master_subnet_ids}"]
   tectonic_base_domain  = "${var.tectonic_base_domain}"
   tectonic_cluster_name = "${var.tectonic_cluster_name}"
+  tectonic_cl_channel   = "${var.tectonic_cl_channel}"
+  external_endpoints    = ["${var.tectonic_external_etcd_endpoints}"]
+}
+
+module "masters" {
+  source = "../modules/aws-master-asg"
+
+  vpc_id                       = "${module.vpc.vpc_id}"
+  ssh_key                      = "${var.tectonic_aws_ssh_key}"
+  tectonic_base_domain         = "${var.tectonic_base_domain}"
+  tectonic_cluster_name        = "${var.tectonic_cluster_name}"
+  tectonic_cl_channel          = "${var.tectonic_cl_channel}"
+  tectonic_master_count        = "${var.tectonic_master_count}"
+  etcd_endpoints               = ["${module.etcd.endpoints}"]
+  tectonic_aws_master_ec2_type = "${var.tectonic_aws_master_ec2_type}"
+  extra_sg_ids                 = ["${module.vpc.cluster_default_sg}"]
+  tectonic_kube_version        = "${var.tectonic_kube_version}"
+  master_subnet_ids            = ["${module.vpc.master_subnet_ids}"]
+}
+
+module "workers" {
+  source = "../modules/aws-worker-asg"
+
+  vpc_id                       = "${module.vpc.vpc_id}"
+  tectonic_worker_count        = "${var.tectonic_worker_count}"
+  ssh_key                      = "${var.tectonic_aws_ssh_key}"
+  etcd_endpoints               = "${module.etcd.endpoints}"
+  tectonic_base_domain         = "${var.tectonic_base_domain}"
+  tectonic_cluster_name        = "${var.tectonic_cluster_name}"
+  worker_subnet_ids            = ["${module.vpc.worker_subnet_ids}"]
+  tectonic_cl_channel          = "${var.tectonic_cl_channel}"
+  tectonic_aws_worker_ec2_type = "${var.tectonic_aws_worker_ec2_type}"
+  tectonic_kube_version        = "${var.tectonic_kube_version}"
+  extra_sg_ids                 = ["${module.vpc.cluster_default_sg}"]
+}
+
+module "dns" {
+  source = "../modules/aws-dns"
+
+  vpc_id               = "${module.vpc.vpc_id}"
+  tectonic_base_domain = "${var.tectonic_base_domain}"
+  tectonic_dns_name    = "${var.tectonic_dns_name}"
+  console-elb          = "${module.masters.console-elb}"
+  api-external-elb     = "${module.masters.api-internal-elb}"
+  api-internal-elb     = "${module.masters.api-external-elb}"
 }

@@ -6,6 +6,10 @@ variable "tectonic_cluster_name" {
   type = "string"
 }
 
+variable "tectonic_cl_channel" {
+  type = "string"
+}
+
 variable "dns_zone" {
   type = "string"
 }
@@ -22,10 +26,10 @@ variable "ssh_key" {
   type = "string"
 }
 
-variable "coreos_ami" {
-  type = "string"
+variable "etcd_subnets" {
+  type = "list"
 }
 
-variable "etcd_subnets" {
+variable "external_endpoints" {
   type = "list"
 }
