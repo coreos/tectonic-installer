@@ -1,15 +1,3 @@
-// The flavor ID as given in `openstack flavor list`.
-// Specifies the size (CPU/Memory/Drive) of the VM.
-variable "flavor_id" {
-  type = "string"
-}
-
-// The image ID as given in `openstack image list`.
-// Specifies the OS image of the VM.
-variable "image_id" {
-  type = "string"
-}
-
 // The amount of worker nodes to be created.
 // Example: `3`
 variable "count" {
@@ -52,6 +40,6 @@ variable core_public_keys {
   type = "list"
 }
 
-output "ips_v4" {
-  value = ["${openstack_compute_instance_v2.worker_node.*.access_ip_v4}"]
+output "user_data" {
+  value = ["${ignition_config.worker.*.rendered}"]
 }

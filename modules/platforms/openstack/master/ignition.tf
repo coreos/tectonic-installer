@@ -54,7 +54,7 @@ resource "ignition_file" "resolv_conf" {
 }
 
 resource "ignition_file" "hostname" {
-  count      = "${var.count_ignition}"
+  count      = "${var.count}"
   path       = "/etc/hostname"
   mode       = 0644
   uid        = 0
@@ -165,7 +165,7 @@ resource "ignition_user" "core" {
 }
 
 resource "ignition_config" "master" {
-  count = "${var.count_ignition}"
+  count = "${var.count}"
 
   users = [
     "${ignition_user.core.id}",

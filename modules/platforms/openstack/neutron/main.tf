@@ -4,24 +4,15 @@ module "dns" {
   cluster_name = "${var.tectonic_cluster_name}"
   base_domain  = "${var.tectonic_base_domain}"
 
-  tectonic_console_records = ["${module.worker.ips_v4}"]
-  tectonic_api_records     = ["${module.master.ips_v4}"]
+  tectonic_console_records = ["${module.network.worker_floating_ips}"]
+  tectonic_api_records     = ["${module.network.master_floating_ips}"]
 }
 
 module "etcd" {
   source = "./../etcd"
 
-  // disable nova etcd nodes
-  count = "0"
-
-  count_internal      = "1"
-  count_ignition      = "1"
-  network_id_internal = "${var.tectonic_openstack_external_gateway_id}"
-
-  cluster_name = "${var.tectonic_cluster_name}"
-  flavor_id    = "${var.tectonic_openstack_flavor_id}"
-  image_id     = "${var.tectonic_openstack_image_id}"
-
+  count            = "1"
+  cluster_name     = "${var.tectonic_cluster_name}"
   core_public_keys = ["${module.secrets.core_public_key_openssh}"]
 }
 
@@ -41,20 +32,12 @@ nameserver 8.8.8.8
 nameserver 8.8.4.4
 EOF
 
-  // disable external master nodes for nova
-  count = "0"
-
-  kubeconfig_content  = "${file("${var.tectonic_assets_dir}/auth/kubeconfig")}"
-  etcd_fqdns          = "${module.etcd.ips_v4}"
-  flavor_id           = "${var.tectonic_openstack_flavor_id}"
-  image_id            = "${var.tectonic_openstack_image_id}"
-  cluster_name        = "${var.tectonic_cluster_name}"
-  kube_image_url      = "${data.null_data_source.local.outputs.kube_image_url}"
-  kube_image_tag      = "${data.null_data_source.local.outputs.kube_image_tag}"
-  count_floating      = "${var.tectonic_master_count}"
-  count_ignition      = "${var.tectonic_master_count}"
-  network_id_internal = "${module.network.id}"
-  floatingips         = ["${module.network.floating_ips}"]
+  kubeconfig_content = "${file("${var.tectonic_assets_dir}/auth/kubeconfig")}"
+  etcd_fqdns         = ["${openstack_compute_instance_v2.etcd_node.*.access_ip_v4}"]
+  cluster_name       = "${var.tectonic_cluster_name}"
+  count              = "${var.tectonic_master_count}"
+  kube_image_url     = "${data.null_data_source.local.outputs.kube_image_url}"
+  kube_image_tag     = "${data.null_data_source.local.outputs.kube_image_tag}"
 
   core_public_keys = ["${module.secrets.core_public_key_openssh}"]
 }
@@ -62,10 +45,10 @@ EOF
 module "bootkube" {
   source = "./../../../bootkube"
 
-  trigger_ids      = "${module.master.node_ids}"
+  trigger_ids      = ["${openstack_compute_instance_v2.master_node.*.id}"]
   assets_dir       = "${var.tectonic_assets_dir}"
   core_private_key = "${module.secrets.core_private_key_pem}"
-  hosts            = "${module.master.ips_v4}"
+  hosts            = ["${module.network.master_floating_ips}"]
 }
 
 module "worker" {
@@ -78,14 +61,12 @@ nameserver 8.8.4.4
 EOF
 
   count              = "${var.tectonic_worker_count}"
-  flavor_id          = "${var.tectonic_openstack_flavor_id}"
-  image_id           = "${var.tectonic_openstack_image_id}"
   cluster_name       = "${var.tectonic_cluster_name}"
   kubeconfig_content = "${file("${var.tectonic_assets_dir}/auth/kubeconfig")}"
   kube_image_url     = "${data.null_data_source.local.outputs.kube_image_url}"
   kube_image_tag     = "${data.null_data_source.local.outputs.kube_image_tag}"
 
-  etcd_fqdns       = "${module.etcd.ips_v4}"
+  etcd_fqdns       = ["${openstack_compute_instance_v2.etcd_node.*.access_ip_v4}"]
   core_public_keys = ["${module.secrets.core_public_key_openssh}"]
 }
 

@@ -36,8 +36,6 @@ resource "ignition_user" "core" {
 }
 
 resource "ignition_config" "etcd" {
-  count = "${var.count_ignition}"
-
   users = [
     "${ignition_user.core.id}",
   ]

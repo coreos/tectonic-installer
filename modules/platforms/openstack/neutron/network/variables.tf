@@ -15,8 +15,12 @@ variable "external_gateway_id" {
   type = "string"
 }
 
-output "floating_ips" {
+output "master_floating_ips" {
   value = ["${openstack_compute_floatingip_v2.master.*.address}"]
+}
+
+output "worker_floating_ips" {
+  value = ["${openstack_compute_floatingip_v2.worker.*.address}"]
 }
 
 output "id" {
