@@ -15,7 +15,7 @@ module "etcd" {
   node_count            = "${var.tectonic_aws_az_count == 5 ? 5 : 3}"
   ssh_key               = "${var.tectonic_aws_ssh_key}"
   dns_zone              = "${module.dns.int_zone_id}"
-  etcd_subnets          = ["${module.vpc.master_subnet_ids}"]
+  etcd_subnets          = ["${module.vpc.worker_subnet_ids}"]
   tectonic_base_domain  = "${var.tectonic_base_domain}"
   tectonic_cluster_name = "${var.tectonic_cluster_name}"
   tectonic_cl_channel   = "${var.tectonic_cl_channel}"

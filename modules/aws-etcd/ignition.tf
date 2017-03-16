@@ -20,7 +20,7 @@ resource "ignition_file" "node_hostname" {
   filesystem = "root"
 
   content {
-    content = "etcd-${count.index}.${var.tectonic_base_domain}"
+    content = "{var.tectonic_cluster_name}-etcd-${count.index}.${var.tectonic_base_domain}"
   }
 }
 
