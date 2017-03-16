@@ -61,6 +61,6 @@ module "dns" {
   tectonic_base_domain = "${var.tectonic_base_domain}"
   tectonic_dns_name    = "${var.tectonic_dns_name}"
   console-elb          = "${module.masters.console-elb}"
-  api-external-elb     = "${module.masters.api-internal-elb}"
-  api-internal-elb     = "${module.masters.api-external-elb}"
+  api-internal-elb     = "${module.masters.api-internal-elb}"
+  api-external-elb     = "${module.masters.api-external-elb}"
 }
