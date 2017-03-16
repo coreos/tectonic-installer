@@ -57,13 +57,13 @@ resource "ignition_systemd_unit" "locksmithd" {
 resource "ignition_systemd_unit" "kubelet-master" {
   name    = "kubelet.service"
   enable  = true
-  content = "${file("${path.module}/resources/worker-kubelet.service")}"
+  content = "${file("${path.module}/resources/master-kubelet.service")}"
 }
 
 resource "ignition_systemd_unit" "kubelet-worker" {
   name    = "kubelet.service"
   enable  = true
-  content = "${file("${path.module}/resources/worker-kubelet.service")}"
+  content = "${file("${path.module}/resources/master-kubelet.service")}"
 }
 
 resource "ignition_systemd_unit" "bootkube" {
@@ -163,8 +163,8 @@ resource "ignition_file" "kubelet-env" {
 
   content {
     content = <<EOF
-KUBELET_ACI=quay.io/coreos/hyperkube
-KUBELET_VERSION="${var.tectonic_kube_version}"
+KUBELET_ACI=${var.kube_image_url}
+KUBELET_VERSION=${var.kube_image_tag}
 EOF
   }
 }

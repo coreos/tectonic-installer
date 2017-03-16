@@ -26,10 +26,6 @@ variable "tectonic_worker_count" {
   type = "string"
 }
 
-variable "tectonic_kube_version" {
-  type = "string"
-}
-
 variable "etcd_endpoints" {
   type = "list"
 }
@@ -40,4 +36,12 @@ variable "worker_subnet_ids" {
 
 variable "extra_sg_ids" {
   type = "list"
+}
+
+variable "kube_image_url" {
+  type = "string"
+}
+
+variable "kube_image_tag" {
+  type = "string"
 }

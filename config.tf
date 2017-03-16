@@ -88,7 +88,6 @@ variable "tectonic_etcd_count" {
 variable "tectonic_etcd_servers" {
   description = "List of external etcd v3 servers to connect with (scheme://ip:port). Optionally use if providing external etcd."
   type        = "list"
-  type        = "string"
 }
 
 // The base DNS domain of the cluster.
@@ -147,11 +146,6 @@ variable "tectonic_ingress_type" {
   default     = "HostPort"
 }
 
-variable "tectonic_base_domain" {
-  type        = "string"
-  description = "Base address used to access the Tectonic Console, without protocol nor trailing forward slash"
-}
-
 variable "tectonic_ca_cert" {
   type        = "string"
   description = "PEM-encoded CA certificate, used to generate Tectonic Console's server certificate. Optional, if left blank, a CA certificate will be automatically generated."
@@ -186,4 +180,28 @@ variable "tectonic_dns_name" {
 variable "tectonic_external_etcd_endpoints" {
   type    = "list"
   default = [""]
+}
+
+variable "tectonic_aws_master_ec2_type" {
+  type = "string"
+}
+
+variable "tectonic_aws_worker_ec2_type" {
+  type = "string"
+}
+
+variable "tectonic_aws_etcd_ec2_type" {
+  type = "string"
+}
+
+variable "tectonic_aws_vpc_cidr_block" {
+  type = "string"
+}
+
+variable "tectonic_aws_az_count" {
+  type = "string"
+}
+
+variable "tectonic_aws_external_vpc_id" {
+  type = "string"
 }
