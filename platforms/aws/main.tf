@@ -19,7 +19,7 @@ module "etcd" {
   tectonic_base_domain  = "${var.tectonic_base_domain}"
   tectonic_cluster_name = "${var.tectonic_cluster_name}"
   tectonic_cl_channel   = "${var.tectonic_cl_channel}"
-  external_endpoints    = ["${var.tectonic_external_etcd_endpoints}"]
+  external_endpoints    = ["${var.tectonic_etcd_servers}"]
 }
 
 module "masters" {

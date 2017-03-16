@@ -88,6 +88,7 @@ variable "tectonic_etcd_count" {
 variable "tectonic_etcd_servers" {
   description = "List of external etcd v3 servers to connect with (scheme://ip:port). Optionally use if providing external etcd."
   type        = "list"
+  default     = [""]
 }
 
 // The base DNS domain of the cluster.
@@ -175,11 +176,6 @@ variable "tectonic_aws_ssh_key" {
 
 variable "tectonic_dns_name" {
   type = "string"
-}
-
-variable "tectonic_external_etcd_endpoints" {
-  type    = "list"
-  default = [""]
 }
 
 variable "tectonic_aws_master_ec2_type" {
