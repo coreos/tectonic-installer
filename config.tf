@@ -163,11 +163,6 @@ variable "tectonic_ca_key_alg" {
   default     = "RSA"
 }
 
-variable "tectonic_assets_dir" {
-  type        = "string"
-  description = "The directory name of the unpacked tectonic assets."
-}
-
 // Name of an EC2 ssh key to use
 // joe-sfo
 variable "tectonic_aws_ssh_key" {

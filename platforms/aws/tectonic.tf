@@ -2,8 +2,8 @@ module "bootkube" {
   source         = "../../common/bootkube"
   cloud_provider = "aws"
 
-  kube_apiserver_url = "https://${aws_route53_record.api-external.name}:443"
-  oidc_issuer_url    = "https://${aws_route53_record.ingress-public.name}/identity"
+  kube_apiserver_url = "https://${module.dns.api_internal_fqdn}:443"
+  oidc_issuer_url    = "https://${module.dns.ingress_internal_fqdn}/identity"
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
@@ -32,8 +32,8 @@ module "tectonic" {
   source   = "../../common/tectonic"
   platform = "aws"
 
-  domain             = "${aws_route53_record.ingress-public.name}"
-  kube_apiserver_url = "https://${module.dns.api-external-name}:443"
+  domain             = "${module.dns.ingress_internal_fqdn}"
+  kube_apiserver_url = "https://${module.dns.api_internal_fqdn}:443"
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
@@ -64,7 +64,7 @@ module "tectonic" {
 
 
 #   connection {
-#     host  = "${aws_elb.api-external.dns_name}"
+#     host  = "${module.dns.api_internal_fqdn}"
 #     user  = "core"
 #     agent = true
 #   }

@@ -37,6 +37,9 @@ module "masters" {
   kube_image_url               = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
   kube_image_tag               = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
   master_subnet_ids            = ["${module.vpc.master_subnet_ids}"]
+  tectonic_kube_dns_service_ip = "${var.tectonic_kube_dns_service_ip}"
+  kubeconfig_content           = "${module.bootkube.kubeconfig}"
+  tectonic_versions            = "${var.tectonic_versions}"
 }
 
 module "workers" {
@@ -54,6 +57,9 @@ module "workers" {
   kube_image_url               = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
   kube_image_tag               = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
   extra_sg_ids                 = ["${module.vpc.cluster_default_sg}"]
+  tectonic_kube_dns_service_ip = "${var.tectonic_kube_dns_service_ip}"
+  kubeconfig_content           = "${module.bootkube.kubeconfig}"
+  tectonic_versions            = "${var.tectonic_versions}"
 }
 
 module "dns" {

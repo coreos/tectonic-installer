@@ -48,7 +48,7 @@ data "template_file" "etcd-member" {
 
   vars {
     version   = "${var.tectonic_versions["etcd"]}"
-    endpoints = "${join(",",module.etcd.endpoints)}"
+    endpoints = "${join(",",var.etcd_endpoints)}"
   }
 }
 
@@ -70,7 +70,7 @@ resource "ignition_file" "kubeconfig" {
   mode       = "420"
 
   content {
-    content = "${module.bootkube.kubeconfig}"
+    content = "${var.kubeconfig_content}"
   }
 }
 
@@ -81,8 +81,8 @@ resource "ignition_file" "kubelet-env" {
 
   content {
     content = <<EOF
-KUBELET_ACI=quay.io/coreos/hyperkube
-KUBELET_VERSION="${var.tectonic_kube_version}"
+KUBELET_ACI="${var.kube_image_url}"
+KUBELET_VERSION="${var.kube_image_tag}"
 EOF
   }
 }
