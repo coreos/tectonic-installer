@@ -1,5 +1,5 @@
 module "bootkube" {
-  source         = "../../common/bootkube"
+  source         = "../../modules/bootkube"
   cloud_provider = "aws"
 
   kube_apiserver_url = "https://${module.dns.api_internal_fqdn}:443"
@@ -29,7 +29,7 @@ module "bootkube" {
 }
 
 module "tectonic" {
-  source   = "../../common/tectonic"
+  source   = "../../modules/tectonic"
   platform = "aws"
 
   domain             = "${module.dns.ingress_internal_fqdn}"
