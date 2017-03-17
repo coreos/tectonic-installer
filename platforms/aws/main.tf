@@ -20,6 +20,7 @@ module "etcd" {
   tectonic_cluster_name = "${var.tectonic_cluster_name}"
   tectonic_cl_channel   = "${var.tectonic_cl_channel}"
   external_endpoints    = ["${var.tectonic_etcd_servers}"]
+  etcd_version          = "${var.tectonic_versions["etcd"]}"
 }
 
 module "masters" {
