@@ -20,7 +20,7 @@ assets: $(ASSETS)
 
 apply: $(BUILD_DIR) assets config.tfvars
 	terraform get ./platform-$(PLATFORM)
-	terraform apply -state-out=$(BUILD_DIR)/platform-$(PLATFORM) --var-file=./config.tfvars ./platform-$(PLATFORM)
+	terraform apply -state-out=$(BUILD_DIR)/platform-$(PLATFORM) -var-file=./config.tfvars ./platform-$(PLATFORM)
 
 destroy: $(BUILD_DIR) assets config.tfvars
-	terraform destroy -state=$(BUILD_DIR)/platform-$(PLATFORM) --var-file=./config.tfvars ./platform-$(PLATFORM)
+	terraform destroy -state=$(BUILD_DIR)/platform-$(PLATFORM) -var-file=./config.tfvars ./platform-$(PLATFORM)
