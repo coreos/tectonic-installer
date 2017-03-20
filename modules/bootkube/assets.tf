@@ -11,6 +11,7 @@ resource "template_folder" "bootkube" {
     dnsmasq_metrics_image = "${var.container_images["dnsmasq_metrics"]}"
     exechealthz_image     = "${var.container_images["exechealthz"]}"
     flannel_image         = "${var.container_images["flannel"]}"
+    etcd_operator_image   = "${var.container_images["etcd_operator"]}"
 
     etcd_servers = "${join(",", var.etcd_servers)}"
     cloud_provider = "${var.cloud_provider}"

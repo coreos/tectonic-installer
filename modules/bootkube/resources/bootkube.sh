@@ -7,4 +7,4 @@
   ${bootkube_image} \
   --net=host \
   --dns=host \
-  --exec=/bootkube -- start --asset-dir=/assets --etcd-server=${etcd_server}
+  --exec=/bootkube -- start --asset-dir=/assets --etcd-server=${etcd_server} --experimental-self-hosted-etcd=${experimental_self_hosted_etcd}

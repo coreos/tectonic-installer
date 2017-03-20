@@ -25,6 +25,7 @@ variable "tectonic_container_images" {
     dnsmasq_metrics           = "gcr.io/google_containers/dnsmasq-metrics-amd64:1.0"
     exechealthz               = "gcr.io/google_containers/exechealthz-amd64:1.2"
     flannel                   = "quay.io/coreos/flannel:v0.7.0-amd64"
+    etcd_operator             = "quay.io/coreos/etcd-operator:v0.2.4"
   }
 }
 
