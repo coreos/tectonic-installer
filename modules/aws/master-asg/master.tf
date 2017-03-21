@@ -61,7 +61,7 @@ resource "aws_launch_configuration" "master_conf" {
   security_groups             = ["${concat(list(aws_security_group.master_sec_group.id), var.extra_sg_ids)}"]
   iam_instance_profile        = "${aws_iam_instance_profile.master_profile.arn}"
   associate_public_ip_address = true
-  user_data                   = "${ignition_config.master.rendered}"
+  user_data                   = "${var.user_data}"
 
   lifecycle {
     create_before_destroy = true
@@ -166,6 +166,21 @@ resource "aws_iam_role_policy" "master_policy" {
         "ecr:DescribeRepositories",
         "ecr:ListImages",
         "ecr:BatchGetImage"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action" : [
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::*",
+      "Effect": "Allow"
+    },
+    {
+      "Action" : [
+        "autoscaling:DescribeAutoScalingGroups",
+        "autoscaling:DescribeAutoScalingInstances"
       ],
       "Resource": "*",
       "Effect": "Allow"

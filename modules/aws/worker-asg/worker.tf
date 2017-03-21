@@ -29,8 +29,7 @@ resource "aws_launch_configuration" "worker_conf" {
   key_name             = "${var.ssh_key}"
   security_groups      = ["${concat(list(aws_security_group.worker_sec_group.id), var.extra_sg_ids)}"]
   iam_instance_profile = "${aws_iam_instance_profile.worker_profile.arn}"
-
-  user_data = "${ignition_config.worker.rendered}"
+  user_data            = "${var.user_data}"
 
   lifecycle {
     create_before_destroy = true
@@ -115,6 +114,21 @@ resource "aws_iam_role_policy" "worker_policy" {
         "ecr:DescribeRepositories",
         "ecr:ListImages",
         "ecr:BatchGetImage"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action" : [
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::*",
+      "Effect": "Allow"
+    },
+    {
+      "Action" : [
+        "autoscaling:DescribeAutoScalingGroups",
+        "autoscaling:DescribeAutoScalingInstances"
       ],
       "Resource": "*",
       "Effect": "Allow"
