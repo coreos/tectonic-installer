@@ -192,6 +192,7 @@ resource "ignition_systemd_unit" "tectonic" {
 Description=Bootstrap a Tectonic cluster
 [Service]
 Type=oneshot
+RemainAfterExit=true
 WorkingDirectory=/opt/tectonic
 ExecStart=/usr/bin/bash /opt/tectonic/bootkube.sh
 ExecStart=/usr/bin/bash /opt/tectonic/tectonic.sh kubeconfig tectonic
