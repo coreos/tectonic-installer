@@ -45,7 +45,7 @@ until $CURL -f "$K8S_API/version" &> /dev/null; do
 done
 
 echo "Waiting for Kubernetes components..."
-while $CURL "$K8S_API/api/v1/namespaces/kube-system/pods" 2>/dev/null | grep Pending > /dev/null; do
+while $CURL "$K8S_API/api/v1/namespaces/kube-system/pods" 2>/dev/null | jq -r .items[].status.phase | grep -v '^Running$'; do
   sleep 5
 done
 sleep 10
