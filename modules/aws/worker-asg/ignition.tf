@@ -1,7 +1,6 @@
 resource "ignition_config" "worker" {
   files = [
     "${ignition_file.kubeconfig.id}",
-    "${ignition_file.kubelet-env.id}",
     "${ignition_file.max-user-watches.id}",
   ]
 
@@ -33,7 +32,9 @@ data "template_file" "kubelet-worker" {
   template = "${file("${path.module}/resources/worker-kubelet.service")}"
 
   vars {
-    cluster_dns = "${var.tectonic_kube_dns_service_ip}"
+    aci            = "${element(split(":", var.container_images["hyperkube"]), 0)}"
+    version        = "${element(split(":", var.container_images["hyperkube"]), 1)}"
+    cluster_dns_ip = "${var.kube_dns_service_ip}"
   }
 }
 
@@ -47,7 +48,7 @@ data "template_file" "etcd-member" {
   template = "${file("${path.module}/resources/etcd-member.service")}"
 
   vars {
-    version   = "${var.tectonic_versions["etcd"]}"
+    image     = "${var.container_images["etcd"]}"
     endpoints = "${join(",",var.etcd_endpoints)}"
   }
 }
@@ -71,19 +72,6 @@ resource "ignition_file" "kubeconfig" {
 
   content {
     content = "${var.kubeconfig_content}"
-  }
-}
-
-resource "ignition_file" "kubelet-env" {
-  filesystem = "root"
-  path       = "/etc/kubernetes/kubelet.env"
-  mode       = "420"
-
-  content {
-    content = <<EOF
-KUBELET_ACI="${var.kube_image_url}"
-KUBELET_VERSION="${var.kube_image_tag}"
-EOF
   }
 }
 

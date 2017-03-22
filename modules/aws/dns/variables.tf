@@ -2,22 +2,22 @@ variable "vpc_id" {
   type = "string"
 }
 
-variable "tectonic_base_domain" {
+variable "base_domain" {
   type = "string"
 }
 
-variable "tectonic_dns_name" {
+variable "cluster_name" {
   type = "string"
 }
 
-variable "console-elb" {
+variable "console_elb" {
   type = "map"
 }
 
-variable "api-internal-elb" {
+variable "api_internal_elb" {
   type = "map"
 }
 
-variable "api-external-elb" {
+variable "api_external_elb" {
   type = "map"
 }

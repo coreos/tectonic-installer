@@ -1,6 +1,6 @@
 resource "aws_elb" "api-internal" {
-  name            = "${var.tectonic_cluster_name}-api-internal"
-  subnets         = ["${var.master_subnet_ids}"]
+  name            = "${var.cluster_name}-api-internal"
+  subnets         = ["${var.subnet_ids}"]
   internal        = true
   security_groups = ["${aws_security_group.master_sec_group.id}"]
 
@@ -27,14 +27,14 @@ resource "aws_elb" "api-internal" {
   }
 
   tags {
-    Name              = "${var.tectonic_cluster_name}-api-internal"
-    KubernetesCluster = "${var.tectonic_cluster_name}"
+    Name              = "${var.cluster_name}-api-internal"
+    KubernetesCluster = "${var.cluster_name}"
   }
 }
 
 resource "aws_elb" "api-external" {
-  name            = "${var.tectonic_cluster_name}-api-external"
-  subnets         = ["${var.master_subnet_ids}"]
+  name            = "${var.cluster_name}-api-external"
+  subnets         = ["${var.subnet_ids}"]
   internal        = false
   security_groups = ["${aws_security_group.master_sec_group.id}"]
 
@@ -61,14 +61,14 @@ resource "aws_elb" "api-external" {
   }
 
   tags {
-    Name              = "${var.tectonic_cluster_name}-api-external"
-    KubernetesCluster = "${var.tectonic_cluster_name}"
+    Name              = "${var.cluster_name}-api-external"
+    KubernetesCluster = "${var.cluster_name}"
   }
 }
 
 resource "aws_elb" "console" {
-  name            = "${var.tectonic_cluster_name}-console"
-  subnets         = ["${var.master_subnet_ids}"]
+  name            = "${var.cluster_name}-console"
+  subnets         = ["${var.subnet_ids}"]
   internal        = false
   security_groups = ["${aws_security_group.master_sec_group.id}"]
 
@@ -95,7 +95,7 @@ resource "aws_elb" "console" {
   }
 
   tags {
-    Name              = "${var.tectonic_cluster_name}-console"
-    KubernetesCluster = "${var.tectonic_cluster_name}"
+    Name              = "${var.cluster_name}-console"
+    KubernetesCluster = "${var.cluster_name}"
   }
 }

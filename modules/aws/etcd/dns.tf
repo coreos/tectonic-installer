@@ -17,10 +17,10 @@ resource "aws_route53_record" "etcd_srv_client" {
 }
 
 resource "aws_route53_record" "etc_a_nodes" {
-  count   = "${length(var.external_endpoints) == 0 ? var.node_count : 0}"
+  count   = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
   type    = "A"
   ttl     = "60"
   zone_id = "${var.dns_zone}"
-  name    = "${var.tectonic_cluster_name}-etcd-${count.index}"
+  name    = "${var.cluster_name}-etcd-${count.index}"
   records = ["${aws_instance.etcd_node.*.private_ip[count.index]}"]
 }
