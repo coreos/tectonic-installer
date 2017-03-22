@@ -7,6 +7,18 @@ resource "ignition_config" "etcd" {
     "${ignition_systemd_unit.etcd2.id}",
     "${ignition_systemd_unit.etcd.id}",
   ]
+
+  users = [
+    "${ignition_user.core.id}",
+  ]
+}
+
+resource "ignition_user" "core" {
+  name = "core"
+
+  ssh_authorized_keys = [
+    "${file(var.ssh_key)}",
+  ]
 }
 
 resource "ignition_systemd_unit" "locksmithd" {
