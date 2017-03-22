@@ -52,12 +52,12 @@ Environment="ETCD_IMAGE_TAG=v3.1.2"
 EnvironmentFile=/run/metadata/coreos
 ExecStart=
 ExecStart=/usr/lib/coreos/etcd-wrapper \
-  --name=etcd \
+  --name=${azurerm_network_interface.etcd_nic.*.name[count.index]} \
   --advertise-client-urls=http://$${COREOS_AZURE_IPV4_DYNAMIC}:2379 \
   --initial-advertise-peer-urls=http://$${COREOS_AZURE_IPV4_DYNAMIC}:2380 \
   --listen-client-urls=http://0.0.0.0:2379 \
   --listen-peer-urls=http://0.0.0.0:2380 \
-  --initial-cluster=etcd=http://$${COREOS_AZURE_IPV4_DYNAMIC}:2380
+  --initial-cluster=${join(",",formatlist("%s=http://%s:2380",azurerm_network_interface.etcd_nic.*.name,azurerm_network_interface.etcd_nic.*.private_ip_address))}
 EOF
     },
   ]
