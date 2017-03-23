@@ -8,9 +8,9 @@ All the common Tectonic SDK variables used for *all* platforms.
 | tectonic_admin_email | e-mail address used to login to Tectonic | - | yes |
 | tectonic_admin_password_hash | bcrypt hash of admin password to use with Tectonic Console | - | yes |
 | tectonic_base_domain | Base address used to access the Tectonic Console, without protocol nor trailing forward slash | - | yes |
-| tectonic_ca_cert | PEM-encoded CA certificate, used to generate Tectonic Console's server certificate. Optional, if left blank, a CA certificate will be automatically generated. | - | yes |
-| tectonic_ca_key | PEM-encoded CA key, used to generate Tectonic Console's server certificate. Optional if tectonic_ca_cert is left blank | - | yes |
-| tectonic_ca_key_alg | Algorithm used to generate tectonic_ca_key. Optional if tectonic_ca_cert is left blank. | `RSA` | no |
+| tectonic_ca_cert_path | Path to a PEM-encoded CA certificate, used to generate Tectonic Console's server certificate. Optional, if left blank, a CA certificate will be automatically generated. | - | yes |
+| tectonic_ca_key_path | Path to a PEM-encoded CA key, used to generate Tectonic Console's server certificate. Optional if tectonic_ca_cert_path is left blank. | - | yes |
+| tectonic_ca_key_alg | Algorithm used to generate the key present in tectonic_ca_key_path. Optional if tectonic_ca_cert_path is left blank. | `RSA` | no |
 | tectonic_cl_channel |  | `stable` | no |
 | tectonic_cluster_cidr | A CIDR notation IP range from which to assign pod IPs | `10.2.0.0/16` | no |
 | tectonic_cluster_name | The name of the cluster. This will be prepended to `tectonic_base_domain` resulting in the URL to the Tectonic console. | - | yes |

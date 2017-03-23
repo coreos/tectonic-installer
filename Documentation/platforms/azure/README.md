@@ -98,9 +98,9 @@ tectonic_admin_email = "first.last@example.com"
 
 tectonic_admin_password_hash = "<redacted - generate with bcrypt tool>"
 
-tectonic_ca_cert = "" # path on disk, keep empty to generate one
+tectonic_ca_cert_path = "" # path on disk, keep empty to generate one
 
-tectonic_ca_key = "" # path on disk, keep empty to generate one
+tectonic_ca_key_path = "" # path on disk, keep empty to generate one
 
 tectonic_azure_ssh_key = "/Users/coreos/.ssh/id_rsa.pub"
 

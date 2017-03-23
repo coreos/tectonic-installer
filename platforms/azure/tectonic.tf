@@ -8,8 +8,8 @@ module "bootkube" {
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
 
-  ca_cert    = "${var.tectonic_ca_cert}"
-  ca_key     = "${var.tectonic_ca_key}"
+  ca_cert    = "${length(var.tectonic_ca_cert_path) > 0 ? file(var.tectonic_ca_cert_path) : ""}"
+  ca_key     = "${length(var.tectonic_ca_key_path) > 0 ? file(var.tectonic_ca_key_path) : ""}"
   ca_key_alg = "${var.tectonic_ca_key_alg}"
 
   service_cidr = "${var.tectonic_service_cidr}"

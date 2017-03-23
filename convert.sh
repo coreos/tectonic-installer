@@ -68,8 +68,8 @@ tectonic_assets_dir = "$(dirname ${2})"
 
 tectonic_admin_email = ""
 tectonic_admin_password_hash = ""
-tectonic_ca_cert = ""
-tectonic_ca_key = ""
+tectonic_ca_cert_path = ""
+tectonic_ca_key_path = ""
 tectonic_etcd_servers = [ "" ]
 tectonic_license_path = ""
 tectonic_pull_secret_path = ""
