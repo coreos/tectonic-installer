@@ -30,6 +30,21 @@ variable "extra_sg_ids" {
   type = "list"
 }
 
+variable "base_domain" {
+  type        = "string"
+  description = "Domain on which the ELB records will be created"
+}
+
+variable "internal_zone_id" {
+  type        = "string"
+  description = "ID of the internal facing Route53 Hosted Zone on which the ELB records will be created"
+}
+
+variable "external_zone_id" {
+  type        = "string"
+  description = "ID of the public facing Route53 Hosted Zone on which the ELB records will be created"
+}
+
 variable "user_data" {
   type        = "string"
   description = "User-data content used to boot the instances"

@@ -26,7 +26,7 @@ module "etcd" {
   vpc_id  = "${module.vpc.vpc_id}"
   subnets = ["${module.vpc.worker_subnet_ids}"]
 
-  dns_zone     = "${module.dns.int_zone_id}"
+  dns_zone_id  = "${aws_route53_zone.tectonic-int.zone_id}"
   base_domain  = "${var.tectonic_base_domain}"
   cluster_name = "${var.tectonic_cluster_name}"
 
@@ -58,6 +58,10 @@ module "masters" {
   ssh_key    = "${var.tectonic_aws_ssh_key}"
   cl_channel = "${var.tectonic_cl_channel}"
   user_data  = "${module.ignition-masters.ignition}"
+
+  internal_zone_id = "${aws_route53_zone.tectonic-int.zone_id}"
+  external_zone_id = "${data.aws_route53_zone.tectonic-ext.zone_id}"
+  base_domain      = "${var.tectonic_base_domain}"
 }
 
 module "ignition-workers" {
@@ -85,17 +89,4 @@ module "workers" {
   ssh_key    = "${var.tectonic_aws_ssh_key}"
   cl_channel = "${var.tectonic_cl_channel}"
   user_data  = "${module.ignition-workers.ignition}"
-}
-
-module "dns" {
-  source = "../../modules/aws/dns"
-
-  vpc_id = "${module.vpc.vpc_id}"
-
-  base_domain = "${var.tectonic_base_domain}"
-  cluster_name = "${var.tectonic_dns_name}"
-
-  console_elb      = "${module.masters.console-elb}"
-  api_internal_elb = "${module.masters.api-internal-elb}"
-  api_external_elb = "${module.masters.api-external-elb}"
 }

@@ -32,6 +32,18 @@ resource "aws_elb" "api-internal" {
   }
 }
 
+resource "aws_route53_record" "api-internal" {
+  zone_id = "${var.internal_zone_id}"
+  name    = "${var.cluster_name}-k8s.${var.base_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_elb.api-internal.dns_name}"
+    zone_id                = "${aws_elb.api-internal.zone_id}"
+    evaluate_target_health = true
+  }
+}
+
 resource "aws_elb" "api-external" {
   name            = "${var.cluster_name}-api-external"
   subnets         = ["${var.subnet_ids}"]
@@ -66,6 +78,18 @@ resource "aws_elb" "api-external" {
   }
 }
 
+resource "aws_route53_record" "api-external" {
+  zone_id = "${var.external_zone_id}"
+  name    = "${var.cluster_name}-k8s.${var.base_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_elb.api-external.dns_name}"
+    zone_id                = "${aws_elb.api-external.zone_id}"
+    evaluate_target_health = true
+  }
+}
+
 resource "aws_elb" "console" {
   name            = "${var.cluster_name}-console"
   subnets         = ["${var.subnet_ids}"]
@@ -97,5 +121,29 @@ resource "aws_elb" "console" {
   tags {
     Name              = "${var.cluster_name}-console"
     KubernetesCluster = "${var.cluster_name}"
+  }
+}
+
+resource "aws_route53_record" "ingress-public" {
+  zone_id = "${var.external_zone_id}"
+  name    = "${var.cluster_name}.${var.base_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_elb.console.dns_name}"
+    zone_id                = "${aws_elb.console.zone_id}"
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "ingress-private" {
+  zone_id = "${var.internal_zone_id}"
+  name    = "${var.cluster_name}.${var.base_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_elb.console.dns_name}"
+    zone_id                = "${aws_elb.console.zone_id}"
+    evaluate_target_health = true
   }
 }

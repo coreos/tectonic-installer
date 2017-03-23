@@ -10,7 +10,7 @@ variable "cl_channel" {
   type = "string"
 }
 
-variable "dns_zone" {
+variable "dns_zone_id" {
   type = "string"
 }
 
