@@ -102,21 +102,6 @@ resource "ignition_file" "max-user-watches" {
   }
 }
 
-resource "ignition_systemd_unit" "tectonic" {
-  name   = "tectonic.service"
-  enable = true
-
-  content = <<EOF
-[Unit]
-Description=Bootstrap a Tectonic cluster
-[Service]
-Type=oneshot
-WorkingDirectory=/opt/tectonic
-ExecStart=/usr/bin/bash /opt/tectonic/bootkube.sh
-ExecStart=/usr/bin/bash /opt/tectonic/tectonic.sh kubeconfig tectonic
-EOF
-}
-
 resource "ignition_user" "core" {
   name = "core"
 
