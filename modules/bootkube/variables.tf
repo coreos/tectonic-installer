@@ -82,3 +82,14 @@ variable "oidc_groups_claim" {
     description = "The OpenID claim to use for specifying user groups (string or array of strings)"
     type        = "string"
 }
+
+variable "etcd_service_ip" {
+    description = "Service IP used to reach etcd"
+    type        = "string"
+}
+
+variable "experimental_self_hosted_etcd" {
+    description = "Self hosted etcd mode. Includes starting the initial etcd member by bootkube"
+    type        = "string"
+    default     = "false"
+}
