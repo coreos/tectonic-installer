@@ -13,6 +13,7 @@ module "etcd" {
 
   vpc_id                = "${module.vpc.vpc_id}"
   node_count            = "${var.tectonic_aws_az_count == 5 ? 5 : 3}"
+  az_count              = "${var.tectonic_aws_az_count}"
   ssh_key               = "${var.tectonic_aws_ssh_key}"
   dns_zone              = "${module.dns.int_zone_id}"
   etcd_subnets          = ["${module.vpc.worker_subnet_ids}"]
