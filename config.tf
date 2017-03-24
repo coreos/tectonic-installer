@@ -155,21 +155,21 @@ variable "tectonic_ingress_type" {
   default     = "HostPort"
 }
 
-variable "tectonic_ca_cert" {
+variable "tectonic_ca_cert_path" {
   type        = "string"
-  description = "PEM-encoded CA certificate, used to generate Tectonic Console's server certificate. Optional, if left blank, a CA certificate will be automatically generated."
+  description = "Path to a PEM-encoded CA certificate, used to generate Tectonic Console's server certificate. Optional, if left blank, a CA certificate will be automatically generated."
   default = ""
 }
 
-variable "tectonic_ca_key" {
+variable "tectonic_ca_key_path" {
   type        = "string"
-  description = "PEM-encoded CA key, used to generate Tectonic Console's server certificate. Optional if tectonic_ca_cert is left blank"
+  description = "Path to a PEM-encoded CA key, used to generate Tectonic Console's server certificate. Optional if tectonic_ca_cert_path is left blank."
   default = ""
 }
 
 variable "tectonic_ca_key_alg" {
   type        = "string"
-  description = "Algorithm used to generate tectonic_ca_key. Optional if tectonic_ca_cert is left blank."
+  description = "Algorithm used to generate the key present in tectonic_ca_key_path. Optional if tectonic_ca_cert_path is left blank."
   default     = "RSA"
 }
 
