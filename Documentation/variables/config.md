@@ -17,9 +17,7 @@ All the common Tectonic SDK variables used for *all* platforms.
 | tectonic_container_images | Container images to use | `<map>` | no |
 | tectonic_etcd_count | The number of etcd nodes to be created. | `1` | no |
 | tectonic_etcd_servers | List of external etcd v3 servers to connect with (hostnames/IPs only). Optionally used if using an external etcd cluster. | - | yes |
-| tectonic_ingress_type | Type of Ingress mapping to use (e.g. HostPort, NodePort) | `HostPort` | no |
 | tectonic_kube_apiserver_service_ip | Service IP used to reach kube-apiserver inside the cluster | `10.3.0.1` | no |
-| tectonic_kube_apiserver_url | URL used to reach kube-apiserver | `https://10.1.1.1:443` | no |
 | tectonic_kube_dns_service_ip | Service IP used to reach kube-dns | `10.3.0.10` | no |
 | tectonic_license_path |  | - | yes |
 | tectonic_master_count | The number of master nodes to be created. | `1` | no |

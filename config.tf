@@ -42,12 +42,6 @@ variable "tectonic_versions" {
   }
 }
 
-variable "tectonic_kube_apiserver_url" {
-  type        = "string"
-  description = "URL used to reach kube-apiserver"
-  default     = "https://10.1.1.1:443"
-}
-
 variable "tectonic_kube_apiserver_service_ip" {
   type        = "string"
   description = "Service IP used to reach kube-apiserver inside the cluster"
@@ -149,12 +143,6 @@ variable "tectonic_admin_password_hash" {
   description = "bcrypt hash of admin password to use with Tectonic Console"
 }
 
-variable "tectonic_ingress_type" {
-  description = "Type of Ingress mapping to use (e.g. HostPort, NodePort)"
-  type        = "string"
-  default     = "HostPort"
-}
-
 variable "tectonic_ca_cert" {
   type        = "string"
   description = "PEM-encoded CA certificate, used to generate Tectonic Console's server certificate. Optional, if left blank, a CA certificate will be automatically generated."
@@ -171,8 +159,4 @@ variable "tectonic_ca_key_alg" {
   type        = "string"
   description = "Algorithm used to generate tectonic_ca_key. Optional if tectonic_ca_cert is left blank."
   default     = "RSA"
-}
-
-variable "tectonic_dns_name" {
-  type = "string"
 }
