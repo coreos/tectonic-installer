@@ -8,8 +8,8 @@ module "vpc" {
   cluster_name = "${var.tectonic_cluster_name}"
 
   external_vpc_id         = "${var.tectonic_aws_external_vpc_id}"
-  external_master_subnets = ["${compact(var.tectonic_aws_external_master_subnets)}"]
-  external_worker_subnets = ["${compact(var.tectonic_aws_external_worker_subnets)}"]
+  external_master_subnets = ["${compact(var.tectonic_aws_external_master_subnet_ids)}"]
+  external_worker_subnets = ["${compact(var.tectonic_aws_external_worker_subnet_ids)}"]
 }
 
 module "etcd" {
