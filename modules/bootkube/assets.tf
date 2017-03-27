@@ -12,7 +12,8 @@ resource "template_folder" "bootkube" {
     exechealthz_image     = "${var.container_images["exechealthz"]}"
     flannel_image         = "${var.container_images["flannel"]}"
 
-    etcd_servers = "${join(",", var.etcd_servers)}"
+    master_count   = "${var.master_count}"
+    etcd_servers   = "${join(",", var.etcd_servers)}"
     cloud_provider = "${var.cloud_provider}"
 
     cluster_cidr = "${var.cluster_cidr}"
