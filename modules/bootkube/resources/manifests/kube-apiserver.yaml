@@ -52,6 +52,7 @@ spec:
         - --oidc-groups-claim=${oidc_groups_claim}
         - --oidc-ca-file=/etc/kubernetes/secrets/ca.crt
         - --cloud-provider=${cloud_provider}
+        - --apiserver-count=${master_count}
         env:
         - name: POD_IP
           valueFrom:

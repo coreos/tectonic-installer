@@ -26,6 +26,7 @@ module "bootkube" {
   oidc_client_id      = "tectonic-kubectl"
 
   etcd_servers = ["http://127.0.0.1:2379"]
+  master_count = "${var.tectonic_master_count}"
 }
 
 module "tectonic" {
@@ -60,8 +61,8 @@ module "tectonic" {
 }
 
 data "archive_file" "assets" {
-  type        = "zip"
-  source_dir  = "${path.cwd}/generated/"
+  type       = "zip"
+  source_dir = "${path.cwd}/generated/"
 
   # Because the archive_file provider is a data source, depends_on can't be
   # used to guarantee that the tectonic/bootkube modules have generated
