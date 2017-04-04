@@ -134,11 +134,13 @@ create_resource yaml updater/migration-status-kind.yaml                 apis/ext
 create_resource yaml updater/node-agent.yaml                            apis/extensions/v1beta1/namespaces/tectonic-system/daemonsets
 create_resource yaml updater/kube-version-operator.yaml                 apis/extensions/v1beta1/namespaces/tectonic-system/deployments
 create_resource yaml updater/tectonic-channel-operator.yaml             apis/extensions/v1beta1/namespaces/tectonic-system/deployments
+create_resource yaml updater/tectonic-prometheus-operator.yaml          apis/extensions/v1beta1/namespaces/tectonic-system/deployments
 wait_for_tpr channel-operator-config.coreos.com apis/coreos.com/v1/namespaces/tectonic-system/channeloperatorconfigs
 create_resource json updater/tectonic-channel-operator-config.json      apis/coreos.com/v1/namespaces/tectonic-system/channeloperatorconfigs
 wait_for_tpr app-version.coreos.com apis/coreos.com/v1/namespaces/tectonic-system/appversions
 create_resource json updater/app-version-tectonic-cluster.json          apis/coreos.com/v1/namespaces/tectonic-system/appversions
 create_resource json updater/app-version-kubernetes.json                apis/coreos.com/v1/namespaces/tectonic-system/appversions
+create_resource json updater/app-version-tectonic-monitoring.json       apis/coreos.com/v1/namespaces/tectonic-system/appversions
 
 echo "Tectonic installation is done"
 exit 0
