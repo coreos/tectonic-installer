@@ -34,8 +34,8 @@ resource "template_dir" "tectonic" {
 
     etcd_cluster_size = "${var.master_count > 2 ? 3 : 1}"
 
-    license     = "${base64encode(file(var.license_path))}"
-    pull_secret = "${base64encode(file(var.pull_secret_path))}"
+    license     = "${base64encode(var.license)}"
+    pull_secret = "${base64encode(var.pull_secret)}"
     ca_cert     = "${base64encode(var.ca_cert)}"
 
     update_server  = "${var.update_server}"

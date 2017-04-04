@@ -208,7 +208,7 @@ Note: This field MUST be set manually prior to creating the cluster.
 EOF
 }
 
-variable "tectonic_pull_secret_path" {
+variable "tectonic_pull_secret" {
   type = "string"
 
   description = <<EOF
@@ -218,7 +218,7 @@ Note: This field MUST be set manually prior to creating the cluster.
 EOF
 }
 
-variable "tectonic_license_path" {
+variable "tectonic_license" {
   type = "string"
 
   description = <<EOF

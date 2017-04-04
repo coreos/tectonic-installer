@@ -50,8 +50,8 @@ pipeline {
       steps {
         parallel (
           "TerraForm: AWS": {
-            withCredentials([file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'),
-                             file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_license_path'),
+            withCredentials([file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret'),
+                             file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_license'),
                              [
                                $class: 'UsernamePasswordMultiBinding',
                                credentialsId: 'tectonic-aws',
@@ -101,8 +101,8 @@ pipeline {
     always {
       checkout scm
 
-      withCredentials([file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_pull_secret_path'),
-                       file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_license_path'),
+      withCredentials([file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_pull_secret'),
+                       file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_license'),
                        [
                          $class: 'UsernamePasswordMultiBinding',
                          credentialsId: 'tectonic-aws',

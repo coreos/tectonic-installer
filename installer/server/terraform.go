@@ -360,18 +360,6 @@ func newExecutorFromApplyHandlerInput(input *TerraformApplyHandlerInput) (*terra
 		return nil, ctxh.NewAppError(err, fmt.Sprintf("Could not create TerraForm executor: %v", err.Error()), http.StatusInternalServerError)
 	}
 
-	// Write the License and Pull Secret to disk, and wire these files in the
-	// variables.
-	if input.License == "" {
-		return nil, ctxh.NewAppError(err, "Tectonic license not provided", http.StatusBadRequest)
-	}
-	ex.AddFile("license.txt", []byte(input.License))
-	if input.PullSecret == "" {
-		return nil, ctxh.NewAppError(err, "Tectonic pull secret not provided", http.StatusBadRequest)
-	}
-	ex.AddFile("pull_secret.json", []byte(input.PullSecret))
-	input.Variables["tectonic_license_path"] = "./license.txt"
-	input.Variables["tectonic_pull_secret_path"] = "./pull_secret.json"
 	serviceCidr := input.Variables["tectonic_service_cidr"].(string)
 
 	ip, ok := input.Variables["tectonic_kube_apiserver_service_ip"].(string)

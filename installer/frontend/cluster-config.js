@@ -219,8 +219,6 @@ export const toAWS_TF = (cc, FORMS) => {
     clusterKind: 'tectonic-aws-tf',
     dryRun: cc[DRY_RUN],
     platform: "aws",
-    license: cc[TECTONIC_LICENSE],
-    pullSecret: cc[PULL_SECRET],
     adminPassword: window.btoa(cc[ADMIN_PASSWORD]),
     credentials: {
       AWSAccessKeyID: cc[AWS_ACCESS_KEY_ID],
@@ -228,6 +226,8 @@ export const toAWS_TF = (cc, FORMS) => {
       AWSRegion: cc[AWS_REGION],
     },
     variables: {
+      tectonic_license: cc[TECTONIC_LICENSE],
+      tectonic_pull_secret: cc[PULL_SECRET],
       tectonic_aws_region: cc[AWS_REGION],
       tectonic_admin_email: cc[ADMIN_EMAIL],
       tectonic_aws_master_ec2_type: controllers[INSTANCE_TYPE],
@@ -295,10 +295,10 @@ export const toBaremetal_TF = (cc, FORMS) => {
     clusterKind: 'tectonic-metal',
     dryRun: cc[DRY_RUN],
     platform: 'metal',
-    license: cc[TECTONIC_LICENSE],
-    pullSecret: cc[PULL_SECRET],
     adminPassword: window.btoa(cc[ADMIN_PASSWORD]),
     variables: {
+      tectonic_license: cc[TECTONIC_LICENSE],
+      tectonic_pull_secret: cc[PULL_SECRET],
       tectonic_cluster_name: cc[CLUSTER_NAME],
       tectonic_cl_channel: cc[CHANNEL_TO_USE],
       tectonic_admin_email: cc[ADMIN_EMAIL],
