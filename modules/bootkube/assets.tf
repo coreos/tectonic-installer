@@ -1,5 +1,5 @@
 # Self-hosted manifests (resources/generated/manifests/)
-resource "template_folder" "bootkube" {
+resource "tectonic_template_folder" "bootkube" {
   input_path  = "${path.module}/resources/manifests"
   output_path = "${path.cwd}/generated/manifests"
 
@@ -46,7 +46,7 @@ data "template_file" "kubeconfig" {
   }
 }
 
-resource "localfile_file" "kubeconfig" {
+resource "tectonic_local_file" "kubeconfig" {
   content     = "${data.template_file.kubeconfig.rendered}"
   destination = "${path.cwd}/generated/kubeconfig"
 }
@@ -61,7 +61,7 @@ data "template_file" "bootkube" {
   }
 }
 
-resource "localfile_file" "bootkube" {
+resource "tectonic_local_file" "bootkube" {
   content     = "${data.template_file.bootkube.rendered}"
   destination = "${path.cwd}/generated/bootkube.sh"
 }
