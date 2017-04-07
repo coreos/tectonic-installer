@@ -1,6 +1,9 @@
 pipeline {
   agent {
-    label 'worker'
+    docker {
+      image 'quay.io/coreos/tectonic-terraform'
+      label 'worker'
+    }
   }
 
   options {
@@ -11,7 +14,7 @@ pipeline {
   stages {
     stage('Syntax Check') {
       steps {
-        sh 'docker run --rm -v$PWD:/terraform quay.io/coreos/tectonic-terraform "make structure-check"'
+        sh 'make structure-check'
       }
     }
   }
