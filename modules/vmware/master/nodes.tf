@@ -22,6 +22,7 @@ resource "vsphere_virtual_machine" "master_node" {
     // UUID enablement is requiremd for Kubernetes vSphere Integration
     // see; https://kubernetes.io/docs/getting-started-guides/vsphere/
     disk.enableUUID = "1" 
+    
   }
  
 }

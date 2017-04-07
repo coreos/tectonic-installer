@@ -2,11 +2,35 @@
 
 ## Prerequsities
 
-1. The latest Container Linux Stable (1298.6.0 or later) [downloaded and imported into vSphere][booting on vmware].
-1. Convert the Container Linux image [into a Virtual Machine template][vmware convert to template]
-1. Ensure you have VMware credentials set up, i.e. the [environment variables][terraform vsphere provider] `VSPHERE_USER`, `VSPHERE_PASSWORD`, `VSPHERE_SERVER`, `VSPHERE_ALLOW_UNVERIFIED_SSL` are set or present in `terraform.tfvar` file under build folder.
-1. Ensure that DHCP exists in the PortGroup that is targetted for Tectonic installation
-1. Current Node discovery requires AWS Route53 hosted public domain, ensure that [Terraform AWS provider integration][terraform aws provider] is setup
+1. The latest Container Linux Stable (1298.6.0 or later) [downloaded and imported into vSphere][bootingonvmware].
+1. Convert the Container Linux image [into a Virtual Machine template][vmwareconverttotemplate]
+1. Pre-Allocated IP addresses for the cluster and pre-create DNS records
+
+## DNS and IP address allocation
+
+Tectonic Virtual Machine named follow the $clustername-etcd-$instancenumber, $clustername-master-$instancenumber, $clustername-worker-$instancenumber syntax. The manifests for VMware within this repository assume static allocation of IP Addresses.
+
+Prior to the start of setup create required DNS records. Below is a sample table 
+
+| Record | Type | Value |
+|------|-------------|:-----:|
+|mycluster.mycompany.com | A | 192.168.246.30 |
+|mycluster.mycompany.com | A | 192.168.246.31 |
+|mycluster-k8s.mycompany.com | A | 192.168.246.20 |
+|mycluster-k8s.mycompany.com | A | 192.168.246.21 |
+|mycluster-worker-0.mycompany.com | A | 192.168.246.30 |
+|mycluster-worker-1.mycompany.com | A | 192.168.246.31 |
+|mycluster-master-0.mycompany.com | A | 192.168.246.20 |
+|mycluster-master-1.mycompany.com | A | 192.168.246.21 |
+|mycluster-etcd-0.mycompany.com | A | 192.168.246.10 |
+|mycluster-etcd-1.mycompany.com | A | 192.168.246.11 |
+|mycluster-etcd-2.mycompany.com | A | 192.168.246.12 |
+|_etcd-server._tcp.mycompany.com | SRV | 0 0 2380 mycluster-etcd-0.mycompany.com |
+|_etcd-server._tcp.mycompany.com | SRV | 0 0 2380 mycluster-etcd-1.mycompany.com |
+|_etcd-server._tcp.mycompany.com | SRV | 0 0 2380 mycluster-etcd-2.mycompany.com |
+|_etcd-client._tcp.mycompany.com | SRV | 0 0 2379 mycluster-etcd-0.mycompany.com |
+|_etcd-client._tcp.mycompany.com | SRV | 0 0 2379 mycluster-etcd-1.mycompany.com |
+|_etcd-client._tcp.mycompany.com | SRV | 0 0 2379 mycluster-etcd-2.mycompany.com |
 
 ## Getting Started
 
@@ -17,7 +41,7 @@ $ cd tectonic-installer
 $ make terraform-download
 ```
 
-After downloading, you will need to source this new binary in your `$PATH`. This is important, especially if you have another verison of Terraform installed. Run this command to add it to your path:
+After downloading, you will need to source this new binary in your `$PATH`. This is important, especially if you have another version of Terraform installed. Run this command to add it to your path:
 
 ```
 $ export PATH=/path/to/tectonic-installer/bin/terraform:$PATH
@@ -34,19 +58,6 @@ Next, get the modules that Terraform will use to create the cluster resources:
 
 ```
 $ terraform get platforms/vmware
-```
-
-Configure your AWS credentials.
-
-```
-$ export AWS_ACCESS_KEY_ID=
-$ export AWS_SECRET_ACCESS_KEY=
-```
-
-An AWS region is required even-though Route53 is not region specific.
-
-```
-$ export AWS_REGION=
 ```
 
 Now we're ready to specify our cluster configuration.
@@ -81,7 +92,7 @@ If you encounter any issues, please file an issue with the repository.
 
 ## VMware vSphere Provider for Kubernetes
 
-Tectonic Installer for VMware deploys with [Kubneretes vSphere extensions][kubernetes vmware], which allow storage and metadata integations. See [vSphere Examples][vsphere examples] to create a POD with VMFS/VMDK integration.
+Tectonic Installer for VMware deploys with [Kubneretes vSphere extensions][kubernetesvmware], which allow storage and metadata integations. See [vSphere Examples][vsphereexamples] to create a POD with VMFS/VMDK integration.
 
 ## Delete the cluster
 
@@ -92,12 +103,10 @@ $ PLATFORM=vmware CLUSTER=my-cluster make destroy
 ```
 
 
-
-[booting on vmware]: [https://coreos.com/os/docs/latest/booting-on-vmware.html]
-[vmware convert to template]: [https://pubs.vmware.com/vsphere-51/index.jsp?topic=%2Fcom.vmware.vsphere.vm_admin.doc%2FGUID-846238E4-A1E3-4A28-B230-33BDD1D57454.html]
-[terraform vsphere provider]: [https://www.terraform.io/docs/providers/vsphere/index.html]
-[terraform aws provider]: [https://www.terraform.io/docs/providers/aws/index.html]
+[bootingonvmware]: [https://coreos.com/os/docs/latest/booting-on-vmware.html]
+[vmwareconverttotemplate]: [https://pubs.vmware.com/vsphere-51/index.jsp?topic=%2Fcom.vmware.vsphere.vm_admin.doc%2FGUID-846238E4-A1E3-4A28-B230-33BDD1D57454.html]
+[terraformawsprovider]: [https://www.terraform.io/docs/providers/aws/index.html]
 [account]: https://account.coreos.com
 [bcrypt]: https://github.com/coreos/bcrypt-tool/releases/tag/v1.0.0
-[vsphere examples]: https://github.com/kubernetes/kubernetes/tree/master/examples/volumes/vsphere
-[kubernetes vmware]: https://kubernetes.io/docs/getting-started-guides/vsphere/
+[vsphereexamples]: https://github.com/kubernetes/kubernetes/tree/master/examples/volumes/vsphere
+[kubernetesvmware]: https://kubernetes.io/docs/getting-started-guides/vsphere/

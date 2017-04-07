@@ -3,6 +3,10 @@ variable "count" {
   description = "Number of nodes to be created."
 }
 
+variable "base_domain" {
+  type = "string"
+}
+
 variable kube_image_tag {
   type = "string"
   description = "The hyperkube image tag"
@@ -16,11 +20,6 @@ variable kube_image_url {
 variable kubeconfig_content {
   type = "string"
   description = "The content of the kubeconfig file."
-}
-
-variable resolv_conf_content {
-  type = "string"
-  description = "The content of the /etc/resolv.conf file"
 }
 
 variable etcd_fqdns {
@@ -113,4 +112,19 @@ variable vmware_server {
 variable vmware_sslselfsigned {
   type = "string"
   description = "Set to True if vCenter SSL is self-signed for Kubernetes - vSphere integration"
+}
+
+variable dns_server {
+  type = "string"
+  description = "DNS Server of the nodes"
+}
+
+variable ip_address {
+  type = "map"
+  description = "IP Address of the node"
+}
+
+variable gateway {
+  type = "string"
+  description = "Gateway of the node"
 }

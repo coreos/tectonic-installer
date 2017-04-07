@@ -32,7 +32,7 @@ module "tectonic" {
   source   = "../../modules/tectonic"
   platform = "vsphere"
 
-  base_address       = "${var.tectonic_cluster_name}.${var.tectonic_base_domain}"
+  base_address       = "${var.tectonic_cluster_name}.${var.tectonic_base_domain}:443"
   kube_apiserver_url = "https://${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}:443"
 
   # Platform-independent variables wiring, do not modify.
@@ -63,7 +63,7 @@ resource "null_resource" "tectonic" {
   depends_on = ["module.tectonic", "module.masters", "module.cloudprovider"]
 
   connection {
-    host        = "${module.dns.api_external_fqdn}"
+    host        = "${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}"
     private_key = "${module.secrets.core_private_key_pem}"
     user        = "core"
   }

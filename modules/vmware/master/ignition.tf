@@ -20,6 +20,25 @@ resource "ignition_config" "master" {
     "${ignition_systemd_unit.kubelet-master.id}",
     "${ignition_systemd_unit.tectonic.id}",
   ]
+
+  networkd = [
+  "${ignition_networkd_unit.vmnetwork.id}",
+  ]
+}
+
+resource "ignition_networkd_unit" "vmnetwork" {
+    count      = "${var.count}"
+    name = "00-ens192.network"
+    content = <<EOF
+[Match]
+Name=ens192
+[Network]
+DNS=${var.dns_server}
+Address=${var.ip_address["${count.index}"]}
+Gateway=${var.gateway}
+UseDomains=yes
+Domains=${var.base_domain}
+EOF
 }
 
 resource "ignition_systemd_unit" "vmtoolsd_member" {
@@ -35,17 +54,6 @@ resource "ignition_systemd_unit" "vmtoolsd_member" {
   ExecStart=/usr/share/oem/bin/vmtoolsd
   TimeoutStopSec=5
 EOF
-}
-
-resource "ignition_file" "resolv_conf" {
-  path       = "/etc/resolv.conf"
-  mode       = 0644
-  uid        = 0
-  filesystem = "root"
-
-  content {
-    content = "${var.resolv_conf_content}"
-  }
 }
 
 resource "ignition_user" "core" {

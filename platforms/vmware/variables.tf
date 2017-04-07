@@ -94,3 +94,47 @@ variable "tectonic_vmware_worker_vm_memory" {
   default       = "4096"
   description   = "Worker node Memory Size in MB"
 }
+
+variable "tectonic_vmware_vm_masterips" {
+  type = "map"
+  description = "terraform map of Virtual Machine IPs"
+}
+
+variable "tectonic_vmware_vm_mastergateway" {
+  type = "string"
+  description = "gateway IP address for Master Virtual Machine"
+}
+
+variable "tectonic_vmware_vm_workerips" {
+  type = "map"
+  description = "terraform map of Virtual Machine IPs"
+}
+
+variable "tectonic_vmware_vm_workergateway" {
+  type = "string"
+  description = "tgateway IP address for Worker Virtual Machine "
+}
+
+variable "tectonic_vmware_vm_etcdips" {
+  type = "map"
+  description = "terraform map of Virtual Machine IPs"
+}
+
+variable "tectonic_vmware_vm_etcdgateway" {
+  type = "string"
+  description = "gateway IP address for etcd Virtual Machine "
+}
+
+variable "tectonic_vmware_vm_dns" {
+  type = "string"
+  description = "DNS Server in use by nodes"
+}
+
+variable "tectonic_vmware_dnsresolv" {
+  type          = "string"
+  default       = <<EOF
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+EOF
+  description   = "DNS Server for the infrastructure"
+}

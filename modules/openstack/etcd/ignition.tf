@@ -1,23 +1,26 @@
-resource "ignition_systemd_unit" "etcd_member" {
-  name = "etcd-member.service"
+resource "ignition_systemd_unit" "etcd-member" {
+  count  = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
+  name   = "etcd-member.service"
+  enable = true
 
-  dropin {
-    name = "40-etcd-cluster.conf"
+  dropin = [
+    {
+      name = "40-etcd-cluster.conf"
 
-    content = <<EOF
+      content = <<EOF
 [Service]
-Environment="ETCD_IMAGE_TAG=v3.1.0"
-ExecStartPre=/usr/bin/sh -c '/usr/bin/systemctl set-environment COREOS_PRIVATE_IPV4=$$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)'
+Environment="ETCD_IMAGE=${var.container_image}"
 ExecStart=
 ExecStart=/usr/lib/coreos/etcd-wrapper \
---name=etcd \
---advertise-client-urls=http://$${COREOS_PRIVATE_IPV4}:2379 \
---initial-advertise-peer-urls=http://$${COREOS_PRIVATE_IPV4}:2380 \
---listen-client-urls=http://0.0.0.0:2379 \
---listen-peer-urls=http://0.0.0.0:2380 \
---initial-cluster=etcd=http://$${COREOS_PRIVATE_IPV4}:2380
+  --name=etcd \
+  --discovery-srv=${var.base_domain} \
+  --advertise-client-urls=http://${var.cluster_name}-etcd-${count.index}.${var.base_domain}:2379 \
+  --initial-advertise-peer-urls=http://${var.cluster_name}-etcd-${count.index}.${var.base_domain}:2380 \
+  --listen-client-urls=http://0.0.0.0:2379 \
+  --listen-peer-urls=http://0.0.0.0:2380
 EOF
-  }
+    },
+  ]
 }
 
 resource "ignition_user" "core" {

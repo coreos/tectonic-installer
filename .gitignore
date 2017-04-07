@@ -8,3 +8,4 @@ build/**
 config.tfvars
 generated/
 bin/
+*.DS_Store
