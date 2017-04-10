@@ -39,12 +39,12 @@ resource "tls_self_signed_cert" "kube-ca" {
   ]
 }
 
-resource "localfile_file" "kube-ca-key" {
+resource "tectonic_local_file" "kube-ca-key" {
   content = "${var.ca_cert == "" ? join(" ", tls_private_key.kube-ca.*.private_key_pem) : var.ca_key}"
   destination = "${path.cwd}/generated/tls/ca.key"
 }
 
-resource "localfile_file" "kube-ca-crt" {
+resource "tectonic_local_file" "kube-ca-crt" {
   content = "${var.ca_cert == "" ? join(" ", tls_self_signed_cert.kube-ca.*.cert_pem) : var.ca_cert}"
   destination = "${path.cwd}/generated/tls/ca.crt"
 }
@@ -93,12 +93,12 @@ resource "tls_locally_signed_cert" "apiserver" {
   ]
 }
 
-resource "localfile_file" "apiserver-key" {
+resource "tectonic_local_file" "apiserver-key" {
   content = "${tls_private_key.apiserver.private_key_pem}"
   destination = "${path.cwd}/generated/tls/apiserver.key"
 }
 
-resource "localfile_file" "apiserver-crt" {
+resource "tectonic_local_file" "apiserver-crt" {
   content = "${tls_locally_signed_cert.apiserver.cert_pem}"
   destination = "${path.cwd}/generated/tls/apiserver.crt"
 }
@@ -109,12 +109,12 @@ resource "tls_private_key" "service-account" {
   rsa_bits = "2048"
 }
 
-resource "localfile_file" "service-account-key" {
+resource "tectonic_local_file" "service-account-key" {
   content = "${tls_private_key.service-account.private_key_pem}"
   destination = "${path.cwd}/generated/tls/service-account.key"
 }
 
-resource "localfile_file" "service-account-crt" {
+resource "tectonic_local_file" "service-account-crt" {
   content = "${tls_private_key.service-account.public_key_pem}"
   destination = "${path.cwd}/generated/tls/service-account.pub"
 }
@@ -151,12 +151,12 @@ resource "tls_locally_signed_cert" "kubelet" {
   ]
 }
 
-resource "localfile_file" "kubelet-key" {
+resource "tectonic_local_file" "kubelet-key" {
   content = "${tls_private_key.kubelet.private_key_pem}"
   destination = "${path.cwd}/generated/tls/kubelet.key"
 }
 
-resource "localfile_file" "kubelet-crt" {
+resource "tectonic_local_file" "kubelet-crt" {
   content = "${tls_locally_signed_cert.kubelet.cert_pem}"
   destination = "${path.cwd}/generated/tls/kubelet.crt"
 }
