@@ -37,6 +37,7 @@ data "template_file" "kubelet-worker" {
   template = "${file("${path.module}/resources/worker-kubelet.service")}"
 
   vars {
+    node_label     = "${var.kubelet_node_label}"
     cloud_provider = "${var.cloud_provider}"
     cluster_dns    = "${var.tectonic_kube_dns_service_ip}"
   }
@@ -86,8 +87,8 @@ resource "ignition_file" "kubelet-env" {
 
   content {
     content = <<EOF
-KUBELET_ACI="${var.kube_image_url}"
-KUBELET_VERSION="${var.kube_image_tag}"
+KUBELET_IMAGE_URL="${var.kube_image_url}"
+KUBELET_IMAGE_TAG="${var.kube_image_tag}"
 EOF
   }
 }

@@ -30,7 +30,7 @@ $ make terraform-download
 After downloading, you will need to source this new binary in your `$PATH`. This is important, especially if you have another verison of Terraform installed. Run this command to add it to your path:
 
 ```
-$ export PATH=/path/to/tectonic-installer/bin/terraform:$PATH
+$ export PATH=`pwd`/bin/terraform:$PATH
 ```
 
 You can double check that you're using the binary that was just downloaded:
@@ -103,7 +103,7 @@ The Tectonic Console should be up and running after the containers have download
 Inside of the `/generated` folder you should find any credentials, including the CA if generated, and a kubeconfig. You can use this to control the cluster with `kubectl`:
 
 ```
-$ KUBECONFIG=generated/kubeconfig
+$ export KUBECONFIG=generated/kubeconfig
 $ kubectl cluster-info
 ```
 
@@ -122,8 +122,8 @@ See the [troubleshooting][troubleshooting] document for work arounds for bugs th
 [conventions]: ../../conventions.md
 [generic]: ../../generic-platform.md
 [env]: http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-environment
-[register]: https://account.tectonic.com/signup/summary/tectonic-2016-12
-[account]: https://account.tectonic.com
+[register]: https://account.coreos.com/signup/summary/tectonic-2016-12
+[account]: https://account.coreos.com
 [vars]: ../../variables/config.md
 [troubleshooting]: ../../troubleshooting.md
 [aws-vars]: ../../variables/platform-aws.md

@@ -1,5 +1,5 @@
 # Naming
-# domain name that is set in Azure DNS Zone, as described in the prerequisites.
+# domain name that is set in Azure DNS, as described in the prerequisites.
 tectonic_base_domain = "azure.example.com"
 tectonic_cluster_name = "mycluster"
 # If want Azure to automatically set up FQDN, set tectonic_create_dns_zone to false
@@ -36,7 +36,7 @@ tectonic_azure_vnet_cidr_block = "10.0.0.0/16"
 
 # Tectonic Details
 # path on disk to your Tectonic License and Pull Secret
-# obtain these from your Tectonic Account: https://account.tectonic.com
+# obtain these from your Tectonic Account: https://account.coreos.com
 tectonic_license_path = "/Users/coreos/Desktop/tectonic-license.txt"
 tectonic_pull_secret_path = "/Users/coreos/Desktop/config.json"
 tectonic_etcd_servers = [] # array of etcd endpoints, keep blank to use created machines
