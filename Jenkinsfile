@@ -50,8 +50,14 @@ pipeline {
               ln -sf ${WORKSPACE}/test/aws.tfvars ${WORKSPACE}/build/${CLUSTER}/terraform.tfvars
 
               make plan
+
+              # always cleanup cluster
+              function shutdown() {
+                make destroy
+              }
+              trap shutdown EXIT
+
               make apply
-              make destroy
               '''
             }
           }
