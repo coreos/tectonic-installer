@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image 'quay.io/coreos/tectonic-terraform'
+      image 'quay.io/coreos/tectonic-terraform:v0.0.2'
       label 'worker'
     }
   }
