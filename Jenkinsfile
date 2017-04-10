@@ -23,12 +23,22 @@ pipeline {
         parallel (
           "AWS": {
               withCredentials([file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_pull_secret_path'),
-                               file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_license_path')]) {
+                               file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_license_path'),
+                               [
+                                 $class: 'UsernamePasswordMultiBinding',
+                                 credentialsId: 'tectonic-aws-creds',
+                                 usernameVariable: 'AWS_ACCESS_KEY_ID',
+                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                               ]
+                               ]) {
               sh '''
               # Set required configuration
               export PLATFORM=aws
               export CLUSTER="tf-${PLATFORM}-${BRANCH_NAME}-${BUILD_ID}"
               export TF_VAR_tectonic_cluster_name=${CLUSTER}
+
+              # AWS specific configuration
+              export AWS_REGION="us-west-2"
 
               # make core utils accessible to make
               export PATH=/bin:${PATH}
