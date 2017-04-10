@@ -33,8 +33,11 @@ pipeline {
               # make core utils accessible to make
               export PATH=/bin:${PATH}
 
+              # Create local config
+              make localconfig
+
               # Use smoke test configuration for deployment
-              ln -sf ${WORKSPACE}/test/aws.tfvars ${WORKSPACE}/platforms/aws/terraform.tfvars
+              ln -sf ${WORKSPACE}/test/aws.tfvars ${WORKSPACE}/build/${CLUSTER}/terraform.tfvars
 
               make plan
               make apply
