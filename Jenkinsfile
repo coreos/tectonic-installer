@@ -35,7 +35,9 @@ pipeline {
               # Set required configuration
               export PLATFORM=aws
               export CLUSTER="tf-${PLATFORM}-${BRANCH_NAME}-${BUILD_ID}"
-              export TF_VAR_tectonic_cluster_name=${CLUSTER}
+
+              # s3 buckets require lowercase names
+              export TF_VAR_tectonic_cluster_name=$(echo ${CLUSTER} | awk '{print tolower($0)}')
 
               # AWS specific configuration
               export AWS_REGION="us-west-2"
