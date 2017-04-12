@@ -1,5 +1,30 @@
-resource "ignition_systemd_unit" "etcd-member" {
-  count  = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
+resource "ignition_config" "etcd" {
+  users = [
+    "${ignition_user.core.id}",
+  ]
+
+  files = [
+    "${ignition_file.resolv_conf.id}",
+  ]
+
+  systemd = [
+    "${ignition_systemd_unit.locksmithd.id}",
+    "${ignition_systemd_unit.etcd3.id}",
+  ]
+}
+
+resource "ignition_file" "resolv_conf" {
+  path       = "/etc/resolv.conf"
+  mode       = 0644
+  uid        = 0
+  filesystem = "root"
+
+  content {
+    content = "${var.resolv_conf_content}"
+  }
+}
+
+resource "ignition_systemd_unit" "etcd3" {
   name   = "etcd-member.service"
   enable = true
 
@@ -23,17 +48,19 @@ EOF
   ]
 }
 
+resource "ignition_systemd_unit" "locksmithd" {
+  name   = "locksmithd.service"
+  enable = true
+
+  dropin = [
+    {
+      name    = "40-etcd-lock.conf"
+      content = "[Service]\nEnvironment=REBOOT_STRATEGY=etcd-lock\n"
+    },
+  ]
+}
+
 resource "ignition_user" "core" {
   name                = "core"
   ssh_authorized_keys = ["${var.core_public_keys}"]
-}
-
-resource "ignition_config" "etcd" {
-  users = [
-    "${ignition_user.core.id}",
-  ]
-
-  systemd = [
-    "${ignition_systemd_unit.etcd_member.id}",
-  ]
 }
