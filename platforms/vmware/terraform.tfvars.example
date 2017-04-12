@@ -45,14 +45,18 @@ tectonic_vmware_folder = "vsphere"
 
 tectonic_vmware_vm_etcdips = {
   "0" = "192.168.246.10/24"
+  "1" = "192.168.246.11/24"
+  "2" = "192.168.246.12/24"
 }
 
 tectonic_vmware_vm_masterips = {
   "0" = "192.168.246.20/24"
+  "1" = "192.168.246.21/24"
 }
 
 tectonic_vmware_vm_workerips = {
   "0" = "192.168.246.30/24"
+  "1" = "192.168.246.31/24"
 }
 
 tectonic_vmware_vm_etcdgateway = "192.168.246.1"

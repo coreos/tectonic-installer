@@ -48,6 +48,7 @@ The example below will use `PLATFORM=azure` but you can set the value to somethi
 - `PLATFORM=aws` [AWS via Terraform](Documentation/platforms/aws/README.md) [[**alpha**][platform-lifecycle]]
 - `PLATFORM=azure` [Azure via Terraform](Documentation/platforms/azure/README.md) [[**alpha**][platform-lifecycle]]
 - `PLATFORM=openstack` [OpenStack via Terraform](Documentation/platforms/openstack/README.md) [[**alpha**][platform-lifecycle]]
+- `PLATFORM=vmware` [VMware via Terraform](Documentation/platforms/vmware/README.md) [[**alpha**][platform-lifecycle]]
 
 **Initiate the Cluster Configuration**
 

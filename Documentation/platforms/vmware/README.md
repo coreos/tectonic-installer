@@ -2,15 +2,18 @@
 
 ## Prerequsities
 
-1. The latest Container Linux Stable (1298.6.0 or later) [downloaded and imported into vSphere][bootingonvmware].
-1. Convert the Container Linux image [into a Virtual Machine template][vmwareconverttotemplate]
+1. Download the latest Container Linux Stable (1298.6.0 or later) from; https://coreos.com/os/docs/latest/booting-on-vmware.html.
+1. Import `coreos_production_vmware_ova.ova` into vCenter.
+1. Resize the Virtual Machine Disk size to 30 GB
+1. Convert the Container Linux image into a Virtual Machine template.
 1. Pre-Allocated IP addresses for the cluster and pre-create DNS records
+
 
 ## DNS and IP address allocation
 
 Tectonic Virtual Machine named follow the $clustername-etcd-$instancenumber, $clustername-master-$instancenumber, $clustername-worker-$instancenumber syntax. The manifests for VMware within this repository assume static allocation of IP Addresses.
 
-Prior to the start of setup create required DNS records. Below is a sample table 
+Prior to the start of setup create required DNS records. Below is a sample table of 3 etcd nodes, 2 master nodes and 2 worker nodes. 
 
 | Record | Type | Value |
 |------|-------------|:-----:|
@@ -102,9 +105,6 @@ To delete your cluster, run:
 $ PLATFORM=vmware CLUSTER=my-cluster make destroy
 ```
 
-
-[bootingonvmware]: [https://coreos.com/os/docs/latest/booting-on-vmware.html]
-[vmwareconverttotemplate]: [https://pubs.vmware.com/vsphere-51/index.jsp?topic=%2Fcom.vmware.vsphere.vm_admin.doc%2FGUID-846238E4-A1E3-4A28-B230-33BDD1D57454.html]
 [terraformawsprovider]: [https://www.terraform.io/docs/providers/aws/index.html]
 [account]: https://account.coreos.com
 [bcrypt]: https://github.com/coreos/bcrypt-tool/releases/tag/v1.0.0
