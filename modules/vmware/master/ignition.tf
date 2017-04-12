@@ -22,7 +22,7 @@ resource "ignition_config" "master" {
   ]
 
   networkd = [
-  "${ignition_networkd_unit.vmnetwork.id}",
+  "${ignition_networkd_unit.vmnetwork.*.id[count.index]}",
   ]
 }
 

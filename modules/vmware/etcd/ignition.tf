@@ -8,12 +8,12 @@ resource "ignition_config" "etcd" {
   ]
 
   systemd = [
-    "${ignition_systemd_unit.etcd3.id}",
+    "${ignition_systemd_unit.etcd3.*.id[count.index]}",
     "${ignition_systemd_unit.vmtoolsd_member.id}",
   ]
 
   networkd = [
-  "${ignition_networkd_unit.vmnetwork.id}",
+  "${ignition_networkd_unit.vmnetwork.*.id[count.index]}",
   ]
 }
 

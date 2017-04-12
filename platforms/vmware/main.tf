@@ -38,7 +38,7 @@ module "etcd" {
 
 module "masters" {
   source = "../../modules/vmware/master"
-  count                   = "${var.tectonic_master_count}"
+
   kubeconfig_content           = "${module.bootkube.kubeconfig}"
   cluster_name                 = "${var.tectonic_cluster_name}"
   count                        = "${var.tectonic_master_count}"
@@ -71,7 +71,7 @@ module "masters" {
 
 module "workers" {
   source = "../../modules/vmware/worker"
-  count                   = "${var.tectonic_worker_count}"
+
   kubeconfig_content           = "${module.bootkube.kubeconfig}"
   cluster_name                 = "${var.tectonic_cluster_name}"
   count                        = "${var.tectonic_worker_count}"
