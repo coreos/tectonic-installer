@@ -60,3 +60,9 @@ variable "tectonic_azure_external_vnet_id" {
   description = "ID of an existing Virtual Network to launch nodes into. Example: VNet1. Leave blank to create a new Virtual Network."
   default     = ""
 }
+
+variable "tectonic_azure_external_vnet_name" {
+  type        = "string"
+  default     = ""
+  description = "Pre-existing virtual network to create cluster into."
+}

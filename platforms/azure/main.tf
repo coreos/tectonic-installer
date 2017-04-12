@@ -10,6 +10,7 @@ module "vnet" {
   resource_group_name   = "${azurerm_resource_group.tectonic_cluster.name}"
   tectonic_cluster_name = "${var.tectonic_cluster_name}"
   vnet_cidr_block       = "${var.tectonic_azure_vnet_cidr_block}"
+  external_vnet_name    = "${var.tectonic_azure_external_vnet_name}"
 }
 
 module "etcd" {
