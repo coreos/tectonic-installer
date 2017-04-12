@@ -1,42 +1,41 @@
-tectonic_base_domain = "foo.bar"
-tectonic_cluster_name = "foobar"
+tectonic_base_domain = "foo.bar" # DNS Zone of Tectonic Cluster
+tectonic_cluster_name = "foobar" # Cluster Name
 
-tectonic_admin_email = "admin@example.com"
+tectonic_admin_email = "admin@example.com" # Initial Administrator email address 
 tectonic_admin_password_hash = "$2a$12$k9wa31uE/4uD9aVtT/vNtOZwxXyEJ/9DwXXEYB/eUpb9fvEPsH/kO" # PASSWORD
 
-tectonic_master_count = 3
-tectonic_worker_count = 1
-tectonic_etcd_count = 1
+tectonic_master_count = 2 # Number of Master Nodes
+tectonic_worker_count = 2 # Number of Worker Nodes
+tectonic_etcd_count = 3 # Number of etcd nodes
 
-tectonic_cl_channel = "stable"
+tectonic_cl_channel = "stable" # Container Linux update channel
 
 tectonic_update_server = ""
 tectonic_update_channel = ""
 tectonic_update_app_id = ""
 
-tectonic_service_cidr = "10.3.0.0/24"
-tectonic_cluster_cidr = "10.2.0.0/16"
-tectonic_aws_vpc_cidr_block = "10.0.0.0/16"
-tectonic_kube_dns_service_ip = "10.3.0.10"
-tectonic_kube_apiserver_service_ip = "10.3.0.1"
+tectonic_service_cidr = "10.3.0.0/24" # Service CIDR
+tectonic_cluster_cidr = "10.2.0.0/16" # Container/POD Network CIDR
+tectonic_kube_dns_service_ip = "10.3.0.10" # Kube-DNS IP Address, must be within Service CIDR range
+tectonic_kube_apiserver_service_ip = "10.3.0.1" # Kubernetes API internal IP, must be within Service CIDR range
 
 tectonic_ca_key_alg = "RSA"
 tectonic_ca_cert = ""
 tectonic_ca_key = ""
 
-tectonic_license_path = "./license"
-tectonic_pull_secret_path = "./pull_secret"
+tectonic_license_path = "./license" # path to Tectonic License file 
+tectonic_pull_secret_path = "./pull_secret" # path to Tectonic Pull Secret
 
-tectonic_etcd_servers = []
+tectonic_etcd_servers = [] # ETCD endpoints if you are bringing your own etcd cluster
 
-tectonic_vmware_cluster = "cluster01"
-tectonic_vmware_datacenter = "nyc"
-tectonic_vmware_datastore = "datastore2"
-tectonic_vmware_vm_template = "coreos_production_vmware_ova"
-tectonic_vmware_network = "VM Network"
-tectonic_vmware_vm_template_folder = "/nyc/vm/templates"
+tectonic_vmware_cluster = "cluster01" # vSphere Cluster Name
+tectonic_vmware_datacenter = "nyc" # vSphere Virtual DataCenter 
+tectonic_vmware_datastore = "datastore2" # Datastore to be used
+tectonic_vmware_network = "VM Network" # Portgroup name to attach to 
+tectonic_vmware_vm_template = "coreos_production_vmware_ova" # CoreOS Container Linux template
+tectonic_vmware_vm_template_folder = "/nyc/vm/templates" # CoreOS Container Linux template folder
 
-tectonic_vmware_username = "Administrator@vsphere.local"
+tectonic_vmware_username = "Administrator@vsphere.local" 
 tectonic_vmware_password = "VMware123!"
 tectonic_vmware_server = "192.168.246.20"
 tectonic_vmware_sslselfsigned = true

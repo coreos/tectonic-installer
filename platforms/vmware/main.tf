@@ -13,7 +13,7 @@ resource "vsphere_folder" "tectonic_vsphere_folder" {
 module "etcd" {
   source = "../../modules/vmware/etcd"
 
-  count                   = "1"
+  count                   = "${var.tectonic_etcd_count}"
   cluster_name            = "${var.tectonic_cluster_name}"
   core_public_keys        = ["${module.secrets.core_public_key_openssh}"]
   container_image         = "${var.tectonic_container_images["etcd"]}"
@@ -38,7 +38,7 @@ module "etcd" {
 
 module "masters" {
   source = "../../modules/vmware/master"
-  
+  count                   = "${var.tectonic_master_count}"
   kubeconfig_content           = "${module.bootkube.kubeconfig}"
   cluster_name                 = "${var.tectonic_cluster_name}"
   count                        = "${var.tectonic_master_count}"
@@ -71,7 +71,7 @@ module "masters" {
 
 module "workers" {
   source = "../../modules/vmware/worker"
-  
+  count                   = "${var.tectonic_worker_count}"
   kubeconfig_content           = "${module.bootkube.kubeconfig}"
   cluster_name                 = "${var.tectonic_cluster_name}"
   count                        = "${var.tectonic_worker_count}"
