@@ -1,5 +1,5 @@
 resource "vsphere_virtual_machine" "etcd_node" {
-  count           = "${var.count}"
+  count = "${length(var.external_endpoints) == 0 ? var.count : 0}"
   name            = "${var.cluster_name}-etcd-${count.index}"
   datacenter      = "${var.vmware_datacenter}"
   cluster         = "${var.vmware_cluster}"

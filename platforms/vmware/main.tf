@@ -79,7 +79,7 @@ module "workers" {
   kube_image_tag               = "${data.null_data_source.local.outputs.kube_image_tag}"
   tectonic_versions            = "${var.tectonic_versions}"
   tectonic_kube_dns_service_ip = "${var.tectonic_kube_dns_service_ip}"
-   base_domain             = "${var.tectonic_base_domain}"
+  base_domain             = "${var.tectonic_base_domain}"
   vmware_username              = "${var.tectonic_vmware_username}"
   vmware_password              = "${var.tectonic_vmware_password}"
   vmware_server                = "${var.tectonic_vmware_server}"
@@ -94,7 +94,7 @@ module "workers" {
   vm_disk_template        = "${var.tectonic_vmware_vm_template}"
   vm_disk_template_folder = "${var.tectonic_vmware_vm_template_folder}"
   vmware_folder           = "${var.tectonic_vmware_folder}"
-  etcd_fqdns                   = ["${module.etcd.ip_address}"]
+  etcd_fqdns              = ["${module.etcd.ip_address}"]
   dns_server              = "${var.tectonic_vmware_vm_dns}"
   ip_address              = "${var.tectonic_vmware_vm_workerips}"
   gateway                 = "${var.tectonic_vmware_vm_workergateway}"

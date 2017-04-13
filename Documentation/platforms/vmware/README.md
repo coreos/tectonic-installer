@@ -28,12 +28,7 @@ Prior to the start of setup create required DNS records. Below is a sample table
 |mycluster-etcd-0.mycompany.com | A | 192.168.246.10 |
 |mycluster-etcd-1.mycompany.com | A | 192.168.246.11 |
 |mycluster-etcd-2.mycompany.com | A | 192.168.246.12 |
-|_etcd-server._tcp.mycompany.com | SRV | 0 0 2380 mycluster-etcd-0.mycompany.com |
-|_etcd-server._tcp.mycompany.com | SRV | 0 0 2380 mycluster-etcd-1.mycompany.com |
-|_etcd-server._tcp.mycompany.com | SRV | 0 0 2380 mycluster-etcd-2.mycompany.com |
-|_etcd-client._tcp.mycompany.com | SRV | 0 0 2379 mycluster-etcd-0.mycompany.com |
-|_etcd-client._tcp.mycompany.com | SRV | 0 0 2379 mycluster-etcd-1.mycompany.com |
-|_etcd-client._tcp.mycompany.com | SRV | 0 0 2379 mycluster-etcd-2.mycompany.com |
+
 
 ## Getting Started
 

@@ -1,4 +1,6 @@
 resource "ignition_config" "etcd" {
+  count = "${length(var.external_endpoints) == 0 ? var.count : 0}"
+
   users = [
     "${ignition_user.core.id}",
   ]
@@ -46,15 +48,25 @@ resource "ignition_systemd_unit" "etcd3" {
 Environment="ETCD_IMAGE=${var.container_image}"
 ExecStart=
 ExecStart=/usr/lib/coreos/etcd-wrapper \
-  --name=etcd \
-  --discovery-srv=${var.base_domain} \
+  --name=${var.cluster_name}-etcd-${count.index} \
   --advertise-client-urls=http://${var.cluster_name}-etcd-${count.index}.${var.base_domain}:2379 \
   --initial-advertise-peer-urls=http://${var.cluster_name}-etcd-${count.index}.${var.base_domain}:2380 \
   --listen-client-urls=http://0.0.0.0:2379 \
-  --listen-peer-urls=http://0.0.0.0:2380
+  --listen-peer-urls=http://0.0.0.0:2380 \
+  --initial-cluster="${join("," , data.template_file.etcd-cluster.*.rendered)}" 
 EOF
     },
   ]
+}
+
+data "template_file" "etcd-cluster" {
+  template = "${file("${path.module}/resources/etcd-cluster")}"
+  count = "${var.count}"
+  vars = {
+    etcd-name = "${var.cluster_name}-etcd-${count.index}"
+    etcd-address = "${var.cluster_name}-etcd-${count.index}.${var.base_domain}"
+  }
+
 }
 
 resource "ignition_file" "hostname-etcd" {
