@@ -35,7 +35,7 @@ spec:
         - --storage-backend=etcd3
         - --allow-privileged=true
         - --service-cluster-ip-range=${service_cidr}
-        - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota
+        - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota
         - --tls-cert-file=/etc/kubernetes/secrets/apiserver.crt
         - --tls-private-key-file=/etc/kubernetes/secrets/apiserver.key
         - --kubelet-client-certificate=/etc/kubernetes/secrets/apiserver.crt
