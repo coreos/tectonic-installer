@@ -33,6 +33,21 @@ resource "template_folder" "bootkube" {
   }
 }
 
+# Self-hosted bootstrapping manifests (resources/generated/manifests-bootstrap/)
+resource "template_folder" "bootkube-bootstrap" {
+  input_path = "${path.module}/resources/bootstrap-manifests"
+  output_path = "${path.cwd}/generated/bootstrap-manifests"
+
+  vars {
+    hyperkube_image = "${var.container_images["hyperkube"]}"
+
+    etcd_servers = "${join(",", var.etcd_servers)}"
+
+    cluster_cidr = "${var.cluster_cidr}"
+    service_cidr = "${var.service_cidr}"
+  }
+}
+
 # kubeconfig (resources/generated/kubeconfig)
 data "template_file" "kubeconfig" {
   template = "${file("${path.module}/resources/kubeconfig")}"
@@ -56,7 +71,6 @@ data "template_file" "bootkube" {
 
   vars {
     bootkube_image = "${var.container_images["bootkube"]}"
-    etcd_server    = "${element(var.etcd_servers, 0)}"
   }
 }
 
