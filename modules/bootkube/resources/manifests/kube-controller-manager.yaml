@@ -13,9 +13,25 @@ spec:
       labels:
         tier: control-plane
         component: kube-controller-manager
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ""
     spec:
-      nodeSelector:
-        node-role.kubernetes.io/master: ""
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: tier
+                  operator: In
+                  values:
+                  - control-plane
+                - key: component
+                  operator: In
+                  values:
+                  - kube-contoller-manager
+              topologyKey: kubernetes.io/hostname
       containers:
       - name: kube-controller-manager
         image: ${hyperkube_image}
@@ -36,6 +52,14 @@ spec:
         - name: ssl-host
           mountPath: /etc/ssl/certs
           readOnly: true
+      tolerations:
+      - key: "CriticalAddonsOnly"
+        operator: "Exists"
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
       volumes:
       - name: secrets
         secret:

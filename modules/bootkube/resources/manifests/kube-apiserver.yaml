@@ -14,10 +14,8 @@ spec:
         component: kube-apiserver
       annotations:
         checkpointer.alpha.coreos.com/checkpoint: "true"
+        scheduler.alpha.kubernetes.io/critical-pod: ""
     spec:
-      nodeSelector:
-        node-role.kubernetes.io/master: ""
-      hostNetwork: true
       containers:
       - name: kube-apiserver
         image: ${hyperkube_image}
@@ -68,6 +66,15 @@ spec:
         - mountPath: /var/lock
           name: var-lock
           readOnly: false
+      hostNetwork: true
+      tolerations:
+      - key: "CriticalAddonsOnly"
+        operator: "Exists"
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
       volumes:
       - name: ssl-certs-host
         hostPath:

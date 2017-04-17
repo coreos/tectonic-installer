@@ -6,6 +6,8 @@ metadata:
   labels:
     tier: control-plane
     component: kube-scheduler
+  annotations:
+    scheduler.alpha.kubernetes.io/critical-pod: ""
 spec:
   replicas: 2
   template:
@@ -14,8 +16,22 @@ spec:
         tier: control-plane
         component: kube-scheduler
     spec:
-      nodeSelector:
-        node-role.kubernetes.io/master: ""
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: tier
+                  operator: In
+                  values:
+                  - control-plane
+                - key: component
+                  operator: In
+                  values:
+                  - kube-scheduler
+              topologyKey: kubernetes.io/hostname
       containers:
       - name: kube-scheduler
         image: ${hyperkube_image}
@@ -23,3 +39,11 @@ spec:
         - ./hyperkube
         - scheduler
         - --leader-elect=true
+      tolerations:
+      - key: "CriticalAddonsOnly"
+        operator: "Exists"
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+      nodeSelector:
+        node-role.kubernetes.io/master: ""

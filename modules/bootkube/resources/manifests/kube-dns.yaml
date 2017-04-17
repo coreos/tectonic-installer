@@ -45,8 +45,12 @@ spec:
         k8s-app: kube-dns
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ''
-        scheduler.alpha.kubernetes.io/tolerations: '[{"key":"CriticalAddonsOnly", "operator":"Exists"}]'
     spec:
+      volumes:
+      - name: kube-dns-config
+        configMap:
+          name: kube-dns
+          optional: true
       containers:
       - name: kubedns
         image: ${kubedns_image}
@@ -170,3 +174,11 @@ spec:
         - containerPort: 8080
           protocol: TCP
       dnsPolicy: Default  # Don't use cluster DNS.
+      tolerations:
+      - key: "CriticalAddonsOnly"
+        operator: "Exists"
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
