@@ -4,13 +4,15 @@ metadata:
   name: kube-controller-manager
   namespace: kube-system
   labels:
-    k8s-app: kube-controller-manager
+    tier: control-plane
+    component: kube-controller-manager
 spec:
   replicas: 2
   template:
     metadata:
       labels:
-        k8s-app: kube-controller-manager
+        tier: control-plane
+        component: kube-controller-manager
     spec:
       nodeSelector:
         node-role.kubernetes.io/master: ""

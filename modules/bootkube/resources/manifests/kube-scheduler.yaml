@@ -4,13 +4,15 @@ metadata:
   name: kube-scheduler
   namespace: kube-system
   labels:
-    k8s-app: kube-scheduler
+    tier: control-plane
+    component: kube-scheduler
 spec:
   replicas: 2
   template:
     metadata:
       labels:
-        k8s-app: kube-scheduler
+        tier: control-plane
+        component: kube-scheduler
     spec:
       nodeSelector:
         node-role.kubernetes.io/master: ""

@@ -4,12 +4,14 @@ metadata:
   name: kube-apiserver
   namespace: kube-system
   labels:
-    k8s-app: kube-apiserver
+    tier: control-plane
+    component: kube-apiserver
 spec:
   template:
     metadata:
       labels:
-        k8s-app: kube-apiserver
+        tier: control-plane
+        component: kube-apiserver
       annotations:
         checkpointer.alpha.coreos.com/checkpoint: "true"
     spec:
