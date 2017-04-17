@@ -43,7 +43,6 @@ spec:
         - --service-account-key-file=/etc/kubernetes/secrets/service-account.pub
         - --client-ca-file=/etc/kubernetes/secrets/ca.crt
         - --authorization-mode=RBAC
-        - --runtime-config=rbac.authorization.k8s.io/v1alpha1
         - --anonymous-auth=${anonymous_auth}
         - --oidc-issuer-url=${oidc_issuer_url}
         - --oidc-client-id=${oidc_client_id}
