@@ -8,8 +8,7 @@ resource "template_folder" "bootkube" {
     pod_checkpointer_image = "${var.container_images["pod_checkpointer"]}"
     kubedns_image          = "${var.container_images["kubedns"]}"
     kubednsmasq_image      = "${var.container_images["kubednsmasq"]}"
-    dnsmasq_metrics_image  = "${var.container_images["dnsmasq_metrics"]}"
-    exechealthz_image      = "${var.container_images["exechealthz"]}"
+    kubedns_sidecar_image  = "${var.container_images["kubedns_sidecar"]}"
     flannel_image          = "${var.container_images["flannel"]}"
 
     etcd_servers   = "${join(",", var.etcd_servers)}"
