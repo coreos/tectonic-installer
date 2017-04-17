@@ -39,6 +39,12 @@ spec:
         - ./hyperkube
         - scheduler
         - --leader-elect=true
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 10251  # Note: Using default port. Update if --port option is set differently.
+          initialDelaySeconds: 15
+          timeoutSeconds: 15
       tolerations:
       - key: "CriticalAddonsOnly"
         operator: "Exists"
