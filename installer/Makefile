@@ -66,11 +66,6 @@ vendor: glide.yaml
 	@glide up -v
 	@glide-vc --use-lock-file --no-tests --only-code
 
-.PHONY: vendor-terraform
-vendor-terraform:
-	rm -rf assets/terraform
-	git clone https://github.com/coreos/tectonic-installer.git assets/terraform
-
 .PHONY: tools
 tools: bin/go-bindata bin/sanity bin/golint
 

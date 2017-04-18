@@ -15,7 +15,7 @@ import (
 
 	"github.com/dghubble/sessions"
 	"github.com/jhoonb/archivex"
-	
+
 	"github.com/coreos/tectonic-installer/installer/server/asset"
 	"github.com/coreos/tectonic-installer/installer/server/ctxh"
 	"github.com/coreos/tectonic-installer/installer/server/defaults"
@@ -170,11 +170,11 @@ func terraformApplyHandler(sessionProvider sessions.Store) ctxh.ContextHandler {
 		if errCtx != nil {
 			return errCtx
 		}
-		tfMainDir := fmt.Sprintf("%s/terraform/platforms/%s", ex.WorkingDirectory(), input.Platform)
+		tfMainDir := fmt.Sprintf("%s/platforms/%s", ex.WorkingDirectory(), input.Platform)
 
-		// Restore TF Templates to the Executor's working directory.
-		if err := binassets.RestoreAssets(ex.WorkingDirectory(), "terraform"); err != nil {
-			return ctxh.NewAppError(err, "could not expand TerraForm templates", http.StatusInternalServerError)
+		// Copy the TF Templates to the Executor's working directory.
+		if err := terraform.RestoreSources(ex.WorkingDirectory()); err != nil {
+			return ctxh.NewAppError(err, "could not write TerraForm templates", http.StatusInternalServerError)
 		}
 
 		// Execute TerraForm get and wait for it to finish.
@@ -309,7 +309,7 @@ func terraformDestroyHandler(sessionProvider sessions.Store) ctxh.ContextHandler
 		if errCtx != nil {
 			return errCtx
 		}
-		tfMainDir := fmt.Sprintf("%s/terraform/platforms/%s", ex.WorkingDirectory(), input.Platform)
+		tfMainDir := fmt.Sprintf("%s/platforms/%s", ex.WorkingDirectory(), input.Platform)
 
 		// Execute TerraForm apply in the background.
 		id, _, err := ex.Execute("destroy", "-force", "-no-color", tfMainDir)
