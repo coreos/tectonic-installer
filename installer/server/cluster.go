@@ -7,7 +7,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/coreos-inc/tectonic/installer/server/asset"
+	"github.com/coreos/tectonic-installer/installer/server/asset"
 )
 
 // Cluster errors

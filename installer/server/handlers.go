@@ -9,7 +9,7 @@ import (
 	"github.com/dghubble/sessions"
 	"golang.org/x/net/context"
 
-	"github.com/coreos-inc/tectonic/installer/server/ctxh"
+	"github.com/coreos/tectonic-installer/installer/server/ctxh"
 )
 
 // logRequests logs HTTP requests and calls the next handler.

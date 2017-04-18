@@ -88,12 +88,12 @@ dependencies, yarn dependencies are *not* vendored directly, because
 `yarn install` will build native extensions that could break builds on
 other platforms/operating systems. To add a dependency, run:
 
-    cd $GOPATH/src/github.com/coreos-inc/tectonic/installer/frontend
+    cd $GOPATH/src/github.com/coreos/tectonic-installer/installer/frontend
     yarn add $MY_PACKAGE # for a runtime dependency
 
 If you are adding a build dependency, run the following commands instead:
 
-    cd $GOPATH/src/github.com/coreos-inc/tectonic/installer/frontend
+    cd $GOPATH/src/github.com/coreos/tectonic-installer/installer/frontend
     yarn add --dev $MY_BUILD_PACKAGE # for a development dependency
 
 Both sets of commands will update the `package.json` and
@@ -114,7 +114,7 @@ To add a new dependency:
 
 To run glide, use the following commands.
 
-    cd $GOPATH/src/github.com/coreos-inc/tectonic/installer
+    cd $GOPATH/src/github.com/coreos/tectonic-installer/installer
     glide update --strip-vendor --skip-test
 
 If it worked correctly it should:

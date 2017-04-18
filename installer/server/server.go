@@ -6,7 +6,7 @@ import (
 
 	"github.com/dghubble/sessions"
 
-	"github.com/coreos-inc/tectonic/installer/server/ctxh"
+	"github.com/coreos/tectonic-installer/installer/server/ctxh"
 )
 
 const (

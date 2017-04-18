@@ -12,7 +12,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/coreos-inc/tectonic/installer/server/terraform/plugin"
+	"github.com/coreos/tectonic-installer/installer/server/terraform/plugin"
 
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/kardianos/osext"

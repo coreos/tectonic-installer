@@ -2,9 +2,9 @@ export CGO_ENABLED:=0
 export VERSION=$(shell ../git-version)
 
 OS=$(shell uname | tr A-Z a-z)
-LD_FLAGS="-w -X github.com/coreos-inc/tectonic/installer/server/version.Version=$(VERSION)"
+LD_FLAGS="-w -X github.com/coreos/tectonic-installer/installer/server/version.Version=$(VERSION)"
 
-REPO=github.com/coreos-inc/tectonic/installer
+REPO=github.com/coreos/tectonic-installer/installer
 IMAGE_REPO=coreos-inc/installer
 QUAY_REPO=quay.io/coreos-inc/installer
 

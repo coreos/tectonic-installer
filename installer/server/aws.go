@@ -6,8 +6,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	bootkube "github.com/kubernetes-incubator/bootkube/pkg/asset"
 
-	"github.com/coreos-inc/tectonic/installer/server/asset"
-	"github.com/coreos-inc/tectonic/installer/server/aws/cloudforms"
+	"github.com/coreos/tectonic-installer/installer/server/asset"
+	"github.com/coreos/tectonic-installer/installer/server/aws/cloudforms"
 )
 
 // getAWSSession returns an AWS client session which should be re-used across

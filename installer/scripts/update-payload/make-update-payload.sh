@@ -27,7 +27,6 @@ ASSETS_DIR=${1}
 
 # TODO(yifan): Maybe put these files into separate dirs for each channel
 # in the future.
-# Ref https://github.com/coreos-inc/tectonic/pull/1121
 deployments=(
   "tectonic-channel-operator-deployment.yaml"
   "kube-version-operator-deployment.yaml"

@@ -1,4 +1,4 @@
-package: github.com/coreos-inc/tectonic/installer
+package: github.com/coreos/tectonic-installer/installer
 import:
 - package: github.com/aws/aws-sdk-go
   version: v1.4.5

@@ -194,7 +194,7 @@ bringup_cluster
 
 sudo rkt run \
     --volume bk,kind=host,source=${ROOT} \
-    --mount volume=bk,target=/go/src/github.com/coreos-inc/tectonic \
+    --mount volume=bk,target=/go/src/github.com/coreos/tectonic-installer \
     --insecure-options=image docker://golang:1.7.5 \
     --user=$(id -u) \
     --set-env=KUBECONFIG_PATH="${ROOT}/tests/scripts/aws/output/${CLUSTER_NAME}/assets/auth/kubeconfig" \
@@ -203,4 +203,4 @@ sudo rkt run \
     --set-env=TECTONIC_TARGET_VERSION=${TARGET_VERSION} \
     --set-env=KUBERNETES_TARGET_VERSION=${KUBERNETES_TARGET_VERSION} \
     --exec /bin/bash -- -c \
-    "cd /go/src/github.com/coreos-inc/tectonic && go test -timeout 30m -v ./installer/tests/upgrade"
+    "cd /go/src/github.com/coreos/tectonic-installer && go test -timeout 30m -v ./installer/tests/upgrade"

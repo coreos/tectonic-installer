@@ -18,9 +18,9 @@ import (
 	bootkube "github.com/kubernetes-incubator/bootkube/pkg/asset"
 	"github.com/pborman/uuid"
 
-	"github.com/coreos-inc/tectonic/installer/binassets"
-	"github.com/coreos-inc/tectonic/installer/server/asset"
-	"github.com/coreos-inc/tectonic/installer/server/tlsutil"
+	"github.com/coreos/tectonic-installer/installer/binassets"
+	"github.com/coreos/tectonic-installer/installer/server/asset"
+	"github.com/coreos/tectonic-installer/installer/server/tlsutil"
 )
 
 const (
@@ -398,8 +398,6 @@ type consoleOIDCConfig struct {
 
 	// OAuth2 client credentials for kubeclt. This is the client trusted by the API server
 	// and the credentials put in the generated kubeconfig files.
-	//
-	// For details see: https://github.com/coreos-inc/tectonic/blob/master/docs-internal/tectonic-identity.md
 	KubectlClientID string
 	KubectlSecret   string
 }

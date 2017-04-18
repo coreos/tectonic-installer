@@ -10,7 +10,7 @@ import (
 
 	"os"
 
-	"github.com/coreos-inc/tectonic/installer/server/terraform/plugin"
+	"github.com/coreos/tectonic-installer/installer/server/terraform/plugin"
 	"github.com/stretchr/testify/assert"
 )
 

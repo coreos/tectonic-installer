@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -14,14 +15,11 @@ import (
 
 	"github.com/dghubble/sessions"
 	"github.com/jhoonb/archivex"
-
-	"path/filepath"
-
-	"github.com/coreos-inc/tectonic/installer/binassets"
-	"github.com/coreos-inc/tectonic/installer/server/asset"
-	"github.com/coreos-inc/tectonic/installer/server/ctxh"
-	"github.com/coreos-inc/tectonic/installer/server/defaults"
-	"github.com/coreos-inc/tectonic/installer/server/terraform"
+	
+	"github.com/coreos/tectonic-installer/installer/server/asset"
+	"github.com/coreos/tectonic-installer/installer/server/ctxh"
+	"github.com/coreos/tectonic-installer/installer/server/defaults"
+	"github.com/coreos/tectonic-installer/installer/server/terraform"
 )
 
 func newAWSTerraformVars(c *TectonicAWSCluster) ([]asset.Asset, error) {

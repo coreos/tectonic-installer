@@ -14,7 +14,7 @@ import (
 	"github.com/coreos/go-semver/semver"
 	"golang.org/x/net/context"
 
-	"github.com/coreos-inc/tectonic/installer/server/ctxh"
+	"github.com/coreos/tectonic-installer/installer/server/ctxh"
 )
 
 const (

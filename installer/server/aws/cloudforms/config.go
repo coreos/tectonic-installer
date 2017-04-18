@@ -12,7 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/coreos/ipnets"
 
-	"github.com/coreos-inc/tectonic/installer/server/defaults"
+	"github.com/coreos/tectonic-installer/installer/server/defaults"
 )
 
 const (

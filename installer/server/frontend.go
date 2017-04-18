@@ -9,7 +9,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 
-	"github.com/coreos-inc/tectonic/installer/binassets"
+	"github.com/coreos/tectonic-installer/installer/binassets"
 )
 
 func serveIndex(platforms []string, devMode bool) http.Handler {

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"sync"
 
-	"github.com/coreos-inc/tectonic/installer/server/aws/cloudforms"
+	"github.com/coreos/tectonic-installer/installer/server/aws/cloudforms"
 )
 
 func init() {

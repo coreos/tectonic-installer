@@ -23,8 +23,8 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/aws/aws-sdk-go/service/sts"
-	"github.com/coreos-inc/tectonic/installer/server/aws/cloudforms"
-	"github.com/coreos-inc/tectonic/installer/server/ctxh"
+	"github.com/coreos/tectonic-installer/installer/server/aws/cloudforms"
+	"github.com/coreos/tectonic-installer/installer/server/ctxh"
 )
 
 type listItem struct {

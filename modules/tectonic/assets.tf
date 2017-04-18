@@ -1,5 +1,4 @@
 # Kubernetes Manifests (resources/generated/manifests/)
-## github.com/coreos-inc/tectonic/commit/0b48144d5332201cf461a309d501b33a00a26f75
 resource "template_folder" "tectonic" {
   input_path  = "${path.module}/resources/manifests"
   output_path = "${path.cwd}/generated/tectonic"

@@ -12,9 +12,9 @@ import (
 	bootkubeTLS "github.com/kubernetes-incubator/bootkube/pkg/tlsutil"
 	"golang.org/x/net/context"
 
-	"github.com/coreos-inc/tectonic/installer/binassets"
-	"github.com/coreos-inc/tectonic/installer/server/asset"
-	"github.com/coreos-inc/tectonic/installer/server/aws/cloudforms"
+	"github.com/coreos/tectonic-installer/installer/binassets"
+	"github.com/coreos/tectonic-installer/installer/server/asset"
+	"github.com/coreos/tectonic-installer/installer/server/aws/cloudforms"
 )
 
 const (

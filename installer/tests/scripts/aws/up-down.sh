@@ -24,7 +24,7 @@ curl -O https://storage.googleapis.com/kubernetes-release/release/v1.5.5/bin/${O
 
 # the current tectonic configuration is num workers + 1 controller
 export NODE_COUNT=$(expr ${WORKER_COUNT} + 1)
-project="github.com/coreos-inc/tectonic"
+project="github.com/coreos/tectonic-installer"
 export TEST_KUBECONFIG=${KUBECONFIG}
 
 ${ROOT}/bin/sanity

@@ -12,9 +12,9 @@ import (
 	"github.com/coreos/pkg/flagutil"
 	"github.com/toqueteos/webbrowser"
 
-	installer "github.com/coreos-inc/tectonic/installer/server"
-	"github.com/coreos-inc/tectonic/installer/server/terraform/plugin"
-	"github.com/coreos-inc/tectonic/installer/server/version"
+	installer "github.com/coreos/tectonic-installer/installer/server"
+	"github.com/coreos/tectonic-installer/installer/server/terraform/plugin"
+	"github.com/coreos/tectonic-installer/installer/server/version"
 )
 
 func main() {

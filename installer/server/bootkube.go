@@ -7,8 +7,8 @@ import (
 
 	bootkube "github.com/kubernetes-incubator/bootkube/pkg/asset"
 
-	"github.com/coreos-inc/tectonic/installer/server/asset"
-	"github.com/coreos-inc/tectonic/installer/server/tlsutil"
+	"github.com/coreos/tectonic-installer/installer/server/asset"
+	"github.com/coreos/tectonic-installer/installer/server/tlsutil"
 )
 
 const (

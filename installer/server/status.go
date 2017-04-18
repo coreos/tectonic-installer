@@ -7,7 +7,7 @@ import (
 	"github.com/dghubble/sessions"
 	"golang.org/x/net/context"
 
-	"github.com/coreos-inc/tectonic/installer/server/ctxh"
+	"github.com/coreos/tectonic-installer/installer/server/ctxh"
 )
 
 // statusHandler returns the status of the created cluster based on the

@@ -12,7 +12,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/session"
 
-	"github.com/coreos-inc/tectonic/installer/server/aws/cloudforms"
+	"github.com/coreos/tectonic-installer/installer/server/aws/cloudforms"
 )
 
 // StatusChecker is a client for checking the status of cluster components.
