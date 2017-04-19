@@ -1,7 +1,7 @@
 package: github.com/coreos/tectonic-installer/installer
 import:
 - package: github.com/aws/aws-sdk-go
-  version: v1.4.5
+  version: v1.6.25
   subpackages:
   - aws
   - aws/credentials
@@ -14,8 +14,9 @@ import:
 - package: github.com/cloudfoundry-incubator/candiedyaml
   version: 99c3df83b51532e3615f851d8c2dbb638f5313bf
 - package: github.com/coreos/matchbox
-  version: 219da4d9348fb197d0e3148380c53e8afef3c246
+  version: 43ce5c1d91b688ce863495bf2c2b7816568fdb2a
   subpackages:
+  - matchbox/client
   - matchbox/rpc/rpcpb
   - matchbox/server/serverpb
   - matchbox/storage/storagepb
@@ -40,9 +41,10 @@ import:
   subpackages:
   - golint
 - package: github.com/golang/protobuf
-  version: 7cc19b78d562895b13596ddce7aafb59dd789318
+  version: 2bba0603135d7d7f5cb73b2125beeda19c09f4ef
   subpackages:
   - proto
+  - protoc-gen-go
 - package: github.com/go-yaml/yaml
   version: a83829b6f1293c91addabc89d0571c246397bbf4
 - package: github.com/ghodss/yaml
@@ -80,16 +82,19 @@ import:
   subpackages:
   - go/gcimporter15
 - package: google.golang.org/grpc
-  version: 83e628beaa8cab332f304ad93dff7abc46722386
+  version: 1.2.1
   subpackages:
   - codes
   - credentials
   - grpclog
   - internal
+  - keepalive
   - metadata
   - naming
-  - transport
   - peer
+  - stats
+  - tap
+  - transport
 - package: github.com/coreos/coreos-cloudinit
   version: 36c4b72b9fb389688f5ba34038478f8d918bb8d3
   subpackages:
@@ -222,4 +227,7 @@ import:
   version: 281073eb9eb092240d33ef253c404f1cca550309
 - package: github.com/jhoonb/archivex
   version: b669bdadd30ace382d6e082dfcc8e33b926db1a1
-
+- package: github.com/coreos/terraform-provider-matchbox 
+  version: dd045535c826b7e2e0daeddc6b8d4b2cc81f9dd0
+  subpackages:
+  - matchbox
