@@ -10,7 +10,6 @@ import (
 
 	"os"
 
-	"github.com/coreos/tectonic-installer/installer/server/terraform/plugin"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,9 +26,9 @@ data "template_file" "foobar" {
   }
 }
 
-resource "tectonic_local_file" "foobar" {
+resource "local_file" "foobar" {
   content = "${data.template_file.foobar.rendered}"
-  destination = "/tmp/foobar.txt"
+  filename = "/tmp/foobar.txt"
 }
 
 output "foobar" {
@@ -42,7 +41,7 @@ func TestMain(m *testing.M) {
 	// binary to execute the plugins. Otherwise TerraForm calls back into the
 	// test suite and the RPC plugin handshake can't happen.
 	if os.Getenv("TF_PLUGIN_MAGIC_COOKIE") != "" {
-		plugin.Serve()
+		ServePlugin(os.Args[1])
 		return
 	}
 

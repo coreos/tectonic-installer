@@ -12,8 +12,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/coreos/tectonic-installer/installer/server/terraform/plugin"
-
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/kardianos/osext"
 	"github.com/shirou/gopsutil/process"
@@ -27,11 +25,6 @@ const (
 
 	logsFileSuffix = ".log"
 	failFileSuffix = ".fail"
-
-	configTemplate = `
-providers {
-    %s = "%s"
-}`
 )
 
 // ErrBinaryNotFound denotes the fact that the TerraForm binary could not be
@@ -111,9 +104,15 @@ func NewExecutorFromPath(executionPath string) (*Executor, error) {
 	// Create the folder in which the logs will be stored, if not existing.
 	os.Mkdir(filepath.Join(ex.executionPath, logsFolderName), 0770)
 
-	// Create a Executor CLI configuration file, that contains the
-	ex.configPath, err = createConfig(executionPath)
+	// Create a Executor CLI configuration file, that contains the list of
+	// vendored providers/provisioners.
+	config, err := BuildPluginsConfig()
 	if err != nil {
+		return nil, err
+	}
+
+	ex.configPath = filepath.Join(ex.WorkingDirectory(), configFileName)
+	if err := ioutil.WriteFile(ex.configPath, []byte(config), 0660); err != nil {
 		return nil, err
 	}
 
@@ -285,33 +284,6 @@ func (ex *Executor) Cleanup() {
 	if ex.executionPath != "" {
 		os.RemoveAll(ex.executionPath)
 	}
-}
-
-// createConfig creates the configuration that will be used by TerraForm, which
-// wire the custom provider/provisioners that are exposed by the currently
-// executing binary.
-func createConfig(folder string) (string, error) {
-	// Create the command that can be used to serve the Executor plugin, as well
-	// as the content of the config.
-	//
-	// There are two ways the binary can identity calls from TerraForm. They can
-	// either check for the `TF_PLUGIN_MAGIC_COOKIE` env variable, or we can call
-	// a CLI sub-command, and use `-TFSPACE-` to separate the binary from the sub-
-	// command in the plugin path that we template below.
-	// (i.e. "tectonic" = "/path/to/installer-TFSPACE-subcommand").
-	//
-	// For now, we consider that using the env variable is more convenient given
-	// users might want to write the config file by themselves to use TerraForm
-	// directly.
-	execPath, err := osext.Executable()
-	if err != nil {
-		return "", err
-	}
-	config := fmt.Sprintf(configTemplate, plugin.Name, execPath)
-
-	// Write the configuration.
-	path := filepath.Join(folder, configFileName)
-	return path, ioutil.WriteFile(path, []byte(config), 0660)
 }
 
 // tfBinatyPath searches for a TerraForm binary on disk:
