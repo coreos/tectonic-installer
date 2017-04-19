@@ -43,8 +43,9 @@ resource "template_folder" "bootkube-bootstrap" {
 
     etcd_servers = "${join(",", var.etcd_servers)}"
 
-    cluster_cidr = "${var.cluster_cidr}"
-    service_cidr = "${var.service_cidr}"
+    advertise_address = "${var.advertise_address}"
+    cluster_cidr      = "${var.cluster_cidr}"
+    service_cidr      = "${var.service_cidr}"
   }
 }
 
