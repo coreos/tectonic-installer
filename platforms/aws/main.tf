@@ -21,27 +21,27 @@ module "vpc" {
   #
   # To enable mode A, make sure "tectonic_aws_az_count" variable IS NOT SET to any value 
   # and instead configure a set of AZs + CIDRs for masters and workers using the
-  # "tectonic_aws_master_subnets" and "tectonic_aws_worker_subnets" variables.
+  # "tectonic_aws_master_custom_subnets" and "tectonic_aws_worker_custom_subnets" variables.
   #
-  # To enable mode B, make sure that "tectonic_aws_master_subnets" and "tectonic_aws_worker_subnets" 
+  # To enable mode B, make sure that "tectonic_aws_master_custom_subnets" and "tectonic_aws_worker_custom_subnets" 
   # ARE NOT SET. Instead, set the desired number of VPC AZs using "tectonic_aws_az_count" variable.
 
-  # These counts could be deducted by length(keys(var.tectonic_aws_master_subnets)) 
+  # These counts could be deducted by length(keys(var.tectonic_aws_master_custom_subnets)) 
   # but there is a restriction on passing computed values as counts. This approach works around that.
-  master_az_count = "${var.tectonic_aws_az_count == "" ? "${length(keys(var.tectonic_aws_master_subnets))}" : var.tectonic_aws_az_count}"
-  worker_az_count = "${var.tectonic_aws_az_count == "" ? "${length(keys(var.tectonic_aws_worker_subnets))}" : var.tectonic_aws_az_count}"
+  master_az_count = "${var.tectonic_aws_az_count == "" ? "${length(keys(var.tectonic_aws_master_custom_subnets))}" : var.tectonic_aws_az_count}"
+  worker_az_count = "${var.tectonic_aws_az_count == "" ? "${length(keys(var.tectonic_aws_worker_custom_subnets))}" : var.tectonic_aws_az_count}"
   # The appending of the "padding" element is required as workaround since the function
   # element() won't work on empty lists. See https://github.com/hashicorp/terraform/issues/11210
-  master_subnets = "${concat(values(var.tectonic_aws_master_subnets),list("padding"))}"
-  worker_subnets = "${concat(values(var.tectonic_aws_worker_subnets),list("padding"))}"
+  master_subnets = "${concat(values(var.tectonic_aws_master_custom_subnets),list("padding"))}"
+  worker_subnets = "${concat(values(var.tectonic_aws_worker_custom_subnets),list("padding"))}"
   # The split() / join() trick works around the limitation of tenrary operator expressions 
   # only being able to return strings.
-  master_azs = ["${ split("|", "${length(keys(var.tectonic_aws_master_subnets))}" > 0 ?
-    join("|", keys(var.tectonic_aws_master_subnets)) :
+  master_azs = ["${ split("|", "${length(keys(var.tectonic_aws_master_custom_subnets))}" > 0 ?
+    join("|", keys(var.tectonic_aws_master_custom_subnets)) :
     join("|", data.aws_availability_zones.azs.names)
   )}"]
-  worker_azs = ["${ split("|", "${length(keys(var.tectonic_aws_worker_subnets))}" > 0 ?
-    join("|", keys(var.tectonic_aws_worker_subnets)) :
+  worker_azs = ["${ split("|", "${length(keys(var.tectonic_aws_worker_custom_subnets))}" > 0 ?
+    join("|", keys(var.tectonic_aws_worker_custom_subnets)) :
     join("|", data.aws_availability_zones.azs.names)
   )}"]
 }

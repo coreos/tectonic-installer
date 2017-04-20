@@ -128,12 +128,12 @@ variable "tectonic_aws_worker_root_volume_iops" {
   description = "The amount of provisioned IOPS for the root block device of worker nodes."
 }
 
-variable "tectonic_aws_master_subnets" {
+variable "tectonic_aws_master_custom_subnets" {
   type    = "map"
   default = {}
 }
 
-variable "tectonic_aws_worker_subnets" {
+variable "tectonic_aws_worker_custom_subnets" {
   type    = "map"
   default = {}
 }
