@@ -54,6 +54,13 @@ resource "ignition_file" "hostname" {
 resource "ignition_systemd_unit" "docker" {
   name   = "docker.service"
   enable = true
+
+  dropin = [
+    {
+      name    = "10-dockeropts.conf"
+      content = "[Service]\nEnvironment=\"DOCKER_OPTS=--log-opt max-size=50m --log-opt max-file=3\"\n"
+    },
+  ]
 }
 
 resource "ignition_systemd_unit" "locksmithd" {
@@ -71,8 +78,9 @@ data "template_file" "kubelet" {
   template = "${file("${path.module}/resources/kubelet.service")}"
 
   vars {
-    cluster_dns = "${var.tectonic_kube_dns_service_ip}"
-    node_labels = "${var.node_labels}"
+    cluster_dns       = "${var.tectonic_kube_dns_service_ip}"
+    node_labels       = "${var.node_labels}"
+    node_taints_param = "${var.node_taints != "" ? "--register-with-taints=${var.node_taints}" : ""}"
   }
 }
 

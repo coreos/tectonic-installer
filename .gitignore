@@ -1,10 +1,13 @@
-assets
-assets*.zip
+./assets
+./assets*.zip
 **/id_rsa*
 **/terraform.tfstate*
 .terraform
 **/ssh-key.pem
 build/**
 config.tfvars
+terraform.tfvars
+pull-secret.json
+tectonic-license.txt
 generated/
 bin/

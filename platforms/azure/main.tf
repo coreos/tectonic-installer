@@ -54,6 +54,10 @@ module "masters" {
   tectonic_kube_dns_service_ip = "${var.tectonic_kube_dns_service_ip}"
   cloud_provider               = ""
   kubelet_node_label           = "node-role.kubernetes.io/master"
+  kubelet_node_taints          = "node-role.kubernetes.io/master=:NoSchedule"
+  bootkube_service             = "${module.bootkube.systemd_service}"
+  tectonic_service             = "${module.tectonic.systemd_service}"
+  tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
 }
 
 module "workers" {
@@ -93,7 +97,7 @@ module "dns" {
   location            = "${var.tectonic_azure_location}"
   resource_group_name = "${var.tectonic_azure_dns_resource_group}"
 
-  create_dns_zone = "${var.tectonic_create_dns_zone}"
+  create_dns_zone = "${var.tectonic_azure_create_dns_zone}"
 
   // TODO etcd list
   // TODO worker list

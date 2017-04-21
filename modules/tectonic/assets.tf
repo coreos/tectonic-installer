@@ -1,8 +1,7 @@
 # Kubernetes Manifests (resources/generated/manifests/)
-## github.com/coreos-inc/tectonic/commit/0b48144d5332201cf461a309d501b33a00a26f75
-resource "template_folder" "tectonic" {
-  input_path  = "${path.module}/resources/manifests"
-  output_path = "${path.cwd}/generated/tectonic"
+resource "template_dir" "tectonic" {
+  source_dir      = "${path.module}/resources/manifests"
+  destination_dir = "${path.cwd}/generated/tectonic"
 
   vars {
     addon_resizer_image                = "${var.container_images["addon_resizer"]}"
@@ -58,7 +57,7 @@ resource "template_folder" "tectonic" {
     kube_apiserver_url = "${var.kube_apiserver_url}"
     oidc_issuer_url    = "https://${var.base_address}/identity"
 
-    cluster_id               = "${uuid()}"
+    cluster_id               = "${sha256("${var.kube_apiserver_url}-${var.platform}")}"
     platform                 = "${var.platform}"
     certificates_strategy    = "${var.ca_generated == "true" ? "installerGeneratedCA" : "userProvidedCA"}"
     identity_api_service     = "${var.identity_api_service}"
@@ -75,9 +74,9 @@ data "template_file" "tectonic" {
   }
 }
 
-resource "localfile_file" "tectonic" {
-  content     = "${data.template_file.tectonic.rendered}"
-  destination = "${path.cwd}/generated/tectonic.sh"
+resource "local_file" "tectonic" {
+  content  = "${data.template_file.tectonic.rendered}"
+  filename = "${path.cwd}/generated/tectonic.sh"
 }
 
 # tectonic.sh (resources/generated/tectonic-rkt.sh)
@@ -90,9 +89,9 @@ data "template_file" "tectonic-rkt" {
   }
 }
 
-resource "localfile_file" "tectonic-rkt" {
-  content     = "${data.template_file.tectonic-rkt.rendered}"
-  destination = "${path.cwd}/generated/tectonic-rkt.sh"
+resource "local_file" "tectonic-rkt" {
+  content  = "${data.template_file.tectonic-rkt.rendered}"
+  filename = "${path.cwd}/generated/tectonic-rkt.sh"
 }
 
 # tectonic.service (available as output variable)

@@ -72,3 +72,8 @@ variable "tectonic_azure_external_vnet_name" {
   default     = ""
   description = "Pre-existing virtual network to create cluster into."
 }
+
+variable "tectonic_azure_create_dns_zone" {
+  description = "If set to true, create an Azure DNS zone"
+  default     = "true"
+}

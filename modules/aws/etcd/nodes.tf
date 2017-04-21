@@ -30,10 +30,16 @@ resource "aws_instance" "etcd_node" {
   subnet_id              = "${var.subnets[count.index % var.az_count]}"
   key_name               = "${var.ssh_key}"
   user_data              = "${ignition_config.etcd.*.rendered[count.index]}"
-  vpc_security_group_ids = ["${aws_security_group.etcd_sec_group.id}"]
+  vpc_security_group_ids = ["${var.sg_ids}"]
 
   tags = "${merge(map(
       "Name", "${var.cluster_name}-etcd-${count.index}",
       "KubernetesCluster", "${var.cluster_name}"
     ), var.extra_tags)}"
+
+  root_block_device {
+    volume_type = "${var.root_volume_type}"
+    volume_size = "${var.root_volume_size}"
+    iops        = "${var.root_volume_iops}"
+  }
 }

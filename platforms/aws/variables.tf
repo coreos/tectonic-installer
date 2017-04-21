@@ -29,7 +29,7 @@ variable "tectonic_aws_vpc_cidr_block" {
 
 variable "tectonic_aws_az_count" {
   type        = "string"
-  default     = "3"
+  default     = ""
   description = "Number of Availability Zones your EC2 instances will be deployed across. This should be less than or equal to the total number available in the region. Be aware that some regions only have 2."
 }
 
@@ -72,4 +72,68 @@ variable "tectonic_dns_name" {
   type        = "string"
   default     = ""
   description = "DNS prefix used to construct the console and API server endpoints."
+}
+
+variable "tectonic_aws_etcd_root_volume_type" {
+  type        = "string"
+  default     = "gp2"
+  description = "The type of volume for the root block device of etcd nodes."
+}
+
+variable "tectonic_aws_etcd_root_volume_size" {
+  type        = "string"
+  default     = "30"
+  description = "The size of the volume in gigabytes for the root block device of etcd nodes."
+}
+
+variable "tectonic_aws_etcd_root_volume_iops" {
+  type        = "string"
+  default     = "100"
+  description = "The amount of provisioned IOPS for the root block device of etcd nodes."
+}
+
+variable "tectonic_aws_master_root_volume_type" {
+  type        = "string"
+  default     = "gp2"
+  description = "The type of volume for the root block device of master nodes."
+}
+
+variable "tectonic_aws_master_root_volume_size" {
+  type        = "string"
+  default     = "30"
+  description = "The size of the volume in gigabytes for the root block device of master nodes."
+}
+
+variable "tectonic_aws_master_root_volume_iops" {
+  type        = "string"
+  default     = "100"
+  description = "The amount of provisioned IOPS for the root block device of master nodes."
+}
+
+variable "tectonic_aws_worker_root_volume_type" {
+  type        = "string"
+  default     = "gp2"
+  description = "The type of volume for the root block device of worker nodes."
+}
+
+variable "tectonic_aws_worker_root_volume_size" {
+  type        = "string"
+  default     = "30"
+  description = "The size of the volume in gigabytes for the root block device of worker nodes."
+}
+
+variable "tectonic_aws_worker_root_volume_iops" {
+  type        = "string"
+  default     = "100"
+  description = "The amount of provisioned IOPS for the root block device of worker nodes."
+}
+
+variable "tectonic_aws_master_custom_subnets" {
+  type    = "map"
+  default = {}
+}
+
+variable "tectonic_aws_worker_custom_subnets" {
+  type    = "map"
+  default = {}
 }

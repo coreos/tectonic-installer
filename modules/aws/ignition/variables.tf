@@ -23,9 +23,19 @@ variable "kubelet_node_label" {
   description = "Label that Kubelet will apply on the node"
 }
 
+variable "kubelet_node_taints" {
+  type        = "string"
+  description = "Taints that Kubelet will apply on the node"
+}
+
 variable "etcd_endpoints" {
   type        = "list"
   description = "List of etcd endpoints"
+}
+
+variable "etcd_gateway_enabled" {
+  description = "Specifies whether the etcd gateway should be enabled or not."
+  default     = true
 }
 
 variable "bootkube_service" {

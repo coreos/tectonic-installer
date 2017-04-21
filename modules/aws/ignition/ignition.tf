@@ -19,6 +19,13 @@ resource "ignition_config" "main" {
 resource "ignition_systemd_unit" "docker" {
   name   = "docker.service"
   enable = true
+
+  dropin = [
+    {
+      name    = "10-dockeropts.conf"
+      content = "[Service]\nEnvironment=\"DOCKER_OPTS=--log-opt max-size=50m --log-opt max-file=3\"\n"
+    },
+  ]
 }
 
 resource "ignition_systemd_unit" "locksmithd" {
@@ -40,6 +47,7 @@ data "template_file" "kubelet" {
     version                = "${element(split(":", var.container_images["hyperkube"]), 1)}"
     cluster_dns_ip         = "${var.kube_dns_service_ip}"
     node_label             = "${var.kubelet_node_label}"
+    node_taints_param      = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
     kubeconfig_s3_location = "${var.kubeconfig_s3_location}"
   }
 }
@@ -61,7 +69,7 @@ data "template_file" "etcd-member" {
 
 resource "ignition_systemd_unit" "etcd-member" {
   name   = "etcd-member.service"
-  enable = true
+  enable = "${var.etcd_gateway_enabled == 1 ? true : false}"
 
   dropin = [
     {

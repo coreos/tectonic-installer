@@ -27,12 +27,18 @@ resource "aws_launch_configuration" "worker_conf" {
   image_id             = "${data.aws_ami.coreos_ami.image_id}"
   name_prefix          = "${var.cluster_name}-worker-"
   key_name             = "${var.ssh_key}"
-  security_groups      = ["${concat(list(aws_security_group.worker_sec_group.id), var.extra_sg_ids)}"]
+  security_groups      = ["${var.sg_ids}"]
   iam_instance_profile = "${aws_iam_instance_profile.worker_profile.arn}"
   user_data            = "${var.user_data}"
 
   lifecycle {
     create_before_destroy = true
+  }
+
+  root_block_device {
+    volume_type = "${var.root_volume_type}"
+    volume_size = "${var.root_volume_size}"
+    iops        = "${var.root_volume_iops}"
   }
 }
 
