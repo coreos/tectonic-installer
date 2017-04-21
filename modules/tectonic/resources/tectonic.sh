@@ -127,7 +127,7 @@ kubectl create -f monitoring/node-exporter-svc.yaml
 kubectl create -f monitoring/node-exporter-ds.yaml
 kubectl create -f monitoring/prometheus-operator.yaml
 wait_for_tpr tectonic-system prometheus.monitoring.coreos.com
-kubectl create -f monitoring/prometheus-k8s.json
+kubectl create -f monitoring/prometheus-k8s.yaml
 
 echo "Creating Ingress"
 kubectl create -f ingress/default-backend/configmap.yaml
@@ -164,7 +164,7 @@ echo "Creating Tectonic Updater"
   wait_for_tpr tectonic-system app-version.coreos.com
   kubectl create -f updater/app-version-tectonic-cluster.json
   kubectl create -f updater/app-version-kubernetes.json
-  kubectl create -f updater/app-version-tectonic-monitoring.json
+  kubectl create -f updater/app-version-tectonic-monitoring.yaml
 fi
 
 # wait for Tectonic pods
