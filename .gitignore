@@ -11,3 +11,9 @@ pull-secret.json
 tectonic-license.txt
 generated/
 bin/
+installer/*.aci
+installer/assets/frontend/scripts/
+installer/binassets/assets.go
+installer/frontend/node_modules/
+installer/matchbox
+installer/tests/scripts/aws/output/
