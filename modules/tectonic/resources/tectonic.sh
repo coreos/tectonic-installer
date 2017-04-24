@@ -127,7 +127,10 @@ kubectl create -f monitoring/node-exporter-svc.yaml
 kubectl create -f monitoring/node-exporter-ds.yaml
 kubectl create -f monitoring/prometheus-operator.yaml
 wait_for_tpr tectonic-system prometheus.monitoring.coreos.com
+wait_for_tpr tectonic-system service-monitor.monitoring.coreos.com
 kubectl create -f monitoring/prometheus-k8s.yaml
+kubectl create -f monitoring/prometheus-k8s-service-monitor-k8s-apps-http.yaml
+kubectl create -f monitoring/prometheus-k8s-service-monitor-kubelet.yaml
 
 echo "Creating Ingress"
 kubectl create -f ingress/default-backend/configmap.yaml
