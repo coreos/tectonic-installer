@@ -48,12 +48,14 @@ pipeline {
         }
       }
       stage("Smoke Tests") {
-      environment {
-        CLUSTER="tf-${PLATFORM}-${BRANCH_NAME}-${BUILD_ID}"
-      }
       steps {
         parallel (
           "TerraForm: AWS": {
+            environment {
+              PLATFORM=aws
+              CLUSTER="tf-${PLATFORM}-${BRANCH_NAME}-${BUILD_ID}"
+              AWS_REGION="us-west-2"
+            }
             withCredentials([file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_pull_secret_path'),
                              file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_license_path'),
                              [
@@ -66,14 +68,8 @@ pipeline {
             unstash 'installer'
             unstash 'sanity'
             sh '''
-            # Set required configuration
-            export PLATFORM=aws
-
             # s3 buckets require lowercase names
             export TF_VAR_tectonic_cluster_name=$(echo ${CLUSTER} | awk '{print tolower($0)}')
-
-            # AWS specific configuration
-            export AWS_REGION="us-west-2"
 
             # make core utils accessible to make
             export PATH=/bin:${PATH}
