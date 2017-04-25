@@ -4,7 +4,7 @@ metadata:
   name: tectonic-monitoring
   namespace: tectonic-system
   labels:
-    managed-by-channel-operator: true
+    managed-by-channel-operator: "true"
 spec:
   desiredVersion: ${monitoring_version}
   paused: false
