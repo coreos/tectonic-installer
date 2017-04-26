@@ -30,11 +30,19 @@ plan: installer-env $(BUILD_DIR)/.terraform
 apply: installer-env $(BUILD_DIR)/.terraform
 	cd $(BUILD_DIR) && $(TF_CMD) apply $(TOP_DIR)/platforms/$(PLATFORM)
 
-destroy: installer-env
+destroy: installer-env ${BUILD_DIR}/.terraform
 	cd $(BUILD_DIR) && $(TF_CMD) destroy -force $(TOP_DIR)/platforms/$(PLATFORM)
 
 terraform-check:
 	@terraform-docs >/dev/null 2>&1 || @echo "terraform-docs is required (https://github.com/segmentio/terraform-docs)"
+
+.PHONY: docs
+docs: \
+	Documentation/variables/config.md \
+	Documentation/variables/aws.md \
+	Documentation/variables/azure.md \
+	Documentation/variables/openstack-nova.md \
+	Documentation/variables/openstack-neutron.md
 
 Documentation/variables/config.md: config.tf
 ifndef TF_DOCS
