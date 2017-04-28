@@ -29,6 +29,7 @@ module "bootkube" {
   etcd_ca_cert     = "${var.tectonic_etcd_ca_cert_path}"
   etcd_client_cert = "${var.tectonic_etcd_client_cert_path}"
   etcd_client_key  = "${var.tectonic_etcd_client_key_path}"
+  etcd_service_ip  = "${var.tectonic_kube_etcd_service_ip}"
 }
 
 module "tectonic" {
