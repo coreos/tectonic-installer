@@ -146,7 +146,7 @@ An existing VPC for a public cluster must have a public subnet for controllers, 
 
 Public subnets have a default route to the Internet Gateway and should auto-assign IP addresses. Private subnets have a default route to a default gateway, such as a NAT Gateway or a Virtual Private Gateway.
 
-*DHCP Options Set* attached to the VPC must have AWS [private domain name][aws-vpc-dns-hostnames]. In us-east-1 region AWS private domain name is ec2.internal whereas other regions use region.compute.internal.
+*DHCP Options Set* attached to the VPC must have an AWS [private domain name][aws-vpc-dns-hostnames]. In us-east-1 region, an AWS private domain name is ec2.internal whereas other regions use region.compute.internal.
 
 
 [aws-cli-doc]: http://docs.aws.amazon.com/cli/latest/userguide/installing.html
