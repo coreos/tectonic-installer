@@ -1,4 +1,4 @@
-# Tectonic Installer FAQ
+# Tectonic FAQ
 
 ## License and pull-secret formats
 
