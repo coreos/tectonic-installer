@@ -57,5 +57,10 @@ Make sure to check out the [community support forum](https://github.com/coreos/t
 
 *If you have any unanswered questions about Tectonic Installer visit [coreos.com/contact][contact]*.
 
+*If you have any unanswered questions about Tectonic visit [coreos.com/contact][contact]*.
 
+
+[assets]: ../admin/assets-zip.md
+[user-management]: ../admin/user-management.md
 [contact]: https://coreos.com/contact/
+[sign-up]: https://account.coreos.com/signup/summary/tectonic-2016-12
