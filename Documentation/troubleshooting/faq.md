@@ -10,6 +10,23 @@ For example, if the Kubernetes version is 1.5.6, the first Tectonic production r
 
 When copying your license and pull-secret from account.coreos.com, be sure to choose the correct format. The license format should be "Raw Format" and the pull-secret should be in the "dockercfg" format.
 
+## Can I use my license on multiple clusters?
+
+Yes, a single license can be used on multiple clusters, as long as the total limits on that license are not exceeded.
+
+## What happens when I exceed my license limits?
+
+Once your cluster is larger than your license allows, the Console will prompt you to input an updated license. Enter the new license in the dialog box that is shown. The new license limits will take a few minutes to take effect, but applications on the cluster will continue to run.
+
+<div class="row">
+  <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-12 col-xs-12 co-m-screenshot">
+    <img src="../img/license-exceeded.png">
+    <div class="co-m-screenshot-caption">Console showing a cluster that has exceeded capacity</div>
+  </div>
+</div>
+
+Visit [coreos.com/contact][contact] for an updated license.
+
 ## Domain name can't be changed
 
 The domain names selected for Tectonic and Controller DNS names during install cannot be easily changed later. If a cluster's domain name must change, set up a new cluster with the new domain name and migrate cluster work to it.
