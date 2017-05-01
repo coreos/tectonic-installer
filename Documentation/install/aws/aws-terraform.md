@@ -21,15 +21,21 @@ Open a new terminal, and run the following commands to download and extract Tect
 
 ```bash
 $ curl -O https://releases.tectonic.com/tectonic-1.6.2-tectonic.1.tar.gz # download
-tar xzvf tectonic-1.6.2-tectonic.1.tar.gz # extract the tarball
+$ tar xzvf tectonic-1.6.2-tectonic.1.tar.gz # extract the tarball
+$ cd tectonic
 ```
 
 ### Initialize and configure Terraform
 
-Initialize the Terraform configuration with Installer's location and export the path to that configuration:
+Start by setting the `INSTALLER_PATH` to the location of your platform's Tectonic installer. The platform should either be `darwin`, `linux`, or `windows`.
 
 ```bash
-$ INSTALLER_PATH=$(pwd)/installer/bin/linux/installer # Edit the platform name.
+$ export INSTALLER_PATH=$(pwd)/tectonic-installer/darwin/installer # Edit the platform name.
+```
+
+Make a copy of the Terraform configuration file for our system. Do not share this configuration file as it is specific to your machine.
+
+```bash
 $ sed "s|<PATH_TO_INSTALLER>|$INSTALLER_PATH|g" terraformrc.example > .terraformrc
 $ export TERRAFORM_CONFIG=$(pwd)/.terraformrc
 ```

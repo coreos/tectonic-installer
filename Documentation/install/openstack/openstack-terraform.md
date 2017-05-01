@@ -18,23 +18,27 @@ OpenStack is a highly customizable environment where different components can be
 
 Replace `<flavor>` with either option in the following commands. Now we're ready to specify our cluster configuration.
 
-First, clone the Tectonic Installer repository in a convenient location:
+### Download and extract Tectonic Installer
 
-```
-$ git clone https://github.com/coreos/tectonic-installer.git
-$ cd tectonic-installer
-```
+Open a new terminal, and run the following commands to download and extract Tectonic Installer.
 
-Build the Tectonic Installer:
-
-```
-$ (cd installer && make build)
+```bash
+$ curl -O https://releases.tectonic.com/tectonic-1.6.2-tectonic.1.tar.gz # download
+$ tar xzvf tectonic-1.6.2-tectonic.1.tar.gz # extract the tarball
+$ cd tectonic
 ```
 
-Initialize the TerraForm configuration with Installer's location and export the path to that configuration:
+### Initialize and configure Terraform
 
+Start by setting the `INSTALLER_PATH` to the location of your platform's Tectonic installer. The platform should either be `darwin`, `linux`, or `windows`.
+
+```bash
+$ export INSTALLER_PATH=$(pwd)/tectonic-installer/darwin/installer # Edit the platform name.
 ```
-$ INSTALLER_PATH=$(pwd)/installer/bin/linux/installer # Edit the platform name.
+
+Make a copy of the Terraform configuration file for our system. Do not share this configuration file as it is specific to your machine.
+
+```bash
 $ sed "s|<PATH_TO_INSTALLER>|$INSTALLER_PATH|g" terraformrc.example > .terraformrc
 $ export TERRAFORM_CONFIG=$(pwd)/.terraformrc
 ```
