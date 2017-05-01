@@ -13,28 +13,14 @@ Generally, the AWS platform templates adhere to the standards defined by the pro
 
 ## Getting Started
 
-### Download and run the Tectonic Installer
+### Download and extract Tectonic Installer
 
-Open a new terminal, and run the following commands:
-
-Pull down the tarball with:
+Open a new terminal, and run the following commands to download and extract Tectonic Installer.
 
 ```bash
-$ curl -O https://releases.tectonic.com/tectonic-1.6.2-tectonic.1.tar.gz
+$ curl -O https://releases.tectonic.com/tectonic-1.6.2-tectonic.1.tar.gz # download
+tar xzvf tectonic-1.6.2-tectonic.1.tar.gz # extract the tarball
 ```
-
-Then, extract the tarball, and launch the Tectonic Installer:
-
-```bash
-tar xzvf tectonic-1.6.2-tectonic.1.tar.gz # to extract the tarball
-$ cd tectonic/tectonic-installer # to change to the previously untarred directory
-$ ./$PLATFORM/installer # to run the Tectonic Installer
-```
-Where `$PLATFORM` is one of: `linux`, `darwin` or `windows`.
-
-A browser window will open to begin the GUI installation process.
-
-Use the `./$PLATFORM/installer` command to relaunch the Installer at any time. When launched, you will be given the option to *Start Over*, or to *Continue* where you left off.
 
 ### Initialize and configure Terraform
 
