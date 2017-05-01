@@ -46,7 +46,7 @@ func TestAwsVolumeTypes(t *testing.T) {
 	expectedVolumeType := getExpectedVolumeTypes(res)
 
 	if !reflect.DeepEqual(actualVolumeType, expectedVolumeType) {
-		t.Fatalf("The Volume Iops actual:%+v doesn't match the expected:%+v", actualVolumeType, expectedVolumeType)
+		t.Fatalf("The Volume Types actual:%+v doesn't match the expected:%+v", actualVolumeType, expectedVolumeType)
 	}
 
 }
