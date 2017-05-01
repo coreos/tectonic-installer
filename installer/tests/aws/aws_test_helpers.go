@@ -9,9 +9,9 @@ import (
 	"github.com/coreos/tectonic-installer/installer/server/aws/cloudforms"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strconv"
 	"testing"
-	"path/filepath"
 )
 
 const (
@@ -69,7 +69,7 @@ func getAwsVolumes(t *testing.T) (*ec2.DescribeVolumesOutput, error) {
 				Values: []*string{aws.String("in-use")},
 			},
 			{
-				Name: 	aws.String("tag:KubernetesCluster"),
+				Name:   aws.String("tag:KubernetesCluster"),
 				Values: []*string{aws.String(clusterName)},
 			},
 		},
@@ -115,7 +115,7 @@ func getParsedPayload() *cloudforms.Config {
 }
 
 // Makes aws api's describe-volumes call. Returns a map of count for size,Iops & volume type
-func getActualVolume(t *testing.T,volumeT string) map[string]int {
+func getActualVolume(t *testing.T, volumeT string) map[string]int {
 
 	volume := make(map[string]int)
 	var vtype string

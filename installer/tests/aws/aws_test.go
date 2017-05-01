@@ -5,7 +5,6 @@ import (
 	"testing"
 )
 
-
 func TestAwsInstancesTypes(t *testing.T) {
 	res := getParsedPayload()
 	actualInstanceTypes := getActualInstanceTypes(t)
@@ -19,7 +18,7 @@ func TestAwsInstancesTypes(t *testing.T) {
 
 func TestAwsVolumeSize(t *testing.T) {
 	res := getParsedPayload()
-	actualVolumeSize := getActualVolume(t,"size")
+	actualVolumeSize := getActualVolume(t, "size")
 	expectedVolumeSize := getExpectedVolumeSizes(res)
 
 	if !reflect.DeepEqual(actualVolumeSize, expectedVolumeSize) {
@@ -30,7 +29,7 @@ func TestAwsVolumeSize(t *testing.T) {
 func TestAwsVolumeIops(t *testing.T) {
 	res := getParsedPayload()
 
-	actualVolumeIops := getActualVolume(t,"iops")
+	actualVolumeIops := getActualVolume(t, "iops")
 	expectedVolumeIops := getExpectedVolumeIops(res)
 
 	if !reflect.DeepEqual(actualVolumeIops, expectedVolumeIops) {
@@ -42,7 +41,7 @@ func TestAwsVolumeIops(t *testing.T) {
 func TestAwsVolumeTypes(t *testing.T) {
 	res := getParsedPayload()
 
-	actualVolumeType := getActualVolume(t,"volumeType")
+	actualVolumeType := getActualVolume(t, "volumeType")
 	expectedVolumeType := getExpectedVolumeTypes(res)
 
 	if !reflect.DeepEqual(actualVolumeType, expectedVolumeType) {
