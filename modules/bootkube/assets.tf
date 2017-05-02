@@ -39,7 +39,6 @@ resource "template_dir" "bootkube" {
     cluster_cidr        = "${var.cluster_cidr}"
     service_cidr        = "${var.service_cidr}"
     kube_dns_service_ip = "${var.kube_dns_service_ip}"
-    advertise_address   = "${var.advertise_address}"
 
     anonymous_auth      = "${var.anonymous_auth}"
     oidc_issuer_url     = "${var.oidc_issuer_url}"
@@ -73,10 +72,9 @@ resource "template_dir" "bootkube-bootstrap" {
     etcd_cert_flag = "${data.null_data_source.etcd.outputs.cert_flag}"
     etcd_key_flag  = "${data.null_data_source.etcd.outputs.key_flag}"
 
-    advertise_address = "${var.advertise_address}"
-    cloud_provider    = "${var.cloud_provider}"
-    cluster_cidr      = "${var.cluster_cidr}"
-    service_cidr      = "${var.service_cidr}"
+    cloud_provider = "${var.cloud_provider}"
+    cluster_cidr   = "${var.cluster_cidr}"
+    service_cidr   = "${var.service_cidr}"
   }
 }
 
@@ -170,7 +168,8 @@ data "template_file" "bootkube" {
   template = "${file("${path.module}/resources/bootkube.sh")}"
 
   vars {
-    bootkube_image = "${var.container_images["bootkube"]}"
+    advertise_address = "${var.advertise_address}"
+    bootkube_image    = "${var.container_images["bootkube"]}"
   }
 }
 

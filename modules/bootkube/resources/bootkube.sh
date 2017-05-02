@@ -6,6 +6,10 @@
 # be missing for now, making bootkube crash.
 mkdir -p /etc/kubernetes/manifests/
 
+for f in bootstrap-manifests/bootstrap-apiserver.yaml manifests/kube-apiserver.yaml; do
+    sed -i s/\$$ADVERTISE_ADDRESS/${advertise_address}/ "$f"
+done
+
 /usr/bin/rkt run \
   --trust-keys-from-https \
   --volume assets,kind=host,source=$(pwd) \
