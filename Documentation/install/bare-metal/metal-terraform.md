@@ -6,9 +6,9 @@ Following this guide will deploy a Tectonic cluster on virtual or physical hardw
 
 ## Prerequsities
 
-* Matchbox **v0.6.0** installation with the gRPC API enabled. See [installation](https://coreos.com/tectonic/docs/latest/install/bare-metal).
+* Matchbox [v0.6.0](https://github.com/coreos/matchbox/releases) installation with the gRPC API enabled. See [installation](https://coreos.com/matchbox/docs/latest/deployment.html).
 * Matchbox TLS client credentials
-* PXE network boot environment with DHCP, TFTP, and DNS services. See [network-setup](https://coreos.com/tectonic/docs/latest/install/bare-metal/network-setup.html).
+* PXE network boot environment with DHCP, TFTP, and DNS services. See [network-setup](https://coreos.com/matchbox/docs/latest/network-setup.html).
 * DNS records for the Kubernetes controller(s) and Tectonic Ingress worker(s). See [DNS](https://coreos.com/tectonic/docs/latest/install/bare-metal#networking).
 * Machines with BIOS options set to boot from disk normally, but PXE prior to installation.
 * Machines with known MAC addresses and stable domain names.
@@ -47,7 +47,7 @@ Create a build directory to hold your customizations and copy the example file i
 ```
 $ export CLUSTER=my-cluster
 $ mkdir -p build/${CLUSTER}
-$ cp platforms/metal/terraform.tfvars.example build/${CLUSTER}/terraform.tfvars
+$ cp examples/terraform.tfvars.metal build/${CLUSTER}/terraform.tfvars
 ```
 
 Customizations should be made to `build/${CLUSTER}/terraform.tfvars`. Edit the following variables to correspond to your matchbox installation:
