@@ -18,7 +18,7 @@ module "bootkube" {
   kube_apiserver_service_ip = "${var.tectonic_kube_apiserver_service_ip}"
   kube_dns_service_ip       = "${var.tectonic_kube_dns_service_ip}"
 
-  advertise_address = "0.0.0.0"
+  advertise_address = "$$COREOS_EC2_IPV4_LOCAL"
   anonymous_auth    = "false"
 
   oidc_username_claim = "email"
