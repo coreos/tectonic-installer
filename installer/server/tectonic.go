@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	tectonicVersion              = "1.5.6-tectonic.1"
+	tectonicVersion              = "1.5.7-tectonic.1"
 	tectonicNamespace            = "tectonic-system"
 	tectonicCASecretName         = "tectonic-ca-cert-secret"
 	tectonicTLSSecret            = "tectonic-tls-secret"

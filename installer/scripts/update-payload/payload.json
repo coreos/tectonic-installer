@@ -1,5 +1,5 @@
 {
-  "version": "1.5.6-tectonic.1",
+  "version": "1.5.7-tectonic.1",
   "deployments": [
     {
       "apiVersion": "extensions/v1beta1",
@@ -112,7 +112,7 @@
   "desiredVersions": [
     {
       "name": "kubernetes",
-      "version": "1.5.6+tectonic.1"
+      "version": "1.5.7+tectonic.1"
     }
   ]
 }
