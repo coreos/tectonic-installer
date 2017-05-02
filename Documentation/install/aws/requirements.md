@@ -92,7 +92,7 @@ Use the `SECRET_ACCESS_KEY`, `ACCESS_KEY_ID`, and `SESSION_TOKEN` to authenticat
 
 The final step of the Tectonic install requires an SSH key and access to standard utilities like `ssh` and `scp`. Setting up a new key on AWS should take less than 5 minutes.
 
-Tectonic uses AWS S3 to store all credentials, using server-side AES encryption for storage, and TLS encryption for upload/download. Any pod run in the system can query the AWS metadata, get node AWS credentials, and pull down cluster credentials from AWS S3.
+Tectonic uses AWS S3 to store all credentials, using server-side AES encryption for storage, and TLS encryption for upload/download. Any pod run in the system can query the AWS metadata, get node AWS credentials, and pull down cluster credentials from AWS S3. CoreOS plans to address this issue in a later release.
 
 First, create a key.
 
