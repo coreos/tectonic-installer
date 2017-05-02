@@ -1,19 +1,19 @@
-// Install CoreOS to disk
-resource "matchbox_group" "coreos-install" {
+// Install Container Linux to disk before provisioning
+resource "matchbox_group" "install" {
   count   = "${length(var.tectonic_metal_controller_names) + length(var.tectonic_metal_worker_names)}"
-  name    = "${format("coreos-install-%s", element(concat(var.tectonic_metal_controller_names, var.tectonic_metal_worker_names), count.index))}"
-  profile = "${matchbox_profile.coreos-install.name}"
+  name    = "${format("container-linux-install-%s", element(concat(var.tectonic_metal_controller_names, var.tectonic_metal_worker_names), count.index))}"
+  profile = "${module.profiles.cached-container-linux-install}"
 
   selector {
     mac = "${element(concat(var.tectonic_metal_controller_macs, var.tectonic_metal_worker_macs), count.index)}"
   }
 
   metadata {
-    coreos_channel     = "${var.tectonic_cl_channel}"
-    coreos_version     = "${var.tectonic_metal_cl_version}"
-    ignition_endpoint  = "${var.tectonic_metal_matchbox_http_endpoint}/ignition"
-    baseurl            = "${var.tectonic_metal_matchbox_http_endpoint}/assets/coreos"
-    ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
+    container_linux_channel = "${var.tectonic_cl_channel}"
+    container_linux_version = "${var.tectonic_metal_cl_version}"
+    ignition_endpoint       = "${var.tectonic_metal_matchbox_http_endpoint}/ignition"
+    baseurl                 = "${var.tectonic_metal_matchbox_http_endpoint}/assets/coreos"
+    ssh_authorized_key      = "${var.tectonic_ssh_authorized_key}"
   }
 }
 
@@ -22,7 +22,7 @@ resource "matchbox_group" "coreos-install" {
 resource "matchbox_group" "controller" {
   count   = "${length(var.tectonic_metal_controller_names)}"
   name    = "${format("%s-%s", var.tectonic_cluster_name, element(var.tectonic_metal_controller_names, count.index))}"
-  profile = "${matchbox_profile.tectonic-controller.name}"
+  profile = "${module.profiles.tectonic-controller}"
 
   selector {
     mac = "${element(var.tectonic_metal_controller_macs, count.index)}"
@@ -46,7 +46,7 @@ resource "matchbox_group" "controller" {
 resource "matchbox_group" "worker" {
   count   = "${length(var.tectonic_metal_worker_names)}"
   name    = "${format("%s-%s", var.tectonic_cluster_name, element(var.tectonic_metal_worker_names, count.index))}"
-  profile = "${matchbox_profile.tectonic-worker.name}"
+  profile = "${module.profiles.tectonic-worker}"
 
   selector {
     mac = "${element(var.tectonic_metal_worker_macs, count.index)}"
@@ -59,7 +59,8 @@ resource "matchbox_group" "worker" {
     ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
 
     # extra data
-    kubelet_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
-    kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+    kubelet_image_url  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
+    kubelet_image_tag  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+    kube_version_image = "${var.tectonic_container_images["kube_version"]}"
   }
 }
