@@ -1,0 +1,86 @@
+# Copyright 2017 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# GCP Details
+tectonic_gcp_project_id  = "graphite-demos"
+tectonic_gcp_credentials = ""
+tectonic_gcp_region      = "us-central1"
+tectonic_gcp_zones       = ["us-central1-a","us-central1-b","us-central1-c"]
+
+# Naming
+google_managedzone_name = "my-domain"        # Pre-existing GCP resource name for the Cloud DNS ManagedZone
+tectonic_base_domain    = "gcp.example.com." # Actual DNS base domain name corresponding to the 'google_managedzone_name'
+tectonic_cluster_name   = "mycluster"
+
+# Login Details
+# generate a hash with the bcrypt-hash tool (https://github.com/coreos/bcrypt-tool/releases/tag/v1.0.0) that will be used for your admin user.
+tectonic_admin_email = "admin@example.com"
+tectonic_admin_password_hash = "$2a$12$k9wa31uE/4uD9aVtT/vNtOZwxXyEJ/9DwXXEYB/eUpb9fvEPsH/kO" # PASSWORD
+
+# Machines per zone (auto-scaled managed instance group - min and max)
+# Note: If selecting a GCP region with only two zones, some zones may have
+#       more than one master to acheive minimum quorum requirements.
+tectonic_masters_count  = 1  # for GCP, this is per zone
+tectonic_masters_max    = 2  # max per zone (e.g. 6 machines if using 3 zones)
+tectonic_worker_count   = 1  # for GCP, this is per zone
+tectonic_workers_max    = 4  # max per zone (e.g. 12 machines if using 3 zones)
+tectonic_etcd_count     = 1  # for GCP, this is per zone (min of 3 even with less than 3 zones)
+tectonic_etcd_nodes_max = 4  # max per zone (e.g. 6 machines if using 3 zones)
+
+# Container Linux
+tectonic_cl_channel = "stable" # alpha, beta, stable
+
+# Machine types
+tectonic_gcp_master_gce_type = "n1-standard-2"
+tectonic_gcp_worker_gce_type = "n1-standard-2"
+tectonic_gcp_etcd_gce_type   = "n1-standard-1"
+
+# Disk types and sizes
+tectonic_gcp_etcd_disktype  = "pd-standard" # can also be pd-ssd for better performance
+tectonic_gcp_etcd_disk_size = 30            # gigabytes
+
+# VPC Network Details
+# Uncomment and set to use an existing network, or leave as is to create a new one
+# Existing network and subnet will already have set a IP block
+# tectonic_gcp_external_network_name = "my-network"
+# tectonic_gcp_external_subnet_name = "my-subnet"
+
+# Update Details
+# leave blank for default values
+tectonic_update_server = ""
+tectonic_update_channel = ""
+tectonic_update_app_id = ""
+
+# Networking
+tectonic_gcp_network_masters_cidr_range   = "10.10.0.0/16"
+tectonic_gcp_network_workers_cidr_range   = "10.11.0.0/16"
+#tectonic_kube_dns_service_ip = "10.3.0.10"
+#tectonic_kube_apiserver_service_ip = "10.3.0.1"
+
+# Tectonic Details
+# path on disk to your Tectonic License and Pull Secret
+# obtain these from your Tectonic Account: https://account.coreos.com
+tectonic_license_path = "/Users/coreos/Desktop/tectonic-license.txt"
+tectonic_pull_secret_path = "/Users/coreos/Desktop/config.json"
+tectonic_etcd_servers = [] # array of etcd endpoints, keep blank to use created machines
+
+# Tectonic CA
+# Supply your own CA and cert, or leave blank to generate
+tectonic_ca_key_alg = "RSA"
+tectonic_ca_cert = <<EOD
+EOD
+tectonic_ca_key = <<EOD
+EOD
+
+# vim: ts=2:sw=2:sts=2:et
