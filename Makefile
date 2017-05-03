@@ -8,19 +8,32 @@ TF_DOCS := $(shell which terraform-docs 2> /dev/null)
 TF_EXAMPLES := $(shell which terraform-examples 2> /dev/null)
 TF_CMD = TERRAFORM_CONFIG=$(TOP_DIR)/.terraformrc terraform
 
-$(info Using build directory [${BUILD_DIR}])
-
 all: apply
 
 $(INSTALLER_BIN):
 	make build -C $(TOP_DIR)/installer
 
-installer-env: $(INSTALLER_BIN) terraformrc.example	
-	sed "s|<PATH_TO_INSTALLER>|$(INSTALLER_BIN)|g" terraformrc.example > .terraformrc
+installer-env: $(INSTALLER_BIN) terraformrc.example
+	$(info Using build directory [${BUILD_DIR}])
+	@sed "s|<PATH_TO_INSTALLER>|$(INSTALLER_BIN)|g" terraformrc.example > .terraformrc
 
-localconfig:
+init:
+ifdef FROM_ASSETS
+	$(eval CLUSTER = $(shell unzip -Z1 $(FROM_ASSETS) | grep -Eo '^[^/\\]+' | sort -u))
+	$(eval BUILD_DIR = $(TOP_DIR)/build/$(CLUSTER))
+	@unzip -d $(TOP_DIR)/build $(FROM_ASSETS)
+	@echo 
+	@echo Done!
+	@echo Your assets for cluster $(CLUSTER) are imported.
+	@echo Now just use the cluster name variable and you are good to go.
+	@echo 
+	@echo CLUSTER=$(CLUSTER) make plan / apply / destroy
+	@echo 
+	@echo Happy applying!
+else
 	mkdir -p $(BUILD_DIR)
 	touch $(BUILD_DIR)/terraform.tfvars
+endif
 
 $(BUILD_DIR)/.terraform:
 	cd $(BUILD_DIR) && $(TF_CMD) get $(TOP_DIR)/platforms/$(PLATFORM)
