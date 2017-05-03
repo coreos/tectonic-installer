@@ -172,6 +172,6 @@ See the [troubleshooting][troubleshooting] document for work arounds for bugs th
 [register]: https://account.coreos.com/signup/summary/tectonic-2016-12
 [account]: https://account.coreos.com
 [vars]: ../../variables/config.md
-[troubleshooting]: ../../troubleshooting.md
+[troubleshooting]: ../../troubleshooting/faq.md
 [openstack-nova-vars]: ../../variables/openstack-nova.md
 [openstack-neutron-vars]: ../../variables/openstack-neutron.md

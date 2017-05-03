@@ -185,7 +185,7 @@ $ terraform apply $ terraform plan \
 [bcrypt]: https://github.com/coreos/bcrypt-tool/releases/tag/v1.0.0
 [plan-docs]: https://www.terraform.io/docs/commands/plan.html
 [copy-docs]: https://www.terraform.io/docs/commands/apply.html
-[troubleshooting]: ../../troubleshooting.md
+[troubleshooting]: ../../troubleshooting/faq.md
 [login]: https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli
 [azure-dns]: https://docs.microsoft.com/en-us/azure/dns/dns-getstarted-portal
 [vars]: ../../variables/config.md

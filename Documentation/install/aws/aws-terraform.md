@@ -121,7 +121,7 @@ See the [troubleshooting][troubleshooting] document for workarounds for bugs tha
 [register]: https://account.coreos.com/signup/summary/tectonic-2016-12
 [account]: https://account.coreos.com
 [vars]: ../../variables/config.md
-[troubleshooting]: ../../troubleshooting.md
+[troubleshooting]: ../../troubleshooting/faq.md
 [aws-vars]: ../../variables/aws.md
 [aws-gui]: https://coreos.com/tectonic/docs/latest/install/aws/index.html
 [terraform]: https://www.terraform.io/downloads.html
