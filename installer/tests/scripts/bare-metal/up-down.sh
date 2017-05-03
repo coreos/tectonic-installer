@@ -50,6 +50,8 @@ main() {
   curl -H "Content-Type: application/json" -X POST -d @${TEMP}/metal.json ${CLUSTER_CREATE} -o $TEMP/assets.zip
   unzip $TEMP/assets.zip -d $TEMP
 
+  #TODO: Terraform apply
+
   echo "Starting QEMU/KVM nodes"
   pushd matchbox
   sudo -E ./scripts/libvirt create
