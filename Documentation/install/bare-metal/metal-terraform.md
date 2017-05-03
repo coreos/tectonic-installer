@@ -13,6 +13,7 @@ Following this guide will deploy a Tectonic cluster on virtual or physical hardw
 * Machines with BIOS options set to boot from disk normally, but PXE prior to installation.
 * Machines with known MAC addresses and stable domain names.
 * Tectonic Account - Register for a [Tectonic Account][register], which is free for up to 10 nodes. You will need to provide the cluster license and pull secret below.
+* `ipmitool` or `virt-install` will be used to actually boot the machines.
 
 ## Getting Started
 
@@ -32,6 +33,7 @@ Start by setting the `INSTALLER_PATH` to the location of your platform's Tectoni
 
 ```bash
 $ export INSTALLER_PATH=$(pwd)/tectonic-installer/darwin/installer # Edit the platform name.
+$ export PATH=$PATH:$(pwd)/tectonic-installer/darwin # Put the `terraform` binary in our PATH
 ```
 
 Make a copy of the Terraform configuration file for our system. Do not share this configuration file as it is specific to your machine.

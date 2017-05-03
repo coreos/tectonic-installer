@@ -10,6 +10,7 @@ Generally, the Azure platform templates adhere to the standards defined by the p
 
  - **DNS** - Setup your DNS zone in a resource group called `tectonic-dns-group` or specify a different resource group using the `tectonic_azure_dns_resource_group` variable below. We use a separate resource group assuming that you have a zone that you already want to use. Follow the [docs to set one up][azure-dns].
  - **Tectonic Account** - Register for a [Tectonic Account][register], which is free for up to 10 nodes. You will need to provide the cluster license and pull secret below.
+ - **Azure CLI** - The Azure Command line interface is required to generate Azure credentials.
 
 ## Getting Started
 
@@ -29,6 +30,7 @@ Start by setting the `INSTALLER_PATH` to the location of your platform's Tectoni
 
 ```bash
 $ export INSTALLER_PATH=$(pwd)/tectonic-installer/darwin/installer # Edit the platform name.
+$ export PATH=$PATH:$(pwd)/tectonic-installer/darwin # Put the `terraform` binary in our PATH
 ```
 
 Make a copy of the Terraform configuration file for our system. Do not share this configuration file as it is specific to your machine.
@@ -133,7 +135,7 @@ $ terraform destroy -var-file=build/${CLUSTER}/terraform.tfvars platforms/azure
 
 ### Known issues and workarounds
 
-See the [troubleshooting][troubleshooting] document for work arounds for bugs that are being tracked.
+See the [troubleshooting][troubleshooting] document for work rounds for bugs that are being tracked.
 
 ## Scaling the cluster
 
