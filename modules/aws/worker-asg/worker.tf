@@ -47,27 +47,72 @@ resource "aws_launch_configuration" "worker_conf" {
   }
 }
 
-resource "aws_autoscaling_group" "workers" {
-  name                 = "${var.cluster_name}-workers"
-  desired_capacity     = "${var.instance_count}"
-  max_size             = "${var.instance_count * 3}"
-  min_size             = "1"
-  launch_configuration = "${aws_launch_configuration.worker_conf.id}"
-  vpc_zone_identifier  = ["${var.subnet_ids}"]
+resource "aws_cloudformation_stack" "workers_autoscaling_group" {
+  name = "${var.cluster_name}-workers"
 
-  tag {
-    key                 = "Name"
-    value               = "${var.cluster_name}-worker"
-    propagate_at_launch = true
+  # Health check grace period is 2 minutes.
+  # Batch size is 2, and we pause 3 minutes between batches.
+  # Plus 1 minute extra
+  timeout_in_minutes = "${((var.instance_count/2) * 2 * 3 ) + 1}"
+
+  tags = "${merge(map(
+      "Name", "${var.cluster_name}-cloudformation-master-asg",
+      "KubernetesCluster", "${var.cluster_name}"
+    ), var.extra_tags)}"
+
+  template_body = <<EOF
+{
+  "Resources": {
+    "AutoScalingGroup": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "VPCZoneIdentifier": ["${join("\",\"", var.subnet_ids)}"],
+        "LaunchConfigurationName": "${aws_launch_configuration.worker_conf.id}",
+        "DesiredCapacity": "${var.instance_count}",
+        "MinSize": "1",
+        "MaxSize": "${var.instance_count * 3}",
+        "TerminationPolicies": ["OldestLaunchConfiguration", "OldestInstance"],
+        "HealthCheckType": "EC2",
+        "HealthCheckGracePeriod": 120,
+        "Tags": [
+            {
+                "Key": "Name",
+                "Value": "${var.cluster_name}-worker",
+                "PropagateAtLaunch": true
+            },
+            {
+                "Key": "KubernetesCluster",
+                "Value": "${var.cluster_name}",
+                "PropagateAtLaunch": true
+            }
+        ]
+      },
+      "UpdatePolicy": {
+        "AutoScalingRollingUpdate": {
+          "MinInstancesInService": "${var.instance_count}",
+          "MaxBatchSize": "2",
+          "PauseTime": "PT3M",
+          "WaitOnResourceSignals": false
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "AsgName": {
+      "Description": "The name of the auto scaling group",
+      "Value": {
+        "Ref": "AutoScalingGroup"
+      }
+    },
+    "StackName": {
+      "Description": "The name of the auto scaling group",
+      "Value": {
+        "Ref": "AWS::StackName"
+      }
+    }
   }
-
-  tag {
-    key                 = "KubernetesCluster"
-    value               = "${var.cluster_name}"
-    propagate_at_launch = true
-  }
-
-  tags = ["${var.autoscaling_group_extra_tags}"]
+}
+EOF
 
   lifecycle {
     create_before_destroy = true
@@ -77,6 +122,10 @@ resource "aws_autoscaling_group" "workers" {
 resource "aws_iam_instance_profile" "worker_profile" {
   name = "${var.cluster_name}-worker-profile"
   role = "${aws_iam_role.worker_role.name}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_iam_role" "worker_role" {
@@ -98,6 +147,10 @@ resource "aws_iam_role" "worker_role" {
     ]
 }
 EOF
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_iam_role_policy" "worker_policy" {
@@ -149,4 +202,8 @@ resource "aws_iam_role_policy" "worker_policy" {
   ]
 }
 EOF
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }

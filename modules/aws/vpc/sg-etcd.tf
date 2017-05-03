@@ -49,4 +49,8 @@ resource "aws_security_group" "etcd" {
     to_port   = 2380
     self      = true
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }

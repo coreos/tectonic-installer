@@ -5,6 +5,10 @@ resource "aws_security_group" "master" {
       "Name", "${var.cluster_name}_master_sg",
       "KubernetesCluster", "${var.cluster_name}"
     ), var.extra_tags)}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_egress" {
@@ -15,6 +19,10 @@ resource "aws_security_group_rule" "master_egress" {
   to_port     = 0
   protocol    = "-1"
   cidr_blocks = ["0.0.0.0/0"]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_icmp" {
@@ -25,6 +33,10 @@ resource "aws_security_group_rule" "master_ingress_icmp" {
   cidr_blocks = ["0.0.0.0/0"]
   from_port   = 0
   to_port     = 0
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_ssh" {
@@ -35,6 +47,10 @@ resource "aws_security_group_rule" "master_ingress_ssh" {
   cidr_blocks = ["0.0.0.0/0"]
   from_port   = 22
   to_port     = 22
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_http" {
@@ -45,6 +61,10 @@ resource "aws_security_group_rule" "master_ingress_http" {
   cidr_blocks = ["0.0.0.0/0"]
   from_port   = 80
   to_port     = 80
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_https" {
@@ -55,6 +75,10 @@ resource "aws_security_group_rule" "master_ingress_https" {
   cidr_blocks = ["0.0.0.0/0"]
   from_port   = 443
   to_port     = 443
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_heapster" {
@@ -65,6 +89,10 @@ resource "aws_security_group_rule" "master_ingress_heapster" {
   from_port = 4194
   to_port   = 4194
   self      = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_heapster_from_worker" {
@@ -75,6 +103,10 @@ resource "aws_security_group_rule" "master_ingress_heapster_from_worker" {
   protocol  = "tcp"
   from_port = 4194
   to_port   = 4194
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_flannel" {
@@ -85,6 +117,10 @@ resource "aws_security_group_rule" "master_ingress_flannel" {
   from_port = 4789
   to_port   = 4789
   self      = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_flannel_from_worker" {
@@ -95,6 +131,10 @@ resource "aws_security_group_rule" "master_ingress_flannel_from_worker" {
   protocol  = "udp"
   from_port = 4789
   to_port   = 4789
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_node_exporter" {
@@ -105,6 +145,10 @@ resource "aws_security_group_rule" "master_ingress_node_exporter" {
   from_port = 9100
   to_port   = 9100
   self      = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_node_exporter_from_worker" {
@@ -115,6 +159,10 @@ resource "aws_security_group_rule" "master_ingress_node_exporter_from_worker" {
   protocol  = "tcp"
   from_port = 9100
   to_port   = 9100
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_kubelet_insecure" {
@@ -125,6 +173,10 @@ resource "aws_security_group_rule" "master_ingress_kubelet_insecure" {
   from_port = 10250
   to_port   = 10250
   self      = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_kubelet_insecure_from_worker" {
@@ -135,6 +187,10 @@ resource "aws_security_group_rule" "master_ingress_kubelet_insecure_from_worker"
   protocol  = "tcp"
   from_port = 10250
   to_port   = 10250
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_kubelet_secure" {
@@ -145,6 +201,10 @@ resource "aws_security_group_rule" "master_ingress_kubelet_secure" {
   from_port = 10255
   to_port   = 10255
   self      = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_kubelet_secure_from_worker" {
@@ -155,6 +215,10 @@ resource "aws_security_group_rule" "master_ingress_kubelet_secure_from_worker" {
   protocol  = "tcp"
   from_port = 10255
   to_port   = 10255
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_etcd" {
@@ -165,6 +229,10 @@ resource "aws_security_group_rule" "master_ingress_etcd" {
   from_port = 2379
   to_port   = 2380
   self      = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_bootstrap_etcd" {
@@ -175,6 +243,10 @@ resource "aws_security_group_rule" "master_ingress_bootstrap_etcd" {
   from_port = 12379
   to_port   = 12380
   self      = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_services" {
@@ -185,6 +257,10 @@ resource "aws_security_group_rule" "master_ingress_services" {
   from_port = 32000
   to_port   = 32767
   self      = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "master_ingress_services_from_console" {
@@ -195,4 +271,8 @@ resource "aws_security_group_rule" "master_ingress_services_from_console" {
   protocol  = "tcp"
   from_port = 32000
   to_port   = 32767
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }

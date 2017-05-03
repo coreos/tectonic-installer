@@ -22,29 +22,76 @@ data "aws_ami" "coreos_ami" {
   }
 }
 
-resource "aws_autoscaling_group" "masters" {
-  name                 = "${var.cluster_name}-masters"
-  desired_capacity     = "${var.instance_count}"
-  max_size             = "${var.instance_count * 3}"
-  min_size             = "1"
-  launch_configuration = "${aws_launch_configuration.master_conf.id}"
-  vpc_zone_identifier  = ["${var.subnet_ids}"]
+resource "aws_cloudformation_stack" "master_autoscaling_group" {
+  name = "${var.cluster_name}-master"
 
-  load_balancers = ["${aws_elb.api-internal.id}", "${join("",aws_elb.api-external.*.id)}", "${aws_elb.console.id}"]
+  # Health check grace period is 5 minutes.
+  # Batch size is 1, and we pause 3 minutes between batches.
+  # Plus 1 minute extra
+  timeout_in_minutes = "${(var.instance_count * 5 * 3 ) + 1}"
 
-  tag {
-    key                 = "Name"
-    value               = "${var.cluster_name}-master"
-    propagate_at_launch = true
+  # Rolling back the master ASG likely won't improve things, so disable it.
+  disable_rollback = true
+
+  tags = "${merge(map(
+      "Name", "${var.cluster_name}-cloudformation-master-asg",
+      "KubernetesCluster", "${var.cluster_name}"
+    ), var.extra_tags)}"
+
+  template_body = <<EOF
+{
+  "Resources": {
+    "AutoScalingGroup": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "VPCZoneIdentifier": ["${join("\",\"", var.subnet_ids)}"],
+        "LaunchConfigurationName": "${aws_launch_configuration.master_conf.id}",
+        "DesiredCapacity": "${var.instance_count}",
+        "MinSize": "1",
+        "MaxSize": "${var.instance_count * 3}",
+        "TerminationPolicies": ["OldestLaunchConfiguration", "OldestInstance"],
+        "HealthCheckType": "ELB",
+        "LoadBalancerNames": ["${aws_elb.api-internal.id}", "${join("",aws_elb.api-external.*.id)}", "${aws_elb.console.id}"],
+        "HealthCheckGracePeriod": 300,
+        "Tags": [
+            {
+                "Key": "Name",
+                "Value": "${var.cluster_name}-master",
+                "PropagateAtLaunch": true
+            },
+            {
+                "Key": "KubernetesCluster",
+                "Value": "${var.cluster_name}",
+                "PropagateAtLaunch": true
+            }
+        ]
+      },
+      "UpdatePolicy": {
+        "AutoScalingRollingUpdate": {
+          "MinInstancesInService": "${var.instance_count}",
+          "MaxBatchSize": "1",
+          "PauseTime": "PT3M",
+          "WaitOnResourceSignals": false
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "AsgName": {
+      "Description": "The name of the auto scaling group",
+      "Value": {
+        "Ref": "AutoScalingGroup"
+      }
+    },
+    "StackName": {
+      "Description": "The name of the auto scaling group",
+      "Value": {
+        "Ref": "AWS::StackName"
+      }
+    }
   }
-
-  tag {
-    key                 = "KubernetesCluster"
-    value               = "${var.cluster_name}"
-    propagate_at_launch = true
-  }
-
-  tags = ["${var.autoscaling_group_extra_tags}"]
+}
+EOF
 
   lifecycle {
     create_before_destroy = true
@@ -145,6 +192,14 @@ resource "aws_iam_role_policy" "master_policy" {
       "Action" : [
         "autoscaling:DescribeAutoScalingGroups",
         "autoscaling:DescribeAutoScalingInstances"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action" : [
+        "cloudformation:DescribeStackResource",
+        "cloudformation:SignalResource"
       ],
       "Resource": "*",
       "Effect": "Allow"

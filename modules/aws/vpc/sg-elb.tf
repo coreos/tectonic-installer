@@ -20,6 +20,10 @@ resource "aws_security_group" "api" {
     from_port   = 443
     to_port     = 443
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group" "console" {
