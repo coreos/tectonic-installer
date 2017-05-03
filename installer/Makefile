@@ -6,23 +6,25 @@ LD_FLAGS="-w -X github.com/coreos/tectonic-installer/installer/server/version.Ve
 
 REPO=github.com/coreos/tectonic-installer/installer
 
+GO_FILES=$(shell find server -type f -name '*.go')
+
 .PHONY: all
 all: build
 
 .PHONY: build
 build: bin/$(OS)/installer
 
-bin/windows/installer.exe: frontend binassets/assets.go
+bin/windows/installer.exe: $(GO_FILES) binassets/assets.go
 	@GOOS=windows go build -o bin/windows/installer.exe -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
-bin/%/installer: frontend binassets/assets.go
+bin/%/installer: $(GO_FILES) binassets/assets.go
 	@GOOS=$* go build -o bin/$*/installer -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
 .PHONY: backend
 backend: binassets/assets.go
 	@GOOS=$(OS) go build -o bin/$(OS)/installer -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
-binassets/assets.go: bin/go-bindata
+binassets/assets.go: frontend bin/go-bindata $(shell find assets -type f)
 	@./bin/go-bindata -pkg binassets -o binassets/assets.go -prefix assets assets/...
 
 .PHONY: frontend
@@ -40,6 +42,10 @@ smoke-aws: bin/sanity
 .PHONY: smoke-bare-metal
 smoke-bare-metal: bin/sanity
 	@./tests/scripts/bare-metal/up-down.sh
+
+.PHONY: dist
+dist: release-bins
+	@./scripts/release/make_release_tarball.sh
 
 .PHONY: release
 release: release-bins
@@ -73,7 +79,7 @@ bin/sanity:
 
 .PHONY: clean
 clean:
+	@$(MAKE) -C frontend clean
 	@rm -rf bin/
 	@rm -f binassets/assets.go
-	@rm -rf assets/public/scripts
-	@rm -rf frontend/node_modules
+	@rm -rf assets/frontend/scripts
