@@ -30,7 +30,7 @@ $ export INSTALLER_PATH=$(pwd)/tectonic-installer/darwin/installer # Edit the pl
 $ export PATH=$PATH:$(pwd)/tectonic-installer/darwin # Put the `terraform` binary in our PATH
 ```
 
-Make a copy of the Terraform configuration file for our system. Do not share this configuration file as it is specific to your machine.
+Make a copy of the Terraform configuration file for the system. Do not share this configuration file as it is specific to the machine.
 
 ```bash
 $ sed "s|<PATH_TO_INSTALLER>|$INSTALLER_PATH|g" terraformrc.example > .terraformrc
