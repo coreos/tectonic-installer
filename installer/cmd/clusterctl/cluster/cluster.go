@@ -11,9 +11,9 @@ type Cluster struct {
 
 // Tolerable validates whether scenario s with name n can be applied to this cluster. A scenario may not be applied
 // because another variant from the scenario has already been applied or there's a constraint with an existing scenario.
-func (c Cluster) Tolerable(s Scenario, name string) bool {
+func (c Cluster) Tolerable(s Scenario) bool {
 	// should not be applied with avoided scenarios, or it's own scenario
-	rejects := append(s.Avoid, name)
+	rejects := append(s.Avoid, s.Name)
 
 	for _, active := range c.ActiveScenarios {
 		for _, reject := range rejects {
@@ -31,3 +31,14 @@ func (c *Cluster) Add(cfg Config, scenarioName string) {
 	c.Config.Apply(cfg)
 }
 
+type Clusters []*Cluster
+
+// Assign returns a cluster which can run the given scenario. Nil is returned if no suitable cluster exists.
+func (clusters Clusters) Assign(s Scenario) *Cluster {
+	for _, c := range clusters {
+		if c.Tolerable(s) {
+			return c
+		}
+	}
+	return nil
+}

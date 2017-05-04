@@ -10,25 +10,22 @@ func Constrain(base Config, scenarios Scenarios) (clusters []Config) {
 	scenarios = sort.Reverse(scenarios)
 
 	// contains a slice entry for each cluster required, with a map of scenarios
-	clusters := []Config{}
+	clusters := new(Clusters)
 	sPtrs := make([][]*Config, len(scenarios))
-	for sName, s := range scenarios {
+	for _, s := range scenarios {
 		vPtrs := make([]*Config, len(s.Variants))
-		for vName, v := range s.Variants {
+		for _, v := range s.Variants {
 			// attempt to assign variant to existing cluster
-			for _, c := range clusters {
-				if c.CanApply(s, sName) {
-					c.Apply(v)
-
-					// update recording of applied scenarios
-					c.ActiveScenarios = append(c.ActiveScenarios, sName)
-					break
+			c := clusters.Assign(s)
+			if c == nil {
+				// create new cluster since no compatible ones exist
+				c = &Cluster{
+					Config: base,
 				}
+				clusters = append(clusters, c)
 			}
+
+			c.Add(v, s.Name)
 		}
 	}
-}
-
-func canPlace (clusters []map[string]Config,  ) bool {
-
 }
