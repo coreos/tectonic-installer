@@ -1,4 +1,3 @@
-/*
 data "ignition_config" "etcd" {
   systemd = [
     "${data.ignition_systemd_unit.locksmithd.id}",
@@ -55,4 +54,3 @@ EOF
     },
   ]
 }
-*/

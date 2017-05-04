@@ -35,6 +35,10 @@ resource "google_compute_instance_template" "tectonic-worker-it" {
 
   tags = ["tectonic-workers"]
 
+  metadata = {
+    user-data = "${var.user_data}"
+  }
+
   service_account {
     scopes = ["cloud-platform"]
   }

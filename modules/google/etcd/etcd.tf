@@ -32,6 +32,10 @@ resource "google_compute_instance" "etcd-node" {
 #    }
   }
 
+  metadata = {
+    user-data = "${data.ignition_config.etcd.rendered}"
+  }
+
   service_account {
     scopes = ["cloud-platform"]
   }

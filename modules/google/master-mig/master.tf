@@ -63,6 +63,10 @@ resource "google_compute_instance_template" "tectonic-master-it" {
 
   tags = ["tectonic-masters"]
 
+  metadata = {
+    user-data = "${var.user_data}"
+  }
+
   service_account {
 #    email  = "${google_service_account.tectonic-master-sa.email}"
 #    scopes = ["compute", "storage-ro"]

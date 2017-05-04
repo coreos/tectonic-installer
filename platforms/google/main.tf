@@ -92,6 +92,7 @@ module "masters" {
   max_masters    = "${var.tectonic_masters_max}"
   machine_type   = "${var.tectonic_gcp_master_gce_type}"
   cluster_name   = "${var.tectonic_cluster_name}"
+  user_data      = "${module.ignition-masters.ignition}"
 
   master_subnetwork_name = "${module.network.master_subnetwork_name}"
   master_targetpool_self_link = "${module.network.master_targetpool_self_link}"
@@ -113,6 +114,7 @@ module "workers" {
   max_workers    = "${var.tectonic_workers_max}"
   machine_type   = "${var.tectonic_gcp_worker_gce_type}"
   cluster_name   = "${var.tectonic_cluster_name}"
+  user_data      = "${module.ignition-workers.ignition}"
 
   worker_subnetwork_name = "${module.network.worker_subnetwork_name}"
   worker_targetpool_self_link = "${module.network.worker_targetpool_self_link}"
