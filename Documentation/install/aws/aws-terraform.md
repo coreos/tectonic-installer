@@ -1,10 +1,8 @@
 # Install Tectonic on AWS with Terraform
 
-Following this guide will deploy a Tectonic cluster within your AWS account. This document is primarily meant for users to bring up the tectonic installer manually. To install Tectonic on AWS with a graphical installer refer [this][aws-gui].
+Following this guide will deploy a Tectonic cluster on an AWS account. To install Tectonic on AWS with a graphical installer refer to the [AWS graphical installer documentation][aws-gui].
 
 Generally, the AWS platform templates adhere to the standards defined by the project [conventions][conventions] and [generic platform requirements][generic]. This document aims to document the implementation details specific to the AWS platform.
-
-<p style="background:#d9edf7; padding: 10px;" class="text-info"><strong>Alpha:</strong> These modules and instructions are currently considered alpha. See the <a href="../../platform-lifecycle.md">platform life cycle</a> for more details.</p>
 
 ## Prerequsities
 
@@ -97,7 +95,7 @@ This should run for a little bit, and when complete, your Tectonic cluster shoul
 
 The Tectonic Console should be up and running after the containers have downloaded. You can access it at the DNS name configured in your variables file.
 
-Inside of the `/generated` folder you should find any credentials, including the CA if generated, and a kubeconfig. You can use this to control the cluster with `kubectl`:
+Inside of the `/generated` folder you should find any credentials, including the CA if generated, and a `kubeconfig`. You can use this to control the cluster with `kubectl`:
 
 ```bash
 $ export KUBECONFIG=generated/auth/kubeconfig
