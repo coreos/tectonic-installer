@@ -69,9 +69,6 @@ pipeline {
             # s3 buckets require lowercase names
             export TF_VAR_tectonic_cluster_name=$(echo ${CLUSTER} | awk '{print tolower($0)}')
 
-            # AWS specific configuration
-            export AWS_REGION="us-west-2"
-
             # make core utils accessible to make
             export PATH=/bin:${PATH}
 
@@ -91,11 +88,26 @@ pipeline {
             trap shutdown EXIT
 
             make apply
+
+            # TODO: replace in Go
+            CONFIG=${WORKSPACE}/build/${CLUSTER}/terraform.tfvars
+            MASTER_COUNT=$(grep tectonic_master_count ${CONFIG} | awk -F "=" '{gsub(/"/, "", $2); print $2}')
+            WORKER_COUNT=$(grep tectonic_worker_count ${CONFIG} | awk -F "=" '{gsub(/"/, "", $2); print $2}')
+
+            export NODE_COUNT=$(( ${MASTER_COUNT} + ${WORKER_COUNT} ))
+
+            export TEST_KUBECONFIG=${WORKSPACE}/build/${CLUSTER}/generated/auth/kubeconfig
+            installer/bin/sanity -test.v -test.parallel=1
             '''
             }
           }
         )
       }
+    }
+  }
+  post {
+    always {
+      deleteDir()
     }
   }
 }

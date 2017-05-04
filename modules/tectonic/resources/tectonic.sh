@@ -168,10 +168,11 @@ echo "Creating Tectonic Updater"
   kubectl create -f updater/app-version-tectonic-cluster.yaml
   kubectl create -f updater/app-version-kubernetes.yaml
   kubectl create -f updater/app-version-tectonic-monitoring.yaml
+  kubectl apply -f etcd/cluster-config.yaml
 fi
 
 echo "Creating Container Linux Updater"
-kubectl create -f container-linux-updater/deployment.yaml
+kubectl create -f updater/container-linux-updater-operator.yaml
 
 # wait for Tectonic pods
 wait_for_pods tectonic-system
