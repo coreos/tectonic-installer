@@ -83,3 +83,4 @@ clean:
 	rm -rf bin/
 	rm -f binassets/assets.go
 	rm -rf assets/frontend/scripts
+	rm -rf .workspace/
