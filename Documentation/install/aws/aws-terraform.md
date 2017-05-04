@@ -1,6 +1,6 @@
 # Install Tectonic on AWS with Terraform
 
-Following this guide will deploy a Tectonic cluster on an AWS account. To install Tectonic on AWS with a graphical installer refer to the [AWS graphical installer documentation][aws-gui].
+Use this guide to manually install a Tectonic cluster on an AWS account. To install Tectonic on AWS with a graphical installer instead, refer to the [AWS graphical installer documentation][aws-gui].
 
 Generally, the AWS platform templates adhere to the standards defined by the project [conventions][conventions] and [generic platform requirements][generic]. This document aims to document the implementation details specific to the AWS platform.
 
