@@ -135,7 +135,7 @@ $ terraform destroy -var-file=build/${CLUSTER}/terraform.tfvars platforms/azure
 
 ### Known issues and workarounds
 
-See the [troubleshooting][troubleshooting] document for work rounds for bugs that are being tracked.
+See the [installer troubleshooting][troubleshooting] document for known problem points and work arounds.
 
 ## Scaling the cluster
 
@@ -187,7 +187,7 @@ $ terraform apply $ terraform plan \
 [bcrypt]: https://github.com/coreos/bcrypt-tool/releases/tag/v1.0.0
 [plan-docs]: https://www.terraform.io/docs/commands/plan.html
 [copy-docs]: https://www.terraform.io/docs/commands/apply.html
-[troubleshooting]: ../../troubleshooting/faq.md
+[troubleshooting]: ../../troubleshooting/installer-terraform.md
 [login]: https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli
 [azure-dns]: https://docs.microsoft.com/en-us/azure/dns/dns-getstarted-portal
 [vars]: ../../variables/config.md
