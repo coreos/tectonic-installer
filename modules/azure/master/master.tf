@@ -16,8 +16,9 @@ resource "azurerm_storage_account" "tectonic_master" {
   account_type        = "Premium_LRS"
 
   tags {
-    environment                                 = "staging"
-    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    environment = "staging"
+
+    # "kubernetes.io/cluster/${var.cluster_name}" = "owned"
   }
 }
 
@@ -84,7 +85,8 @@ resource "azurerm_virtual_machine_scale_set" "tectonic_masters" {
   }
 
   tags {
-    environment                                 = "staging"
-    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    environment = "staging"
+
+    # "kubernetes.io/cluster/${var.cluster_name}" = "owned"
   }
 }

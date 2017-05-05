@@ -42,7 +42,7 @@ resource "azurerm_network_security_group" "cluster_default" {
     destination_address_prefix = "*"
   }
 
-  tags {
-    "kubernetes.io/cluster/${var.tectonic_cluster_name}" = "owned"
-  }
+  # tags {
+  #   "kubernetes.io/cluster/${var.tectonic_cluster_name}" = "owned"
+  # }
 }

@@ -33,14 +33,14 @@ variable "cluster_name" {
   type = "string"
 }
 
-variable "ssh_key" {
-  type = "string"
-}
-
 variable "virtual_network" {
   type = "string"
 }
 
 variable "subnet" {
+  type = "string"
+}
+
+variable "public_ssh_key" {
   type = "string"
 }

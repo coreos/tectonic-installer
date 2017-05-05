@@ -86,3 +86,18 @@ variable "tectonic_azure_create_dns_zone" {
   description = "If set to true, create an Azure DNS zone"
   default     = "true"
 }
+
+variable "tectonic_azure_vnet_resource" {
+  description = "Resource path for existing virtual network"
+  default     = ""
+}
+
+variable "tectonic_azure_master_subnet_resource" {
+  description = "Resource path for existing subnet"
+  default     = ""
+}
+
+variable "tectonic_azure_worker_subnet_resource" {
+  description = "Resource path for existing subnet"
+  default     = ""
+}
