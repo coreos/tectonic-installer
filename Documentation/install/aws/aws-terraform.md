@@ -29,7 +29,7 @@ tar xzvf tectonic-1.6.2-tectonic.1.tar.gz # extract the tarball
 Initialize the Terraform configuration with Installer's location and export the path to that configuration:
 
 ```bash
-$ INSTALLER_PATH=$(pwd)/installer/bin/linux/installer # Edit the platform name.
+$ INSTALLER_PATH=$(pwd)/tectonic-installer/linux/installer # Edit the platform name.
 $ sed "s|<PATH_TO_INSTALLER>|$INSTALLER_PATH|g" terraformrc.example > .terraformrc
 $ export TERRAFORM_CONFIG=$(pwd)/.terraformrc
 ```
