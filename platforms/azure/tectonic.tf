@@ -2,8 +2,8 @@ module "bootkube" {
   source         = "../../modules/bootkube"
   cloud_provider = ""
 
-  kube_apiserver_url = "${var.tectonic_azure_create_dns_zone == "true" ? "https://${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}:443" : "https://${module.masters.api_internal_fqdn}:443"}"
-  oidc_issuer_url    = "${var.tectonic_azure_create_dns_zone == "true" ? "https://${var.tectonic_cluster_name}.${var.tectonic_base_domain}/identity" : "https://${module.masters.ingress_internal_fqdn}/identity"}"
+  kube_apiserver_url = "https://${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}:443"
+  oidc_issuer_url    = "https://${var.tectonic_cluster_name}.${var.tectonic_base_domain}/identity"
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
@@ -35,8 +35,8 @@ module "tectonic" {
   source   = "../../modules/tectonic"
   platform = "azure"
 
-  base_address       = "${var.tectonic_azure_create_dns_zone == "true" ? "${var.tectonic_cluster_name}.${var.tectonic_base_domain}" : module.masters.ingress_internal_fqdn}"
-  kube_apiserver_url = "${var.tectonic_azure_create_dns_zone == "true" ? "https://${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}:443" : "https://${module.masters.api_internal_fqdn}:443"}"
+  base_address       = "${var.tectonic_cluster_name}.${var.tectonic_base_domain}"
+  kube_apiserver_url = "https://${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}:443"
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
@@ -67,11 +67,11 @@ resource "null_resource" "tectonic" {
   depends_on = ["module.tectonic", "module.masters"]
 
   triggers {
-    api-endpoint = "${var.tectonic_azure_create_dns_zone == "true" ? "${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}" : module.masters.api_external_fqdn}"
+    api-endpoint = "${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}"
   }
 
   connection {
-    host  = "${var.tectonic_azure_create_dns_zone == "true" ? "${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}" : module.masters.api_external_fqdn}"
+    host  = "${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}"
     user  = "core"
     agent = true
   }
