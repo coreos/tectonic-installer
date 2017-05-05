@@ -6,6 +6,7 @@ import (
 
 // Config holds the configuration needed to setup an individual cluster.
 type Config struct {
+	Name string
 	server.TerraformApplyHandlerInput
 }
 

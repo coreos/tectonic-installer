@@ -1,20 +1,20 @@
 package cluster
 
 import (
+	"math/rand"
 	"sort"
 )
 
-func Constrain(base Config, scenarios Scenarios) (clusters []Config) {
+func Constrain(base *Config, scenarios Scenarios) (clusters Clusters) {
 	// sort scenarios descending from highest number of variants
 	sort.Sort(scenarios)
 	scenarios = sort.Reverse(scenarios)
 
 	// contains a slice entry for each cluster required, with a map of scenarios
-	clusters := new(Clusters)
 	sPtrs := make([][]*Config, len(scenarios))
-	for _, s := range scenarios {
+	for sNum, s := range scenarios {
 		vPtrs := make([]*Config, len(s.Variants))
-		for _, v := range s.Variants {
+		for vNum, v := range s.Variants {
 			// attempt to assign variant to existing cluster
 			c := clusters.Assign(s)
 			if c == nil {
@@ -24,8 +24,22 @@ func Constrain(base Config, scenarios Scenarios) (clusters []Config) {
 				}
 				clusters = append(clusters, c)
 			}
+			c.Add(s, v)
 
-			c.Add(v, s.Name)
+			// add to slice to allow randomization
+			vPtrs[vNum] = v
+		}
+		sPtrs[sNum] = vPtrs
+	}
+	shuffle(sPtrs)
+	return
+}
+
+func shuffle(s [][]*Config) {
+	for _, variants := range s {
+		// randomize variants within a scenario
+		for i, v := range rand.Perm(len(variants)) {
+			*variants[i] = *variants[v]
 		}
 	}
 }

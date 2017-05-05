@@ -1,6 +1,9 @@
 package cluster
 
-import "path/filepath"
+import (
+	"path/filepath"
+	"sort"
+)
 
 // Scenario contains a set of variants which are tests mutually exclusively.
 type Scenario struct {
@@ -8,17 +11,20 @@ type Scenario struct {
 	Name string
 
 	// Variants are cluster configurations that are applied separately from each other.
-	Variants []Config
+	Variants []*Config
 
 	// Avoid contains scenarios which this scenario should avoid.
-	Avoid    []string
+	Avoid []string
 }
 
 // Scenarios represented in a set
-type Scenarios []Scenario
+type Scenarios []*Scenario
 
-func (s Scenarios) Match(pattern string) ([]Scenario, error) {
-	scenarios := []Scenario{}
+// implements sort Interface
+var _ sort.Interface = new(Scenarios)
+
+func (s Scenarios) Match(pattern string) ([]*Scenario, error) {
+	scenarios := []*Scenario{}
 	for _, val := range s {
 		if match, err := filepath.Match(pattern, val.Name); err != nil {
 			return nil, err
