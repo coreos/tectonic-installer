@@ -135,8 +135,8 @@ module "ignition-masters" {
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
   kube_dns_service_ip       = "${var.tectonic_kube_dns_service_ip}"
   etcd_endpoints            = ["${module.etcd.etcd_ip}"]
-  kubeconfig_gcs_location   = "${google_storage_bucket.kubeconfig.name}/${google_storage_bucket_object.kubeconfig.name}"
-  assets_gcs_location       = "${google_storage_bucket.tectonic-assets.name}/${google_storage_bucket_object.tectonic-assets.name}"
+  kubeconfig_gcs_location   = "${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.kubeconfig.name}"
+  assets_gcs_location       = "${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.tectonic-assets.name}"
   container_images          = "${var.tectonic_container_images}"
   bootkube_service          = "${module.bootkube.systemd_service}"
   tectonic_service          = "${module.tectonic.systemd_service}"
@@ -151,7 +151,7 @@ module "ignition-workers" {
   kubelet_node_taints     = ""
   kube_dns_service_ip     = "${var.tectonic_kube_dns_service_ip}"
   etcd_endpoints          = ["${module.etcd.etcd_ip}"]
-  kubeconfig_gcs_location = "${google_storage_bucket.kubeconfig.name}/${google_storage_bucket_object.kubeconfig.name}"
+  kubeconfig_gcs_location = "${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.kubeconfig.name}"
   assets_gcs_location     = ""
   container_images        = "${var.tectonic_container_images}"
   bootkube_service        = ""
