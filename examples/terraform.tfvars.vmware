@@ -1,0 +1,178 @@
+
+// e-mail address used to login to Tectonic
+tectonic_admin_email = ""
+
+// bcrypt hash of admin password to use with Tectonic Console. You can download bcrypt from; https://github.com/coreos/bcrypt-tool/releases
+tectonic_admin_password_hash = ""
+
+// The base DNS domain of the cluster. Example: `openstack.dev.coreos.systems`.
+tectonic_base_domain = ""
+
+// (optional) PEM-encoded CA certificate, used to generate Tectonic Console's server certificate. Optional, if left blank, a CA certificate will be automatically generated.
+// tectonic_ca_cert = ""
+
+// (optional) PEM-encoded CA key, used to generate Tectonic Console's server certificate. Optional if tectonic_ca_cert is left blank
+// tectonic_ca_key = ""
+
+// Algorithm used to generate tectonic_ca_key. Optional if tectonic_ca_cert is left blank.
+tectonic_ca_key_alg = "RSA"
+
+// The Container Linux update channel.
+// Examples: `stable`, `beta`, `alpha`
+tectonic_cl_channel = "stable"
+
+// A CIDR notation IP range from which to assign pod IPs
+tectonic_cluster_cidr = "10.2.0.0/16"
+
+// The name of the cluster. This will be prepended to `tectonic_base_domain` resulting in the URL to the Tectonic console.
+tectonic_cluster_name = ""
+
+// (optional) The path to the etcd CA certificate for TLS communication with etcd.
+// tectonic_etcd_ca_cert_path = ""
+
+// (optional) The path to the etcd client certificate for TLS communication with etcd.
+// tectonic_etcd_client_cert_path = ""
+
+// (optional) The path to the etcd client key for TLS communication with etcd.
+// tectonic_etcd_client_key_path = ""
+
+// The number of etcd nodes to be created.
+// If set to zero, the count of etcd nodes will be determined automatically (currently only supported on AWS).
+tectonic_etcd_count = "0"
+
+// (optional) List of external etcd v3 servers to connect with (hostnames/IPs only).
+// Needs to be set if using an external etcd cluster.
+// Example: `["etcd1", "etcd2", "etcd3"]`
+// tectonic_etcd_servers = ""
+
+// If set to true, experimental Tectonic assets are being deployed.
+tectonic_experimental = false
+
+// Service IP used to reach kube-apiserver inside the cluster
+tectonic_kube_apiserver_service_ip = "10.3.0.1"
+
+// Service IP used to reach kube-dns
+tectonic_kube_dns_service_ip = "10.3.0.10"
+
+// Service IP used to reach self-hosted etcd
+tectonic_kube_etcd_service_ip = "10.3.0.15"
+
+// The path to the tectonic licence file.
+tectonic_license_path = ""
+
+// The number of master nodes to be created.
+tectonic_master_count = "1"
+
+// The domain name which resolves to controller node(s)
+tectonic_vmware_controller_domain = ""
+
+// The domain name which resolves to Tectonic Ingress (i.e. worker node(s))
+tectonic_vmware_ingress_domain = ""
+
+// The path the pull secret file in JSON format.
+tectonic_pull_secret_path = ""
+
+// A CIDR notation IP range from which to assign service cluster IPs
+tectonic_service_cidr = "10.3.0.0/16"
+
+// SSH public key to use as an authorized key. Example: `"ssh-rsa AAAB3N..."`
+tectonic_ssh_authorized_key = ""
+
+// If set to true, a vanilla Kubernetes cluster will be deployed, omitting the tectonic assets.
+tectonic_vanilla_k8s = false
+
+// The number of worker nodes to be created.
+tectonic_worker_count = "3"
+
+// VMware vCenter Server FQDN or IP Address
+tectonic_vmware_server = ""
+
+// (Optional)  VMware vCenter Login credentials. You will be prompted if commented out
+// tectonic_vmware_username = ""
+// tectonic_vmware_password = ""
+
+// VMware vCenter SSL connectivity. Set to true if vCenter SSL certificate is self-signed
+tectonic_vmware_sslselfsigned = true
+
+// VMware DataCenter (vDC) to deploy Tectonic into
+tectonic_vmware_datacenter = ""
+
+// VMware vSphere Cluster Name 
+tectonic_vmware_cluster = ""
+
+// VMware Datastore. Note: Storage Clusters are not yet supported in Terraform
+tectonic_vmware_datastore = ""
+
+// VMware Folder Name to create Virtual Machines in
+tectonic_vmware_folder = ""	
+
+// VMware Port Group to attach nodes
+tectonic_vmware_network = ""
+
+// VMware CoreOS Container Linux Template Name
+tectonic_vmware_vm_template = ""
+
+// VMware CoreOS Container Linux Template Folder
+tectonic_vmware_vm_template_folder = ""
+
+// (Optional) Number of vCPUs to assign ETCD nodes
+// tectonic_vmware_etcd_vcpu = 1
+
+// (Optional) Memory size to assign ETCD nodes in MB
+// tectonic_vmware_etcd_memory = 2048
+
+// (Optional) Number of vCPUs to assign Master nodes
+// tectonic_vmware_master_vm_vcpu= 1
+
+// (Optional) Memory size to assign Master nodes in MB
+// tectonic_vmware_master_vm_memory = 4096
+
+// (Optional) Number of vCPUs to assign Worker nodes
+// tectonic_vmware_worker_vm_vcpu = 2
+
+// (Optional) Memory size to assign Worker nodes in MB
+// tectonic_vmware_worker_vm_memory = 4096
+
+// Hostnames of ETCD Nodes 
+// ex: tectonic_vmware_etcd_hostnames = {
+//  "0" = "etcd0"
+//  "1" = "etcd1"
+//  "2" = "etcd2"
+//  "3" = "etcd3"
+//  "4" = "etcd5"
+// }
+tectonic_vmware_etcd_hostnames = {}
+
+// IP Address of ETCD Nodes 
+// ex: tectonic_vmware_etcd_hostnames = {
+//  "0" = "etcd0"
+//  "1" = "etcd1"
+//  "2" = "etcd2"
+//  "3" = "etcd3"
+//  "4" = "etcd5"
+// }
+tectonic_vmware_etcd_ip = {}
+
+// Default gateway IP Address of ETCD node
+tectonic_vmware_etcd_gateway = ""
+
+// Hostnames of Master Nodes 
+tectonic_vmware_master_hostnames = {}
+
+// IP Address of Master Nodes 
+tectonic_vmware_master_ip = {}
+
+// Default gateway IP Address of Master nodes
+tectonic_vmware_master_gateway = ""
+
+// Hostnames of Worker Nodes 
+tectonic_vmware_worker_hostnames = {}
+
+// IP Address of Worker Nodes 
+tectonic_vmware_worker_ip = {}
+
+// Gateway IP Address of Worker nodes
+tectonic_vmware_worker_gateway = ""
+
+// DNS Server IP Address
+tectonic_vmware_node_dns = ""
