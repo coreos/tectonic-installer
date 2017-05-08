@@ -11,8 +11,8 @@ resource "matchbox_group" "coreos-install" {
   metadata {
     coreos_channel     = "${var.tectonic_cl_channel}"
     coreos_version     = "${var.tectonic_metal_cl_version}"
-    ignition_endpoint  = "${var.tectonic_metal_matchbox_http_endpoint}/ignition"
-    baseurl            = "${var.tectonic_metal_matchbox_http_endpoint}/assets/coreos"
+    ignition_endpoint  = "${var.tectonic_metal_matchbox_http_url}/ignition"
+    baseurl            = "${var.tectonic_metal_matchbox_http_url}/assets/coreos"
     ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
   }
 }
@@ -37,7 +37,7 @@ resource "matchbox_group" "controller" {
     ssh_authorized_key   = "${var.tectonic_ssh_authorized_key}"
 
     # extra data
-    etcd_image_tag    = "${var.tectonic_versions["etcd"]}"
+    etcd_image_tag    = "v${var.tectonic_versions["etcd"]}"
     kubelet_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
     kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
   }
