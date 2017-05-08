@@ -8,6 +8,7 @@ TF_DOCS := $(shell which terraform-docs 2> /dev/null)
 TF_EXAMPLES := $(shell which terraform-examples 2> /dev/null)
 TF_RC := $(TOP_DIR)/.terraformrc
 TF_CMD = TERRAFORM_CONFIG=$(TF_RC) terraform
+export TF_VAR_tectonic_cluster_name = $(CLUSTER)
 
 $(info Using build directory [${BUILD_DIR}])
 
