@@ -196,7 +196,7 @@ variable "tectonic_admin_email" {
 
 variable "tectonic_admin_password_hash" {
   type        = "string"
-  description = "bcrypt hash of admin password to use with Tectonic Console"
+  description = "bcrypt hash of admin password to use with Tectonic Console. Generate a bcrypt hash of the password by using the tool given at https://github.com/coreos/bcrypt-tool."
 }
 
 variable "tectonic_ca_cert" {
