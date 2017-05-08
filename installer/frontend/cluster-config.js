@@ -320,7 +320,8 @@ export const toBaremetal_TF = (cc, FORMS) => {
       tectonic_cluster_cidr: cc[POD_CIDR],
       tectonic_service_cidr: cc[SERVICE_CIDR],
       tectonic_dns_name: cc[CLUSTER_SUBDOMAIN],
-      tectonic_experimental: cc[UPDATER_ENABLED],
+      // tectonic_experimental: cc[UPDATER_ENABLED],
+      tectonic_experimental: false,
       tectonic_base_domain: 'unused',
     },
   };

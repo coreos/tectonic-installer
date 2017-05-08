@@ -3,7 +3,6 @@ import React from 'react';
 import { validate } from '../validate';
 import { Input, WithClusterConfig } from './ui';
 import { TectonicLicense, licenseForm } from './tectonic-license';
-import { ExperimentalFeatures } from './experimental-features';
 import { CLUSTER_NAME } from '../cluster-config';
 
 export const BM_ClusterInfo = () => {
@@ -25,7 +24,6 @@ export const BM_ClusterInfo = () => {
       </div>
       <TectonicLicense />
       <br />
-      <ExperimentalFeatures />
     </div>
   );
 };
