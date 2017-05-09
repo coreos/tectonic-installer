@@ -35,7 +35,7 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --cluster-domain=cluster.local \
   --client-ca-file=/etc/kubernetes/ca.crt \
   --anonymous-auth=false \
-  --cloud-provider=aws
+  --cloud-provider=gce
 ExecStop=-/usr/bin/rkt stop --uuid-file=/var/run/kubelet-pod.uuid
 
 Restart=always

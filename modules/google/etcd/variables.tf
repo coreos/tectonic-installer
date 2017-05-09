@@ -14,6 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+variable "dns_enabled" {
+  type = "string"
+}
+
 variable "container_image" {
   type = "string"
 }

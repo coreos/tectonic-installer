@@ -81,6 +81,7 @@ module "etcd" {
   disk_size = "${var.tectonic_gcp_etcd_disk_size}"
 
   master_subnetwork_name = "${module.network.master_subnetwork_name}"
+  dns_enabled = "${!var.tectonic_experimental && length(compact(var.tectonic_etcd_servers)) == 0}"
 }
 
 module "masters" {

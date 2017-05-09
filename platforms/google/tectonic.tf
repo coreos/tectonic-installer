@@ -16,7 +16,7 @@ limitations under the License.
 
 module "bootkube" {
   source         = "../../modules/bootkube"
-  cloud_provider = "google"
+  cloud_provider = "gce"
 
   kube_apiserver_url = "https://${module.network.master_ip}:443"
   oidc_issuer_url    = "https://${module.network.master_ip}/identity"
