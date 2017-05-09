@@ -17,7 +17,7 @@ type Scenario struct {
 	Avoid []string
 }
 
-// Scenarios represented in a set
+// Scenarios sorted by least number of variants
 type Scenarios []*Scenario
 
 // implements sort Interface
@@ -45,5 +45,5 @@ func (s Scenarios) Swap(i, j int) {
 
 // Less returns if i has less variants than j
 func (s Scenarios) Less(i, j int) bool {
-	return len(s[i].Variants) < len(s[j].Variants)
+	return len(s[i].Variants) > len(s[j].Variants)
 }

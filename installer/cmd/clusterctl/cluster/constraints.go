@@ -8,7 +8,6 @@ import (
 func Constrain(base *Config, scenarios Scenarios) (clusters Clusters) {
 	// sort scenarios descending from highest number of variants
 	sort.Sort(scenarios)
-	scenarios = sort.Reverse(scenarios)
 
 	// contains a slice entry for each cluster required, with a map of scenarios
 	sPtrs := make([][]*Config, len(scenarios))
@@ -24,7 +23,7 @@ func Constrain(base *Config, scenarios Scenarios) (clusters Clusters) {
 				}
 				clusters = append(clusters, c)
 			}
-			c.Add(s, v)
+			c.Add(s, v.Name)
 
 			// add to slice to allow randomization
 			vPtrs[vNum] = v
