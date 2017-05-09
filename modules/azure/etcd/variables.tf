@@ -44,3 +44,7 @@ variable "virtual_network" {
 variable "subnet" {
   type = "string"
 }
+
+variable "container_image" {
+  type = "string"
+}

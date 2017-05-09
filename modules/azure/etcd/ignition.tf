@@ -46,7 +46,7 @@ Requires=coreos-metadata.service
 After=coreos-metadata.service
 
 [Service]
-Environment="ETCD_IMAGE_TAG=v3.1.2"
+Environment="ETCD_IMAGE_TAG=${var.container_image}"
 EnvironmentFile=/run/metadata/coreos
 ExecStart=
 ExecStart=/usr/lib/coreos/etcd-wrapper \

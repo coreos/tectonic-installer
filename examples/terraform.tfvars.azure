@@ -1,3 +1,5 @@
+// The client secret of the AAD user used to provision the cluster
+tectonic_arm_client_secret
 
 // The e-mail address used to login as the admin user to the Tectonic Console.
 // 

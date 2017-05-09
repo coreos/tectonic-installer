@@ -33,7 +33,7 @@ variable "cluster_name" {
   type = "string"
 }
 
-variable "public_ssh_key" {
+variable "nsg_id" {
   type = "string"
 }
 
@@ -45,28 +45,10 @@ variable "subnet" {
   type = "string"
 }
 
-variable "kube_image_url" {
+variable "custom_data" {
   type = "string"
 }
 
-variable "kube_image_tag" {
-  type = "string"
-}
-
-variable "kubeconfig_content" {
-  type    = "string"
-  default = ""
-}
-
-variable "tectonic_kube_dns_service_ip" {
-  type = "string"
-}
-
-variable "cloud_provider" {
-  type    = "string"
-  default = "azure"
-}
-
-variable "kubelet_node_label" {
+variable "public_ssh_key" {
   type = "string"
 }

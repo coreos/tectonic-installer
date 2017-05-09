@@ -112,3 +112,13 @@ EOF
 
   default = ""
 }
+
+variable "tectonic_arm_client_id" {
+  type        = "string"
+  description = "Client ID of application to act on behalf of user"
+}
+
+variable "tectonic_arm_client_secret" {
+  type        = "string"
+  description = "Access code of application"
+}

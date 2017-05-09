@@ -37,6 +37,7 @@ resource "azurerm_virtual_machine" "etcd_node" {
   os_profile_linux_config {
     disable_password_authentication = true
 
+    # Required by Azure when password is disabled
     ssh_keys {
       path     = "/home/core/.ssh/authorized_keys"
       key_data = "${file(var.public_ssh_key)}"

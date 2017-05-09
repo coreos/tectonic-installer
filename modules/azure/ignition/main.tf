@@ -1,16 +1,19 @@
-data "ignition_config" "master" {
+data "azurerm_client_config" "current" {}
+
+data "ignition_config" "main" {
   files = [
     "${data.ignition_file.kubeconfig.id}",
     "${data.ignition_file.kubelet-env.id}",
     "${data.ignition_file.max-user-watches.id}",
+    "${data.ignition_file.cloud-provider.id}",
   ]
 
   systemd = [
     "${data.ignition_systemd_unit.docker.id}",
     "${data.ignition_systemd_unit.locksmithd.id}",
-    "${data.ignition_systemd_unit.kubelet-master.id}",
-    "${data.ignition_systemd_unit.tectonic.id}",
+    "${data.ignition_systemd_unit.kubelet.id}",
     "${data.ignition_systemd_unit.bootkube.id}",
+    "${data.ignition_systemd_unit.tectonic.id}",
   ]
 
   users = [
@@ -18,6 +21,8 @@ data "ignition_config" "master" {
   ]
 }
 
+# TODO: Is this actually needed since required virtual_machine config creates
+# a core user and seeds the ssh key
 data "ignition_user" "core" {
   name = "core"
 
@@ -43,21 +48,20 @@ data "ignition_systemd_unit" "locksmithd" {
   mask = true
 }
 
-data "template_file" "kubelet-master" {
-  template = "${file("${path.module}/resources/master-kubelet.service")}"
+data "template_file" "kubelet" {
+  template = "${file("${path.module}/resources/kubelet.service")}"
 
   vars {
+    cluster_dns       = "${var.kube_dns_service_ip}"
     node_label        = "${var.kubelet_node_label}"
     node_taints_param = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
-    cloud_provider    = "${var.cloud_provider}"
-    cluster_dns       = "${var.tectonic_kube_dns_service_ip}"
   }
 }
 
-data "ignition_systemd_unit" "kubelet-master" {
+data "ignition_systemd_unit" "kubelet" {
   name    = "kubelet.service"
   enable  = true
-  content = "${data.template_file.kubelet-master.rendered}"
+  content = "${data.template_file.kubelet.rendered}"
 }
 
 data "ignition_file" "kubeconfig" {
@@ -80,6 +84,34 @@ data "ignition_file" "kubelet-env" {
 KUBELET_IMAGE_URL="${var.kube_image_url}"
 KUBELET_IMAGE_TAG="${var.kube_image_tag}"
 EOF
+  }
+}
+
+data "template_file" "cloud-provider" {
+  template = "${file("${path.module}/resources/cloud-provider.json")}"
+
+  vars {
+    cloud = "${var.arm_cloud}",
+    tenant_id = "${data.azurerm_client_config.current.tenant_id}",
+    subscription_id = "${data.azurerm_client_config.current.subscription_id}",
+    aad_client_id = "${data.azurerm_client_config.current.client_id}",
+    aad_client_secret = "${var.arm_client_secret}",
+    resource_group_name = "${var.resource_group_name}",
+    location = "${var.location}",
+    subnet_name = "${var.subnet_name}",
+    security_group_name = "${var.nsg_name}",
+    vnet_name = "${var.virtual_network}",
+    route_table_name = "${var.route_table_name}",
+    primary_availability_set_name = "${var.primary_availability_set_name}"
+  }
+}
+
+data "ignition_file" "cloud-provider" {
+  filesystem = "root"
+  path       = "/etc/kubernetes/azure.json"
+  mode       = "420"
+  content {
+    content = "${data.template_file.cloud-provider.rendered}"
   }
 }
 
