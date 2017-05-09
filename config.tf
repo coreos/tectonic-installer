@@ -56,7 +56,7 @@ variable "tectonic_versions" {
     prometheus = "v1.6.1"
     monitoring = "1.1.0"
     kubernetes = "1.6.2+tectonic.0"
-    tectonic   = "1.6.2-tectonic.0"
+    tectonic   = "1.6.2-tectonic.1"
   }
 }
 
