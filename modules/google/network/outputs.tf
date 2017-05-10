@@ -42,4 +42,8 @@ output "tectonic_network_name" {
   value = "${google_compute_network.tectonic-network.name}"
 }
 
+output "kube_apiserver_fqdn" {
+  value = "${google_dns_record_set.cluster-api.name}"
+}
+
 # vim: ts=2:sw=2:sts=2:et:ai

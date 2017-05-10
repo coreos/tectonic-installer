@@ -18,8 +18,8 @@ module "bootkube" {
   source         = "../../modules/bootkube"
   cloud_provider = "gce"
 
-  kube_apiserver_url = "https://${module.network.master_ip}:443"
-  oidc_issuer_url    = "https://${module.network.master_ip}/identity"
+  kube_apiserver_url = "https://${module.network.kube_apiserver_fqdn}:443"
+  oidc_issuer_url    = "https://${module.network.kube_apiserver_fqdn}/identity"
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
@@ -52,8 +52,8 @@ module "tectonic" {
   source   = "../../modules/tectonic"
   platform = "google"
 
-  base_address       = "${module.network.master_ip}"
-  kube_apiserver_url = "https://${module.network.master_ip}:443"
+  base_address       = "${module.network.kube_apiserver_fqdn}"
+  kube_apiserver_url = "https://${module.network.kube_apiserver_fqdn}:443"
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
