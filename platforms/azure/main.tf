@@ -29,8 +29,8 @@ module "etcd" {
 
   location            = "${var.tectonic_azure_location}"
   resource_group_name = "${module.resource_group.name}"
-  image_reference     = "${var.tectonic_azure_image_reference}"
   vm_size             = "${var.tectonic_azure_etcd_vm_size}"
+  cl_channel          = "${var.tectonic_cl_channel}"
 
   etcd_count      = "${var.tectonic_etcd_count}"
   base_domain     = "${var.tectonic_base_domain}"
@@ -71,8 +71,8 @@ module "masters" {
 
   location            = "${var.tectonic_azure_location}"
   resource_group_name = "${module.resource_group.name}"
-  image_reference     = "${var.tectonic_azure_image_reference}"
   vm_size             = "${var.tectonic_azure_master_vm_size}"
+  cl_channel          = "${var.tectonic_cl_channel}"
 
   master_count          = "${var.tectonic_master_count}"
   base_domain           = "${var.tectonic_base_domain}"
@@ -115,8 +115,8 @@ module "workers" {
 
   location            = "${var.tectonic_azure_location}"
   resource_group_name = "${module.resource_group.name}"
-  image_reference     = "${var.tectonic_azure_image_reference}"
   vm_size             = "${var.tectonic_azure_worker_vm_size}"
+  cl_channel          = "${var.tectonic_cl_channel}"
 
   worker_count    = "${var.tectonic_worker_count}"
   base_domain     = "${var.tectonic_base_domain}"
