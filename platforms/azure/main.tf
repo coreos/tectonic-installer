@@ -26,22 +26,12 @@ module "etcd" {
   image_reference     = "${var.tectonic_azure_image_reference}"
   vm_size             = "${var.tectonic_azure_etcd_vm_size}"
 
-  master_count                 = "${var.tectonic_master_count}"
-  base_domain                  = "${var.tectonic_base_domain}"
-  cluster_name                 = "${var.tectonic_cluster_name}"
-  public_ssh_key               = "${var.tectonic_azure_ssh_key}"
-  virtual_network              = "${module.vnet.vnet_id}"
-  subnet                       = "${module.vnet.master_subnet}"
-  kube_image_url               = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
-  kube_image_tag               = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
-  kubeconfig_content           = "${module.bootkube.kubeconfig}"
-  tectonic_kube_dns_service_ip = "${var.tectonic_kube_dns_service_ip}"
-  cloud_provider               = ""
-  kubelet_node_label           = "node-role.kubernetes.io/master"
-  kubelet_node_taints          = "node-role.kubernetes.io/master=:NoSchedule"
-  bootkube_service             = "${module.bootkube.systemd_service}"
-  tectonic_service             = "${module.tectonic.systemd_service}"
-  tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
+  etcd_count      = "${var.tectonic_etcd_count}"
+  base_domain     = "${var.tectonic_base_domain}"
+  cluster_name    = "${var.tectonic_cluster_name}"
+  public_ssh_key  = "${var.tectonic_azure_ssh_key}"
+  virtual_network = "${module.vnet.vnet_id}"
+  subnet          = "${module.vnet.master_subnet}"
 }
 
 module "masters" {
