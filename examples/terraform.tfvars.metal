@@ -208,6 +208,10 @@ tectonic_ssh_authorized_key = ""
 // The Tectonic statistics collection URL to which to report.
 tectonic_stats_url = "https://stats-collector.tectonic.com"
 
+// (optional) SSH private key file corresponding to tectonic_ssh_authorized_key. If not provided, SSH agent will be used.
+// Example: `/root/.ssh/id_rsa`
+// tectonic_ssh_private_key_path = ""
+
 // If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
 tectonic_vanilla_k8s = false
 
