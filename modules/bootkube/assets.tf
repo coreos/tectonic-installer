@@ -27,7 +27,7 @@ resource "template_dir" "bootkube" {
     flannel_image          = "${var.container_images["flannel"]}"
     etcd_operator_image    = "${var.container_images["etcd_operator"]}"
     kenc_image             = "${var.container_images["kenc"]}"
-
+    busybox_image          = "${var.container_images["busybox"]}"
     # Choose the etcd endpoints to use.
     # 1. If experimental mode is enabled (self-hosted etcd), then use
     # var.etcd_service_ip.
