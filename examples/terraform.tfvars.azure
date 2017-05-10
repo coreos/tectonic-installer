@@ -157,9 +157,6 @@ tectonic_pull_secret_path = ""
 // This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation.
 tectonic_service_cidr = "10.3.0.0/16"
 
-// 
-tectonic_ssh_key = ""
-
 // If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
 tectonic_vanilla_k8s = false
 

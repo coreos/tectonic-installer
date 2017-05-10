@@ -29,11 +29,6 @@ variable "tectonic_azure_location" {
   type = "string"
 }
 
-variable "tectonic_ssh_key" {
-  type    = "string"
-  default = ""
-}
-
 // Name of an Azure ssh key to use
 // joe-sfo
 variable "tectonic_azure_ssh_key" {
