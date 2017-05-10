@@ -16,8 +16,8 @@ Make sure a current version of either the Google Chrome or Mozilla Firefox web b
 Download the [Tectonic installer][latest-tectonic-release].
 
 ```bash
-wget https://releases.tectonic.com/tectonic-1.5.7-tectonic.1.tar.gz
-tar xzvf tectonic-1.5.7-tectonic.1.tar.gz
+wget https://releases.tectonic.com/tectonic-1.6.2-tectonic.1.tar.gz
+tar xzvf tectonic-1.6.2-tectonic.1.tar.gz
 cd tectonic
 ```
 

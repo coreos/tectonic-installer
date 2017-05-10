@@ -40,11 +40,12 @@ import {
   AWS_VPC_FORM,
   AWS_WORKER_SUBNET_IDS,
   AWS_WORKER_SUBNETS,
+  CLUSTER_NAME,
   CLUSTER_SUBDOMAIN,
   DESELECTED_FIELDS,
   POD_CIDR,
   SERVICE_CIDR,
-  toVPCSubnet,
+  toVPCSubnetID,
 } from '../cluster-config';
 
 const vpcInfoForm = new Form(AWS_VPC_FORM, [
@@ -180,6 +181,8 @@ const stateToProps = ({aws, clusterConfig}) => {
     awsCreateVpc: clusterConfig[AWS_CREATE_VPC] === 'VPC_CREATE',
     awsVpcId: clusterConfig[AWS_VPC_ID],
     awsVpcCIDR: clusterConfig[AWS_VPC_CIDR],
+    clusterName: clusterConfig[CLUSTER_NAME],
+    clusterSubdomain: clusterConfig[CLUSTER_SUBDOMAIN],
     internalCluster: clusterConfig[AWS_CREATE_VPC] === 'VPC_PRIVATE',
     podCIDR: clusterConfig[POD_CIDR],
     serviceCIDR: clusterConfig[SERVICE_CIDR],
@@ -196,6 +199,7 @@ const dispatchToProps = dispatch => ({
     setIn(AWS_WORKER_SUBNET_IDS, {}, dispatch);
   },
   getDefaultSubnets: () => dispatch(awsActions.getDefaultSubnets()),
+  setSubdomain: subdomain => setIn(CLUSTER_SUBDOMAIN, subdomain, dispatch),
 });
 
 export const AWS_VPC = connect(stateToProps, dispatchToProps)(
@@ -204,15 +208,15 @@ class AWS_VPCComponent extends React.Component {
     const { awsCreateVpc, awsVpcCIDR, awsVpcId, region, internalCluster, serviceCIDR, podCIDR } = this.props;
     let controllerSubnets, privateSubnets;
     if (awsCreateVpc) {
-      controllerSubnets = toVPCSubnet(region, this.props.awsControllerSubnets);
-      privateSubnets = toVPCSubnet(region, this.props.awsWorkerSubnets);
+      controllerSubnets = toVPCSubnetID(region, this.props.awsControllerSubnets);
+      privateSubnets = toVPCSubnetID(region, this.props.awsWorkerSubnets);
     } else {
       if (!awsVpcId) {
         // User hasn't selected a VPC yet. Don't try to validate.
         return Promise.resolve();
       }
-      controllerSubnets = toVPCSubnet(region, this.props.awsControllerSubnetIds);
-      privateSubnets = toVPCSubnet(region, this.props.awsWorkerSubnetIds);
+      controllerSubnets = toVPCSubnetID(region, this.props.awsControllerSubnetIds);
+      privateSubnets = toVPCSubnetID(region, this.props.awsWorkerSubnetIds);
     }
 
     let publicSubnets;
@@ -245,7 +249,7 @@ class AWS_VPCComponent extends React.Component {
   }
 
   render () {
-    const { availableVpcs, awsCreateVpc, availableVpcSubnets, awsVpcId, internalCluster, advanced } = this.props;
+    const { availableVpcs, awsCreateVpc, availableVpcSubnets, awsVpcId, clusterName, clusterSubdomain, internalCluster, advanced } = this.props;
 
     let controllerSubnets;
     let workerSubnets;
@@ -309,7 +313,7 @@ class AWS_VPCComponent extends React.Component {
         <div className="col-xs-9">
           <div className="row">
             <div className="col-xs-4" style={{paddingRight: 0}}>
-              <Connect field={CLUSTER_SUBDOMAIN}>
+              <Connect field={CLUSTER_SUBDOMAIN} getDefault={() => clusterSubdomain || clusterName}>
                 <Input placeholder="subdomain" />
               </Connect>
             </div>
