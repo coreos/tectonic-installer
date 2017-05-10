@@ -52,7 +52,7 @@ import:
 - package: github.com/jteeuwen/go-bindata
   version: a0ff2567cfb70903282db057e799fd826784d41d
   subpackages:
-  - go-bindata # Must specify here or glide-vc will remove it.
+  - go-bindata
 - package: github.com/pmezard/go-difflib
   version: 792786c7400a136282c1664665ae0a8db921c6c2
   subpackages:
@@ -98,7 +98,7 @@ import:
 - package: github.com/coreos/coreos-cloudinit
   version: 36c4b72b9fb389688f5ba34038478f8d918bb8d3
   subpackages:
-    - config/validate
+  - config/validate
 - package: github.com/coreos/yaml
   version: 6b16a5714269b2f70720a45406b1babd947a17ef
 - package: github.com/dghubble/sessions
@@ -298,8 +298,6 @@ import:
   - codec/codecgen
 - package: github.com/StackExchange/wmi
   version: 9f32b5905fd6ce7384093f9d048437e79f7b4d85
-
-# config-transpiler converts configs to Ignition
 - package: github.com/coreos/container-linux-config-transpiler
   version: dd0df6d1bf49c82c904c4825c7412507bef2d8b4
 - package: github.com/ajeddeloh/yaml
@@ -312,13 +310,10 @@ import:
   - config
 - package: github.com/vincent-petithory/dataurl
   version: 9a301d65acbb728fcc3ace14f45f511a4cfeea9c
-
-# used to encrypt passwords for dex 
 - package: golang.org/x/crypto
   version: d172538b2cfce0c13cee31e647d0367aa8cd2486
   subpackages:
   - bcrypt
-# vpc availability subnet splitting math
 - package: github.com/coreos/ipnets
   version: 02aaf3c1ee2483ada21d643ce1c94708c8d1c7d0
 - package: github.com/coreos/go-systemd
@@ -326,8 +321,6 @@ import:
   subpackages:
   - journal
   - unit
-
-# used by terraform
 - package: github.com/hashicorp/hil
   version: 5b8d13c8c5c2753e109fab25392a1dbfa2db93d2
   subpackages:
@@ -356,7 +349,7 @@ import:
   version: 8fef92e41e22a70e700a96b29f066cda30ea24ef
 - package: github.com/mitchellh/mapstructure
   version: 281073eb9eb092240d33ef253c404f1cca550309
-- package: github.com/coreos/terraform-provider-matchbox 
+- package: github.com/coreos/terraform-provider-matchbox
   version: 4c66aa75b60489a4220730d70b0446e25b0c9a0a
   subpackages:
   - matchbox
@@ -383,3 +376,4 @@ import:
   - json/parser
   - json/scanner
   - json/token
+- package: github.com/fatih/structs
