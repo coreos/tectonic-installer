@@ -57,8 +57,8 @@ module "masters" {
   cluster_name   = "${var.tectonic_cluster_name}"
   public_ssh_key = "${var.tectonic_azure_ssh_key}"
 
-  virtual_network = "${var.tectonic_azure_vnet_resource}"
-  subnet          = "${var.tectonic_azure_master_subnet_resource}"
+  virtual_network = "${var.tectonic_azure_external_vnet_name}"
+  subnet          = "${var.tectonic_azure_external_master_subnet_id}"
 
   kube_image_url               = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
   kube_image_tag               = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
@@ -85,8 +85,8 @@ module "workers" {
   cluster_name   = "${var.tectonic_cluster_name}"
   public_ssh_key = "${var.tectonic_azure_ssh_key}"
 
-  virtual_network = "${var.tectonic_azure_vnet_resource}"
-  subnet          = "${var.tectonic_azure_worker_subnet_resource}"
+  virtual_network = "${var.tectonic_azure_external_vnet_name}"
+  subnet          = "${var.tectonic_azure_external_worker_subnet_id}"
 
   kube_image_url               = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
   kube_image_tag               = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
@@ -120,5 +120,5 @@ module "jumpbox" {
   location            = "${var.tectonic_azure_location}"
   resource_group_name = "${module.resource_group.name}"
   public_ssh_key      = "${var.tectonic_azure_ssh_key}"
-  subnet              = "${var.tectonic_azure_master_subnet_resource}"
+  subnet              = "${var.tectonic_azure_external_master_subnet_id}"
 }
