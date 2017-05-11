@@ -1,5 +1,5 @@
 data "ignition_config" "etcd" {
-  count = "${var.etcd_count}"
+  count = "${data.null_data_source.consts.outputs.instance_count}"
 
   systemd = [
     "${data.ignition_systemd_unit.locksmithd.id}",
@@ -20,7 +20,7 @@ data "ignition_systemd_unit" "locksmithd" {
 }
 
 data "ignition_systemd_unit" "etcd3" {
-  count  = "${var.etcd_count}"
+  count  = "${length(var.external_endpoints) == 0 ? var.etcd_count : 0}"
   name   = "etcd-member.service"
   enable = true
 

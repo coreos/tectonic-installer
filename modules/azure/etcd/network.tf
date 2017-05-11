@@ -1,5 +1,5 @@
 resource "azurerm_network_interface" "etcd_nic" {
-  count                     = "${var.etcd_count}"
+  count                     = "${length(var.external_endpoints) == 0 ? var.etcd_count : 0}"
   name                      = "${var.cluster_name}-etcd-nic-${count.index}"
   location                  = "${var.location}"
   network_security_group_id = "${azurerm_network_security_group.etcd_group.id}"
@@ -9,11 +9,11 @@ resource "azurerm_network_interface" "etcd_nic" {
     name                                    = "tectonic_etcd_configuration"
     subnet_id                               = "${var.subnet}"
     private_ip_address_allocation           = "dynamic"
-    load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.etcd-lb.id}"]
   }
 }
 
 resource "azurerm_network_security_group" "etcd_group" {
+  count               = "${data.null_data_source.consts.outputs.instance_count > 0 ? 1 : 0}"
   name                = "${var.cluster_name}-etcd"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
@@ -31,7 +31,7 @@ resource "azurerm_network_security_group" "etcd_group" {
   }
 
   security_rule {
-    name                       = "etcd-client-perr"
+    name                       = "etcd-client-peer"
     source_port_range          = "*"
     destination_port_range     = "2379-2380"
     protocol                   = "Tcp"

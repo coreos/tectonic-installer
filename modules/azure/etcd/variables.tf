@@ -21,6 +21,10 @@ variable "etcd_count" {
   type = "string"
 }
 
+variable "external_endpoints" {
+  type = "list"
+}
+
 // The base DNS domain of the cluster.
 // Example: `azure.dev.coreos.systems`
 variable "base_domain" {
@@ -46,4 +50,10 @@ variable "subnet" {
 
 variable "container_image" {
   type = "string"
+}
+
+data "null_data_source" "consts" {
+  inputs = {
+    instance_count = "${length(var.external_endpoints) == 0 ? var.etcd_count : 0}"
+  }
 }

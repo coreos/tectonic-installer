@@ -32,14 +32,16 @@ module "etcd" {
   vm_size             = "${var.tectonic_azure_etcd_vm_size}"
   cl_channel          = "${var.tectonic_cl_channel}"
 
-  etcd_count      = "${var.tectonic_etcd_count}"
+  etcd_count         = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count}"
+  external_endpoints = ["${compact(var.tectonic_etcd_servers)}"]
+
   base_domain     = "${var.tectonic_base_domain}"
   cluster_name    = "${var.tectonic_cluster_name}"
   public_ssh_key  = "${var.tectonic_azure_ssh_key}"
   virtual_network = "${module.vnet.vnet_id}"
   subnet          = "${module.vnet.master_subnet}"
 
-  container_image = "${var.tectonic_container_images["etcd"]}"
+  container_image = "${element(split(":", var.tectonic_container_images["etcd"]), 1)}"
 }
 
 module "ignition-masters" {
