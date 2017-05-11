@@ -13,7 +13,7 @@ func TestClusterTolerable(t *testing.T) {
 		Variants: []*Config{
 			{
 				Name: "self-hosted-enabled",
-				TerraformApplyHandlerInput: server.TerraformApplyHandlerInput{
+				Input: &server.TerraformApplyHandlerInput{
 					Variables: map[string]interface{}{
 						"tectonic_experimental": true,
 					},

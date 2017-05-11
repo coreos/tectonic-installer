@@ -14,7 +14,7 @@ type Scenario struct {
 	Variants []*Config `json:"variants"`
 
 	// Avoid contains scenarios which this scenario should avoid.
-	Avoid []string `json:"avoid"`
+	Avoid []string `json:"avoid,omitempty"`
 }
 
 // Scenarios sorted by least number of variants
