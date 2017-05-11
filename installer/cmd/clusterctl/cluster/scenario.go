@@ -8,13 +8,13 @@ import (
 // Scenario contains a set of variants which are tests mutually exclusively.
 type Scenario struct {
 	// Name is the human readable identifier for the scenario.
-	Name string
+	Name string `json:"name"`
 
 	// Variants are cluster configurations that are applied separately from each other.
-	Variants []*Config
+	Variants []*Config `json:"variants"`
 
 	// Avoid contains scenarios which this scenario should avoid.
-	Avoid []string
+	Avoid []string `json:"avoid"`
 }
 
 // Scenarios sorted by least number of variants

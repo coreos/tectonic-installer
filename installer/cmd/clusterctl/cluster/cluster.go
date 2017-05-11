@@ -18,10 +18,10 @@ func NewCluster(name string) *Cluster {
 // Cluster represents a Tectonic instance.
 type Cluster struct {
 	// Config describes the parameters the cluster is to be provisioned with.
-	*Config
+	*Config `json:"config"`
 
 	// Variants that will be applied to the cluster, key is the scenario the variant is from.
-	Scenarios map[string]*Config
+	Scenarios map[string]*Config `json:"scenarios"`
 }
 
 // Tolerable validates whether scenario s with name n can be applied to this cluster. A scenario may not be applied

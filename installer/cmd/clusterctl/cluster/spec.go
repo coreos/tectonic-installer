@@ -2,8 +2,8 @@ package cluster
 
 // Spec defines various cluster configurations that can be deployed using clusterctl.
 type Spec struct {
-	*Config
-	Scenarios
+	*Config `json:"config"`
+	Scenarios `json:"scenarios"`
 }
 
 // Build creates clusters for the named scenarios given. If no scenarios or an empty string is given the default will be used.
