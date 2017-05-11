@@ -21,7 +21,7 @@ type Cluster struct {
 	*Config `json:"config"`
 
 	// Variants that will be applied to the cluster, key is the scenario the variant is from.
-	Scenarios map[string]*Config `json:"scenarios"`
+	scenarios map[string]*Config
 }
 
 // Tolerable validates whether scenario s with name n can be applied to this cluster. A scenario may not be applied
@@ -30,7 +30,7 @@ func (c Cluster) Tolerable(s *Scenario) bool {
 	// should not be applied with avoided scenarios, or it's own scenario
 	rejects := append(s.Avoid, s.Name)
 
-	for cur := range c.Scenarios {
+	for cur := range c.scenarios {
 		for _, reject := range rejects {
 			if reject == cur {
 				return false
@@ -42,14 +42,14 @@ func (c Cluster) Tolerable(s *Scenario) bool {
 
 // Add applies the config to the cluster and records the scenarios name. Restrictions are not checked.
 func (c *Cluster) Add(scenario *Scenario, variantName string) error {
-	if c.Scenarios == nil {
-		c.Scenarios = map[string]*Config{}
+	if c.scenarios == nil {
+		c.scenarios = map[string]*Config{}
 	}
 
 	if scenario != nil {
 		for _, variant := range scenario.Variants {
 			if variant.Name == variantName {
-				c.Scenarios[scenario.Name] = variant
+				c.scenarios[scenario.Name] = variant
 				return nil
 			}
 		}
@@ -82,5 +82,5 @@ func (c Clusters) Swap(i, j int) {
 
 // Less returns true if the other item has more scenarios
 func (c Clusters) Less(i, j int) bool {
-	return len(c[i].Scenarios) < len(c[j].Scenarios)
+	return len(c[i].scenarios) < len(c[j].scenarios)
 }

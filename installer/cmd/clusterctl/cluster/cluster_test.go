@@ -100,7 +100,7 @@ func TestClusterAssign(t *testing.T) {
 	maxScenarios := 0
 	if assigned == nil {
 		t.Fatal("failed to assign to a cluster")
-	} else if len(assigned.Scenarios) > maxScenarios {
+	} else if len(assigned.scenarios) > maxScenarios {
 		t.Fatalf("should have minimized to %d (had %d)", maxScenarios, assigned)
 	}
 }

@@ -2,7 +2,7 @@ package cluster
 
 // Spec defines various cluster configurations that can be deployed using clusterctl.
 type Spec struct {
-	*Config `json:"config"`
+	*Config   `json:"config"`
 	Scenarios `json:"scenarios"`
 }
 

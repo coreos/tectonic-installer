@@ -6,7 +6,7 @@ import (
 
 // Config holds the configuration needed to setup an individual cluster.
 type Config struct {
-	Name string `json:"name"`
+	Name                              string `json:"name"`
 	server.TerraformApplyHandlerInput `json:"input"`
 }
 
