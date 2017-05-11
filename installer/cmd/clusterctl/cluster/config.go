@@ -11,7 +11,7 @@ type Config struct {
 }
 
 // Apply overrides configuration using values from another config. Currently only works on variables.
-func (c *Config) Apply(top Config) {
+func (c *Config) Apply(top *Config) {
 	for k, v := range top.Input.Variables {
 		c.Input.Variables[k] = v
 	}

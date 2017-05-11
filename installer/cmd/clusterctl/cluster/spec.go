@@ -27,5 +27,7 @@ func (spec *Spec) Build(patterns ...string) (clusters Clusters, err error) {
 		scenarios = append(scenarios, matchedScenarios...)
 	}
 
-	return Constrain(spec.Config, scenarios), nil
+	clusters = Constrain(spec.Config, scenarios)
+	clusters.Build()
+	return
 }

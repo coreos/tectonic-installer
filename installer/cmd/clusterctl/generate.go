@@ -18,12 +18,13 @@ func generate(specData []byte) error {
 		return fmt.Errorf("failed to create clusters from spec: %v", err)
 	}
 
-	for _, cluster := range clusters {
-		data, err := json.Marshal(&cluster)
+	for _, c := range clusters {
+		data, err := json.Marshal(&c)
 		if err != nil {
 			return fmt.Errorf("failed to output cluster: %v", err)
 		}
 
 		fmt.Println(string(data))
 	}
+	return nil
 }

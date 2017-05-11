@@ -58,6 +58,13 @@ func (c *Cluster) Add(scenario *Scenario, variantName string) error {
 	return errors.New("could not add: passed scenario was nil")
 }
 
+// Build applies all variants on this cluster.
+func (c *Cluster) Build() {
+	for _, s := range c.scenarios {
+		c.Config.Apply(s)
+	}
+}
+
 // Clusters are sorted by least number of scenarios.
 type Clusters []*Cluster
 
@@ -70,6 +77,13 @@ func (clusters Clusters) Assign(s *Scenario) *Cluster {
 		}
 	}
 	return nil
+}
+
+// Build applies variants for each cluster.
+func (c Clusters) Build() {
+	for _, s := range c {
+		s.Build()
+	}
 }
 
 func (c Clusters) Len() int {

@@ -90,7 +90,11 @@ func exampleSpec() *Spec {
 
 func TestRenderClusterFromSpec(t *testing.T) {
 	spec := exampleSpec()
-	data, err := json.Marshal(spec)
+	cluster, err := spec.Build()
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := json.Marshal(cluster)
 	if err != nil {
 		t.Fatal(err)
 	}

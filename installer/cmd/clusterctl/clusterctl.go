@@ -29,6 +29,7 @@ var (
 
 func init() {
 	flag.BoolVar(&flags.generate, "g", false, "output a set of clusters generated using a spec")
+	flag.Parse()
 }
 
 func main() {
@@ -40,10 +41,13 @@ func main() {
 
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
-		return fmt.Errorf("could not read file: ")
+		fmt.Printf("could not read file: %v", err)
+		os.Exit(1)
 	}
 
 	if flags.generate {
-		return generate(data)
+		if err := generate(data); err != nil {
+			fmt.Printf("Error: %v", err)
+		}
 	}
 }
