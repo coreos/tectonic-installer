@@ -133,9 +133,12 @@ module "workers" {
 module "dns" {
   source = "../../modules/azure/dns"
 
-  master_ip_addresses = "${module.masters.ip_address}"
-  console_ip_address  = "${module.masters.console_ip_address}"
-  etcd_ip_addresses   = "${module.etcd.ip_address}"
+  public_ip_type = "${var.tectonic_azure_public_ip_type}"
+
+  master_ip_address     = "${module.masters.ip_address}"
+  master_azure_fqdn     = "${module.masters.api_azure_fqdn}"
+  console_ip_address    = "${module.masters.console_ip_address}"
+  console_azure_fqdn     = "${module.masters.console_azure_fqdn}"
 
   base_domain  = "${var.tectonic_base_domain}"
   cluster_name = "${var.tectonic_cluster_name}"
@@ -143,7 +146,8 @@ module "dns" {
   location            = "${var.tectonic_azure_location}"
   resource_group_name = "${var.tectonic_azure_dns_resource_group}"
 
-  use_custom_fqdn = "${var.tectonic_azure_use_custom_fqdn}"
+  use_custom_fqdn   = "${var.tectonic_azure_use_custom_fqdn}"
+  external_dns_zone = "${var.tectonic_azure_external_dns_zone}"
 
   // TODO etcd list
   // TODO worker list

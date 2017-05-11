@@ -39,8 +39,8 @@ tectonic_azure_external_vnet_name = ""
 // Example: the subnet ID starts with `"/subscriptions/{subscriptionId}"` or `"/providers/{resourceProviderNamespace}"`.
 // tectonic_azure_external_worker_subnet_id = ""
 
-// 
-tectonic_azure_image_reference = ""
+// Type of public ip to allocate, Static or Dynamic
+// tectonic_azure_public_ip_type = "dynamic"
 
 // 
 tectonic_azure_location = ""
@@ -53,6 +53,9 @@ tectonic_azure_ssh_key = ""
 
 // If set to true, assemble the FQDN from the configuration. Otherwise, use the FQDN set up by Azure.
 tectonic_azure_use_custom_fqdn = true
+
+// If set to true, assumes an pre-existing zone name matching tectonic_base_domain
+tectonic_azure_external_dns_zone = false
 
 // Block of IP addresses used by the Resource Group. This should not overlap with any other networks, such as a private datacenter connected via ExpressRoute.
 tectonic_azure_vnet_cidr_block = "10.0.0.0/16"

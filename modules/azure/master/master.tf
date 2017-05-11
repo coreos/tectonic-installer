@@ -73,7 +73,7 @@ resource "azurerm_virtual_machine" "tectonic_master" {
   delete_os_disk_on_termination = true
 
   os_profile {
-    computer_name  = "tectonic-master-${count.index}"
+    computer_name  = "${var.cluster_name}-master-${count.index}"
     admin_username = "core"
     admin_password = ""
 

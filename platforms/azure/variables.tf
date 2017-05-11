@@ -69,6 +69,11 @@ variable "tectonic_azure_use_custom_fqdn" {
   default     = true
 }
 
+variable "tectonic_azure_external_dns_zone" {
+  description = "If true, assumes an existing dns zone with the tectonic_base_domain"
+  default = false
+}
+
 variable "tectonic_azure_external_master_subnet_id" {
   type = "string"
 
@@ -95,9 +100,14 @@ EOF
   default = ""
 }
 
-variable "tectonic_arm_client_id" {
-  type        = "string"
-  description = "Client ID of application to act on behalf of user"
+variable "tectonic_azure_public_ip_type" {
+  type = "string"
+
+  description = <<EOF
+(optional) Weither public ips are allocated as static or dynamic (default)
+EOF
+
+  default = "Dynamic"
 }
 
 variable "tectonic_arm_client_secret" {

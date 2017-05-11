@@ -18,18 +18,28 @@ variable "cluster_name" {
   type = "string"
 }
 
-variable "master_ip_addresses" {
-  type = "list"
+variable "master_ip_address" {
+  type = "string"
+}
+
+variable "master_azure_fqdn" {
+  type = "string"
 }
 
 variable "console_ip_address" {
   type = "string"
 }
 
-variable "etcd_ip_addresses" {
-  type = "list"
+variable "console_azure_fqdn" {
+  type = "string"
 }
 
 variable "use_custom_fqdn" {
   default = true
+}
+
+variable "external_dns_zone" { }
+
+variable "public_ip_type" {
+  type = "string"
 }

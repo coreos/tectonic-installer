@@ -59,3 +59,7 @@ variable "public_ssh_key" {
 variable "use_custom_fqdn" {
   default = true
 }
+
+variable "public_ip_type" {
+  type = "string"
+}
