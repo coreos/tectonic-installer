@@ -15,20 +15,6 @@ data "ignition_config" "main" {
     "${data.ignition_systemd_unit.bootkube.id}",
     "${data.ignition_systemd_unit.tectonic.id}",
   ]
-
-  users = [
-    "${data.ignition_user.core.id}",
-  ]
-}
-
-# TODO: Is this actually needed since required virtual_machine config creates
-# a core user and seeds the ssh key
-data "ignition_user" "core" {
-  name = "core"
-
-  ssh_authorized_keys = [
-    "${file(var.public_ssh_key)}",
-  ]
 }
 
 data "ignition_systemd_unit" "docker" {

@@ -5,18 +5,6 @@ data "ignition_config" "etcd" {
     "${data.ignition_systemd_unit.locksmithd.id}",
     "${data.ignition_systemd_unit.etcd3.*.id[count.index]}",
   ]
-
-  users = [
-    "${data.ignition_user.core.id}",
-  ]
-}
-
-data "ignition_user" "core" {
-  name = "core"
-
-  ssh_authorized_keys = [
-    "${file(var.public_ssh_key)}",
-  ]
 }
 
 data "ignition_systemd_unit" "locksmithd" {
