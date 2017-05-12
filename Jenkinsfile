@@ -75,7 +75,7 @@ pipeline {
             make plan
             make apply
             '''
-            stash name: 'cluster-state', includes: 'build'
+            stash name: 'aws-kubeconfig', includes: "build/tf-aws-${BRANCH_NAME}-${BUILD_ID}/generated/auth/kubeconfig"
             }
           }
         )
@@ -86,7 +86,7 @@ pipeline {
         parallel (
           "TerraForm: AWS": {
             unstash 'sanity'
-            unstash 'cluster-state'
+            unstash 'aws-kubeconfig'
             sh '''
             export PLATFORM=aws
             export CLUSTER="tf-${PLATFORM}-${BRANCH_NAME}-${BUILD_ID}"
@@ -107,14 +107,17 @@ pipeline {
     }
     stage("Conformance") {
       steps {
-        withEnv(["HOME=/go/src/k8s.io/kubernetes", "KUBE_OS_DISTRIBUTION=coreos", "KUBERNETES_CONFORMANCE_TEST=Y"]) {
-          docker.image("quay.io/coreos/kube-conformance:v1.6.2_coreos.0").inside {
-            unstash 'cluster-state'
-            sh '''
-                export CLUSTER=tf-aws-${BRANCH_NAME}-${BUILD_ID}
-                export KUBECONFIG=${WORKSPACE}/build/${CLUSTER}/generated/auth/kubeconfig
+        unstash 'aws-kubeconfig'
+        withEnv(["KUBECONFIG=${WORKSPACE}/build/tf-aws-${BRANCH_NAME}-${BUILD_ID}/generated/auth/kubeconfig"]) {
+          script {
+            docker.image("quay.io/coreos/kube-conformance:v1.6.2_coreos.0").inside {
+              sh '''
+                export HOME=/go/src/k8s.io/kubernetes
+                export KUBE_OS_DISTRIBUTION=coreos
+                export KUBERNETES_CONFORMANCE_TEST=Y
                 go run ${GOPATH}/src/k8s.io/kubernetes/hack/e2e.go -- -v --test -check_version_skew=false --test_args=\"ginkgo.focus='\\[Conformance\\]'\"
-            '''
+              '''
+            }
           }
         }
       }
