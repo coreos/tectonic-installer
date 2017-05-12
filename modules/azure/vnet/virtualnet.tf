@@ -21,3 +21,9 @@ resource "azurerm_subnet" "worker_subnet" {
   virtual_network_name = "${var.external_vnet_name == "" ? join("",azurerm_virtual_network.tectonic_vnet.*.name) : var.external_vnet_name }"
   address_prefix       = "${cidrsubnet(var.vnet_cidr_block, 4, 1)}"
 }
+
+resource "azurerm_route_table" "tectonic" {
+  name                = "${var.tectonic_cluster_name}-route-table"
+  location            = "${var.location}"
+  resource_group_name = "${var.resource_group_name}"
+}

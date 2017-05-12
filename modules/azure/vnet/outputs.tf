@@ -28,3 +28,7 @@ output "worker_subnet" {
 output "worker_subnet_name" {
   value = "${var.tectonic_cluster_name}_worker_subnet"
 }
+
+output "route_table_name" {
+  value = "${azurerm_route_table.tectonic.name}"
+}
