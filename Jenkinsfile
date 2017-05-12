@@ -46,7 +46,7 @@ pipeline {
         stash name: 'sanity', includes: 'installer/bin/sanity'
         }
       }
-      stage("Smoke Tests") {
+    stage("Smoke Tests") {
       steps {
         parallel (
           "TerraForm: AWS": {
@@ -60,7 +60,6 @@ pipeline {
                              ]
                              ]) {
             unstash 'installer'
-            unstash 'sanity'
             sh '''
             # Set required configuration
             export PLATFORM=aws
@@ -68,11 +67,6 @@ pipeline {
 
             # s3 buckets require lowercase names
             export TF_VAR_tectonic_cluster_name=$(echo ${CLUSTER} | awk '{print tolower($0)}')
-
-            # make core utils accessible to make
-            export PATH=/bin:${PATH}
-
-            # Create local config
             make localconfig
 
             # Use smoke test configuration for deployment
@@ -80,6 +74,22 @@ pipeline {
 
             make plan
             make apply
+            '''
+            stash name: 'cluster-state', includes: 'build'
+            }
+          }
+        )
+      }
+    }
+    stage("Sanity Tests") {
+      steps {
+        parallel (
+          "TerraForm: AWS": {
+            unstash 'sanity'
+            unstash 'cluster-state'
+            sh '''
+            export PLATFORM=aws
+            export CLUSTER="tf-${PLATFORM}-${BRANCH_NAME}-${BUILD_ID}"
 
             # TODO: replace in Go
             CONFIG=${WORKSPACE}/build/${CLUSTER}/terraform.tfvars
@@ -91,9 +101,22 @@ pipeline {
             export TEST_KUBECONFIG=${WORKSPACE}/build/${CLUSTER}/generated/auth/kubeconfig
             installer/bin/sanity -test.v -test.parallel=1
             '''
-            }
           }
         )
+      }
+    }
+    stage("Conformance") {
+      steps {
+        withEnv(["HOME=/go/src/k8s.io/kubernetes", "KUBE_OS_DISTRIBUTION=coreos", "KUBERNETES_CONFORMANCE_TEST=Y"]) {
+          docker.image("quay.io/coreos/kube-conformance:v1.6.2_coreos.0").inside {
+            unstash 'cluster-state'
+            sh '''
+                export CLUSTER=tf-aws-${BRANCH_NAME}-${BUILD_ID}
+                export KUBECONFIG=${WORKSPACE}/build/${CLUSTER}/generated/auth/kubeconfig
+                go run ${GOPATH}/src/k8s.io/kubernetes/hack/e2e.go -- -v --test -check_version_skew=false --test_args=\"ginkgo.focus='\\[Conformance\\]'\"
+            '''
+          }
+        }
       }
     }
   }
