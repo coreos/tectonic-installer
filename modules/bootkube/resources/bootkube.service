@@ -1,8 +1,11 @@
 [Unit]
 Description=Bootstrap a Kubernetes cluster
 ConditionPathExists=!/opt/tectonic/init_bootkube.done
+Requires=coreos-metadata.service
+After=coreos-metadata.service
 
 [Service]
+EnvironmentFile=/run/metadata/coreos
 Type=oneshot
 RemainAfterExit=true
 WorkingDirectory=/opt/tectonic

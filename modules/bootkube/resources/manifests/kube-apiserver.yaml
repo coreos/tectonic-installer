@@ -33,7 +33,7 @@ spec:
         - --bind-address=0.0.0.0
         - --secure-port=443
         - --insecure-port=0
-        - --advertise-address=${advertise_address}
+        - --advertise-address=$$ADVERTISE_ADDRESS
         - --etcd-servers=${etcd_servers}
         ${etcd_ca_flag}
         ${etcd_cert_flag}

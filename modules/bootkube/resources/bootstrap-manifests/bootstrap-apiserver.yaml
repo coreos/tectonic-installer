@@ -25,7 +25,7 @@ spec:
     ${etcd_cert_flag}
     ${etcd_key_flag}
     - --insecure-port=0
-    - --advertise-address=${advertise_address}
+    - --advertise-address=$$ADVERTISE_ADDRESS
     - --kubelet-client-certificate=/etc/kubernetes/secrets/apiserver.crt
     - --kubelet-client-key=/etc/kubernetes/secrets/apiserver.key
     - --secure-port=443
