@@ -49,10 +49,6 @@ fi
 unzip -o -d /opt/tectonic/ /opt/tectonic/tectonic.zip
 rm /opt/tectonic/tectonic.zip
 
-# Move optional experimental manifests into bootkube friendly locations
-[ -d /opt/tectonic/experimental ] && mv /opt/tectonic/experimental/* /opt/tectonic/manifests/ && rm -r /opt/tectonic/experimental
-[ -d /opt/tectonic/bootstrap-experimental ] && mv /opt/tectonic/bootstrap-experimental/* /opt/tectonic/bootstrap-manifests/ && rm -r /opt/tectonic/bootstrap-experimental
-
 # Populate the kubelet.env file.
 mkdir -p /etc/kubernetes
 echo "KUBELET_IMAGE_URL=${kubelet_image_url}" > /etc/kubernetes/kubelet.env
