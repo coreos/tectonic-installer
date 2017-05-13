@@ -106,20 +106,25 @@ pipeline {
       }
     }
     stage("Conformance") {
+      agent {
+        docker {
+          image 'quay.io/coreos/kube-conformance:v1.6.2_coreos.0'
+          label 'conformance'
+        }
+      }
+
+      environment {
+        HOME = "/go/src/k8s.io/kubernetes"
+        KUBE_OS_DISTRIBUTION = "coreos"
+        KUBERNETES_CONFORMANCE_TEST = "Y"
+        KUBECONFIG = "${WORKSPACE}/build/tf-aws-${BRANCH_NAME}-${BUILD_ID}/generated/auth/kubeconfig"
+      }
+
       steps {
         unstash 'aws-kubeconfig'
-        withEnv(["KUBECONFIG=${WORKSPACE}/build/tf-aws-${BRANCH_NAME}-${BUILD_ID}/generated/auth/kubeconfig"]) {
-          script {
-            docker.image("quay.io/coreos/kube-conformance:v1.6.2_coreos.0").inside {
-              sh '''
-                export HOME=/go/src/k8s.io/kubernetes
-                export KUBE_OS_DISTRIBUTION=coreos
-                export KUBERNETES_CONFORMANCE_TEST=Y
-                go run ${GOPATH}/src/k8s.io/kubernetes/hack/e2e.go -- -v --test -check_version_skew=false --test_args=\"ginkgo.focus='\\[Conformance\\]'\"
-              '''
-            }
-          }
-        }
+        sh '''
+          go run ${GOPATH}/src/k8s.io/kubernetes/hack/e2e.go -- -v --test --check-version-skew=false --test_args=\"ginkgo.focus='\\[Conformance\\]'\"
+        '''
       }
     }
   }
