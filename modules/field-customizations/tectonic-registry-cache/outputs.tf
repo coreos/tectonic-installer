@@ -19,7 +19,6 @@ output "ignition_systemd_units" {
   value = ["${data.ignition_config.main.systemd}"]
 }
 
-
 output "ignition_config_content" {
   value = "${data.ignition_config.main.rendered}"
 }

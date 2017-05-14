@@ -34,3 +34,9 @@ passwd:
           - docker
       ssh_authorized_keys:
         - {{.ssh_authorized_key}}
+{{if gt (len .append_configs) 0}}
+ignition:
+  config:
+    append: {{range .append_configs}}
+      - source: "{{.}}"
+{{end}}

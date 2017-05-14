@@ -1,4 +1,20 @@
 ---
+networkd:
+  units:
+    {{if .coreos_static_ip}}
+    - name: 00-tectonic.network
+      contents: |
+        [Match]
+        {{if .coreos_network_adapter}}
+        Name={{.coreos_network_adapter}}
+        {{else}}
+        MACAddress={{.coreos_mac_address}}
+        {{end}}
+        [Network]
+        DNS={{.coreos_network_dns}}
+        Address={{.coreos_network_address}}
+        Gateway={{.coreos_network_gateway}}
+    {{end}}
 systemd:
   units:
     - name: etcd-member.service
@@ -67,6 +83,7 @@ systemd:
           --mount volume=var-log,target=/var/log \
           --insecure-options={{.rkt_insecure_options}}"
         EnvironmentFile=/etc/kubernetes/kubelet.env
+        ExecStartPre=/usr/bin/systemctl set-environment KUBELET_IMAGE_URL={{.rkt_image_protocol}}${KUBELET_IMAGE_URL}
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/cni/net.d
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/checkpoint-secrets
@@ -138,7 +155,7 @@ storage:
       mode: 0644
       contents:
         inline: |
-          KUBELET_IMAGE_URL={{.rkt_image_protocol}}{{.kubelet_image_url}}
+          KUBELET_IMAGE_URL={{.kubelet_image_url}}
           KUBELET_IMAGE_TAG={{.kubelet_image_tag}}
     - path: /etc/hostname
       filesystem: root
@@ -156,3 +173,9 @@ passwd:
     - name: core
       ssh_authorized_keys:
         - {{.ssh_authorized_key}}
+{{if gt (len .append_configs) 0}}
+ignition:
+  config:
+    append: {{range .append_configs}}
+      - source: "{{.}}"
+{{end}}
