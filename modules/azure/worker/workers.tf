@@ -15,7 +15,7 @@ resource "azurerm_storage_account" "tectonic_worker" {
 }
 
 resource "azurerm_storage_container" "tectonic_worker" {
-  name                  = "vhd"
+  name                  = "${var.cluster_name}-vhd-worker"
   resource_group_name   = "${var.resource_group_name}"
   storage_account_name  = "${azurerm_storage_account.tectonic_worker.name}"
   container_access_type = "private"
