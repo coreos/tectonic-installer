@@ -54,7 +54,8 @@ DOCS := \
 	Documentation/variables/azure.md \
 	Documentation/variables/metal.md \
 	Documentation/variables/openstack-nova.md \
-	Documentation/variables/openstack-neutron.md
+	Documentation/variables/openstack-neutron.md \
+	Documentation/variables/vmware.md
 
 .PHONY: $(DOCS)
 $(DOCS): Documentation/variables/%.md: platforms/**/*.tf
@@ -76,7 +77,8 @@ EXAMPLES := \
 	examples/terraform.tfvars.azure \
 	examples/terraform.tfvars.metal \
 	examples/terraform.tfvars.openstack-nova \
-	examples/terraform.tfvars.openstack-neutron
+	examples/terraform.tfvars.openstack-neutron \
+	examples/terraform.tfvars.vmware
 
 .PHONY: $(EXAMPLES)
 $(EXAMPLES): examples/terraform.tfvars.%:
