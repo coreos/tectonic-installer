@@ -59,8 +59,8 @@ func TestCluster(t *testing.T) {
 
 	// wait for all nodes to become available
 	t.Run("AllNodesRunning", testAllNodesRunning)
-	t.Run("AllPodsRunning", testAllPodsRunning)
 	t.Run("GetLogs", testLogs)
+	t.Run("AllPodsRunning", testAllPodsRunning)
 	t.Run("KillAPIServer", testKillAPIServer)
 }
 
@@ -94,7 +94,8 @@ func testAllPodsRunning(t *testing.T) {
 
 		pods, err := c.Core().Pods("").List(v1.ListOptions{})
 		if err != nil {
-			t.Fatalf("could not list pods: %v", err)
+			t.Logf("could not list pods: %v", err)
+			pods = &v1.PodList{}
 		}
 
 		allReady := len(pods.Items) != 0
@@ -113,8 +114,6 @@ func testAllPodsRunning(t *testing.T) {
 }
 
 func testLogs(t *testing.T) {
-	// TODO: Diagnose why this fails.
-	t.SkipNow()
 	c := newClient(t)
 
 	namespace := "tectonic-system"

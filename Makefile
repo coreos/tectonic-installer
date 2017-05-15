@@ -75,7 +75,6 @@ docs:
 			'This document gives an overview of variables used in the bare metal platform of the Tectonic SDK.', \
 			platforms/metal/variables.tf)
 
-
 	$(call terraform-docs, Documentation/variables/vmware.md, \
 			'This document gives an overview of variables used in the VMware platform of the Tectonic SDK.', \
 			platforms/vmware/variables.tf)

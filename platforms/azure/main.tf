@@ -9,11 +9,13 @@ module "resource_group" {
 module "vnet" {
   source = "../../modules/azure/vnet"
 
-  location              = "${var.tectonic_azure_location}"
-  resource_group_name   = "${module.resource_group.name}"
-  tectonic_cluster_name = "${var.tectonic_cluster_name}"
-  vnet_cidr_block       = "${var.tectonic_azure_vnet_cidr_block}"
-  external_vnet_name    = "${var.tectonic_azure_external_vnet_name}"
+  location                  = "${var.tectonic_azure_location}"
+  resource_group_name       = "${module.resource_group.name}"
+  tectonic_cluster_name     = "${var.tectonic_cluster_name}"
+  vnet_cidr_block           = "${var.tectonic_azure_vnet_cidr_block}"
+  external_vnet_name        = "${var.tectonic_azure_external_vnet_name}"
+  external_master_subnet_id = "${var.tectonic_azure_external_master_subnet_id}"
+  external_worker_subnet_id = "${var.tectonic_azure_external_worker_subnet_id}"
 }
 
 module "etcd" {
@@ -27,7 +29,7 @@ module "etcd" {
   etcd_count      = "${var.tectonic_etcd_count}"
   base_domain     = "${var.tectonic_base_domain}"
   cluster_name    = "${var.tectonic_cluster_name}"
-  ssh_key         = "${var.tectonic_azure_ssh_key}"
+  public_ssh_key  = "${var.tectonic_azure_ssh_key}"
   virtual_network = "${module.vnet.vnet_id}"
   subnet          = "${module.vnet.master_subnet}"
 }
@@ -56,6 +58,8 @@ module "masters" {
   bootkube_service             = "${module.bootkube.systemd_service}"
   tectonic_service             = "${module.tectonic.systemd_service}"
   tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
+
+  use_custom_fqdn = "${var.tectonic_azure_use_custom_fqdn}"
 }
 
 module "workers" {

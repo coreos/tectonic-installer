@@ -11,8 +11,8 @@ resource "matchbox_group" "coreos-install" {
   metadata {
     coreos_channel     = "${var.tectonic_cl_channel}"
     coreos_version     = "${var.tectonic_metal_cl_version}"
-    ignition_endpoint  = "${var.tectonic_metal_matchbox_http_endpoint}/ignition"
-    baseurl            = "${var.tectonic_metal_matchbox_http_endpoint}/assets/coreos"
+    ignition_endpoint  = "${var.tectonic_metal_matchbox_http_url}/ignition"
+    baseurl            = "${var.tectonic_metal_matchbox_http_url}/assets/coreos"
     ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
   }
 }
@@ -31,13 +31,15 @@ resource "matchbox_group" "controller" {
 
   metadata {
     domain_name          = "${element(var.tectonic_metal_controller_domains, count.index)}"
+    etcd_enabled         = "${var.tectonic_experimental ? "false" : "true"}"
     etcd_name            = "${element(var.tectonic_metal_controller_names, count.index)}"
     etcd_initial_cluster = "${join(",", formatlist("%s=http://%s:2380", var.tectonic_metal_controller_names, var.tectonic_metal_controller_domains))}"
     k8s_dns_service_ip   = "${var.tectonic_kube_dns_service_ip}"
     ssh_authorized_key   = "${var.tectonic_ssh_authorized_key}"
+    exclude_tectonic     = "${var.tectonic_vanilla_k8s}"
 
     # extra data
-    etcd_image_tag    = "${var.tectonic_versions["etcd"]}"
+    etcd_image_tag    = "v${var.tectonic_versions["etcd"]}"
     kubelet_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
     kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
   }
