@@ -1,11 +1,9 @@
-data "azurerm_client_config" "current" {}
-
 data "ignition_config" "main" {
   files = [
     "${data.ignition_file.kubeconfig.id}",
     "${data.ignition_file.kubelet-env.id}",
     "${data.ignition_file.max-user-watches.id}",
-    "${data.ignition_file.cloud-provider.id}",
+    "${data.ignition_file.cloud-config.id}",
   ]
 
   systemd = [
@@ -73,31 +71,12 @@ EOF
   }
 }
 
-data "template_file" "cloud-provider" {
-  template = "${file("${path.module}/resources/cloud-provider.json")}"
-
-  vars {
-    cloud = "${var.arm_cloud}",
-    tenant_id = "${data.azurerm_client_config.current.tenant_id}",
-    subscription_id = "${data.azurerm_client_config.current.subscription_id}",
-    aad_client_id = "${data.azurerm_client_config.current.client_id}",
-    aad_client_secret = "${var.arm_client_secret}",
-    resource_group_name = "${var.resource_group_name}",
-    location = "${var.location}",
-    subnet_name = "${var.subnet_name}",
-    security_group_name = "${var.nsg_name}",
-    vnet_name = "${var.virtual_network}",
-    route_table_name = "${var.route_table_name}",
-    primary_availability_set_name = "${var.primary_availability_set_name}"
-  }
-}
-
-data "ignition_file" "cloud-provider" {
+data "ignition_file" "cloud-config" {
   filesystem = "root"
-  path       = "/etc/kubernetes/azure.json"
+  path       = "/etc/kubernetes/cloud-config.json"
   mode       = "420"
   content {
-    content = "${data.template_file.cloud-provider.rendered}"
+    content = "${var.cloud_config}"
   }
 }
 

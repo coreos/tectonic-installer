@@ -58,6 +58,7 @@ spec:
         - --oidc-groups-claim=${oidc_groups_claim}
         - --oidc-ca-file=/etc/kubernetes/secrets/ca.crt
         - --cloud-provider=${cloud_provider}
+        ${cloud_config_flag}
         - --audit-log-path=/var/log/kubernetes/kube-apiserver-audit.log
         - --audit-log-maxage=30
         - --audit-log-maxbackup=3

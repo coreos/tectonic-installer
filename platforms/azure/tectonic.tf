@@ -1,6 +1,7 @@
 module "bootkube" {
   source         = "../../modules/bootkube"
-  cloud_provider = ""
+  cloud_provider = "azure"
+  cloud_config   = "${module.cloud-config.content}"
 
   kube_apiserver_url = "https://${module.masters.api_external_fqdn}:443"
   oidc_issuer_url    = "https://${module.masters.ingress_external_fqdn}/identity"

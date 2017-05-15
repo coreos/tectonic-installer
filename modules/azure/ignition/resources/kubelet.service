@@ -34,7 +34,7 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --client-ca-file=/etc/kubernetes/ca.crt \
   --anonymous-auth=false \
   --cloud-provider=azure \
-  --cloud-config=/etc/kubernetes/azure.json
+  --cloud-config=/etc/kubernetes/cloud-config.json
 ExecStop=-/usr/bin/rkt stop --uuid-file=/var/run/kubelet-pod.uuid
 Restart=always
 RestartSec=10

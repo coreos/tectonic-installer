@@ -50,6 +50,12 @@ variable "cloud_provider" {
   type        = "string"
 }
 
+variable "cloud_config" {
+  description = "The cloud provider configuration file contents"
+  type = "string"
+  default = ""
+}
+
 variable "service_cidr" {
   description = "A CIDR notation IP range from which to assign service cluster IPs"
   type        = "string"

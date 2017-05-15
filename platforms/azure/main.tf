@@ -44,8 +44,8 @@ module "etcd" {
   container_image = "${element(split(":", var.tectonic_container_images["etcd"]), 1)}"
 }
 
-module "ignition-masters" {
-  source = "../../modules/azure/ignition"
+module "cloud-config" {
+  source = "../../modules/azure/cloud-config"
 
   arm_cloud                     = "AzurePublicCloud"
   arm_client_secret             = "${var.tectonic_arm_client_secret}"
@@ -56,8 +56,13 @@ module "ignition-masters" {
   nsg_name                      = "${module.vnet.security_group}"
   virtual_network               = "${module.vnet.vnet_id}"
   primary_availability_set_name = "${data.null_data_source.consts.outputs.master_as_name}"
-  public_ssh_key                = "${var.tectonic_azure_ssh_key}"
+}
 
+module "ignition-masters" {
+  source = "../../modules/azure/ignition"
+
+  public_ssh_key                = "${var.tectonic_azure_ssh_key}"
+  cloud_config              = "${module.cloud-config.content}"
   kubeconfig_content        = "${module.bootkube.kubeconfig}"
   kube_dns_service_ip       = "${var.tectonic_kube_dns_service_ip}"
   kubelet_node_label        = "node-role.kubernetes.io/master"
@@ -93,17 +98,8 @@ module "masters" {
 module "ignition-workers" {
   source = "../../modules/azure/ignition"
 
-  arm_cloud                     = "AzurePublicCloud"
-  arm_client_secret             = "${var.tectonic_arm_client_secret}"
-  resource_group_name           = "${module.resource_group.name}"
-  location                      = "${var.tectonic_azure_location}"
-  route_table_name              = "${module.vnet.route_table_name}"
-  subnet_name                   = "${module.vnet.master_subnet_name}"
-  nsg_name                      = "${module.vnet.security_group}"
-  virtual_network               = "${module.vnet.vnet_id}"
-  primary_availability_set_name = "${data.null_data_source.consts.outputs.master_as_name}"
-  public_ssh_key                = "${var.tectonic_azure_ssh_key}"
-
+  public_ssh_key      = "${var.tectonic_azure_ssh_key}"
+  cloud_config        = "${module.cloud-config.content}"
   kubeconfig_content  = "${module.bootkube.kubeconfig}"
   kube_dns_service_ip = "${var.tectonic_kube_dns_service_ip}"
   kubelet_node_label  = "node-role.kubernetes.io/node"
@@ -122,14 +118,14 @@ module "workers" {
   vm_size             = "${var.tectonic_azure_worker_vm_size}"
   cl_channel          = "${var.tectonic_cl_channel}"
 
-  worker_count    = "${var.tectonic_worker_count}"
-  base_domain     = "${var.tectonic_base_domain}"
-  cluster_name    = "${var.tectonic_cluster_name}"
-  virtual_network = "${module.vnet.vnet_id}"
-  subnet          = "${module.vnet.worker_subnet}"
-  nsg_id          = "${module.vnet.security_group_id}"
-  custom_data     = "${module.ignition-workers.ignition}"
-  public_ssh_key  = "${var.tectonic_azure_ssh_key}"
+  worker_count          = "${var.tectonic_worker_count}"
+  base_domain           = "${var.tectonic_base_domain}"
+  cluster_name          = "${var.tectonic_cluster_name}"
+  virtual_network       = "${module.vnet.vnet_id}"
+  subnet                = "${module.vnet.worker_subnet}"
+  nsg_id                = "${module.vnet.security_group_id}"
+  custom_data           = "${module.ignition-workers.ignition}"
+  public_ssh_key        = "${var.tectonic_azure_ssh_key}"
 }
 
 module "dns" {

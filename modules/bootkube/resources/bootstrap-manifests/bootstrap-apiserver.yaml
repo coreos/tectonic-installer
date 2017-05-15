@@ -18,38 +18,39 @@ spec:
     - --allow-privileged=true
     - --authorization-mode=RBAC
     - --bind-address=0.0.0.0
-    - --client-ca-file=/etc/kubernetes/secrets/ca.crt
+    - --client-ca-file=/etc/kubernetes/bootstrap-secrets/ca.crt
     - --cloud-provider=${cloud_provider}
+    ${cloud_config_flag}
     - --etcd-servers=${etcd_servers}
     ${etcd_ca_flag}
     ${etcd_cert_flag}
     ${etcd_key_flag}
     - --insecure-port=0
     - --advertise-address=${advertise_address}
-    - --kubelet-client-certificate=/etc/kubernetes/secrets/apiserver.crt
-    - --kubelet-client-key=/etc/kubernetes/secrets/apiserver.key
+    - --kubelet-client-certificate=/etc/kubernetes/bootstrap-secrets/apiserver.crt
+    - --kubelet-client-key=/etc/kubernetes/bootstrap-secrets/apiserver.key
     - --secure-port=443
-    - --service-account-key-file=/etc/kubernetes/secrets/service-account.pub
+    - --service-account-key-file=/etc/kubernetes/bootstrap-secrets/service-account.pub
     - --service-cluster-ip-range=${service_cidr}
     - --storage-backend=etcd3
-    - --tls-ca-file=/etc/kubernetes/secrets/ca.crt
-    - --tls-cert-file=/etc/kubernetes/secrets/apiserver.crt
-    - --tls-private-key-file=/etc/kubernetes/secrets/apiserver.key
+    - --tls-ca-file=/etc/kubernetes/bootstrap-secrets/ca.crt
+    - --tls-cert-file=/etc/kubernetes/bootstrap-secrets/apiserver.crt
+    - --tls-private-key-file=/etc/kubernetes/bootstrap-secrets/apiserver.key
     volumeMounts:
     - mountPath: /etc/ssl/certs
       name: ssl-certs-host
       readOnly: true
-    - mountPath: /etc/kubernetes/secrets
-      name: secrets
+    - mountPath: /etc/kubernetes
+      name: etc-kubernetes
       readOnly: true
     - mountPath: /var/lock
       name: var-lock
       readOnly: false
   hostNetwork: true
   volumes:
-  - name: secrets
+  - name: etc-kubernetes
     hostPath:
-      path: /etc/kubernetes/bootstrap-secrets
+      path: /etc/kubernetes
   - name: ssl-certs-host
     hostPath:
       path: /usr/share/ca-certificates
