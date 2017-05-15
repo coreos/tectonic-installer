@@ -27,7 +27,7 @@ resource "azurerm_storage_container" "tectonic_master" {
 }
 
 resource "azurerm_availability_set" "tectonic_master" {
-  name                = "${var.availability_set_name}"
+  name                = "${var.cluster_name}-master-availability-set"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
 }

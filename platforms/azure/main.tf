@@ -1,6 +1,6 @@
 data "null_data_source" "consts" {
   inputs = {
-    master_as_name = "${var.tectonic_cluster_name}-master-availability-set"
+    worker_as_name = "${var.tectonic_cluster_name}-worker-availability-set"
   }
 }
 
@@ -52,10 +52,10 @@ module "cloud-config" {
   resource_group_name           = "${module.resource_group.name}"
   location                      = "${var.tectonic_azure_location}"
   route_table_name              = "${module.vnet.route_table_name}"
-  subnet_name                   = "${module.vnet.master_subnet_name}"
+  subnet_name                   = "${module.vnet.worker_subnet_name}"
   nsg_name                      = "${module.vnet.security_group}"
   virtual_network               = "${module.vnet.vnet_id}"
-  primary_availability_set_name = "${data.null_data_source.consts.outputs.master_as_name}"
+  primary_availability_set_name = "${data.null_data_source.consts.outputs.worker_as_name}"
 }
 
 module "ignition-masters" {
@@ -89,7 +89,6 @@ module "masters" {
   subnet                = "${module.vnet.master_subnet}"
   nsg_id                = "${module.vnet.security_group_id}"
   custom_data           = "${module.ignition-masters.ignition}"
-  availability_set_name = "${data.null_data_source.consts.outputs.master_as_name}"
   public_ssh_key        = "${var.tectonic_azure_ssh_key}"
   public_ip_type        = "${var.tectonic_azure_public_ip_type}"
   use_custom_fqdn       = "${var.tectonic_azure_use_custom_fqdn}"
@@ -126,6 +125,7 @@ module "workers" {
   nsg_id                = "${module.vnet.security_group_id}"
   custom_data           = "${module.ignition-workers.ignition}"
   public_ssh_key        = "${var.tectonic_azure_ssh_key}"
+  availability_set_name = "${data.null_data_source.consts.outputs.worker_as_name}"
 }
 
 module "dns" {

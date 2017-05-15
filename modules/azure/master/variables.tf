@@ -48,10 +48,6 @@ variable "custom_data" {
   type = "string"
 }
 
-variable "availability_set_name" {
-  type = "string"
-}
-
 variable "public_ssh_key" {
   type = "string"
 }

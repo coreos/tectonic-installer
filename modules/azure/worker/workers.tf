@@ -22,7 +22,7 @@ resource "azurerm_storage_container" "tectonic_worker" {
 }
 
 resource "azurerm_availability_set" "tectonic_worker" {
-  name                = "${var.cluster_name}-worker-availability-set"
+  name                = "${var.availability_set_name}"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
 }
