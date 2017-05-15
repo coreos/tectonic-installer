@@ -28,27 +28,27 @@ variable "tectonic_vmware_password" {
 
 variable "tectonic_vmware_sslselfsigned" {
   type        = "string"
-  description = "Is the vCenter certificate Self-Signed?"
+  description = "Is the vCenter certificate Self-Signed? Example: `tectonic_vmware_sslselfsigned = \"true\"` "
 }
 
 variable "tectonic_vmware_folder" {
   type        = "string"
-  description = "vSphere Folder to create and add the Tectonic objects to"
+  description = "vSphere Folder to create and add the Tectonic nodes"
 }
 
 variable "tectonic_vmware_datastore" {
   type        = "string"
-  description = "Datastore to deploy the Cluster into"
+  description = "Datastore to deploy Tectonic"
 }
 
 variable "tectonic_vmware_network" {
   type        = "string"
-  description = "Portgroup to attach the cluster nodes into"
+  description = "Portgroup to attach the cluster nodes"
 }
 
 variable "tectonic_vmware_datacenter" {
   type        = "string"
-  description = "Virtual DataCenter to deploy VMs into"
+  description = "Virtual DataCenter to deploy VMs"
 }
 
 variable "tectonic_vmware_cluster" {
@@ -58,14 +58,14 @@ variable "tectonic_vmware_cluster" {
 
 // # Global
 
-variable "tectonic_ssh_authorized_key" {
+variable "tectonic_vmware_ssh_authorized_key" {
   type        = "string"
   description = "SSH public key to use as an authorized key. Example: `\"ssh-rsa AAAB3N...\"`"
 }
 
 variable "tectonic_vmware_node_dns" {
   type        = "string"
-  description = "DNS Server in use by nodes"
+  description = "DNS Server to be useddd by Virtual Machine(s)"
 }
 
 variable "tectonic_vmware_controller_domain" {
@@ -85,28 +85,44 @@ variable "tectonic_vmware_ingress_domain" {
 variable "tectonic_vmware_etcd_vcpu" {
   type        = "string"
   default     = "1"
-  description = "etcd node vCPU count"
+  description = "etcd node(s) VM vCPU count"
 }
 
 variable "tectonic_vmware_etcd_memory" {
   type        = "string"
   default     = "4096"
-  description = "etcd node Memory Size in MB"
+  description = "etcd node(s) VM Memory Size in MB"
 }
 
 variable "tectonic_vmware_etcd_hostnames" {
-  type        = "map"
-  description = "terraform map of Virtual Machine Hostnames"
+  type = "map"
+
+  description = <<EOF
+  Terraform map of etcd node(s) Hostnames, Example: 
+  tectonic_vmware_etcd_hostnames = {
+  "0" = "mycluster-etcd-0"
+  "1" = "mycluster-etcd-1"
+  "2" = "mycluster-etcd-2"
+}
+EOF
 }
 
 variable "tectonic_vmware_etcd_ip" {
-  type        = "map"
-  description = "terraform map of Virtual Machine IPs"
+  type = "map"
+
+  description = <<EOF
+  Terraform map of etcd node(s) IP Addresses, Example: 
+  tectonic_vmware_etcd_ip = {
+  "0" = "192.168.246.10/24"
+  "1" = "192.168.246.11/24"
+  "2" = "192.168.246.12/24"
+}
+EOF
 }
 
 variable "tectonic_vmware_etcd_gateway" {
   type        = "string"
-  description = "gateway IP address for etcd Virtual Machine "
+  description = "Default Gateway IP address for etcd nodes(s)"
 }
 
 // ## Masters
@@ -114,28 +130,42 @@ variable "tectonic_vmware_etcd_gateway" {
 variable "tectonic_vmware_master_vcpu" {
   type        = "string"
   default     = "1"
-  description = "master node vCPU count"
+  description = "Master node(s) vCPU count"
 }
 
 variable "tectonic_vmware_master_memory" {
   type        = "string"
   default     = "4096"
-  description = "master node Memory Size in MB"
+  description = "Master node(s) Memory Size in MB"
 }
 
 variable "tectonic_vmware_master_hostnames" {
-  type        = "map"
-  description = "terraform map of Virtual Machine Hostnames"
+  type = "map"
+
+  description = <<EOF
+  Terraform map of Master node(s) Hostnames, Example: 
+  tectonic_vmware_master_hostnames = {
+  "0" = "mycluster-master-0"
+  "1" = "mycluster-master-1"
+}
+EOF
 }
 
 variable "tectonic_vmware_master_ip" {
-  type        = "map"
-  description = "terraform map of Virtual Machine IPs"
+  type = "map"
+
+  description = <<EOF
+  Terraform map of Master node(s) IP Addresses, Example: 
+  tectonic_vmware_vm_masterips = {
+  "0" = "192.168.246.20/24"
+  "1" = "192.168.246.21/24"
+}
+EOF
 }
 
 variable "tectonic_vmware_master_gateway" {
   type        = "string"
-  description = "gateway IP address for master Virtual Machine "
+  description = "Default Gateway IP address for Master nodes(s)"
 }
 
 // ## Workers
@@ -143,26 +173,40 @@ variable "tectonic_vmware_master_gateway" {
 variable "tectonic_vmware_worker_vcpu" {
   type        = "string"
   default     = "1"
-  description = "worker node vCPU count"
+  description = "Worker node(s) vCPU count"
 }
 
 variable "tectonic_vmware_worker_memory" {
   type        = "string"
   default     = "4096"
-  description = "worker node Memory Size in MB"
+  description = "Worker node(s) Memory Size in MB"
 }
 
 variable "tectonic_vmware_worker_hostnames" {
-  type        = "map"
-  description = "terraform map of Virtual Machine Hostnames"
+  type = "map"
+
+  description = <<EOF
+  Terraform map of Worker node(s) Hostnames, Example: 
+  tectonic_vmware_vm_worker_hostnames = {
+  "0" = "mycluster-worker-0"
+  "1" = "mycluster-worker-1"
+}
+EOF
 }
 
 variable "tectonic_vmware_worker_ip" {
-  type        = "map"
-  description = "terraform map of Virtual Machine IPs"
+  type = "map"
+
+  description = <<EOF
+  Terraform map of Worker node(s) IP Addresses, Example: 
+  tectonic_vmware_vm_workerips = {
+  "0" = "192.168.246.30/24"
+  "1" = "192.168.246.31/24"
+}
+EOF
 }
 
 variable "tectonic_vmware_worker_gateway" {
   type        = "string"
-  description = "gateway IP address for worker Virtual Machine "
+  description = "Default Gateway IP address for Master nodes(s)"
 }

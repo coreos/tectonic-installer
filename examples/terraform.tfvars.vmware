@@ -2,7 +2,7 @@
 // e-mail address used to login to Tectonic
 tectonic_admin_email = ""
 
-// bcrypt hash of admin password to use with Tectonic Console. You can download bcrypt from; https://github.com/coreos/bcrypt-tool/releases
+// bcrypt hash of admin password to use with Tectonic Console
 tectonic_admin_password_hash = ""
 
 // The base DNS domain of the cluster. Example: `openstack.dev.coreos.systems`.
@@ -63,116 +63,130 @@ tectonic_license_path = ""
 // The number of master nodes to be created.
 tectonic_master_count = "1"
 
-// The domain name which resolves to controller node(s)
-tectonic_vmware_controller_domain = ""
-
-// The domain name which resolves to Tectonic Ingress (i.e. worker node(s))
-tectonic_vmware_ingress_domain = ""
-
 // The path the pull secret file in JSON format.
 tectonic_pull_secret_path = ""
 
 // A CIDR notation IP range from which to assign service cluster IPs
 tectonic_service_cidr = "10.3.0.0/16"
 
-// SSH public key to use as an authorized key. Example: `"ssh-rsa AAAB3N..."`
-tectonic_ssh_authorized_key = ""
-
 // If set to true, a vanilla Kubernetes cluster will be deployed, omitting the tectonic assets.
 tectonic_vanilla_k8s = false
 
-// The number of worker nodes to be created.
-tectonic_worker_count = "3"
-
-// VMware vCenter Server FQDN or IP Address
-tectonic_vmware_server = ""
-
-// (Optional)  VMware vCenter Login credentials. You will be prompted if commented out
-// tectonic_vmware_username = ""
-// tectonic_vmware_password = ""
-
-// VMware vCenter SSL connectivity. Set to true if vCenter SSL certificate is self-signed
-tectonic_vmware_sslselfsigned = true
-
-// VMware DataCenter (vDC) to deploy Tectonic into
-tectonic_vmware_datacenter = ""
-
-// VMware vSphere Cluster Name 
+// vCenter Cluster used to create VMs under
 tectonic_vmware_cluster = ""
 
-// VMware Datastore. Note: Storage Clusters are not yet supported in Terraform
+// The domain name which resolves to controller node(s)
+tectonic_vmware_controller_domain = ""
+
+// Virtual DataCenter to deploy VMs
+tectonic_vmware_datacenter = ""
+
+// Datastore to deploy Tectonic
 tectonic_vmware_datastore = ""
 
-// VMware Folder Name to create Virtual Machines in
-tectonic_vmware_folder = ""	
-
-// VMware Port Group to attach nodes
-tectonic_vmware_network = ""
-
-// VMware CoreOS Container Linux Template Name
-tectonic_vmware_vm_template = ""
-
-// VMware CoreOS Container Linux Template Folder
-tectonic_vmware_vm_template_folder = ""
-
-// (Optional) Number of vCPUs to assign ETCD nodes
-// tectonic_vmware_etcd_vcpu = 1
-
-// (Optional) Memory size to assign ETCD nodes in MB
-// tectonic_vmware_etcd_memory = 2048
-
-// (Optional) Number of vCPUs to assign Master nodes
-// tectonic_vmware_master_vm_vcpu= 1
-
-// (Optional) Memory size to assign Master nodes in MB
-// tectonic_vmware_master_vm_memory = 4096
-
-// (Optional) Number of vCPUs to assign Worker nodes
-// tectonic_vmware_worker_vm_vcpu = 2
-
-// (Optional) Memory size to assign Worker nodes in MB
-// tectonic_vmware_worker_vm_memory = 4096
-
-// Hostnames of ETCD Nodes 
-// ex: tectonic_vmware_etcd_hostnames = {
-//  "0" = "etcd0"
-//  "1" = "etcd1"
-//  "2" = "etcd2"
-//  "3" = "etcd3"
-//  "4" = "etcd5"
-// }
-tectonic_vmware_etcd_hostnames = {}
-
-// IP Address of ETCD Nodes 
-// ex: tectonic_vmware_etcd_hostnames = {
-//  "0" = "etcd0"
-//  "1" = "etcd1"
-//  "2" = "etcd2"
-//  "3" = "etcd3"
-//  "4" = "etcd5"
-// }
-tectonic_vmware_etcd_ip = {}
-
-// Default gateway IP Address of ETCD node
+// Default Gateway IP address for etcd nodes(s)
 tectonic_vmware_etcd_gateway = ""
 
-// Hostnames of Master Nodes 
-tectonic_vmware_master_hostnames = {}
+// Terraform map of etcd node(s) Hostnames, Example: 
+//   tectonic_vmware_etcd_hostnames = {
+//   "0" = "mycluster-etcd-0"
+//   "1" = "mycluster-etcd-1"
+//   "2" = "mycluster-etcd-2"
+// }
+tectonic_vmware_etcd_hostnames = ""
 
-// IP Address of Master Nodes 
-tectonic_vmware_master_ip = {}
+// Terraform map of etcd node(s) IP Addresses, Example: 
+//   tectonic_vmware_etcd_ip = {
+//   "0" = "192.168.246.10/24"
+//   "1" = "192.168.246.11/24"
+//   "2" = "192.168.246.12/24"
+// }
+tectonic_vmware_etcd_ip = ""
 
-// Default gateway IP Address of Master nodes
+// etcd node(s) VM Memory Size in MB
+tectonic_vmware_etcd_memory = "4096"
+
+// etcd node(s) VM vCPU count
+tectonic_vmware_etcd_vcpu = "1"
+
+// vSphere Folder to create and add the Tectonic nodes
+tectonic_vmware_folder = ""
+
+// The domain name which resolves to Tectonic Ingress (i.e. worker node(s))
+tectonic_vmware_ingress_domain = ""
+
+// Default Gateway IP address for Master nodes(s)
 tectonic_vmware_master_gateway = ""
 
-// Hostnames of Worker Nodes 
-tectonic_vmware_worker_hostnames = {}
+// Terraform map of Master node(s) Hostnames, Example: 
+//   tectonic_vmware_master_hostnames = {
+//   "0" = "mycluster-master-0"
+//   "1" = "mycluster-master-1"
+// }
+tectonic_vmware_master_hostnames = ""
 
-// IP Address of Worker Nodes 
-tectonic_vmware_worker_ip = {}
+// Terraform map of Master node(s) IP Addresses, Example: 
+//   tectonic_vmware_vm_masterips = {
+//   "0" = "192.168.246.20/24"
+//   "1" = "192.168.246.21/24"
+// }
+tectonic_vmware_master_ip = ""
 
-// Gateway IP Address of Worker nodes
+// Master node(s) Memory Size in MB
+tectonic_vmware_master_memory = "4096"
+
+// Master node(s) vCPU count
+tectonic_vmware_master_vcpu = "1"
+
+// Portgroup to attach the cluster nodes
+tectonic_vmware_network = ""
+
+// DNS Server to be useddd by Virtual Machine(s)
+tectonic_vmware_node_dns = ""
+
+// Password to Use
+tectonic_vmware_password = ""
+
+// vCenter Server IP/FQDN
+tectonic_vmware_server = ""
+
+// SSH public key to use as an authorized key. Example: `"ssh-rsa AAAB3N..."`
+tectonic_vmware_ssh_authorized_key = ""
+
+// Is the vCenter certificate Self-Signed? Example: `tectonic_vmware_sslselfsigned = "true"`
+tectonic_vmware_sslselfsigned = ""
+
+// Username to Use to connect to vCenter
+tectonic_vmware_username = "Administrator@vsphere.local"
+
+// Virtual Machine template of CoreOS Container Linux.
+tectonic_vmware_vm_template = ""
+
+// Folder for VM template of CoreOS Container Linux.
+tectonic_vmware_vm_template_folder = ""
+
+// Default Gateway IP address for Master nodes(s)
 tectonic_vmware_worker_gateway = ""
 
-// DNS Server IP Address
-tectonic_vmware_node_dns = ""
+// Terraform map of Worker node(s) Hostnames, Example: 
+//   tectonic_vmware_vm_worker_hostnames = {
+//   "0" = "mycluster-worker-0"
+//   "1" = "mycluster-worker-1"
+// }
+tectonic_vmware_worker_hostnames = ""
+
+// Terraform map of Worker node(s) IP Addresses, Example: 
+//   tectonic_vmware_vm_workerips = {
+//   "0" = "192.168.246.30/24"
+//   "1" = "192.168.246.31/24"
+// }
+tectonic_vmware_worker_ip = ""
+
+// Worker node(s) Memory Size in MB
+tectonic_vmware_worker_memory = "4096"
+
+// Worker node(s) vCPU count
+tectonic_vmware_worker_vcpu = "1"
+
+// The number of worker nodes to be created.
+tectonic_worker_count = "3"

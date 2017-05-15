@@ -3,7 +3,7 @@ module "etcd" {
   instance_count = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count }"
 
   cluster_name       = "${var.tectonic_cluster_name}"
-  core_public_keys   = ["${var.tectonic_ssh_authorized_key}"]
+  core_public_keys   = ["${var.tectonic_vmware_ssh_authorized_key}"]
   container_image    = "${var.tectonic_container_images["etcd"]}"
   base_domain        = "${var.tectonic_base_domain}"
   external_endpoints = ["${compact(var.tectonic_etcd_servers)}"]
@@ -28,7 +28,7 @@ module "masters" {
   source           = "../../modules/vmware/node"
   instance_count   = "${var.tectonic_master_count}"
   base_domain      = "${var.tectonic_base_domain}"
-  core_public_keys = ["${var.tectonic_ssh_authorized_key}"]
+  core_public_keys = ["${var.tectonic_vmware_ssh_authorized_key}"]
   hostname         = "${var.tectonic_vmware_master_hostnames}"
   dns_server       = "${var.tectonic_vmware_node_dns}"
   ip_address       = "${var.tectonic_vmware_master_ip}"
@@ -60,7 +60,7 @@ module "workers" {
   source           = "../../modules/vmware/node"
   instance_count   = "${var.tectonic_worker_count}"
   base_domain      = "${var.tectonic_base_domain}"
-  core_public_keys = ["${var.tectonic_ssh_authorized_key}"]
+  core_public_keys = ["${var.tectonic_vmware_ssh_authorized_key}"]
   hostname         = "${var.tectonic_vmware_worker_hostnames}"
   dns_server       = "${var.tectonic_vmware_node_dns}"
   ip_address       = "${var.tectonic_vmware_worker_ip}"
