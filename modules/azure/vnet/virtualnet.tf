@@ -12,6 +12,7 @@ resource "azurerm_subnet" "master_subnet" {
   resource_group_name  = "${var.resource_group_name}"
   virtual_network_name = "${var.external_vnet_name == "" ? join("",azurerm_virtual_network.tectonic_vnet.*.name) : var.external_vnet_name }"
   address_prefix       = "${cidrsubnet(var.vnet_cidr_block, 4, 0)}"
+  route_table_id       = "${azurerm_route_table.tectonic.id}"
 }
 
 resource "azurerm_subnet" "worker_subnet" {
@@ -20,6 +21,7 @@ resource "azurerm_subnet" "worker_subnet" {
   resource_group_name  = "${var.resource_group_name}"
   virtual_network_name = "${var.external_vnet_name == "" ? join("",azurerm_virtual_network.tectonic_vnet.*.name) : var.external_vnet_name }"
   address_prefix       = "${cidrsubnet(var.vnet_cidr_block, 4, 1)}"
+  route_table_id       = "${azurerm_route_table.tectonic.id}"
 }
 
 resource "azurerm_route_table" "tectonic" {
