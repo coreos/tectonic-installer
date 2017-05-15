@@ -10,6 +10,7 @@ This document gives an overview of variables used in the AWS platform of the Tec
 | tectonic_aws_az_count | Number of Availability Zones your EC2 instances will be deployed across. This should be less than or equal to the total number available in the region.  Be aware that some regions only have 2. If set worker and master subnet CIDRs are calculated automatically.<br><br>Note: This field MUST be set manually prior to creating the cluster. It MUST NOT be set if availability zones CIDRs are configured using `tectonic_aws_master_custom_subnets` and `tectonic_aws_worker_custom_subnets`. | string | `` |
 | tectonic_aws_config_version | (internal) This declares the version of the AWS configuration variables. It has no impact on generated assets but declares the version contract of the configuration. | string | `1.0` |
 | tectonic_aws_etcd_ec2_type | Instance size for the etcd node(s). Example: `t2.medium`. | string | `t2.medium` |
+| tectonic_aws_etcd_extra_sg_ids | (optional) List of additional security group IDs for etcd nodes.<br><br>Example: `["sg-51530134", "sg-b253d7cc"]` | list | `<list>` |
 | tectonic_aws_etcd_root_volume_iops | The amount of provisioned IOPS for the root block device of etcd nodes. | string | `100` |
 | tectonic_aws_etcd_root_volume_size | The size of the volume in gigabytes for the root block device of etcd nodes. | string | `30` |
 | tectonic_aws_etcd_root_volume_type | The type of volume for the root block device of etcd nodes. | string | `gp2` |
@@ -20,6 +21,7 @@ This document gives an overview of variables used in the AWS platform of the Tec
 | tectonic_aws_extra_tags | (optional) Extra AWS tags to be applied to created resources. | map | `<map>` |
 | tectonic_aws_master_custom_subnets | (optional) This configures master availability zones and their corresponding subnet CIDRs directly.<br><br>Example: `{ eu-west-1a = "10.0.0.0/20", eu-west-1b = "10.0.16.0/20" }`<br><br>Note that `tectonic_aws_az_count` must be unset if this is specified. | map | `<map>` |
 | tectonic_aws_master_ec2_type | Instance size for the master node(s). Example: `t2.medium`. | string | `t2.medium` |
+| tectonic_aws_master_extra_sg_ids | (optional) List of additional security group IDs for master nodes.<br><br>Example: `["sg-51530134", "sg-b253d7cc"]` | list | `<list>` |
 | tectonic_aws_master_root_volume_iops | The amount of provisioned IOPS for the root block device of master nodes. | string | `100` |
 | tectonic_aws_master_root_volume_size | The size of the volume in gigabytes for the root block device of master nodes. | string | `30` |
 | tectonic_aws_master_root_volume_type | The type of volume for the root block device of master nodes. | string | `gp2` |
@@ -28,6 +30,7 @@ This document gives an overview of variables used in the AWS platform of the Tec
 | tectonic_aws_vpc_cidr_block | Block of IP addresses used by the VPC. This should not overlap with any other networks, such as a private datacenter connected via Direct Connect. | string | `10.0.0.0/16` |
 | tectonic_aws_worker_custom_subnets | (optional) This configures worker availability zones and their corresponding subnet CIDRs directly.<br><br>Example: `{ eu-west-1a = "10.0.64.0/20", eu-west-1b = "10.0.80.0/20" }`<br><br>Note that `tectonic_aws_az_count` must be unset if this is specified. | map | `<map>` |
 | tectonic_aws_worker_ec2_type | Instance size for the worker node(s). Example: `t2.medium`. | string | `t2.medium` |
+| tectonic_aws_worker_extra_sg_ids | (optional) List of additional security group IDs for worker nodes.<br><br>Example: `["sg-51530134", "sg-b253d7cc"]` | list | `<list>` |
 | tectonic_aws_worker_root_volume_iops | The amount of provisioned IOPS for the root block device of worker nodes. | string | `100` |
 | tectonic_aws_worker_root_volume_size | The size of the volume in gigabytes for the root block device of worker nodes. | string | `30` |
 | tectonic_aws_worker_root_volume_type | The type of volume for the root block device of worker nodes. | string | `gp2` |
