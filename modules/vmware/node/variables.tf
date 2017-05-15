@@ -1,5 +1,5 @@
 variable "instance_count" {
-  type = "string"
+  type        = "string"
   description = "Number of nodes to be created."
 }
 
@@ -43,72 +43,72 @@ variable "tectonic_service_disabled" {
 }
 
 variable dns_server {
-  type = "string"
+  type        = "string"
   description = "DNS Server of the nodes"
 }
 
 variable ip_address {
-  type = "map"
+  type        = "map"
   description = "IP Address of the node"
 }
 
 variable gateway {
-  type = "string"
+  type        = "string"
   description = "Gateway of the node"
 }
 
 variable hostname {
-  type = "map"
+  type        = "map"
   description = "Hostname of the node"
 }
 
 variable core_public_keys {
-  type = "list"
+  type        = "list"
   description = "Public Key for Core User"
 }
 
 variable vmware_datacenter {
-  type = "string"
+  type        = "string"
   description = "vSphere Datacenter to create VMs in"
 }
 
-variable vmware_cluster  {
-  type = "string"
+variable vmware_cluster {
+  type        = "string"
   description = "vSphere Cluster to create VMs in"
 }
 
-variable vm_vcpu  {
-  type = "string"
+variable vm_vcpu {
+  type        = "string"
   description = "ETCD VMs vCPU count"
 }
 
-variable vm_memory  {
-  type = "string"
+variable vm_memory {
+  type        = "string"
   description = "ETCD VMs Memory size in MB"
 }
 
 variable vm_network_label {
-  type = "string"
+  type        = "string"
   description = "ETCD VMs PortGroup"
 }
 
-variable vm_disk_datastore  {
-  type = "string"
-  description   = "Datastore to create ETCD VM in "
+variable vm_disk_datastore {
+  type        = "string"
+  description = "Datastore to create ETCD VM in "
 }
 
-variable vm_disk_template  {
-  type = "string"
+variable vm_disk_template {
+  type        = "string"
   description = "Disk template to use for cloning ETCD VM CoreOS Container Linux"
 }
 
-variable vm_disk_template_folder  {
-  type = "string"
+variable vm_disk_template_folder {
+  type        = "string"
   description = "vSphere Folder CoreOS Container Linux is located in"
 }
 
 variable "vmware_folder" {
-  type = "string"
+  type        = "string"
   description = "Name of the VMware folder to create objects in"
 }
 
@@ -121,6 +121,6 @@ variable "kube_image_tag" {
 }
 
 variable "kubeconfig" {
-  type = "string"
+  type        = "string"
   description = "Contents of Kubeconfig"
 }

@@ -18,7 +18,6 @@ data "ignition_config" "etcd" {
   networkd = [
     "${data.ignition_networkd_unit.vmnetwork.*.id[count.index]}",
   ]
-
 }
 
 data "ignition_user" "core" {
@@ -42,9 +41,10 @@ data "ignition_systemd_unit" "locksmithd" {
 
 data "template_file" "etcd-cluster" {
   template = "${file("${path.module}/resources/etcd-cluster")}"
-  count = "${var.instance_count}"
+  count    = "${var.instance_count}"
+
   vars = {
-    etcd-name = "${var.hostname["${count.index}"]}"
+    etcd-name    = "${var.hostname["${count.index}"]}"
     etcd-address = "${var.hostname["${count.index}"]}.${var.base_domain}"
   }
 }
@@ -57,6 +57,7 @@ data "ignition_systemd_unit" "etcd3" {
   dropin = [
     {
       name = "40-etcd-cluster.conf"
+
       content = <<EOF
       [Service]
       Environment="ETCD_IMAGE=docker://${var.container_image}"
@@ -86,8 +87,9 @@ data "ignition_file" "node_hostname" {
 }
 
 data "ignition_networkd_unit" "vmnetwork" {
-  count      = "${var.instance_count}"
-  name = "00-ens192.network"
+  count = "${var.instance_count}"
+  name  = "00-ens192.network"
+
   content = <<EOF
   [Match]
   Name=ens192
@@ -101,8 +103,9 @@ EOF
 }
 
 data "ignition_systemd_unit" "vmtoolsd_member" {
-  name = "vmtoolsd.service"
+  name   = "vmtoolsd.service"
   enable = true
+
   content = <<EOF
   [Unit]
   Description=VMware Tools Agent

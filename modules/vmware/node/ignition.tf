@@ -1,14 +1,14 @@
 data "ignition_config" "node" {
-  count = "${var.instance_count}"  
+  count = "${var.instance_count}"
 
   users = [
     "${data.ignition_user.core.id}",
   ]
 
   files = [
-    "${data.ignition_file.max-user-watches.id}",        
+    "${data.ignition_file.max-user-watches.id}",
     "${data.ignition_file.node_hostname.*.id[count.index]}",
-    "${data.ignition_file.kubelet-env.id}",        
+    "${data.ignition_file.kubelet-env.id}",
   ]
 
   systemd = [
@@ -31,8 +31,8 @@ data "ignition_user" "core" {
 }
 
 data "ignition_systemd_unit" "docker" {
-  name        = "docker.service"
-  enable      = true
+  name   = "docker.service"
+  enable = true
 
   dropin = [
     {
@@ -43,67 +43,68 @@ data "ignition_systemd_unit" "docker" {
 }
 
 data "ignition_systemd_unit" "locksmithd" {
-  name        = "locksmithd.service"
-  mask        = true
+  name = "locksmithd.service"
+  mask = true
 }
 
 data "template_file" "kubelet" {
-  template    = "${file("${path.module}/resources/services/kubelet.service")}"
+  template = "${file("${path.module}/resources/services/kubelet.service")}"
 
   vars {
-    cluster_dns_ip         = "${var.kube_dns_service_ip}"
-    node_label             = "${var.kubelet_node_label}"
-    node_taints_param      = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"    
+    cluster_dns_ip    = "${var.kube_dns_service_ip}"
+    node_label        = "${var.kubelet_node_label}"
+    node_taints_param = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
   }
 }
 
 data "ignition_systemd_unit" "kubelet" {
-  name        = "kubelet.service"
-  enable      = true
-  content     = "${data.template_file.kubelet.rendered}"
+  name    = "kubelet.service"
+  enable  = true
+  content = "${data.template_file.kubelet.rendered}"
 }
 
 data "template_file" "kubelet-env" {
-  template    = "${file("${path.module}/resources/services/kubelet-env.service")}"
+  template = "${file("${path.module}/resources/services/kubelet-env.service")}"
 
   vars {
     kube_version_image_url = "${element(split(":", var.container_images["kube_version"]), 0)}"
     kube_version_image_tag = "${element(split(":", var.container_images["kube_version"]), 1)}"
-    kubelet_image_url      = "${element(split(":", var.container_images["hyperkube"]), 0)}"    
+    kubelet_image_url      = "${element(split(":", var.container_images["hyperkube"]), 0)}"
   }
 }
 
 data "ignition_systemd_unit" "kubelet-env" {
-  name        = "kubelet-env.service"
-  enable      = true
-  content     = "${data.template_file.kubelet-env.rendered}"
+  name    = "kubelet-env.service"
+  enable  = true
+  content = "${data.template_file.kubelet-env.rendered}"
 }
 
 data "ignition_file" "max-user-watches" {
-  filesystem  = "root"
-  path        = "/etc/sysctl.d/max-user-watches.conf"
-  mode        = "420"
+  filesystem = "root"
+  path       = "/etc/sysctl.d/max-user-watches.conf"
+  mode       = "420"
 
   content {
-    content   = "fs.inotify.max_user_watches=16184"
+    content = "fs.inotify.max_user_watches=16184"
   }
 }
 
 data "ignition_systemd_unit" "bootkube" {
-  name        = "bootkube.service"
-  content     = "${var.bootkube_service}"
+  name    = "bootkube.service"
+  content = "${var.bootkube_service}"
 }
 
 data "ignition_systemd_unit" "tectonic" {
-  name        = "tectonic.service"
-  enable      = "${var.tectonic_service_disabled == 0 ? true : false}"
-  content     = "${var.tectonic_service}"
+  name    = "tectonic.service"
+  enable  = "${var.tectonic_service_disabled == 0 ? true : false}"
+  content = "${var.tectonic_service}"
 }
 
 data "ignition_systemd_unit" "vmtoolsd_member" {
-  name        = "vmtoolsd.service"
-  enable      = true
-  content     = <<EOF
+  name   = "vmtoolsd.service"
+  enable = true
+
+  content = <<EOF
   [Unit]
   Description=VMware Tools Agent
   Documentation=http://open-vm-tools.sourceforge.net/
@@ -116,9 +117,10 @@ EOF
 }
 
 data "ignition_networkd_unit" "vmnetwork" {
-  count      = "${var.instance_count}"
-  name       = "00-ens192.network"
-  content    = <<EOF
+  count = "${var.instance_count}"
+  name  = "00-ens192.network"
+
+  content = <<EOF
   [Match]
   Name=ens192
   [Network]
@@ -137,7 +139,7 @@ data "ignition_file" "node_hostname" {
   filesystem = "root"
 
   content {
-    content  = "${var.hostname["${count.index}"]}"
+    content = "${var.hostname["${count.index}"]}"
   }
 }
 

@@ -1,7 +1,7 @@
 module "bootkube" {
   source         = "../../modules/bootkube"
   cloud_provider = ""
-  
+
   # Address of kube-apiserver
   kube_apiserver_url = "https://${var.tectonic_vmware_controller_domain}:443"
 
@@ -45,7 +45,7 @@ module "tectonic" {
 
   # Address of the Tectonic console (without protocol)
   base_address = "${var.tectonic_vmware_ingress_domain}"
-  
+
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
   versions         = "${var.tectonic_versions}"
