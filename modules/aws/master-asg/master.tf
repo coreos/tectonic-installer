@@ -122,6 +122,11 @@ resource "aws_iam_role_policy" "master_policy" {
       "Effect": "Allow"
     },
     {
+      "Action": "route53:*",
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
       "Action": [
         "ecr:GetAuthorizationToken",
         "ecr:BatchCheckLayerAvailability",
