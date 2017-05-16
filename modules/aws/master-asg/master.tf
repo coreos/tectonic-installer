@@ -44,8 +44,6 @@ resource "aws_autoscaling_group" "masters" {
     propagate_at_launch = true
   }
 
-  tags = ["${var.autoscaling_group_extra_tags}"]
-
   lifecycle {
     create_before_destroy = true
   }
