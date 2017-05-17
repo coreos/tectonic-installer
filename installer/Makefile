@@ -88,3 +88,4 @@ clean:
 	rm -f assets/bindata.go
 	rm -rf assets/frontend/scripts
 	rm -rf .workspace/
+	rm -rf $(GOPATH)/pkg/

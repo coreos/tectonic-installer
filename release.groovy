@@ -53,6 +53,7 @@ pipeline {
                     export GITHUB_CREDENTIALS=$GITHUB_CREDENTIALS
                     go version
                     cd $GO_PROJECT/installer
+                    make clean
                     make build
                     make test
                     make release

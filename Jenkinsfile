@@ -37,7 +37,6 @@ pipeline {
         go version
         cd $GO_PROJECT/installer
 
-        make clean
         make tools
         make build
         make test
