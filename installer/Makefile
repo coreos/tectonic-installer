@@ -15,14 +15,14 @@ all: build
 build: bin/$(OS)/installer
 
 bin/windows/installer.exe: $(GO_FILES) assets/bindata.go
-	GOOS=windows GOOARCH=amd64 go build -o bin/windows/installer.exe -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
+	GOOS=windows GOOARCH=amd64 go build -i -pkgdir $(GOPATH)/pkg/$(shell go env GOOS)_$(shell go env GOARCH) -o bin/windows/installer.exe -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
 bin/%/installer: $(GO_FILES) assets/bindata.go
-	GOOS=$* GOOARCH=amd64 go build -o bin/$*/installer -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
+	GOOS=$* GOOARCH=amd64 go build -i -pkgdir $(GOPATH)/pkg/$(shell go env GOOS)_$(shell go env GOARCH) -o bin/$*/installer -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
 .PHONY: backend
 backend: assets/bindata.go
-	go build -o bin/$(OS)/installer -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
+	go build -o bin/$(OS)/installer -i -pkgdir $(GOPATH)/pkg/$(shell go env GOOS)_$(shell go env GOARCH) -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
 assets/bindata.go: frontend bin/go-bindata $(shell find assets -type f | grep -v .go)
 	./bin/go-bindata -pkg assets -o assets/bindata.go -ignore=bindata.go -ignore=doc.go -ignore=assets.go -prefix assets assets/...
@@ -76,7 +76,7 @@ bin/golint:
 	CGO_ENABLED=0 go build -o bin/golint $(REPO)/vendor/github.com/golang/lint/golint
 
 bin/go-bindata:
-	go build -o bin/go-bindata $(REPO)/vendor/github.com/jteeuwen/go-bindata/go-bindata
+	go build -i -pkgdir $(GOPATH)/pkg/$(shell go env GOOS)_$(shell go env GOARCH) -o bin/go-bindata $(REPO)/vendor/github.com/jteeuwen/go-bindata/go-bindata
 
 bin/sanity:
 	go test tests/sanity/k8s_test.go -c -o bin/sanity
