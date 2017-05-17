@@ -15,14 +15,14 @@ all: build
 build: bin/$(OS)/installer
 
 bin/windows/installer.exe: $(GO_FILES) assets/bindata.go
-	GOOS=windows GOOARCH=amd64 go build -i -pkgdir $(GOPATH)/pkg/$(shell go env GOOS)_$(shell go env GOARCH) -o bin/windows/installer.exe -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
+	GOOS=windows GOOARCH=amd64 go build -v -i -pkgdir $(GOPATH)/pkg/$(shell go env GOOS)_$(shell go env GOARCH) -o bin/windows/installer.exe -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
 bin/%/installer: $(GO_FILES) assets/bindata.go
-	GOOS=$* GOOARCH=amd64 go build -i -pkgdir $(GOPATH)/pkg/$(shell go env GOOS)_$(shell go env GOARCH) -o bin/$*/installer -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
+	GOOS=$* GOOARCH=amd64 go build -v -i -pkgdir $(GOPATH)/pkg/$(shell go env GOOS)_$(shell go env GOARCH) -o bin/$*/installer -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
 .PHONY: backend
 backend: assets/bindata.go
-	go build -o bin/$(OS)/installer -i -pkgdir $(GOPATH)/pkg/$(shell go env GOOS)_$(shell go env GOARCH) -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
+	go build -o bin/$(OS)/installer -v -i -pkgdir $(GOPATH)/pkg/$(shell go env GOOS)_$(shell go env GOARCH) -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
 assets/bindata.go: frontend bin/go-bindata $(shell find assets -type f | grep -v .go)
 	./bin/go-bindata -pkg assets -o assets/bindata.go -ignore=bindata.go -ignore=doc.go -ignore=assets.go -prefix assets assets/...
