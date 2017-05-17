@@ -8,6 +8,7 @@ import {
   AsyncSelect,
   Radio,
   Select,
+  CheckBox,
   Deselect,
   DeselectField,
   WithClusterConfig,
@@ -36,6 +37,7 @@ import {
   AWS_REGION,
   AWS_REGION_FORM,
   AWS_SUBNETS,
+  AWS_USE_EXISTING_HOSTED_ZONE,
   AWS_VPC_CIDR,
   AWS_VPC_ID,
   AWS_VPC_FORM,
@@ -93,6 +95,9 @@ const vpcInfoForm = new Form(AWS_VPC_FORM, [
         });
         return {options: _.sortBy(options, 'label'), zoneToName, privateZones};
       }),
+  }),
+  new Field(AWS_USE_EXISTING_HOSTED_ZONE, {
+    default: false,
   }),
 ], {
   validator: (data, cc) => {
@@ -168,6 +173,7 @@ const stateToProps = ({aws, clusterConfig}) => {
     podCIDR: clusterConfig[POD_CIDR],
     serviceCIDR: clusterConfig[SERVICE_CIDR],
     advanced: clusterConfig[AWS_ADVANCED_NETWORKING],
+    privateZone: _.get(clusterConfig, ['extra', AWS_HOSTED_ZONE_ID, 'privateZones', clusterConfig[AWS_HOSTED_ZONE_ID]]),
   };
 };
 
@@ -230,7 +236,7 @@ class AWS_VPCComponent extends React.Component {
   }
 
   render () {
-    const { availableVpcs, awsCreateVpc, availableVpcSubnets, awsVpcId, clusterName, clusterSubdomain, internalCluster, advanced } = this.props;
+    const { availableVpcs, awsCreateVpc, availableVpcSubnets, awsVpcId, clusterName, clusterSubdomain, internalCluster, advanced, privateZone } = this.props;
 
     let controllerSubnets;
     let workerSubnets;
@@ -306,6 +312,24 @@ class AWS_VPCComponent extends React.Component {
           </div>
         </div>
       </div>
+      { !privateZone &&
+        <div className="row form-group">
+          <div className="col-xs-9 col-xs-offset-3">
+            <label>
+              <Connect field={AWS_USE_EXISTING_HOSTED_ZONE}>
+                <CheckBox inverted suffix={
+                  <span className="text-muted wiz-help-text">
+                    Optimize VPC networking by associating a new private hosted zone. (
+                      <a href="http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html" target="_blank">See AWS documentation&nbsp;&nbsp;<i className="fa fa-external-link" /></a>
+                    )
+                  </span>
+                }/>
+              </Connect>
+            </label>
+          </div>
+        </div>
+      }
+
       <vpcInfoForm.Errors/>
       <AWS_DomainValidation />
       <hr />
