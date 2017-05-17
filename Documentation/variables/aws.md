@@ -8,6 +8,9 @@ This document gives an overview of variables used in the AWS platform of the Tec
 |------|-------------|:----:|:-----:|
 | tectonic_autoscaling_group_extra_tags | (optional) Extra AWS tags to be applied to created autoscaling group resources. This is a list of maps having the keys `key`, `value` and `propagate_at_launch`.<br><br>Example: `[ { key = "foo", value = "bar", propagate_at_launch = true } ]` | list | `<list>` |
 | tectonic_aws_config_version | (internal) This declares the version of the AWS configuration variables. It has no impact on generated assets but declares the version contract of the configuration. | string | `1.0` |
+| tectonic_aws_elb_connection_draining | (optional) Boolean to enable connection draining on ELBs. | string | `false` |
+| tectonic_aws_elb_connection_draining_timeout | (optional) The time in seconds to allow for connections to drain on ELBs. | string | `300` |
+| tectonic_aws_elb_idle_timeout | (optional) The time in seconds that the connection is allowed to be idle on ELBs. The default is set to the maximum allowed setting. | string | `3600` |
 | tectonic_aws_etcd_ec2_type | Instance size for the etcd node(s). Example: `t2.medium`. | string | `t2.medium` |
 | tectonic_aws_etcd_root_volume_iops | The amount of provisioned IOPS for the root block device of etcd nodes. | string | `100` |
 | tectonic_aws_etcd_root_volume_size | The size of the volume in gigabytes for the root block device of etcd nodes. | string | `30` |

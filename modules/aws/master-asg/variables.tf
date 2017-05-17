@@ -95,3 +95,15 @@ variable "root_volume_iops" {
   default     = "100"
   description = "The amount of provisioned IOPS for the root block device."
 }
+
+variable "elb_idle_timeout" {
+  type = "string"
+}
+
+variable "elb_connection_draining" {
+  type = "string"
+}
+
+variable "elb_connection_draining_timeout" {
+  type = "string"
+}
