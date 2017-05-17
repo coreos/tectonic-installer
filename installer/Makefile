@@ -15,14 +15,14 @@ all: build
 build: bin/$(OS)/installer
 
 bin/windows/installer.exe: $(GO_FILES) assets/bindata.go
-	GOOS=windows go build -o bin/windows/installer.exe -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
+	GOOS=windows GOOARCH=amd64 go build -o bin/windows/installer.exe -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
 bin/%/installer: $(GO_FILES) assets/bindata.go
-	GOOS=$* go build -o bin/$*/installer -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
+	GOOS=$* GOOARCH=amd64 go build -o bin/$*/installer -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
 .PHONY: backend
 backend: assets/bindata.go
-	GOOS=$(OS) go build -o bin/$(OS)/installer -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
+	GOOS=$(OS) GOOARCH=amd64 go build -o bin/$(OS)/installer -ldflags $(LD_FLAGS) $(REPO)/cmd/installer
 
 assets/bindata.go: frontend bin/go-bindata $(shell find assets -type f | grep -v .go)
 	./bin/go-bindata -pkg assets -o assets/bindata.go -ignore=bindata.go -ignore=doc.go -ignore=assets.go -prefix assets assets/...
