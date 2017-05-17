@@ -16,6 +16,16 @@ tectonic_admin_password_hash = ""
 // Example: `[ { key = "foo", value = "bar", propagate_at_launch = true } ]`
 // tectonic_autoscaling_group_extra_tags = ""
 
+// (optional) Boolean to enable connection draining on ELBs.
+// tectonic_aws_elb_connection_draining = false
+
+// (optional) The time in seconds to allow for connections to drain on ELBs.
+// tectonic_aws_elb_connection_draining_timeout = "300"
+
+// (optional) The time in seconds that the connection is allowed to be idle on ELBs.
+// The default is set to the maximum allowed setting.
+// tectonic_aws_elb_idle_timeout = "3600"
+
 // Instance size for the etcd node(s). Example: `t2.medium`.
 tectonic_aws_etcd_ec2_type = "t2.medium"
 

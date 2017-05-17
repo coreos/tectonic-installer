@@ -194,3 +194,30 @@ variable "tectonic_aws_region" {
   default     = "eu-west-1"
   description = "The target AWS region for the cluster."
 }
+
+variable "tectonic_aws_elb_idle_timeout" {
+  type    = "string"
+  default = "3600"
+
+  description = <<EOF
+(optional) The time in seconds that the connection is allowed to be idle on ELBs.
+The default is set to the maximum allowed setting.
+EOF
+}
+
+variable "tectonic_aws_elb_connection_draining" {
+  default = false
+
+  description = <<EOF
+(optional) Boolean to enable connection draining on ELBs.
+EOF
+}
+
+variable "tectonic_aws_elb_connection_draining_timeout" {
+  type    = "string"
+  default = "300"
+
+  description = <<EOF
+(optional) The time in seconds to allow for connections to drain on ELBs.
+EOF
+}

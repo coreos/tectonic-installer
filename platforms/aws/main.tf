@@ -119,6 +119,10 @@ module "masters" {
   root_volume_type = "${var.tectonic_aws_master_root_volume_type}"
   root_volume_size = "${var.tectonic_aws_master_root_volume_size}"
   root_volume_iops = "${var.tectonic_aws_master_root_volume_iops}"
+
+  elb_idle_timeout                = "${var.tectonic_aws_elb_idle_timeout}"
+  elb_connection_draining         = "${var.tectonic_aws_elb_connection_draining}"
+  elb_connection_draining_timeout = "${var.tectonic_aws_elb_connection_draining_timeout}"
 }
 
 module "ignition-workers" {
