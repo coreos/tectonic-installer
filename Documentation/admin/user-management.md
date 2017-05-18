@@ -22,13 +22,21 @@ Edit the current `ConfigMap` with the desired changes:
 kubectl edit configmaps tectonic-identity --namespace=tectonic-system
 ```
 
-Trigger a rolling update using `kubectl`. Identity's deployment is intended to be resilient against invalid config files, but admins should verify the new state and restore the `ConfigMap` backup if Identity enters a crash loop. The following command will cause an update:
+Delete the `tectonic-identity` pod:
+
+```
+kubectl delete -f tectonic-identity
+
+```
+
+To apply the changes, trigger a rolling update using `kubectl`.
 
 ```
 kubectl patch deployment tectonic-identity \
     --patch "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}" \
     --namespace tectonic-system
 ```
+Identity's deployment is intended to be resilient against invalid config files, but admins should verify the new state and restore the `ConfigMap` backup if Identity enters a crash loop.
 
 The update's success can then be inspecting by watching the pods in the `tectonic-system` namespace.
 
