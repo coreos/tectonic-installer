@@ -28,7 +28,7 @@ resource "aws_launch_configuration" "worker_conf" {
   name_prefix          = "${var.cluster_name}-worker-"
   key_name             = "${var.ssh_key}"
   security_groups      = ["${var.sg_ids}"]
-  iam_instance_profile = "${aws_iam_instance_profile.worker_profile.arn}"
+  iam_instance_profile = "${coalesce(var.external_worker_arn,join("", aws_iam_instance_profile.worker_profile.*.arn))}"
   user_data            = "${var.user_data}"
 
   lifecycle {
@@ -75,13 +75,15 @@ resource "aws_autoscaling_group" "workers" {
 }
 
 resource "aws_iam_instance_profile" "worker_profile" {
-  name = "${var.cluster_name}-worker-profile"
-  role = "${aws_iam_role.worker_role.name}"
+  count = "${var.external_worker_arn == "" ? 1 : 0}"
+  name  = "${var.cluster_name}-worker-profile"
+  role  = "${aws_iam_role.worker_role.name}"
 }
 
 resource "aws_iam_role" "worker_role" {
-  name = "${var.cluster_name}-worker-role"
-  path = "/"
+  count = "${var.external_worker_arn == "" ? 1 : 0}"
+  name  = "${var.cluster_name}-worker-role"
+  path  = "/"
 
   assume_role_policy = <<EOF
 {
@@ -101,8 +103,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "worker_policy" {
-  name = "${var.cluster_name}_worker_policy"
-  role = "${aws_iam_role.worker_role.id}"
+  count = "${var.external_worker_arn == "" ? 1 : 0}"
+  name  = "${var.cluster_name}_worker_policy"
+  role  = "${aws_iam_role.worker_role.id}"
 
   policy = <<EOF
 {

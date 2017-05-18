@@ -57,7 +57,7 @@ resource "aws_launch_configuration" "master_conf" {
   name_prefix                 = "${var.cluster_name}-master-"
   key_name                    = "${var.ssh_key}"
   security_groups             = ["${var.master_sg_ids}"]
-  iam_instance_profile        = "${aws_iam_instance_profile.master_profile.arn}"
+  iam_instance_profile        = "${coalesce(var.external_master_arn,join("", aws_iam_instance_profile.master_profile.*.arn))}"
   associate_public_ip_address = "${var.public_vpc}"
   user_data                   = "${var.user_data}"
 
@@ -78,13 +78,15 @@ resource "aws_launch_configuration" "master_conf" {
 }
 
 resource "aws_iam_instance_profile" "master_profile" {
-  name = "${var.cluster_name}-master-profile"
-  role = "${aws_iam_role.master_role.name}"
+  count = "${var.external_master_arn == "" ? 1 : 0}"
+  name  = "${var.cluster_name}-master-profile"
+  role  = "${aws_iam_role.master_role.name}"
 }
 
 resource "aws_iam_role" "master_role" {
-  name = "${var.cluster_name}-master-role"
-  path = "/"
+  count = "${var.external_master_arn == "" ? 1 : 0}"
+  name  = "${var.cluster_name}-master-role"
+  path  = "/"
 
   assume_role_policy = <<EOF
 {
@@ -104,8 +106,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "master_policy" {
-  name = "${var.cluster_name}_master_policy"
-  role = "${aws_iam_role.master_role.id}"
+  count = "${var.external_master_arn == "" ? 1 : 0}"
+  name  = "${var.cluster_name}_master_policy"
+  role  = "${aws_iam_role.master_role.id}"
 
   policy = <<EOF
 {
