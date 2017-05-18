@@ -3,11 +3,11 @@ data "ignition_config" "etcd" {
 
   systemd = [
     "${data.ignition_systemd_unit.locksmithd.id}",
-    "${data.ignition_systemd_unit.etcd3.*.id[count.index]}",
+    "${element(data.ignition_systemd_unit.etcd3.*.id, count.index)}",
   ]
 
   files = [
-    "${data.ignition_file.node_hostname.*.id[count.index]}",
+    "${element(data.ignition_file.node_hostname.*.id, count.index)}",
   ]
 }
 
