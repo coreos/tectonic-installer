@@ -38,7 +38,7 @@ resource "template_dir" "tectonic" {
     alertmanager_version           = "${var.versions["alertmanager"]}"
     tectonic_version               = "${var.versions["tectonic"]}"
     etcd_version                   = "${var.versions["etcd"]}"
-    tectonic_etcd_operator_version = "${element(split(":", var.container_images["tectonic_etcd_operator"]), 1)}"
+    tectonic_etcd_operator_version = "${replace(var.container_images["tectonic_etcd_operator"],var.image_re,"$2")}"
 
     etcd_cluster_size = "${var.master_count > 2 ? 3 : 1}"
 
@@ -89,6 +89,8 @@ resource "template_dir" "tectonic" {
     certificates_strategy    = "${var.ca_generated == "true" ? "installerGeneratedCA" : "userProvidedCA"}"
     identity_api_service     = "${var.identity_api_service}"
     tectonic_updater_enabled = "${var.experimental ? "true" : "false"}"
+
+    image_re = "${var.image_re}"
   }
 }
 
