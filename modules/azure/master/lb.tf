@@ -23,6 +23,7 @@ resource "azurerm_lb" "tectonic_lb" {
 data "template_file" "scripts_nsupdate" {
 
   template = <<EOF
+server 10.255.0.27
 update delete dev-k8s-lb.cdx.vpc.starbucks.net A
 update add dev-k8s-lb.cdx.vpc.starbucks.net 0 A $${static_ip_address}
 send
