@@ -40,15 +40,15 @@ resource "local_file" "nsupdate" {
   filename = "${path.cwd}/generated/proxy/nsupdate.txt"
 }
 
-resource "null_resource" "scripts_nsupdate" {
-  depends_on = ["local_file.nsupdate"]
+#resource "null_resource" "scripts_nsupdate" {
+#  depends_on = ["local_file.nsupdate"]
 
-  triggers {
-      md5 = "${md5(data.template_file.scripts_nsupdate.rendered)}"
-  }
+#  triggers {
+#      md5 = "${md5(data.template_file.scripts_nsupdate.rendered)}"
+#  }
 
-  provisioner "local-exec" {
-    command = "nsupdate -d ${path.cwd}/generated/proxy/nsupdate.txt"
-  }
+#  provisioner "local-exec" {
+#    command = "nsupdate -d ${path.cwd}/generated/proxy/nsupdate.txt"
+#  }
 
-}
+#}
