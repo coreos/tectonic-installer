@@ -1,7 +1,7 @@
 # How to Contribute
 
 CoreOS projects are [Apache 2.0 licensed](LICENSE) and accept contributions via
-GitHub pull requests.  This document outlines some of the conventions on
+GitHub pull requests. This document outlines some of the conventions on
 development workflow, commit message formatting, contact points and other
 resources to make it easier to get your contribution accepted.
 
@@ -21,6 +21,7 @@ The project currently uses the general CoreOS email list and IRC channel:
 Please avoid emailing maintainers found in the MAINTAINERS file directly. They
 are very busy and read the mailing lists.
 
+<<<<<<< HEAD
 ##  Reporting a security vulnerability
 
 Due to their public nature, GitHub and mailing lists are not appropriate places for reporting vulnerabilities. Please refer to CoreOS's [security disclosure][disclosure] process when reporting issues that may be security related.
@@ -44,11 +45,11 @@ This is a rough outline of what a contributor's workflow looks like:
 
 Thanks for your contributions!
 
-### Coding Style
+## Coding Style
 
 CoreOS projects written in Go follow a set of style guidelines that we've documented [here](https://github.com/coreos/docs/tree/master/golang). Please follow them when working on your contributions.
 
-### Format of the Commit Message
+## Format of the Commit Message
 
 We follow a rough convention for commit messages that is designed to answer two
 questions: what changed and why. The subject line should feature the what and
