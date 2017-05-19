@@ -15,9 +15,9 @@ output "ingress_internal_fqdn" {
 }
 
 output "api_external_fqdn" {
-  value = "${azurerm_lb.tectonic_lb.frontend_ip_configuration.0.private_ip_address}"
+  value = "dev-k8s.cdx.vpc.starbucks.net"
 }
 
 output "api_internal_fqdn" {
-  value = "${azurerm_lb.tectonic_lb.frontend_ip_configuration.0.private_ip_address}"
+  value = "dev-k8s.cdx.vpc.starbucks.net"
 }
