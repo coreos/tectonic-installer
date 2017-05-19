@@ -47,7 +47,8 @@ resource "template_dir" "bootkube" {
     etcd_cert_flag = "${data.null_data_source.etcd.outputs.cert_flag}"
     etcd_key_flag  = "${data.null_data_source.etcd.outputs.key_flag}"
 
-    etcd_service_ip = "${cidrhost(var.service_cidr, 15)}"
+    etcd_service_ip           = "${cidrhost(var.service_cidr, 15)}"
+    bootstrap_etcd_service_ip = "${cidrhost(var.service_cidr, 200)}"
 
     cloud_provider = "${var.cloud_provider}"
 
@@ -139,7 +140,25 @@ data "template_file" "bootstrap-etcd" {
   template = "${file("${path.module}/resources/experimental/bootstrap-manifests/bootstrap-etcd.yaml")}"
 
   vars {
+    bootstrap_etcd_service_ip = "${cidrhost(var.service_cidr, 200)}"
     etcd_image = "${var.container_images["etcd"]}"
+  }
+}
+
+data "template_file" "bootstrap-etcd-service" {
+  template = "${file("${path.module}/resources/experimental/etcd/bootstrap-etcd-service.json")}"
+
+  vars {
+    bootstrap_etcd_service_ip = "${cidrhost(var.service_cidr, 200)}"
+  }
+}
+
+data "template_file" "migrate-etcd-cluster" {
+  template = "${file("${path.module}/resources/experimental/etcd/migrate-etcd-cluster.json")}"
+
+  vars {
+    etcd_version = "${var.etcd_version}"
+    bootstrap_etcd_service_ip = "${cidrhost(var.service_cidr, 200)}"
   }
 }
 
@@ -149,6 +168,22 @@ resource "local_file" "bootstrap-etcd" {
 
   content  = "${data.template_file.bootstrap-etcd.rendered}"
   filename = "${path.cwd}/generated/bootstrap-experimental/bootstrap-etcd.yaml"
+}
+
+resource "local_file" "migrate-etcd-cluster" {
+  count      = "${var.experimental_enabled ? 1 : 0}"
+  depends_on = ["template_dir.bootkube-bootstrap"]
+
+  content  = "${data.template_file.migrate-etcd-cluster.rendered}"
+  filename = "${path.cwd}/generated/etcd-experimental/migrate-etcd-cluster.json"
+}
+
+resource "local_file" "bootstrap-etcd-service" {
+  count      = "${var.experimental_enabled ? 1 : 0}"
+  depends_on = ["template_dir.bootkube-bootstrap"]
+
+  content  = "${data.template_file.bootstrap-etcd-service.rendered}"
+  filename = "${path.cwd}/generated/etcd-experimental/bootstrap-etcd-service.json"
 }
 
 # etcd certs
