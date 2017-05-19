@@ -33,7 +33,7 @@ func TestAccAWSDefaultNetworkAcl_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSDefaultNetworkAclDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccAWSDefaultNetworkConfig_basic,
 				Check: resource.ComposeTestCheckFunc(
 					testAccGetAWSDefaultNetworkAcl("aws_default_network_acl.default", &networkAcl),
@@ -52,7 +52,7 @@ func TestAccAWSDefaultNetworkAcl_basicIpv6Vpc(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSDefaultNetworkAclDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccAWSDefaultNetworkConfig_basicIpv6Vpc,
 				Check: resource.ComposeTestCheckFunc(
 					testAccGetAWSDefaultNetworkAcl("aws_default_network_acl.default", &networkAcl),
@@ -74,7 +74,7 @@ func TestAccAWSDefaultNetworkAcl_deny_ingress(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSDefaultNetworkAclDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccAWSDefaultNetworkConfig_deny_ingress,
 				Check: resource.ComposeTestCheckFunc(
 					testAccGetAWSDefaultNetworkAcl("aws_default_network_acl.default", &networkAcl),
@@ -93,7 +93,7 @@ func TestAccAWSDefaultNetworkAcl_SubnetRemoval(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSDefaultNetworkAclDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccAWSDefaultNetworkConfig_Subnets,
 				Check: resource.ComposeTestCheckFunc(
 					testAccGetAWSDefaultNetworkAcl("aws_default_network_acl.default", &networkAcl),
@@ -104,7 +104,7 @@ func TestAccAWSDefaultNetworkAcl_SubnetRemoval(t *testing.T) {
 			// Here the Subnets have been removed from the Default Network ACL Config,
 			// but have not been reassigned. The result is that the Subnets are still
 			// there, and we have a non-empty plan
-			resource.TestStep{
+			{
 				Config: testAccAWSDefaultNetworkConfig_Subnets_remove,
 				Check: resource.ComposeTestCheckFunc(
 					testAccGetAWSDefaultNetworkAcl("aws_default_network_acl.default", &networkAcl),
@@ -124,7 +124,7 @@ func TestAccAWSDefaultNetworkAcl_SubnetReassign(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSDefaultNetworkAclDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccAWSDefaultNetworkConfig_Subnets,
 				Check: resource.ComposeTestCheckFunc(
 					testAccGetAWSDefaultNetworkAcl("aws_default_network_acl.default", &networkAcl),
@@ -144,7 +144,7 @@ func TestAccAWSDefaultNetworkAcl_SubnetReassign(t *testing.T) {
 			// the default resource to the other acl resource, to ensure the latter's
 			// update occurs first, and the former's READ will correctly read zero
 			// subnets
-			resource.TestStep{
+			{
 				Config: testAccAWSDefaultNetworkConfig_Subnets_move,
 				Check: resource.ComposeTestCheckFunc(
 					testAccGetAWSDefaultNetworkAcl("aws_default_network_acl.default", &networkAcl),

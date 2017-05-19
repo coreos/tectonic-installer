@@ -35,7 +35,7 @@ func dataSourceAwsAmiIds() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"tags": dataSourceTagsSchema(),
-			"ids": &schema.Schema{
+			"ids": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},

@@ -28,19 +28,19 @@ func resourceAwsNetworkInterface() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 
-			"subnet_id": &schema.Schema{
+			"subnet_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
 
-			"private_ip": &schema.Schema{
+			"private_ip": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
 			},
 
-			"private_ips": &schema.Schema{
+			"private_ips": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Computed: true,
@@ -48,13 +48,13 @@ func resourceAwsNetworkInterface() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"private_ips_count": &schema.Schema{
+			"private_ips_count": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				Computed: true,
 			},
 
-			"security_groups": &schema.Schema{
+			"security_groups": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Computed: true,
@@ -62,32 +62,32 @@ func resourceAwsNetworkInterface() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"source_dest_check": &schema.Schema{
+			"source_dest_check": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
 			},
 
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 
-			"attachment": &schema.Schema{
+			"attachment": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"instance": &schema.Schema{
+						"instance": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"device_index": &schema.Schema{
+						"device_index": {
 							Type:     schema.TypeInt,
 							Required: true,
 						},
-						"attachment_id": &schema.Schema{
+						"attachment_id": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},

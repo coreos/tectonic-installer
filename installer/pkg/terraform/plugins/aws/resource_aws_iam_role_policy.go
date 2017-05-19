@@ -26,11 +26,11 @@ func resourceAwsIamRolePolicy() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"policy": &schema.Schema{
+			"policy": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				Computed:      true,
@@ -38,13 +38,13 @@ func resourceAwsIamRolePolicy() *schema.Resource {
 				ConflictsWith: []string{"name_prefix"},
 				ValidateFunc:  validateIamRolePolicyName,
 			},
-			"name_prefix": &schema.Schema{
+			"name_prefix": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validateIamRolePolicyNamePrefix,
 			},
-			"role": &schema.Schema{
+			"role": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,

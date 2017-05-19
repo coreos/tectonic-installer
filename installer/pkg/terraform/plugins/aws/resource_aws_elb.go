@@ -29,7 +29,7 @@ func resourceAwsElb() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				Computed:      true,
@@ -37,27 +37,27 @@ func resourceAwsElb() *schema.Resource {
 				ConflictsWith: []string{"name_prefix"},
 				ValidateFunc:  validateElbName,
 			},
-			"name_prefix": &schema.Schema{
+			"name_prefix": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
 				ValidateFunc: validateElbNamePrefix,
 			},
 
-			"internal": &schema.Schema{
+			"internal": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				ForceNew: true,
 				Computed: true,
 			},
 
-			"cross_zone_load_balancing": &schema.Schema{
+			"cross_zone_load_balancing": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
 			},
 
-			"availability_zones": &schema.Schema{
+			"availability_zones": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
@@ -65,7 +65,7 @@ func resourceAwsElb() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"instances": &schema.Schema{
+			"instances": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
@@ -73,7 +73,7 @@ func resourceAwsElb() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"security_groups": &schema.Schema{
+			"security_groups": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
@@ -81,18 +81,18 @@ func resourceAwsElb() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"source_security_group": &schema.Schema{
+			"source_security_group": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
 			},
 
-			"source_security_group_id": &schema.Schema{
+			"source_security_group_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 
-			"subnets": &schema.Schema{
+			"subnets": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
@@ -100,46 +100,46 @@ func resourceAwsElb() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"idle_timeout": &schema.Schema{
+			"idle_timeout": {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				Default:      60,
 				ValidateFunc: validateIntegerInRange(1, 3600),
 			},
 
-			"connection_draining": &schema.Schema{
+			"connection_draining": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
 			},
 
-			"connection_draining_timeout": &schema.Schema{
+			"connection_draining_timeout": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				Default:  300,
 			},
 
-			"access_logs": &schema.Schema{
+			"access_logs": {
 				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"interval": &schema.Schema{
+						"interval": {
 							Type:         schema.TypeInt,
 							Optional:     true,
 							Default:      60,
 							ValidateFunc: validateAccessLogsInterval,
 						},
-						"bucket": &schema.Schema{
+						"bucket": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"bucket_prefix": &schema.Schema{
+						"bucket_prefix": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"enabled": &schema.Schema{
+						"enabled": {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
@@ -148,36 +148,36 @@ func resourceAwsElb() *schema.Resource {
 				},
 			},
 
-			"listener": &schema.Schema{
+			"listener": {
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"instance_port": &schema.Schema{
+						"instance_port": {
 							Type:         schema.TypeInt,
 							Required:     true,
 							ValidateFunc: validateIntegerInRange(1, 65535),
 						},
 
-						"instance_protocol": &schema.Schema{
+						"instance_protocol": {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validateListenerProtocol,
 						},
 
-						"lb_port": &schema.Schema{
+						"lb_port": {
 							Type:         schema.TypeInt,
 							Required:     true,
 							ValidateFunc: validateIntegerInRange(1, 65535),
 						},
 
-						"lb_protocol": &schema.Schema{
+						"lb_protocol": {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validateListenerProtocol,
 						},
 
-						"ssl_certificate_id": &schema.Schema{
+						"ssl_certificate_id": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -186,38 +186,38 @@ func resourceAwsElb() *schema.Resource {
 				Set: resourceAwsElbListenerHash,
 			},
 
-			"health_check": &schema.Schema{
+			"health_check": {
 				Type:     schema.TypeList,
 				Optional: true,
 				Computed: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"healthy_threshold": &schema.Schema{
+						"healthy_threshold": {
 							Type:         schema.TypeInt,
 							Required:     true,
 							ValidateFunc: validateIntegerInRange(2, 10),
 						},
 
-						"unhealthy_threshold": &schema.Schema{
+						"unhealthy_threshold": {
 							Type:         schema.TypeInt,
 							Required:     true,
 							ValidateFunc: validateIntegerInRange(2, 10),
 						},
 
-						"target": &schema.Schema{
+						"target": {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validateHeathCheckTarget,
 						},
 
-						"interval": &schema.Schema{
+						"interval": {
 							Type:         schema.TypeInt,
 							Required:     true,
 							ValidateFunc: validateIntegerInRange(5, 300),
 						},
 
-						"timeout": &schema.Schema{
+						"timeout": {
 							Type:         schema.TypeInt,
 							Required:     true,
 							ValidateFunc: validateIntegerInRange(2, 60),
@@ -226,12 +226,12 @@ func resourceAwsElb() *schema.Resource {
 				},
 			},
 
-			"dns_name": &schema.Schema{
+			"dns_name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 
-			"zone_id": &schema.Schema{
+			"zone_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},

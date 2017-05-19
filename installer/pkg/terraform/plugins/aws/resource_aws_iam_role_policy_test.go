@@ -22,7 +22,7 @@ func TestAccAWSIAMRolePolicy_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckIAMRolePolicyDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccIAMRolePolicyConfig(role, policy1),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckIAMRolePolicy(
@@ -31,7 +31,7 @@ func TestAccAWSIAMRolePolicy_basic(t *testing.T) {
 					),
 				),
 			},
-			resource.TestStep{
+			{
 				Config: testAccIAMRolePolicyConfigUpdate(role, policy1, policy2),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckIAMRolePolicy(
@@ -53,7 +53,7 @@ func TestAccAWSIAMRolePolicy_namePrefix(t *testing.T) {
 		Providers:     testAccProviders,
 		CheckDestroy:  testAccCheckIAMRolePolicyDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccIAMRolePolicyConfig_namePrefix(role),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckIAMRolePolicy(
@@ -75,7 +75,7 @@ func TestAccAWSIAMRolePolicy_generatedName(t *testing.T) {
 		Providers:     testAccProviders,
 		CheckDestroy:  testAccCheckIAMRolePolicyDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccIAMRolePolicyConfig_generatedName(role),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckIAMRolePolicy(

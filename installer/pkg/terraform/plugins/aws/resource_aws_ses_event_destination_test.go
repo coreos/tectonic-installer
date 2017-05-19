@@ -18,7 +18,7 @@ func TestAccAWSSESEventDestination_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckSESEventDestinationDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccAWSSESEventDestinationConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAwsSESEventDestinationExists("aws_ses_configuration_set.test"),

@@ -27,53 +27,53 @@ func resourceAwsDirectoryServiceDirectory() *schema.Resource {
 		Delete: resourceAwsDirectoryServiceDirectoryDelete,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"password": &schema.Schema{
+			"password": {
 				Type:      schema.TypeString,
 				Required:  true,
 				ForceNew:  true,
 				Sensitive: true,
 			},
-			"size": &schema.Schema{
+			"size": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
 			},
-			"alias": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-				ForceNew: true,
-			},
-			"description": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-			},
-			"short_name": &schema.Schema{
+			"alias": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
 				ForceNew: true,
 			},
-			"vpc_settings": &schema.Schema{
+			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"short_name": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				ForceNew: true,
+			},
+			"vpc_settings": {
 				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"subnet_ids": &schema.Schema{
+						"subnet_ids": {
 							Type:     schema.TypeSet,
 							Required: true,
 							ForceNew: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
-						"vpc_id": &schema.Schema{
+						"vpc_id": {
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
@@ -81,32 +81,32 @@ func resourceAwsDirectoryServiceDirectory() *schema.Resource {
 					},
 				},
 			},
-			"connect_settings": &schema.Schema{
+			"connect_settings": {
 				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"customer_username": &schema.Schema{
+						"customer_username": {
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
 						},
-						"customer_dns_ips": &schema.Schema{
+						"customer_dns_ips": {
 							Type:     schema.TypeSet,
 							Required: true,
 							ForceNew: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
-						"subnet_ids": &schema.Schema{
+						"subnet_ids": {
 							Type:     schema.TypeSet,
 							Required: true,
 							ForceNew: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
-						"vpc_id": &schema.Schema{
+						"vpc_id": {
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
@@ -114,22 +114,22 @@ func resourceAwsDirectoryServiceDirectory() *schema.Resource {
 					},
 				},
 			},
-			"enable_sso": &schema.Schema{
+			"enable_sso": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
 			},
-			"access_url": &schema.Schema{
+			"access_url": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"dns_ip_addresses": &schema.Schema{
+			"dns_ip_addresses": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 				Computed: true,
 			},
-			"type": &schema.Schema{
+			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "SimpleAD",
@@ -137,7 +137,7 @@ func resourceAwsDirectoryServiceDirectory() *schema.Resource {
 				ValidateFunc: func(v interface{}, k string) (ws []string, es []error) {
 					validTypes := []string{"SimpleAD", "MicrosoftAD"}
 					value := v.(string)
-					for validType, _ := range directoryCreationFuncs {
+					for validType := range directoryCreationFuncs {
 						if validType == value {
 							return
 						}

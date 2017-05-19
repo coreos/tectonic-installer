@@ -25,7 +25,7 @@ func resourceAwsCodeDeployDeploymentGroup() *schema.Resource {
 		Delete: resourceAwsCodeDeployDeploymentGroupDelete,
 
 		Schema: map[string]*schema.Schema{
-			"app_name": &schema.Schema{
+			"app_name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
@@ -38,7 +38,7 @@ func resourceAwsCodeDeployDeploymentGroup() *schema.Resource {
 				},
 			},
 
-			"deployment_group_name": &schema.Schema{
+			"deployment_group_name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
@@ -52,18 +52,18 @@ func resourceAwsCodeDeployDeploymentGroup() *schema.Resource {
 				},
 			},
 
-			"service_role_arn": &schema.Schema{
+			"service_role_arn": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 
-			"alarm_configuration": &schema.Schema{
+			"alarm_configuration": {
 				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"alarms": &schema.Schema{
+						"alarms": {
 							Type:     schema.TypeSet,
 							MaxItems: 10,
 							Optional: true,
@@ -71,12 +71,12 @@ func resourceAwsCodeDeployDeploymentGroup() *schema.Resource {
 							Elem:     &schema.Schema{Type: schema.TypeString},
 						},
 
-						"enabled": &schema.Schema{
+						"enabled": {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
 
-						"ignore_poll_alarm_failure": &schema.Schema{
+						"ignore_poll_alarm_failure": {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  false,
@@ -85,18 +85,18 @@ func resourceAwsCodeDeployDeploymentGroup() *schema.Resource {
 				},
 			},
 
-			"auto_rollback_configuration": &schema.Schema{
+			"auto_rollback_configuration": {
 				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"enabled": &schema.Schema{
+						"enabled": {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
 
-						"events": &schema.Schema{
+						"events": {
 							Type:     schema.TypeSet,
 							Optional: true,
 							Set:      schema.HashString,
@@ -106,14 +106,14 @@ func resourceAwsCodeDeployDeploymentGroup() *schema.Resource {
 				},
 			},
 
-			"autoscaling_groups": &schema.Schema{
+			"autoscaling_groups": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
 
-			"deployment_config_name": &schema.Schema{
+			"deployment_config_name": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "CodeDeployDefault.OneAtATime",
@@ -127,23 +127,23 @@ func resourceAwsCodeDeployDeploymentGroup() *schema.Resource {
 				},
 			},
 
-			"ec2_tag_filter": &schema.Schema{
+			"ec2_tag_filter": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"key": &schema.Schema{
+						"key": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 
-						"type": &schema.Schema{
+						"type": {
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validateTagFilters,
 						},
 
-						"value": &schema.Schema{
+						"value": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -152,23 +152,23 @@ func resourceAwsCodeDeployDeploymentGroup() *schema.Resource {
 				Set: resourceAwsCodeDeployTagFilterHash,
 			},
 
-			"on_premises_instance_tag_filter": &schema.Schema{
+			"on_premises_instance_tag_filter": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"key": &schema.Schema{
+						"key": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 
-						"type": &schema.Schema{
+						"type": {
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validateTagFilters,
 						},
 
-						"value": &schema.Schema{
+						"value": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -177,12 +177,12 @@ func resourceAwsCodeDeployDeploymentGroup() *schema.Resource {
 				Set: resourceAwsCodeDeployTagFilterHash,
 			},
 
-			"trigger_configuration": &schema.Schema{
+			"trigger_configuration": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"trigger_events": &schema.Schema{
+						"trigger_events": {
 							Type:     schema.TypeSet,
 							Required: true,
 							Set:      schema.HashString,
@@ -192,12 +192,12 @@ func resourceAwsCodeDeployDeploymentGroup() *schema.Resource {
 							},
 						},
 
-						"trigger_name": &schema.Schema{
+						"trigger_name": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
 
-						"trigger_target_arn": &schema.Schema{
+						"trigger_target_arn": {
 							Type:     schema.TypeString,
 							Required: true,
 						},

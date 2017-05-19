@@ -22,7 +22,7 @@ func TestAccAWSBeanstalkAppVersion_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckApplicationVersionDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccBeanstalkApplicationVersionConfig(acctest.RandInt()),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckApplicationVersionExists("aws_elastic_beanstalk_application_version.default", &appVersion),

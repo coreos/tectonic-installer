@@ -39,7 +39,7 @@ func dataSourceAwsVpcEndpoint() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"route_table_ids": &schema.Schema{
+			"route_table_ids": {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},

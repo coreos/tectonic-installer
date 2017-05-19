@@ -15,7 +15,7 @@ func TestAccDataSourceAwsKmsAlias(t *testing.T) {
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccDataSourceAwsKmsAlias(rInt),
 				Check: resource.ComposeTestCheckFunc(
 					testAccDataSourceAwsKmsAliasCheck("data.aws_kms_alias.by_name"),

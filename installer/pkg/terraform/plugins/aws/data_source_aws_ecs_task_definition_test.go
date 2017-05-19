@@ -12,7 +12,7 @@ func TestAccAWSEcsDataSource_ecsTaskDefinition(t *testing.T) {
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccCheckAwsEcsTaskDefinitionDataSourceConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestMatchResourceAttr("data.aws_ecs_task_definition.mongo", "id", regexp.MustCompile("^arn:aws:ecs:us-west-2:[0-9]{12}:task-definition/mongodb:[1-9][0-9]*$")),

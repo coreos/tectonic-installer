@@ -22,7 +22,7 @@ func resourceAwsCodeBuildProject() *schema.Resource {
 		Delete: resourceAwsCodeBuildProjectDelete,
 
 		Schema: map[string]*schema.Schema{
-			"artifacts": &schema.Schema{
+			"artifacts": {
 				Type:     schema.TypeSet,
 				Required: true,
 				MaxItems: 1,
@@ -69,7 +69,7 @@ func resourceAwsCodeBuildProject() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
-			"environment": &schema.Schema{
+			"environment": {
 				Type:     schema.TypeSet,
 				Required: true,
 				MaxItems: 1,
@@ -80,7 +80,7 @@ func resourceAwsCodeBuildProject() *schema.Resource {
 							Required:     true,
 							ValidateFunc: validateAwsCodeBuildEnvironmentComputeType,
 						},
-						"environment_variable": &schema.Schema{
+						"environment_variable": {
 							Type:     schema.TypeList,
 							Optional: true,
 							Computed: true,
@@ -121,11 +121,11 @@ func resourceAwsCodeBuildProject() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
-			"source": &schema.Schema{
+			"source": {
 				Type: schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"auth": &schema.Schema{
+						"auth": {
 							Type: schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{

@@ -271,13 +271,13 @@ func TestAccAWSBeanstalkEnv_version_label(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckBeanstalkEnvDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccBeanstalkEnvApplicationVersionConfig(acctest.RandInt()),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckBeanstalkApplicationVersionDeployed("aws_elastic_beanstalk_environment.default", &app),
 				),
 			},
-			resource.TestStep{
+			{
 				Config: testAccBeanstalkEnvApplicationVersionConfigUpdate(acctest.RandInt()),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckBeanstalkApplicationVersionDeployed("aws_elastic_beanstalk_environment.default", &app),

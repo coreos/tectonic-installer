@@ -157,7 +157,7 @@ func resourceAwsEMRCluster() *schema.Resource {
 				ForceNew: true,
 				Required: true,
 			},
-			"autoscaling_role": &schema.Schema{
+			"autoscaling_role": {
 				Type:     schema.TypeString,
 				ForceNew: true,
 				Optional: true,

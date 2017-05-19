@@ -19,7 +19,7 @@ func TestAWSPolicy_namePrefix(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSPolicyDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccAWSPolicyPrefixNameConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAWSPolicyExists("aws_iam_policy.policy", &out),

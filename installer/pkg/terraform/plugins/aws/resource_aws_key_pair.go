@@ -26,14 +26,14 @@ func resourceAwsKeyPair() *schema.Resource {
 		MigrateState:  resourceAwsKeyPairMigrateState,
 
 		Schema: map[string]*schema.Schema{
-			"key_name": &schema.Schema{
+			"key_name": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"key_name_prefix"},
 			},
-			"key_name_prefix": &schema.Schema{
+			"key_name_prefix": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
@@ -46,7 +46,7 @@ func resourceAwsKeyPair() *schema.Resource {
 					return
 				},
 			},
-			"public_key": &schema.Schema{
+			"public_key": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
@@ -59,7 +59,7 @@ func resourceAwsKeyPair() *schema.Resource {
 					}
 				},
 			},
-			"fingerprint": &schema.Schema{
+			"fingerprint": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
