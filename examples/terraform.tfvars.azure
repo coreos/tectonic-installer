@@ -1,16 +1,16 @@
 
 // The e-mail address used to login as the admin user to the Tectonic Console.
-// 
+//
 // Note: This field MUST be set manually prior to creating the cluster.
 tectonic_admin_email = ""
 
 // The bcrypt hash of admin user password to login to the Tectonic Console.
 // Use the bcrypt-hash tool (https://github.com/coreos/bcrypt-tool/releases/tag/v1.0.0) to generate it.
-// 
+//
 // Note: This field MUST be set manually prior to creating the cluster.
 tectonic_admin_password_hash = ""
 
-// 
+//
 tectonic_azure_dns_resource_group = "tectonic-dns-group"
 
 // Instance size for the etcd node(s). Example: Standard_DS2_v2.
@@ -18,7 +18,7 @@ tectonic_azure_etcd_vm_size = "Standard_DS2_v2"
 
 // (optional) Subnet ID within an existing VNet to deploy master nodes into.
 // Required to use an existing VNet.
-// 
+//
 // Example: the subnet ID starts with `"/subscriptions/{subscriptionId}"` or `"/providers/{resourceProviderNamespace}"`.
 // tectonic_azure_external_master_subnet_id = ""
 
@@ -33,20 +33,20 @@ tectonic_azure_external_vnet_name = ""
 
 // (optional) Subnet ID within an existing VNet to deploy worker nodes into.
 // Required to use an existing VNet.
-// 
+//
 // Example: the subnet ID starts with `"/subscriptions/{subscriptionId}"` or `"/providers/{resourceProviderNamespace}"`.
 // tectonic_azure_external_worker_subnet_id = ""
 
-// 
+//
 tectonic_azure_image_reference = ""
 
-// 
+//
 tectonic_azure_location = ""
 
 // Instance size for the master node(s). Example: Standard_DS2_v2.
 tectonic_azure_master_vm_size = "Standard_DS2_v2"
 
-// 
+//
 tectonic_azure_ssh_key = ""
 
 // If set to true, assemble the FQDN from the configuration. Otherwise, use the FQDN set up by Azure.
@@ -59,9 +59,9 @@ tectonic_azure_vnet_cidr_block = "10.0.0.0/16"
 tectonic_azure_worker_vm_size = "Standard_DS2_v2"
 
 // The base DNS domain of the cluster.
-// 
+//
 // Example: `openstack.dev.coreos.systems`.
-// 
+//
 // Note: This field MUST be set manually prior to creating the cluster.
 // This applies only to cloud platforms.
 tectonic_base_domain = ""
@@ -80,7 +80,7 @@ tectonic_base_domain = ""
 // tectonic_ca_key_alg = "RSA"
 
 // The Container Linux update channel.
-// 
+//
 // Examples: `stable`, `beta`, `alpha`
 tectonic_cl_channel = "stable"
 
@@ -89,38 +89,38 @@ tectonic_cluster_cidr = "10.2.0.0/16"
 
 // The name of the cluster.
 // If used in a cloud-environment, this will be prepended to `tectonic_base_domain` resulting in the URL to the Tectonic console.
-// 
+//
 // Note: This field MUST be set manually prior to creating the cluster.
 // Warning: Special characters in the name like '.' may cause errors on OpenStack platforms due to resource name constraints.
 tectonic_cluster_name = ""
 
 // (optional) The path of the file containing the CA certificate for TLS communication with etcd.
-// 
+//
 // Note: This works only when used in conjunction with an external etcd cluster.
 // If set, the variables `tectonic_etcd_servers`, `tectonic_etcd_client_cert_path`, and `tectonic_etcd_client_key_path` must also be set.
 // tectonic_etcd_ca_cert_path = ""
 
 // (optional) The path of the file containing the client certificate for TLS communication with etcd.
-// 
+//
 // Note: This works only when used in conjunction with an external etcd cluster.
 // If set, the variables `tectonic_etcd_servers`, `tectonic_etcd_ca_cert_path`, and `tectonic_etcd_client_key_path` must also be set.
 // tectonic_etcd_client_cert_path = ""
 
 // (optional) The path of the file containing the client key for TLS communication with etcd.
-// 
+//
 // Note: This works only when used in conjunction with an external etcd cluster.
 // If set, the variables `tectonic_etcd_servers`, `tectonic_etcd_ca_cert_path`, and `tectonic_etcd_client_cert_path` must also be set.
 // tectonic_etcd_client_key_path = ""
 
 // The number of etcd nodes to be created.
 // If set to zero, the count of etcd nodes will be determined automatically.
-// 
+//
 // Note: This is currently only supported on AWS.
 tectonic_etcd_count = "0"
 
 // (optional) List of external etcd v3 servers to connect with (hostnames/IPs only).
 // Needs to be set if using an external etcd cluster.
-// 
+//
 // Example: `["etcd1", "etcd2", "etcd3"]`
 // tectonic_etcd_servers = ""
 
@@ -140,7 +140,7 @@ tectonic_kube_dns_service_ip = "10.3.0.10"
 tectonic_kube_etcd_service_ip = "10.3.0.15"
 
 // The path to the tectonic licence file.
-// 
+//
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_license_path = ""
 
@@ -149,14 +149,14 @@ tectonic_license_path = ""
 tectonic_master_count = "1"
 
 // The path the pull secret file in JSON format.
-// 
+//
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_pull_secret_path = ""
 
 // This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation.
 tectonic_service_cidr = "10.3.0.0/16"
 
-// 
+//
 tectonic_ssh_key = ""
 
 // If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
