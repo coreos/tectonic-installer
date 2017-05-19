@@ -38,7 +38,7 @@ tectonic_azure_external_vnet_name = ""
 // tectonic_azure_external_worker_subnet_id = ""
 
 //
-tectonic_azure_image_reference = ""
+//tectonic_azure_image_reference = ""
 
 //
 tectonic_azure_location = ""
