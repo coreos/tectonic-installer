@@ -28,7 +28,7 @@ func resourceAwsAutoscalingGroup() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				Computed:      true,
@@ -44,7 +44,7 @@ func resourceAwsAutoscalingGroup() *schema.Resource {
 					return
 				},
 			},
-			"name_prefix": &schema.Schema{
+			"name_prefix": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
@@ -246,7 +246,7 @@ func resourceAwsAutoscalingGroup() *schema.Resource {
 
 			"tag": autoscalingTagSchema(),
 
-			"tags": &schema.Schema{
+			"tags": {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeMap},

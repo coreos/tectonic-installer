@@ -20,18 +20,18 @@ func resourceAwsKmsAlias() *schema.Resource {
 		Delete: resourceAwsKmsAliasDelete,
 
 		Schema: map[string]*schema.Schema{
-			"arn": &schema.Schema{
+			"arn": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"name_prefix"},
 				ValidateFunc:  validateAwsKmsName,
 			},
-			"name_prefix": &schema.Schema{
+			"name_prefix": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
@@ -44,7 +44,7 @@ func resourceAwsKmsAlias() *schema.Resource {
 					return
 				},
 			},
-			"target_key_id": &schema.Schema{
+			"target_key_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},

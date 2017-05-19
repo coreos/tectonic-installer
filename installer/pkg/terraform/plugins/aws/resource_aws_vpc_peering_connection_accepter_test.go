@@ -15,7 +15,7 @@ func TestAccAwsVPCPeeringConnectionAccepter_sameAccount(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccAwsVPCPeeringConnectionAccepterDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config:      testAccAwsVPCPeeringConnectionAccepterSameAccountConfig,
 				ExpectError: regexp.MustCompile(`aws_vpc_peering_connection_accepter can only adopt into management cross-account VPC peering connections`),
 			},

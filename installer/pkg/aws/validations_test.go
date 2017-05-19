@@ -49,27 +49,27 @@ func TestValidateKubernetesCIDRs_Invalid(t *testing.T) {
 func TestValidateSubnets(t *testing.T) {
 	correctVPCCIDR := "10.0.0.0/16"
 	subnets := []VPCSubnet{
-		VPCSubnet{
+		{
 			AvailabilityZone: "us-west-2a",
 			InstanceCIDR:     "10.0.0.0/20",
 		},
-		VPCSubnet{
+		{
 			AvailabilityZone: "us-west-2b",
 			InstanceCIDR:     "10.0.16.0/20",
 		},
-		VPCSubnet{
+		{
 			AvailabilityZone: "us-west-2c",
 			InstanceCIDR:     "10.0.32.0/20",
 		},
-		VPCSubnet{
+		{
 			AvailabilityZone: "us-west-2a",
 			InstanceCIDR:     "10.0.48.0/20",
 		},
-		VPCSubnet{
+		{
 			AvailabilityZone: "us-west-2b",
 			InstanceCIDR:     "10.0.64.0/20",
 		},
-		VPCSubnet{
+		{
 			AvailabilityZone: "us-west-2c",
 			InstanceCIDR:     "10.0.80.0/20",
 		},
@@ -92,7 +92,7 @@ func TestValidateSubnets_InvalidVPCCIDR(t *testing.T) {
 func TestValidateSubnets_MissingAvailabilityZone(t *testing.T) {
 	vpcCIDR := "10.0.0.0/16"
 	subnets := []VPCSubnet{
-		VPCSubnet{
+		{
 			AvailabilityZone: "",
 			InstanceCIDR:     "10.0.0.0/20",
 		},
@@ -106,7 +106,7 @@ func TestValidateSubnets_MissingAvailabilityZone(t *testing.T) {
 func TestValidateSubnets_InvalidSubnetCIDR(t *testing.T) {
 	vpcCIDR := "10.0.0.0/16"
 	subnets := []VPCSubnet{
-		VPCSubnet{
+		{
 			AvailabilityZone: "us-west-2a",
 			InstanceCIDR:     "10.0.0.0/99",
 		},
@@ -120,11 +120,11 @@ func TestValidateSubnets_InvalidSubnetCIDR(t *testing.T) {
 func TestValidateSubnets_SubnetOverlaps(t *testing.T) {
 	vpcCIDR := "10.0.0.0/16"
 	subnets := []VPCSubnet{
-		VPCSubnet{
+		{
 			AvailabilityZone: "us-west-2a",
 			InstanceCIDR:     "10.0.0.0/20",
 		},
-		VPCSubnet{
+		{
 			AvailabilityZone: "us-west-2b",
 			InstanceCIDR:     "10.0.0.0/20",
 		},

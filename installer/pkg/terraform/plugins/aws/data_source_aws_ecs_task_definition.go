@@ -13,29 +13,29 @@ func dataSourceAwsEcsTaskDefinition() *schema.Resource {
 		Read: dataSourceAwsEcsTaskDefinitionRead,
 
 		Schema: map[string]*schema.Schema{
-			"task_definition": &schema.Schema{
+			"task_definition": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
 			// Computed values.
-			"family": &schema.Schema{
+			"family": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"network_mode": &schema.Schema{
+			"network_mode": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"revision": &schema.Schema{
+			"revision": {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
-			"status": &schema.Schema{
+			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"task_role_arn": &schema.Schema{
+			"task_role_arn": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},

@@ -19,13 +19,13 @@ func resourceAwsSesDomainIdentity() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"domain": &schema.Schema{
+			"domain": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
 
-			"verification_token": &schema.Schema{
+			"verification_token": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},

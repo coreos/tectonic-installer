@@ -18,12 +18,12 @@ func resourceAwsWafXssMatchSet() *schema.Resource {
 		Delete: resourceAwsWafXssMatchSetDelete,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"xss_match_tuples": &schema.Schema{
+			"xss_match_tuples": {
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem: &schema.Resource{
@@ -45,7 +45,7 @@ func resourceAwsWafXssMatchSet() *schema.Resource {
 								},
 							},
 						},
-						"text_transformation": &schema.Schema{
+						"text_transformation": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
