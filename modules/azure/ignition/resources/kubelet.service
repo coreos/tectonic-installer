@@ -27,12 +27,14 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --pod-manifest-path=/etc/kubernetes/manifests \
   --allow-privileged \
   --node-labels=${node_label} \
+  ${node_taints_param} \
   --minimum-container-ttl-duration=6m0s \
   --cluster_dns=${cluster_dns} \
   --cluster_domain=cluster.local \
   --client-ca-file=/etc/kubernetes/ca.crt \
   --anonymous-auth=false \
-  --cloud-provider="${cloud_provider}"
+  --cloud-provider=azure \
+  --cloud-config=/etc/kubernetes/cloud-config.json
 ExecStop=-/usr/bin/rkt stop --uuid-file=/var/run/kubelet-pod.uuid
 Restart=always
 RestartSec=10

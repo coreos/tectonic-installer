@@ -45,6 +45,7 @@ spec:
         - --service-account-private-key-file=/etc/kubernetes/secrets/service-account.key
         - --leader-elect=true
         - --cloud-provider=${cloud_provider}
+        ${cloud_config_flag}
         livenessProbe:
           httpGet:
             path: /healthz

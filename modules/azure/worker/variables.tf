@@ -7,13 +7,12 @@ variable "resource_group_name" {
   type = "string"
 }
 
-// Image refernce to use for worker instances
-variable "image_reference" {
-  type = "map"
-}
-
 // VM Size name
 variable "vm_size" {
+  type = "string"
+}
+
+variable "cl_channel" {
   type = "string"
 }
 
@@ -33,7 +32,7 @@ variable "cluster_name" {
   type = "string"
 }
 
-variable "public_ssh_key" {
+variable "nsg_id" {
   type = "string"
 }
 
@@ -45,28 +44,15 @@ variable "subnet" {
   type = "string"
 }
 
-variable "kube_image_url" {
+variable "custom_data" {
   type = "string"
 }
 
-variable "kube_image_tag" {
+variable "public_ssh_key" {
   type = "string"
 }
 
-variable "kubeconfig_content" {
-  type    = "string"
-  default = ""
-}
-
-variable "tectonic_kube_dns_service_ip" {
+variable "availability_set_name" {
   type = "string"
 }
 
-variable "cloud_provider" {
-  type    = "string"
-  default = "azure"
-}
-
-variable "kubelet_node_label" {
-  type = "string"
-}

@@ -12,26 +12,8 @@ variable "tectonic_azure_dns_resource_group" {
   default = "tectonic-dns-group"
 }
 
-// The image ID as given in `azure image list`.
-// Specifies the OS image of the VM.
-variable "tectonic_azure_image_reference" {
-  type = "map"
-
-  default = {
-    publisher = "CoreOS"
-    offer     = "CoreOS"
-    sku       = "Stable"
-    version   = "latest"
-  }
-}
-
 variable "tectonic_azure_location" {
   type = "string"
-}
-
-variable "tectonic_ssh_key" {
-  type    = "string"
-  default = ""
 }
 
 // Name of an Azure ssh key to use
@@ -87,6 +69,11 @@ variable "tectonic_azure_use_custom_fqdn" {
   default     = true
 }
 
+variable "tectonic_azure_external_dns_zone" {
+  description = "If true, assumes an existing dns zone with the tectonic_base_domain"
+  default = false
+}
+
 variable "tectonic_azure_external_master_subnet_id" {
   type = "string"
 
@@ -111,4 +98,19 @@ Example: the subnet ID starts with `"/subscriptions/{subscriptionId}"` or `"/pro
 EOF
 
   default = ""
+}
+
+variable "tectonic_azure_public_ip_type" {
+  type = "string"
+
+  description = <<EOF
+(optional) Weither public ips are allocated as static or dynamic (default)
+EOF
+
+  default = "Dynamic"
+}
+
+variable "tectonic_arm_client_secret" {
+  type        = "string"
+  description = "Access code of application"
 }

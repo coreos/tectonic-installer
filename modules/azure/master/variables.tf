@@ -7,13 +7,12 @@ variable "resource_group_name" {
   type = "string"
 }
 
-// Image refernce to use for master instances
-variable "image_reference" {
-  type = "map"
-}
-
 // VM Size name
 variable "vm_size" {
+  type = "string"
+}
+
+variable "cl_channel" {
   type = "string"
 }
 
@@ -28,7 +27,7 @@ variable "cluster_name" {
   type = "string"
 }
 
-variable "public_ssh_key" {
+variable "nsg_id" {
   type = "string"
 }
 
@@ -40,55 +39,23 @@ variable "subnet" {
   type = "string"
 }
 
-variable "kube_image_url" {
-  type = "string"
-}
-
-variable "kube_image_tag" {
-  type = "string"
-}
-
-variable "kubeconfig_content" {
-  type = "string"
-}
-
 // Count of master nodes to be created.
 variable "master_count" {
   type = "string"
 }
 
-variable "tectonic_kube_dns_service_ip" {
+variable "custom_data" {
   type = "string"
 }
 
-variable "cloud_provider" {
-  type    = "string"
-  default = "azure"
-}
-
-variable "kubelet_node_label" {
+variable "public_ssh_key" {
   type = "string"
-}
-
-variable "kubelet_node_taints" {
-  type = "string"
-}
-
-variable "bootkube_service" {
-  type        = "string"
-  description = "The content of the bootkube systemd service unit"
-}
-
-variable "tectonic_service" {
-  type        = "string"
-  description = "The content of the tectonic installer systemd service unit"
-}
-
-variable "tectonic_service_disabled" {
-  description = "Specifies whether the tectonic installer systemd unit will be disabled. If true, no tectonic assets will be deployed"
-  default     = false
 }
 
 variable "use_custom_fqdn" {
   default = true
+}
+
+variable "public_ip_type" {
+  type = "string"
 }

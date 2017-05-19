@@ -2,7 +2,7 @@ resource "azurerm_public_ip" "tectonic_api_ip" {
   name                         = "tectonic_api_ip"
   location                     = "${var.location}"
   resource_group_name          = "${var.resource_group_name}"
-  public_ip_address_allocation = "static"
+  public_ip_address_allocation = "${var.public_ip_type}"
   domain_name_label            = "${var.cluster_name}-k8s"
 
   tags {

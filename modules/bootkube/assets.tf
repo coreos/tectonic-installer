@@ -42,7 +42,9 @@ resource "template_dir" "bootkube" {
     etcd_key_flag   = "${data.null_data_source.etcd.outputs.key_flag}"
     etcd_service_ip = "${var.etcd_service_ip}"
 
-    cloud_provider = "${var.cloud_provider}"
+    cloud_provider    = "${var.cloud_provider}"
+    cloud_config      = "${var.cloud_config != "" ? "cloud-config.json: ${base64encode(var.cloud_config)}" : "# no cloud config given"}"
+    cloud_config_flag = "${var.cloud_config != "" ? "- --cloud-config=/etc/kubernetes/secrets/cloud-config.json" : "# no cloud config given"}"
 
     cluster_cidr        = "${var.cluster_cidr}"
     service_cidr        = "${var.service_cidr}"
@@ -83,6 +85,7 @@ resource "template_dir" "bootkube-bootstrap" {
 
     advertise_address = "${var.advertise_address}"
     cloud_provider    = "${var.cloud_provider}"
+    cloud_config_flag = "${var.cloud_config != "" ? "- --cloud-config=/etc/kubernetes/cloud-config.json" : "# no cloud config given"}"
     cluster_cidr      = "${var.cluster_cidr}"
     service_cidr      = "${var.service_cidr}"
   }

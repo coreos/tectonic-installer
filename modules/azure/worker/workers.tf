@@ -1,6 +1,3 @@
-# TODO
-# Add to availabilityset
-
 # Generate unique storage name
 resource "random_id" "tectonic_storage_name" {
   byte_length = 4
@@ -18,62 +15,63 @@ resource "azurerm_storage_account" "tectonic_worker" {
 }
 
 resource "azurerm_storage_container" "tectonic_worker" {
-  name                  = "vhd"
+  name                  = "${var.cluster_name}-vhd-worker"
   resource_group_name   = "${var.resource_group_name}"
   storage_account_name  = "${azurerm_storage_account.tectonic_worker.name}"
   container_access_type = "private"
 }
 
-# resource "azurerm_lb_backend_address_pool" "workers" {
-#   name                = "workers-lb-pool"
-#   resource_group_name = "${var.resource_group_name}"
-#   loadbalancer_id     = "${azurerm_lb.tectonic_lb.id}"
-# }
-
-resource "azurerm_virtual_machine_scale_set" "tectonic_workers" {
-  name                = "${var.cluster_name}-workers"
+resource "azurerm_availability_set" "tectonic_worker" {
+  name                = "${var.availability_set_name}"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
-  upgrade_policy_mode = "Manual"
+}
 
-  sku {
-    name     = "${var.vm_size}"
-    tier     = "${element(split("_", var.vm_size),0)}"
-    capacity = "${var.worker_count}"
+resource "azurerm_network_interface" "tectonic_worker" {
+  count                     = "${var.worker_count}"
+  name                      = "${var.cluster_name}-worker-network-${count.index}"
+  location                  = "${var.location}"
+  resource_group_name       = "${var.resource_group_name}"
+  network_security_group_id = "${var.nsg_id}"
+
+  ip_configuration {
+    name                          = "${var.cluster_name}-worker-ip-${count.index}"
+    subnet_id                     = "${var.subnet}"
+    private_ip_address_allocation = "Dynamic"
   }
+}
 
-  network_profile {
-    name    = "${var.cluster_name}-WorkerNetworkProfile"
-    primary = true
+resource "azurerm_virtual_machine" "tectonic_worker" {
+  count                 = "${var.worker_count}"
+  name                  = "${var.cluster_name}-worker-${count.index}"
+  location              = "${var.location}"
+  resource_group_name   = "${var.resource_group_name}"
+  availability_set_id   = "${azurerm_availability_set.tectonic_worker.id}"
+  vm_size               = "${var.vm_size}"
+  network_interface_ids = ["${azurerm_network_interface.tectonic_worker.*.id[count.index]}"]
 
-    ip_configuration {
-      name      = "${var.cluster_name}-WorkerIPConfiguration"
-      subnet_id = "${var.subnet}"
-
-      # load_balancer_backend_address_pool_ids = ["azurerm_lb_backend_address_pool.workers.id"]
-    }
-  }
-
-  storage_profile_image_reference {
+  storage_image_reference {
     publisher = "CoreOS"
     offer     = "CoreOS"
-    sku       = "Stable"
+    sku       = "${var.cl_channel}"
     version   = "latest"
   }
 
-  storage_profile_os_disk {
-    name           = "worker-osdisk"
+  storage_os_disk {
+    name           = "worker-disk"
     caching        = "ReadWrite"
     create_option  = "FromImage"
     os_type        = "linux"
-    vhd_containers = ["${azurerm_storage_account.tectonic_worker.primary_blob_endpoint}${azurerm_storage_container.tectonic_worker.name}"]
+    vhd_uri        = "${azurerm_storage_account.tectonic_worker.primary_blob_endpoint}${azurerm_storage_container.tectonic_worker.name}/worker-disk-${count.index}.vhd"
   }
+  delete_os_disk_on_termination = true
 
   os_profile {
-    computer_name_prefix = "tectonic-worker-"
-    admin_username       = "core"
-    admin_password       = ""
-    custom_data          = "${base64encode("${data.ignition_config.worker.rendered}")}"
+    computer_name  = "${var.cluster_name}-worker-${count.index}"
+    admin_username = "core"
+    admin_password = ""
+
+    custom_data = "${base64encode(var.custom_data)}"
   }
 
   os_profile_linux_config {
@@ -86,6 +84,6 @@ resource "azurerm_virtual_machine_scale_set" "tectonic_workers" {
   }
 
   tags {
-    environment = "staging"
+    environment                                 = "staging"
   }
 }

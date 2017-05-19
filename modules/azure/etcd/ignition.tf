@@ -1,21 +1,9 @@
 data "ignition_config" "etcd" {
-  count = "${var.etcd_count}"
+  count = "${data.null_data_source.consts.outputs.instance_count}"
 
   systemd = [
     "${data.ignition_systemd_unit.locksmithd.id}",
     "${data.ignition_systemd_unit.etcd3.*.id[count.index]}",
-  ]
-
-  users = [
-    "${data.ignition_user.core.id}",
-  ]
-}
-
-data "ignition_user" "core" {
-  name = "core"
-
-  ssh_authorized_keys = [
-    "${file(var.public_ssh_key)}",
   ]
 }
 
@@ -32,7 +20,7 @@ data "ignition_systemd_unit" "locksmithd" {
 }
 
 data "ignition_systemd_unit" "etcd3" {
-  count  = "${var.etcd_count}"
+  count  = "${length(var.external_endpoints) == 0 ? var.etcd_count : 0}"
   name   = "etcd-member.service"
   enable = true
 
@@ -46,7 +34,7 @@ Requires=coreos-metadata.service
 After=coreos-metadata.service
 
 [Service]
-Environment="ETCD_IMAGE_TAG=v3.1.2"
+Environment="ETCD_IMAGE_TAG=${var.container_image}"
 EnvironmentFile=/run/metadata/coreos
 ExecStart=
 ExecStart=/usr/lib/coreos/etcd-wrapper \

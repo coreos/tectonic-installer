@@ -7,19 +7,22 @@ variable "resource_group_name" {
   type = "string"
 }
 
-// Image refernce to use for master instances
-variable "image_reference" {
-  type = "map"
-}
-
 // VM Size name
 variable "vm_size" {
+  type = "string"
+}
+
+variable "cl_channel" {
   type = "string"
 }
 
 // Count of etcd nodes to be created.
 variable "etcd_count" {
   type = "string"
+}
+
+variable "external_endpoints" {
+  type = "list"
 }
 
 // The base DNS domain of the cluster.
@@ -43,4 +46,14 @@ variable "virtual_network" {
 
 variable "subnet" {
   type = "string"
+}
+
+variable "container_image" {
+  type = "string"
+}
+
+data "null_data_source" "consts" {
+  inputs = {
+    instance_count = "${length(var.external_endpoints) == 0 ? var.etcd_count : 0}"
+  }
 }

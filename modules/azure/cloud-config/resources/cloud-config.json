@@ -1,0 +1,14 @@
+{
+    "cloud": "${cloud}",
+    "tenantId": "${tenant_id}",
+    "subscriptionId": "${subscription_id}",
+    "aadClientId": "${aad_client_id}",
+    "aadClientSecret": "${aad_client_secret}",
+    "resourceGroup": "${resource_group_name}",
+    "location": "${location}",
+    "subnetName": "${subnet_name}",
+    "securityGroupName": "${security_group_name}",
+    "vnetName": "${vnet_name}",
+    "routeTableName": "${route_table_name}",
+    "primaryAvailabilitySetName": "${primary_availability_set_name}"
+}
