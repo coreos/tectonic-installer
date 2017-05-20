@@ -16,7 +16,7 @@ limitations under the License.
 
 resource "google_dns_record_set" "etcd_srv_discover" {
   count   = "${var.dns_enabled ? 1 : 0}"
-  name    = "_etcd-server._tcp.${var.base_domain}"
+  name    = "_etcd-server._tcp.${var.base_domain}."
   type    = "SRV"
   managed_zone = "${var.managed_zone_name}"
   rrdatas = ["${format("0 0 2380 %s", google_dns_record_set.etc_a_node.name)}"]
@@ -25,7 +25,7 @@ resource "google_dns_record_set" "etcd_srv_discover" {
 
 resource "google_dns_record_set" "etcd_srv_client" {
   count   = "${var.dns_enabled ? 1 : 0}"
-  name    = "_etcd-client._tcp.${var.base_domain}"
+  name    = "_etcd-client._tcp.${var.base_domain}."
   type    = "SRV"
   managed_zone = "${var.managed_zone_name}"
   rrdatas = ["${format("0 0 2379 %s", google_dns_record_set.etc_a_node.name)}"]
@@ -37,7 +37,7 @@ resource "google_dns_record_set" "etc_a_node" {
   type    = "A"
   ttl     = "60"
   managed_zone = "${var.managed_zone_name}"
-  name    = "${var.cluster_name}-etcd.${var.base_domain}"
+  name    = "${var.cluster_name}-etcd.${var.base_domain}."
   rrdatas = ["${google_compute_instance.etcd-node.network_interface.0.address}"]
 }
 

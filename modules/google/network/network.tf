@@ -68,6 +68,16 @@ resource "google_compute_forwarding_rule" "tectonic-worker-fwd-rule" {
 
 ## Firewall rules
 ## see https://github.com/coreos/tectonic-installer/blob/master/Documentation/generic-platform.md
+resource "google_compute_firewall" "tectonic-allow-https" {
+  name    = "tectonic-allow-https"
+  network = "${google_compute_network.tectonic-network.name}"
+  allow {
+    protocol = "tcp"
+    ports    = ["443"]
+  }
+  source_ranges = ["0.0.0.0/0"]
+}
+
 resource "google_compute_firewall" "tectonic-allow-ssh" {
   name    = "tectonic-allow-ssh"
   network = "${google_compute_network.tectonic-network.name}"
@@ -135,7 +145,7 @@ resource "google_compute_firewall" "tectonic-worker-etcd" {
 }
 
 resource "google_dns_record_set" "cluster-api" {
-  name         = "${var.cluster_name}.api.${var.base_domain}"
+  name         = "${var.cluster_name}.api.${var.base_domain}."
   type         = "A"
   ttl          = 300
   managed_zone = "${var.managed_zone_name}"
@@ -143,7 +153,7 @@ resource "google_dns_record_set" "cluster-api" {
 }
 
 resource "google_dns_record_set" "cluster-apps" {
-  name         = "${var.cluster_name}.apps.${var.base_domain}"
+  name         = "${var.cluster_name}.apps.${var.base_domain}."
   type         = "A"
   ttl          = 300
   managed_zone = "${var.managed_zone_name}"

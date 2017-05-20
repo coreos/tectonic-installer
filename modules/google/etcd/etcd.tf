@@ -27,9 +27,9 @@ resource "google_compute_instance" "etcd-node" {
 
   network_interface {
     subnetwork = "${var.master_subnetwork_name}"
-#    access_config = {
-#      // Ephemeral IP
-#    }
+    access_config = {
+      // Ephemeral IP
+    }
   }
 
   metadata = {
