@@ -1,15 +1,3 @@
-resource "azurerm_public_ip" "tectonic_api_ip" {
-  name                         = "tectonic_api_ip"
-  location                     = "${var.location}"
-  resource_group_name          = "${var.resource_group_name}"
-  public_ip_address_allocation = "static"
-  domain_name_label            = "${var.cluster_name}-k8s"
-
-  tags {
-    environment = "staging"
-  }
-}
-
 resource "azurerm_lb_rule" "api-lb" {
   name                    = "api-lb-rule-443-443"
   resource_group_name     = "${var.resource_group_name}"

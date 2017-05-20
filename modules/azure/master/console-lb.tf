@@ -1,15 +1,3 @@
-resource "azurerm_public_ip" "tectonic_console_ip" {
-  name                         = "tectonic_console_ip"
-  location                     = "${var.location}"
-  resource_group_name          = "${var.resource_group_name}"
-  public_ip_address_allocation = "static"
-  domain_name_label            = "${var.cluster_name}"
-
-  tags {
-    environment = "staging"
-  }
-}
-
 resource "azurerm_lb_rule" "console-lb-https" {
   name                    = "console-lb-rule-443-32000"
   resource_group_name     = "${var.resource_group_name}"
