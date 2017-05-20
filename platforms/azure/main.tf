@@ -102,3 +102,12 @@ module "dns" {
   // TODO etcd list
   // TODO worker list
 }
+
+module "jumpbox" {
+  source = "../../modules/azure/jumpbox"
+
+  location            = "${var.tectonic_azure_location}"
+  resource_group_name = "${module.resource_group.name}"
+  public_ssh_key      = "${var.tectonic_azure_ssh_key}"
+  subnet              = "${module.vnet.master_subnet}"
+}
