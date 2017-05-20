@@ -45,9 +45,7 @@ Environment="ETCD_IMAGE=${var.container_image}"
 ExecStart=
 ExecStart=/usr/lib/coreos/etcd-wrapper \
   --name=etcd \
-  --discovery-srv=${var.base_domain} \
-  --advertise-client-urls=http://${var.cluster_name}-etcd.${var.base_domain}:2379 \
-  --initial-advertise-peer-urls=http://${var.cluster_name}-etcd.${var.base_domain}:2380 \
+  --advertise-client-urls=http://${var.cluster_name}-etcd:2379 \
   --listen-client-urls=http://0.0.0.0:2379 \
   --listen-peer-urls=http://0.0.0.0:2380
 EOF

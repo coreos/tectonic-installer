@@ -31,8 +31,8 @@ module "bootkube" {
   service_cidr = "${var.tectonic_service_cidr}"
   cluster_cidr = "${var.tectonic_cluster_cidr}"
 
-  kube_apiserver_service_ip = "${module.network.master_ip}"
-  kube_dns_service_ip       = "${module.network.master_ip}"
+  kube_apiserver_service_ip = "10.3.0.1"
+  kube_dns_service_ip       = "10.3.0.10"
 
   advertise_address = "0.0.0.0"
   anonymous_auth    = "false"
