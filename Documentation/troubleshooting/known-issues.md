@@ -1,10 +1,12 @@
 # Known issues in Tectonic
 
-The following is a list of confirmed issues or bugs in Tectonic, that will be fixed in future versions. Items will be removed from this list once addressed and mentioned in the release notes.
+The following is a list of confirmed issues or bugs in Tectonic, that will be fixed in future versions. Items will be marked as solved once addressed and this will be mentioned in the release notes.
 
 ## Tectonic Identity performance issue with OIDC
 
 **Version:** [Tectonic 1.6.2-tectonic.1](https://coreos.com/tectonic/releases/#1.6.2-tectonic.1)
+
+**Status:** open
 
 **Background:**
 
@@ -13,6 +15,8 @@ Tectonic Identity, which utilizes the [open-source project dex](https://github.c
 ## Issues running multiple Terraform commands
 
 **Version:** [Tectonic 1.6.2-tectonic.1](https://coreos.com/tectonic/releases/#1.6.2-tectonic.1)
+
+**Status:** Solved
 
 **Background:**
 
