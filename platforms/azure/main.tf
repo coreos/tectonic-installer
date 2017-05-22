@@ -104,11 +104,11 @@ module "dns" {
   // TODO worker list
 }
 
-module "jumpbox" {
-  source = "../../modules/azure/jumpbox"
+#module "jumpbox" {
+#  source = "../../modules/azure/jumpbox"
 
-  location            = "${var.tectonic_azure_location}"
-  resource_group_name = "${module.resource_group.name}"
-  public_ssh_key      = "${var.tectonic_azure_ssh_key}"
-  subnet              = "${var.tectonic_azure_external_master_subnet_id}"
-}
+#  location            = "${var.tectonic_azure_location}"
+#  resource_group_name = "${module.resource_group.name}"
+#  public_ssh_key      = "${var.tectonic_azure_ssh_key}"
+#  subnet              = "${var.tectonic_azure_external_master_subnet_id}"
+#}
