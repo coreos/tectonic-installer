@@ -21,6 +21,24 @@ variable proxy_storage_profile_image_reference {
   }
 }
 
+resource "azurerm_storage_account" "proxy" {
+  name                = "${random_id.tectonic_master_storage_name.hex}-proxy"
+  resource_group_name = "${var.resource_group_name}"
+  location            = "${var.location}"
+  account_type        = "Standard_LRS"
+
+  tags {
+    environment = "staging"
+  }
+}
+
+resource "azurerm_storage_container" "proxy" {
+  name                  = "${var.cluster_name}-proxy"
+  resource_group_name   = "${var.resource_group_name}"
+  storage_account_name  = "${azurerm_storage_account.proxy.name}"
+  container_access_type = "private"
+}
+
 data "template_file" "scripts_proxy_bootstrap" {
 
   template = <<EOF
@@ -94,7 +112,7 @@ resource "null_resource" "scripts_proxy_bootstrap" {
   }
 
   provisioner "local-exec" {
-    command = "az storage blob upload --container-name ${azurerm_storage_container.tectonic_master.name} --file ${path.cwd}/generated/proxy/api-proxy-bootstrap.sh --name api-proxy-bootstrap.sh --account-name ${azurerm_storage_account.tectonic_master.name} --account-key ${azurerm_storage_account.tectonic_master.primary_access_key}"
+    command = "az storage blob upload --container-name ${azurerm_storage_container.proxy.name} --file ${path.cwd}/generated/proxy/api-proxy-bootstrap.sh --name api-proxy-bootstrap.sh --account-name ${azurerm_storage_account.proxy.name} --account-key ${azurerm_storage_account.proxy.primary_access_key}"
   }
 
 }
@@ -161,7 +179,7 @@ resource "azurerm_virtual_machine_scale_set" "api-proxy" {
       settings = <<SETTINGS
         {
           "fileUris": [
-            "${azurerm_storage_account.tectonic_master.primary_blob_endpoint}${azurerm_storage_container.tectonic_master.name}/api-proxy-bootstrap.sh"
+            "${azurerm_storage_account.tectonic_master.primary_blob_endpoint}${azurerm_storage_container.proxy.name}/api-proxy-bootstrap.sh"
           ],
           "commandToExecute": "sudo bash api-proxy-bootstrap.sh",
           "timestamp": ${substr(null_resource.scripts_proxy_bootstrap.id, 0, 9)}
