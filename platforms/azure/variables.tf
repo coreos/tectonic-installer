@@ -87,8 +87,8 @@ variable "tectonic_azure_external_vnet_name" {
 }
 
 variable "tectonic_azure_use_custom_fqdn" {
-  description = "If set to true, assemble the FQDN from the configuration. Otherwise, use the FQDN set up by Azure."
-  default     = true
+  description = "(optional) If set to true, assemble the FQDN from the configuration. Otherwise, use the FQDN set up by Azure."
+  default     = false
 }
 
 variable "tectonic_azure_external_master_subnet_id" {
