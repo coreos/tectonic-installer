@@ -1,6 +1,4 @@
 provider "vsphere" {
-  user                 = "${var.tectonic_vmware_username}"
-  password             = "${var.tectonic_vmware_password}"
   vsphere_server       = "${var.tectonic_vmware_server}"
   allow_unverified_ssl = "${var.tectonic_vmware_sslselfsigned}"
 }

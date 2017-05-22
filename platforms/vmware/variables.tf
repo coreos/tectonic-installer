@@ -15,17 +15,6 @@ variable "tectonic_vmware_server" {
   description = "vCenter Server IP/FQDN"
 }
 
-variable "tectonic_vmware_username" {
-  type        = "string"
-  default     = "Administrator@vsphere.local"
-  description = "Username to Use to connect to vCenter"
-}
-
-variable "tectonic_vmware_password" {
-  type        = "string"
-  description = "Password to Use"
-}
-
 variable "tectonic_vmware_sslselfsigned" {
   type        = "string"
   description = "Is the vCenter certificate Self-Signed? Example: `tectonic_vmware_sslselfsigned = \"true\"` "

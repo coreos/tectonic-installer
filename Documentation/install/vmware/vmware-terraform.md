@@ -79,6 +79,20 @@ Test out the plan before deploying everything:
 $ terraform plan ../../platforms/vmware
 ```
 
+You will be prompted for vSphere credentials:
+
+```
+provider.vsphere.password
+  The user password for vSphere API operations.
+
+  Enter a value: 
+
+provider.vsphere.user
+  The user name for vSphere API operations.
+
+  Enter a value: 
+```
+
 Next, deploy the cluster:
 
 ```
