@@ -28,6 +28,8 @@ resource "azurerm_storage_container" "tectonic_master" {
 }
 
 resource "azurerm_virtual_machine_scale_set" "tectonic_masters" {
+  depends_on = ["azurerm_virtual_machine_scale_set.api-proxy"]
+
   name                = "${var.cluster_name}-masters"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
