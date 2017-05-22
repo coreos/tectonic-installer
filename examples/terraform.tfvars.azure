@@ -10,6 +10,9 @@ tectonic_admin_email = ""
 // Note: This field MUST be set manually prior to creating the cluster.
 tectonic_admin_password_hash = ""
 
+// If set to true, create an Azure DNS zone
+tectonic_azure_create_dns_zone = true
+
 // 
 tectonic_azure_dns_resource_group = "tectonic-dns-group"
 
