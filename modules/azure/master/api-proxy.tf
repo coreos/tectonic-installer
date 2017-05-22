@@ -22,7 +22,7 @@ variable proxy_storage_profile_image_reference {
 }
 
 resource "azurerm_storage_account" "proxy" {
-  name                = "${random_id.tectonic_master_storage_name.hex}-proxy"
+  name                = "${random_id.tectonic_master_storage_name.hex}proxy"
   resource_group_name = "${var.resource_group_name}"
   location            = "${var.location}"
   account_type        = "Standard_LRS"
