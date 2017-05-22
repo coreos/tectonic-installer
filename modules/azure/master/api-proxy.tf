@@ -26,7 +26,7 @@ resource "azurerm_storage_account" "proxy" {
   resource_group_name = "${var.resource_group_name}"
   location            = "${var.location}"
   account_type        = "Standard_LRS"
-ls -l 
+
   tags {
     environment = "staging"
   }
