@@ -7,6 +7,7 @@ module "bootkube" {
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
+  versions         = "${var.tectonic_versions}"
 
   ca_cert    = "${var.tectonic_ca_cert}"
   ca_key     = "${var.tectonic_ca_key}"
@@ -26,7 +27,6 @@ module "bootkube" {
   etcd_ca_cert         = "${var.tectonic_etcd_ca_cert_path}"
   etcd_client_cert     = "${var.tectonic_etcd_client_cert_path}"
   etcd_client_key      = "${var.tectonic_etcd_client_key_path}"
-  etcd_version         = "${var.tectonic_versions["etcd"]}"
   experimental_enabled = "${var.tectonic_experimental}"
 }
 

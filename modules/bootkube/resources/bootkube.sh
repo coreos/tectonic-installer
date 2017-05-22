@@ -8,7 +8,6 @@ mkdir -p /etc/kubernetes/manifests/
 
 # Move optional experimental manifests into bootkube friendly locations
 [ -d /opt/tectonic/experimental ] && mv /opt/tectonic/experimental/* /opt/tectonic/manifests/ && rm -r /opt/tectonic/experimental
-[ -d /opt/tectonic/etcd-experimental ] && mv /opt/tectonic/etcd-experimental /opt/tectonic/etcd
 [ -d /opt/tectonic/bootstrap-experimental ] && mv /opt/tectonic/bootstrap-experimental/* /opt/tectonic/bootstrap-manifests/ && rm -r /opt/tectonic/bootstrap-experimental
 
 /usr/bin/rkt run \
