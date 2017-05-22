@@ -94,7 +94,7 @@ resource "null_resource" "scripts_proxy_bootstrap" {
   }
 
   provisioner "local-exec" {
-    command = "az storage blob upload --container-name ${azurerm_storage_account.tectonic_master.name} --file ${path.cwd}/generated/proxy/api-proxy-bootstrap.sh --name api-proxy-bootstrap.sh --account-name ${var.storage_account_name} --account-key ${var.storage_account_primary_access_key}"
+    command = "az storage blob upload --container-name ${azurerm_storage_account.tectonic_master.name} --file ${path.cwd}/generated/proxy/api-proxy-bootstrap.sh --name api-proxy-bootstrap.sh --account-name ${azurerm_storage_account.tectonic_master.name} --account-key ${azurerm_storage_account.tectonic_master.primary_access_key}"
   }
 
 }
