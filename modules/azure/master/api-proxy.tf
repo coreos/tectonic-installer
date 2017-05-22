@@ -84,7 +84,7 @@ EOF
 
 resource "local_file" "scripts_proxy_bootstrap" {
   content  = "${data.template_file.scripts_proxy_bootstrap.rendered}"
-  filename = "${path.cwd}/${path.cwd}/generated/proxy/api-proxy-bootstrap.sh"
+  filename = "${path.cwd}/generated/proxy/api-proxy-bootstrap.sh"
 }
 
 resource "null_resource" "scripts_proxy_bootstrap" {
