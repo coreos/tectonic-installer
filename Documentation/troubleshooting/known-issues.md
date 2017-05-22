@@ -16,7 +16,7 @@ Tectonic Identity, which utilizes the [open-source project dex](https://github.c
 
 **Version:** [Tectonic 1.6.2-tectonic.1](https://coreos.com/tectonic/releases/#1.6.2-tectonic.1)
 
-**Status:** Solved
+**Status:** open
 
 **Background:**
 
@@ -44,4 +44,4 @@ ${data.ignition_systemd_unit.etcd3.*.id[count.index]}
 
 Download and use this [customized Terraform binary](https://github.com/coreos/terraform/releases/tag/v0.9.6-fcdf494) that will allow you to run commands after your cluster is booted.
 
-The next Tectonic release will update to Terraform 0.9.6, which will contain the bug fix and allow for normal operation.
+A future Tectonic release will update to Terraform 0.9.6, which will contain the bug fix and allow for normal operation.
