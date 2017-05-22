@@ -26,7 +26,7 @@ resource "azurerm_storage_account" "proxy" {
   resource_group_name = "${var.resource_group_name}"
   location            = "${var.location}"
   account_type        = "Standard_LRS"
-
+ls -l 
   tags {
     environment = "staging"
   }
@@ -179,7 +179,7 @@ resource "azurerm_virtual_machine_scale_set" "api-proxy" {
       settings = <<SETTINGS
         {
           "fileUris": [
-            "${azurerm_storage_account.tectonic_master.primary_blob_endpoint}${azurerm_storage_container.proxy.name}/api-proxy-bootstrap.sh"
+            "${azurerm_storage_account.proxy.primary_blob_endpoint}${azurerm_storage_container.proxy.name}/api-proxy-bootstrap.sh"
           ],
           "commandToExecute": "sudo bash api-proxy-bootstrap.sh",
           "timestamp": ${substr(null_resource.scripts_proxy_bootstrap.id, 0, 9)}
@@ -188,8 +188,8 @@ SETTINGS
 
       protected_settings = <<PSETTINGS
         {
-          "storageAccountName": "${azurerm_storage_account.tectonic_master.name}",
-          "storageAccountKey": "${azurerm_storage_account.tectonic_master.primary_access_key}"
+          "storageAccountName": "${azurerm_storage_account.proxy.name}",
+          "storageAccountKey": "${azurerm_storage_account.proxy.primary_access_key}"
         }
 PSETTINGS
   }
