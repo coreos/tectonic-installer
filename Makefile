@@ -28,7 +28,7 @@ plan: installer-env terraform-get
 	cd $(BUILD_DIR) && $(TF_CMD) plan $(TOP_DIR)/platforms/$(PLATFORM)
 
 apply: installer-env terraform-get
-	cd $(BUILD_DIR) && $(TF_CMD) apply $(TOP_DIR)/platforms/$(PLATFORM)
+	cd $(BUILD_DIR) && TF_LOG=TRACE $(TF_CMD) apply $(TOP_DIR)/platforms/$(PLATFORM)
 
 destroy: installer-env terraform-get
 	cd $(BUILD_DIR) && $(TF_CMD) destroy -force $(TOP_DIR)/platforms/$(PLATFORM)
