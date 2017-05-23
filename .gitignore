@@ -10,3 +10,5 @@ tectonic-license.txt
 terraform.tfstate*
 terraform.tfvars
 /build/
+generated
+crash.log
