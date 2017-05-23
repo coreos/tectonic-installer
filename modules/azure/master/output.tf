@@ -15,9 +15,10 @@ output "ingress_internal_fqdn" {
 }
 
 output "api_external_fqdn" {
-  value = "${azurerm_lb.tectonic_lb.frontend_ip_configuration.0.private_ip_address}"
+  // NOTE: Replaced azurerm_lb.tectonic_lb.frontend_ip_configuration.0.private_ip_address
+  value = "${azurerm_lb.proxy_lb.frontend_ip_configuration.0.private_ip_address}"
 }
 
 output "api_internal_fqdn" {
-  value = "${azurerm_lb.tectonic_lb.frontend_ip_configuration.0.private_ip_address}"
+  value = "${azurerm_lb.proxy_lb.frontend_ip_configuration.0.private_ip_address}"
 }
