@@ -2,7 +2,7 @@ import _ from 'lodash';
 import bcrypt from 'bcryptjs';
 
 import { BARE_METAL_TF } from './platforms';
-import { keyToAlg } from './utils';
+import { keyToAlg, toExtraData } from './utils';
 
 const bcryptCost = 12;
 
@@ -21,6 +21,7 @@ export const AWS_CONTROLLER_SUBNET_IDS = 'awsControllerSubnetIds';
 export const DESELECTED_FIELDS = 'deselectedFields';
 export const AWS_DOMAIN = 'awsDomain';
 export const AWS_HOSTED_ZONE_ID = 'awsHostedZoneId';
+export const AWS_USE_EXISTING_HOSTED_ZONE = 'awsUseExistingHostedZone';
 export const AWS_REGION = 'awsRegion';
 export const AWS_SECRET_ACCESS_KEY = 'awsSecretAccessKey';
 export const AWS_SESSION_TOKEN = 'awsSessionToken';
@@ -277,6 +278,12 @@ export const toAWS_TF = (cc, FORMS, opts={}) => {
     ret.variables.tectonic_aws_external_worker_subnet_ids = workerSubnets;
     ret.variables.tectonic_aws_external_vpc_public = cc[AWS_CREATE_VPC] !== 'VPC_PRIVATE';
   }
+
+  const privateZone = _.get(cc, toExtraData(AWS_HOSTED_ZONE_ID) + '.privateZones.' + cc[AWS_HOSTED_ZONE_ID]);
+  if (!privateZone && cc[AWS_USE_EXISTING_HOSTED_ZONE]) {
+    ret.variables.tectonic_aws_external_private_zone = cc[AWS_HOSTED_ZONE_ID];
+  }
+
   if (cc[CA_TYPE] === 'owned') {
     ret.variables.tectonic_ca_cert = cc[CA_CERTIFICATE];
     ret.variables.tectonic_ca_key = cc[CA_PRIVATE_KEY];
