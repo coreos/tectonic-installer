@@ -17,8 +17,8 @@ Tectonic Installer has improved the stability and user experience of using Terra
 ## Bug Fixes
 
 * (add bug fixes)
-* Fixed issues running multiple Terraform commands ([more info](https://github.com/coreos/tectonic-installer/blob/known-issues/Documentation/troubleshooting/known-issues.md#issues-running-multiple-terraform-commands))
 
 # Known Issues
 
-Tectonic Identity performance issue with OIDC ([more info](Documentation/troubleshooting/known-issues.md#tectonic-identity-performance-issue-with-oidc))
+* Tectonic Identity performance issue with OIDC ([more info](Documentation/troubleshooting/known-issues.md#tectonic-identity-performance-issue-with-oidc))
+* Fixed issues running multiple Terraform commands ([more info](https://github.com/coreos/tectonic-installer/blob/known-issues/Documentation/troubleshooting/known-issues.md#issues-running-multiple-terraform-commands))
