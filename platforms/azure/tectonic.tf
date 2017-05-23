@@ -61,31 +61,36 @@ module "tectonic" {
   master_count      = "${var.tectonic_master_count}"
 }
 
-#resource "null_resource" "tectonic" {
-#  depends_on = ["module.tectonic", "module.masters"]
-#
-#  triggers {
-#    api-endpoint = "${module.masters.api_external_fqdn}"
-#  }
-#
-#  connection {
-#    host  = "${module.masters.api_external_fqdn}"
-#    user  = "core"
-#    agent = true
-#  }
-#
-#  provisioner "file" {
-#    source      = "${path.cwd}/generated"
-#    destination = "$HOME/tectonic"
-#  }
-#
-#  provisioner "remote-exec" {
-#    inline = [
-#      "sudo mkdir -p /opt",
-#      "sudo rm -rf /opt/tectonic",
-#      "sudo mv /home/core/tectonic /opt/",
-#      "sudo systemctl start tectonic",
-#    ]
-#  }
-#}
+// TODO: Revisit
 
+# resource "null_resource" "tectonic" {
+#   depends_on = ["module.tectonic", "module.masters"]
+
+
+#   triggers {
+#     api-endpoint = "${var.tectonic_azure_use_custom_fqdn == "true" ? "${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}" : module.masters.api_external_fqdn}"
+#   }
+
+
+#   connection {
+#     host  = "${var.tectonic_azure_use_custom_fqdn == "true" ? "${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}" : module.masters.api_external_fqdn}"
+#     user  = "core"
+#     agent = true
+#   }
+
+
+#   provisioner "file" {
+#     source      = "${path.cwd}/generated"
+#     destination = "$HOME/tectonic"
+#   }
+
+
+#   provisioner "remote-exec" {
+#     inline = [
+#       "sudo mkdir -p /opt",
+#       "sudo rm -rf /opt/tectonic",
+#       "sudo mv /home/core/tectonic /opt/",
+#       "sudo systemctl start tectonic",
+#     ]
+#   }
+# }
