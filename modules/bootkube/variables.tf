@@ -8,6 +8,10 @@ variable "kube_apiserver_url" {
   type        = "string"
 }
 
+variable "etcd_version" {
+  type = "string"
+}
+
 variable "etcd_endpoints" {
   description = "List of etcd endpoints to connect with (hostnames/IPs only)"
   type        = "list"
