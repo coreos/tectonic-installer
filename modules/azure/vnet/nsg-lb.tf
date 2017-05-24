@@ -1,8 +1,7 @@
 resource "azurerm_network_security_group" "api" {
-  name                = "tectonic-cluster-${var.tectonic_cluster_name}-api-nsg"
+  name                = "${var.tectonic_cluster_name}-api-nsg"
   location            = "${var.location}"
-  resource_group_name = "tectonic-cluster-${var.tectonic_cluster_name}"
-  #depends_on          = ["azurerm_resource_group.tectonic_cluster"]
+  resource_group_name = "${var.resource_group_name}"
 }
 
 resource "azurerm_network_security_rule" "api_egress" {
@@ -15,8 +14,8 @@ resource "azurerm_network_security_rule" "api_egress" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-api-nsg"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${var.tectonic_cluster_name}-api-nsg"
   depends_on                  = ["azurerm_network_security_group.api"]
 }
 
@@ -30,15 +29,15 @@ resource "azurerm_network_security_rule" "api_ingress_https" {
   destination_port_range      = "443"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-api-nsg"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${var.tectonic_cluster_name}-api-nsg"
   depends_on                  = ["azurerm_network_security_group.api"]
 }
 
 resource "azurerm_network_security_group" "console" {
-  name                = "tectonic-cluster-${var.tectonic_cluster_name}-console-nsg"
+  name                = "${var.tectonic_cluster_name}-console-nsg"
   location            = "${var.location}"
-  resource_group_name = "tectonic-cluster-${var.tectonic_cluster_name}"
+  resource_group_name = "${var.resource_group_name}"
   #depends_on          = ["azurerm_resource_group.tectonic_cluster"]
 }
 
@@ -52,8 +51,8 @@ resource "azurerm_network_security_rule" "console_egress" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-console-nsg"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${var.tectonic_cluster_name}-console-nsg"
   depends_on                  = ["azurerm_network_security_group.console"]
 }
 
@@ -67,8 +66,8 @@ resource "azurerm_network_security_rule" "console_ingress_https" {
   destination_port_range      = "443"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-console-nsg"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${var.tectonic_cluster_name}-console-nsg"
   depends_on                  = ["azurerm_network_security_group.console"]
 }
 
@@ -82,7 +81,7 @@ resource "azurerm_network_security_rule" "console_ingress_http" {
   destination_port_range      = "80"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-console-nsg"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${var.tectonic_cluster_name}-console-nsg"
   depends_on                  = ["azurerm_network_security_group.console"]
 }
