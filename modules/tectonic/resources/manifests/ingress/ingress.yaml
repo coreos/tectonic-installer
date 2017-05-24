@@ -19,7 +19,7 @@ spec:
       - path: /
         backend:
           serviceName: tectonic-console
-          servicePort: 80
+          servicePort: 8080
       - path: /identity
         backend:
           serviceName: tectonic-identity
