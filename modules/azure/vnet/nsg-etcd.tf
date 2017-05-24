@@ -18,20 +18,6 @@ resource "azurerm_network_security_rule" "etcd_egress" {
   network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-etcd-nsg"
 }
 
-#resource "azurerm_network_security_rule" "etcd_ingress_icmp" {
-#  name                        = "${var.tectonic_cluster_name}-etcd_ingress_icmp"
-#  priority                    = 200
-#  direction                   = "Inbound"
-#  access                      = "Allow"
-#  protocol                    = "icmp"
-#  source_port_range           = "*"
-#  destination_port_range      = "*"
-#  source_address_prefix       = "*"
-#  destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-etcd-nsg"
-#}
-
 # TODO: Remove in lieu of below rules
 resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
   name                        = "${var.tectonic_cluster_name}-etcd_ingress_ssh"
