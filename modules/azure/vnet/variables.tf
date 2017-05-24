@@ -38,3 +38,51 @@ variable "external_worker_subnet_id" {
   type    = "string"
   default = ""
 }
+
+#variable "etcd_lb_ip" {
+#  type = "string"
+#}
+
+variable "etcd_cidr" {
+  type    = "string"
+  default = ""
+}
+
+variable "master_cidr" {
+  type    = "string"
+  default = ""
+}
+
+variable "worker_cidr" {
+  type    = "string"
+  default = ""
+}
+
+variable "ssh_network_internal" {
+  type    = "string"
+  default = ""
+}
+
+variable "ssh_network_external" {
+  type    = "string"
+  default = ""
+}
+
+variable "external_nsg_rsg_name" {
+  type = "string"
+}
+
+variable "external_etcd_nsg_name" {
+  type    = "string"
+  default = ""
+}
+
+variable "external_master_nsg_name" {
+  type    = "string"
+  default = ""
+}
+
+variable "external_worker_nsg_name" {
+  type    = "string"
+  default = ""
+}

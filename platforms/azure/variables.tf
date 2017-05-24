@@ -7,6 +7,49 @@ EOF
   default = "1.0"
 }
 
+# TODO: Add descriptions for SSH vars
+variable "tectonic_enable_ssh_external" {
+  type        = "string"
+  description = "Specifies if SSH access should be allowed from external networks"
+  default     = "false"
+}
+
+variable "tectonic_ssh_network_int" {
+  type = "string"
+
+  description = <<EOF
+Network (internal) to allow SSH access from. Maps to `source_address_prefix` in Azure.
+Defaults to `VirtualNetwork`. Should be internal to Azure environment.
+Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ]
+EOF
+
+  default = "VirtualNetwork"
+}
+
+variable "tectonic_ssh_network_ext" {
+  type = "string"
+
+  description = <<EOF
+(optional) Network (external) to allow SSH access from. Maps to `source_address_prefix` in Azure.
+Defaults to `*`. Can be external to Azure environment.
+Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ]
+EOF
+
+  default = "*"
+}
+
+# TODO: Check if similar var exists for AWS
+variable "tectonic_use_jumpbox" {
+  type = "string"
+
+  description = <<EOF
+(optional) Specifies whether a jumpbox should be created to manage cluster nodes.
+Experimental - DO NOT USE
+EOF
+
+  default = "false"
+}
+
 variable "tectonic_azure_dns_resource_group" {
   type    = "string"
   default = "tectonic-dns-group"
@@ -18,7 +61,7 @@ variable "tectonic_azure_image_reference" {
   type = "map"
 
   description = <<EOF
-(optional) Specifies an image map with the following keys: `publisher`, `offer`, `sku`, `version` 
+(optional) Specifies an image map with the following keys: `publisher`, `offer`, `sku`, `version`
 EOF
 
   default = {
@@ -138,4 +181,28 @@ Example: the subnet ID starts with `"/subscriptions/{subscriptionId}"` or `"/pro
 EOF
 
   default = ""
+}
+
+variable "tectonic_azure_external_nsg_rsg_name" {
+  type        = "string"
+  description = "(optional)"
+  default     = ""
+}
+
+variable "tectonic_azure_external_etcd_nsg_name" {
+  type        = "string"
+  description = "(optional)"
+  default     = ""
+}
+
+variable "tectonic_azure_external_master_nsg_name" {
+  type        = "string"
+  description = "(optional)"
+  default     = ""
+}
+
+variable "tectonic_azure_external_worker_nsg_name" {
+  type        = "string"
+  description = "(optional)"
+  default     = ""
 }
