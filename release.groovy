@@ -55,6 +55,7 @@ pipeline {
                     export PRE_RELEASE=${params.preRrelease}
                     go version
                     cd $GO_PROJECT/installer
+                    make clean
                     make build
                     make test
                     make release
