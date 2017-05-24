@@ -1,7 +1,7 @@
 resource "azurerm_network_security_group" "master" {
-  name                = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+  name                = "${var.tectonic_cluster_name}-master-nsg"
   location            = "${var.location}"
-  resource_group_name = "tectonic-cluster-${var.tectonic_cluster_name}"
+  resource_group_name = "${var.resource_group_name}"
 }
 
 resource "azurerm_network_security_rule" "master_egress" {
@@ -14,8 +14,8 @@ resource "azurerm_network_security_rule" "master_egress" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${azurerm_network_security_group.master.name}"
 }
 
 resource "azurerm_network_security_rule" "master_ingress_ssh" {
@@ -28,8 +28,8 @@ resource "azurerm_network_security_rule" "master_ingress_ssh" {
   destination_port_range      = "22"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${azurerm_network_security_group.master.name}"
 }
 
 resource "azurerm_network_security_rule" "master_ingress_http" {
@@ -42,8 +42,8 @@ resource "azurerm_network_security_rule" "master_ingress_http" {
   destination_port_range      = "80"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${azurerm_network_security_group.master.name}"
 }
 
 resource "azurerm_network_security_rule" "master_ingress_https" {
@@ -56,8 +56,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
   destination_port_range      = "443"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${azurerm_network_security_group.master.name}"
 }
 
 #resource "azurerm_network_security_rule" "master_ingress_heapster" {
@@ -71,8 +71,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from self
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_heapster_from_worker" {
@@ -86,8 +86,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from worker
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_flannel" {
@@ -101,8 +101,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from self
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_flannel_from_worker" {
@@ -116,8 +116,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from worker
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_node_exporter" {
@@ -131,8 +131,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from self
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_node_exporter_from_worker" {
@@ -146,8 +146,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from worker
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_kubelet_insecure" {
@@ -161,8 +161,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from self
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_kubelet_insecure_from_worker" {
@@ -176,8 +176,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from worker
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_kubelet_secure" {
@@ -191,8 +191,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from self
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_kubelet_secure_from_worker" {
@@ -206,8 +206,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from worker
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_etcd" {
@@ -221,8 +221,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from self
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_bootstrap_etcd" {
@@ -236,8 +236,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from self
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_services" {
@@ -251,8 +251,8 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from self
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}
 
 #resource "azurerm_network_security_rule" "master_ingress_services_from_console" {
@@ -266,6 +266,6 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 #  # TODO: Need to allow traffic from console
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-master-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.master.name}"
 #}

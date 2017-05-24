@@ -1,7 +1,7 @@
 resource "azurerm_network_security_group" "etcd" {
-  name                = "tectonic-cluster-${var.tectonic_cluster_name}-etcd-nsg"
+  name                = "${var.tectonic_cluster_name}-etcd-nsg"
   location            = "${var.location}"
-  resource_group_name = "tectonic-cluster-${var.tectonic_cluster_name}"
+  resource_group_name = "${var.resource_group_name}"
 }
 
 resource "azurerm_network_security_rule" "etcd_egress" {
@@ -14,8 +14,8 @@ resource "azurerm_network_security_rule" "etcd_egress" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-etcd-nsg"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${azurerm_network_security_group.etcd.name}"
 }
 
 # TODO: Remove in lieu of below rules
@@ -29,8 +29,8 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
   destination_port_range      = "22"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-etcd-nsg"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${azurerm_network_security_group.etcd.name}"
 }
 
 #resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
@@ -44,8 +44,8 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
 #  # TODO: Need to allow traffic from self
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-etcd-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.etcd.name}"
 #}
 
 #resource "azurerm_network_security_rule" "etcd_ingress_ssh_from_master" {
@@ -59,8 +59,8 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
 #  # TODO: Need to allow traffic from master
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-etcd-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.etcd.name}"
 #}
 
 #resource "azurerm_network_security_rule" "etcd_ingress_client_self" {
@@ -74,8 +74,8 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
 #  # TODO: Need to allow traffic from self
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-etcd-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.etcd.name}"
 #}
 
 #resource "azurerm_network_security_rule" "etcd_ingress_client_master" {
@@ -89,8 +89,8 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
 #  # TODO: Need to allow traffic from master
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-etcd-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.etcd.name}"
 #}
 
 #resource "azurerm_network_security_rule" "etcd_ingress_client_worker" {
@@ -104,8 +104,8 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
 #  # TODO: Need to allow traffic from workers
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-etcd-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.etcd.name}"
 #}
 
 #resource "azurerm_network_security_rule" "etcd_ingress_peer" {
@@ -119,6 +119,6 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
 #  # TODO: Need to allow traffic from self
 #  #source_address_prefix       = "*"
 #  #destination_address_prefix  = "*"
-#  resource_group_name         = "tectonic-cluster-${var.tectonic_cluster_name}"
-#  network_security_group_name = "tectonic-cluster-${var.tectonic_cluster_name}-etcd-nsg"
+#  resource_group_name         = "${var.resource_group_name}"
+#  network_security_group_name = "${azurerm_network_security_group.etcd.name}"
 #}
