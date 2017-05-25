@@ -110,6 +110,11 @@
           "spec": {
             "containers": [
               {
+                "command": [
+                  "/kube-version-operator",
+                  "--cache-images=true",
+                  "--version-mapping=/upgrade-spec.json"
+                ],
                 "image": "quay.io/coreos/kube-version-operator:v1.6.4-kvo.2",
                 "name": "kube-version-operator"
               }
