@@ -13,9 +13,15 @@ module "vnet" {
   resource_group_name       = "${module.resource_group.name}"
   tectonic_cluster_name     = "${var.tectonic_cluster_name}"
   vnet_cidr_block           = "${var.tectonic_azure_vnet_cidr_block}"
+  etcd_cidr                 = "${module.vnet.etcd_cidr}"
+  master_cidr               = "${module.vnet.master_cidr}"
+  worker_cidr               = "${module.vnet.worker_cidr}"
+  admin_cidr                = "${module.vnet.admin_cidr}"
   external_vnet_name        = "${var.tectonic_azure_external_vnet_name}"
   external_master_subnet_id = "${var.tectonic_azure_external_master_subnet_id}"
   external_worker_subnet_id = "${var.tectonic_azure_external_worker_subnet_id}"
+  ssh_network_internal      = "${var.tectonic_ssh_network_int}"
+  ssh_network_external      = "${var.tectonic_ssh_network_ext}"
 }
 
 module "etcd" {

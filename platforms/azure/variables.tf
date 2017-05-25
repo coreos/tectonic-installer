@@ -7,6 +7,32 @@ EOF
   default = "1.0"
 }
 
+# TODO: Add descriptions for SSH vars
+variable "tectonic_enable_ssh_external" {
+  type        = "string"
+  description = ""
+  default     = "false"
+}
+
+variable "tectonic_ssh_network_int" {
+  type        = "string"
+  description = ""
+  default     = "VirtualNetwork"
+}
+
+variable "tectonic_ssh_network_ext" {
+  type        = "string"
+  description = "(optional)"
+  default     = "*"
+}
+
+# TODO: Check if similar var exists for AWS
+variable "tectonic_use_jumpbox" {
+  type        = "string"
+  description = "(optional)"
+  default     = "false"
+}
+
 variable "tectonic_azure_dns_resource_group" {
   type    = "string"
   default = "tectonic-dns-group"
@@ -18,7 +44,7 @@ variable "tectonic_azure_image_reference" {
   type = "map"
 
   description = <<EOF
-(optional) Specifies an image map with the following keys: `publisher`, `offer`, `sku`, `version` 
+(optional) Specifies an image map with the following keys: `publisher`, `offer`, `sku`, `version`
 EOF
 
   default = {

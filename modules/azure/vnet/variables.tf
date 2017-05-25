@@ -38,3 +38,33 @@ variable "external_worker_subnet_id" {
   type    = "string"
   default = ""
 }
+
+variable "etcd_cidr" {
+  type    = "string"
+  default = ""
+}
+
+variable "master_cidr" {
+  type    = "string"
+  default = ""
+}
+
+variable "worker_cidr" {
+  type    = "string"
+  default = ""
+}
+
+variable "admin_cidr" {
+  type    = "string"
+  default = ""
+}
+
+variable "ssh_network_internal" {
+  type    = "string"
+  default = ""
+}
+
+variable "ssh_network_external" {
+  type    = "string"
+  default = ""
+}

@@ -26,7 +26,22 @@ resource "azurerm_network_security_rule" "master_ingress_ssh" {
   protocol                    = "tcp"
   source_port_range           = "22"
   destination_port_range      = "22"
-  source_address_prefix       = "TODO_ssh_network"
+  source_address_prefix       = "${var.ssh_network_internal}"
+  destination_address_prefix  = "*"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${azurerm_network_security_group.master.name}"
+}
+
+# TODO: Add external SSH rule
+resource "azurerm_network_security_rule" "master_ingress_ssh_admin" {
+  name                        = "${var.tectonic_cluster_name}-master_ingress_ssh_admin"
+  priority                    = 200
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "22"
+  destination_port_range      = "22"
+  source_address_prefix       = "${var.ssh_network_external}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -41,7 +56,7 @@ resource "azurerm_network_security_rule" "master_ingress_flannel" {
   source_port_range           = "4789"
   destination_port_range      = "4789"
   # TODO: Need to allow traffic from self
-  source_address_prefix       = "TODO_master_network"
+  source_address_prefix       = "${var.master_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -56,7 +71,7 @@ resource "azurerm_network_security_rule" "master_ingress_flannel_from_worker" {
   source_port_range           = "4789"
   destination_port_range      = "4789"
   # TODO: Need to allow traffic from worker
-  source_address_prefix       = "TODO_worker_network"
+  source_address_prefix       = "${var.worker_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -73,7 +88,7 @@ resource "azurerm_network_security_rule" "master_ingress_node_exporter" {
   source_port_range           = "9100"
   destination_port_range      = "9100"
   # TODO: Need to allow traffic from self
-  source_address_prefix       = "TODO_master_network"
+  source_address_prefix       = "${var.master_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -88,7 +103,7 @@ resource "azurerm_network_security_rule" "master_ingress_node_exporter_from_work
   source_port_range           = "9100"
   destination_port_range      = "9100"
   # TODO: Need to allow traffic from worker
-  source_address_prefix       = "TODO_worker_network"
+  source_address_prefix       = "${var.worker_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -133,7 +148,7 @@ resource "azurerm_network_security_rule" "master_ingress_etcd" {
   source_port_range           = "2379-2380"
   destination_port_range      = "2379-2380"
   # TODO: Need to allow traffic from self
-  source_address_prefix       = "TODO_master_network"
+  source_address_prefix       = "${var.master_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -148,7 +163,7 @@ resource "azurerm_network_security_rule" "master_ingress_bootstrap_etcd" {
   source_port_range           = "12379-12380"
   destination_port_range      = "12379-12380"
   # TODO: Need to allow traffic from self
-  source_address_prefix       = "TODO_master_network"
+  source_address_prefix       = "${var.master_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -163,7 +178,7 @@ resource "azurerm_network_security_rule" "master_ingress_kubelet_insecure" {
   source_port_range           = "10250"
   destination_port_range      = "10250"
   # TODO: Need to allow traffic from self
-  source_address_prefix       = "TODO_master_network"
+  source_address_prefix       = "${var.master_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -178,7 +193,7 @@ resource "azurerm_network_security_rule" "master_ingress_kubelet_insecure_from_w
   source_port_range           = "10250"
   destination_port_range      = "10250"
   # TODO: Need to allow traffic from worker
-  source_address_prefix       = "TODO_worker_network"
+  source_address_prefix       = "${var.worker_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -193,7 +208,7 @@ resource "azurerm_network_security_rule" "master_ingress_kubelet_secure" {
   source_port_range           = "10255"
   destination_port_range      = "10255"
   # TODO: Need to allow traffic from self
-  source_address_prefix       = "TODO_master_network"
+  source_address_prefix       = "${var.master_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -208,7 +223,7 @@ resource "azurerm_network_security_rule" "master_ingress_kubelet_secure_from_wor
   source_port_range           = "10255"
   destination_port_range      = "10255"
   # TODO: Need to allow traffic from worker
-  source_address_prefix       = "TODO_worker_network"
+  source_address_prefix       = "${var.worker_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -254,7 +269,7 @@ resource "azurerm_network_security_rule" "master_ingress_heapster" {
   source_port_range           = "4194"
   destination_port_range      = "4194"
   # TODO: Need to allow traffic from self
-  source_address_prefix       = "TODO_master_network"
+  source_address_prefix       = "${var.master_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
@@ -270,7 +285,7 @@ resource "azurerm_network_security_rule" "master_ingress_heapster_from_worker" {
   source_port_range           = "4194"
   destination_port_range      = "4194"
   # TODO: Need to allow traffic from worker
-  source_address_prefix       = "TODO_worker_network"
+  source_address_prefix       = "${var.worker_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
