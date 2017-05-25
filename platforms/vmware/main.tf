@@ -46,8 +46,8 @@ module "masters" {
 
   vmware_datacenter       = "${var.tectonic_vmware_datacenter}"
   vmware_cluster          = "${var.tectonic_vmware_cluster}"
-  vm_vcpu                 = "${var.tectonic_vmware_worker_vcpu}"
-  vm_memory               = "${var.tectonic_vmware_worker_memory}"
+  vm_vcpu                 = "${var.tectonic_vmware_master_vcpu}"
+  vm_memory               = "${var.tectonic_vmware_master_memory}"
   vm_network_label        = "${var.tectonic_vmware_network}"
   vm_disk_datastore       = "${var.tectonic_vmware_datastore}"
   vm_disk_template        = "${var.tectonic_vmware_vm_template}"
