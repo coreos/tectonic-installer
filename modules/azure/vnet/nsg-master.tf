@@ -35,7 +35,7 @@ resource "azurerm_network_security_rule" "master_ingress_ssh" {
 # TODO: Add external SSH rule
 resource "azurerm_network_security_rule" "master_ingress_ssh_admin" {
   name                        = "${var.tectonic_cluster_name}-master_ingress_ssh_admin"
-  priority                    = 200
+  priority                    = 250
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "tcp"
