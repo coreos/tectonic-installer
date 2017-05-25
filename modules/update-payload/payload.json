@@ -1,5 +1,5 @@
 {
-  "version": "1.6.2-tectonic.1",
+  "version": "1.6.4-tectonic.1",
   "deployments": [
     {
       "apiVersion": "extensions/v1beta1",
@@ -241,7 +241,7 @@
   "desiredVersions": [
     {
       "name": "kubernetes",
-      "version": "1.6.2+tectonic.1"
+      "version": "1.6.4+tectonic.1"
     },
     {
       "name": "tectonic-monitoring",
