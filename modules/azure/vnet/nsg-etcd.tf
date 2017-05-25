@@ -35,6 +35,20 @@ resource "azurerm_network_security_rule" "etcd_egress" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
   name                        = "${var.tectonic_cluster_name}-etcd_ingress_ssh"
+  priority                    = 200
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "22"
+  destination_port_range      = "22"
+  source_address_prefix       = "TODO_ssh_network"
+  destination_address_prefix  = "*"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${azurerm_network_security_group.etcd.name}"
+}
+
+resource "azurerm_network_security_rule" "etcd_ingress_ssh_self" {
+  name                        = "${var.tectonic_cluster_name}-etcd_ingress_ssh_self"
   priority                    = 300
   direction                   = "Inbound"
   access                      = "Allow"
@@ -42,7 +56,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
   source_port_range           = "22"
   destination_port_range      = "22"
   # TODO: Need to allow traffic from self
-  source_address_prefix       = "*"
+  source_address_prefix       = "TODO_etcd_network"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.etcd.name}"
@@ -57,7 +71,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_from_master" {
   source_port_range           = "22"
   destination_port_range      = "22"
   # TODO: Need to allow traffic from master
-  source_address_prefix       = "*"
+  source_address_prefix       = "TODO_master_network"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.etcd.name}"
@@ -72,7 +86,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_self" {
   source_port_range           = "2379"
   destination_port_range      = "2379"
   # TODO: Need to allow traffic from self
-  source_address_prefix       = "*"
+  source_address_prefix       = "TODO_etcd_network"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.etcd.name}"
@@ -87,7 +101,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_master" {
   source_port_range           = "2379"
   destination_port_range      = "2379"
   # TODO: Need to allow traffic from master
-  source_address_prefix       = "*"
+  source_address_prefix       = "TODO_master_network"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.etcd.name}"
@@ -102,7 +116,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_worker" {
   source_port_range           = "2379"
   destination_port_range      = "2379"
   # TODO: Need to allow traffic from workers
-  source_address_prefix       = "*"
+  source_address_prefix       = "TODO_worker_network"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.etcd.name}"
@@ -117,7 +131,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_peer" {
   source_port_range           = "2380"
   destination_port_range      = "2380"
   # TODO: Need to allow traffic from self
-  source_address_prefix       = "*"
+  source_address_prefix       = "TODO_etcd_network"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.etcd.name}"
