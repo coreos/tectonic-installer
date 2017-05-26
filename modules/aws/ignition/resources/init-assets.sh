@@ -25,7 +25,7 @@ if [ "$MASTER" != "true" ]; then
 fi
 
 # Download the assets from S3.
-/usr/bin/bash /opt/s3-puller.sh ${assets_s3_location} /opt/tectonic/tectonic.zip
+/opt/s3-puller.sh ${assets_s3_location} /opt/tectonic/tectonic.zip
 unzip -o -d /opt/tectonic/ /opt/tectonic/tectonic.zip
 rm /opt/tectonic/tectonic.zip
 
