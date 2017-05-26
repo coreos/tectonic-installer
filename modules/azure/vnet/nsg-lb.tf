@@ -16,6 +16,7 @@ resource "azurerm_network_security_rule" "api_egress" {
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.api.name}"
+
   #depends_on                  = ["azurerm_network_security_group.api"]
 }
 
@@ -31,6 +32,7 @@ resource "azurerm_network_security_rule" "api_ingress_https" {
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.api.name}"
+
   #depends_on                  = ["azurerm_network_security_group.api"]
 }
 
@@ -38,6 +40,7 @@ resource "azurerm_network_security_group" "console" {
   name                = "${var.tectonic_cluster_name}-console-nsg"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
+
   #depends_on          = ["azurerm_resource_group.tectonic_cluster"]
 }
 
@@ -53,6 +56,7 @@ resource "azurerm_network_security_rule" "console_egress" {
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.console.name}"
+
   #depends_on                  = ["azurerm_network_security_group.console"]
 }
 
@@ -68,6 +72,7 @@ resource "azurerm_network_security_rule" "console_ingress_https" {
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.console.name}"
+
   #depends_on                  = ["azurerm_network_security_group.console"]
 }
 
@@ -83,5 +88,6 @@ resource "azurerm_network_security_rule" "console_ingress_http" {
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.console.name}"
+
   #depends_on                  = ["azurerm_network_security_group.console"]
 }

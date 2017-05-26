@@ -2,6 +2,7 @@ resource "azurerm_network_security_group" "etcd" {
   name                = "${var.tectonic_cluster_name}-etcd-nsg"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
+
   #depends_on          = ["azurerm_subnet.master_subnet.id"]
 }
 
@@ -64,28 +65,30 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_admin" {
 }
 
 resource "azurerm_network_security_rule" "etcd_ingress_ssh_self" {
-  name                        = "${var.tectonic_cluster_name}-etcd_ingress_ssh_self"
-  priority                    = 300
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "tcp"
-  source_port_range           = "*"
-  destination_port_range      = "22"
+  name                   = "${var.tectonic_cluster_name}-etcd_ingress_ssh_self"
+  priority               = 300
+  direction              = "Inbound"
+  access                 = "Allow"
+  protocol               = "tcp"
+  source_port_range      = "*"
+  destination_port_range = "22"
+
   # TODO: Need to allow traffic from self
-  source_address_prefix       = "${var.etcd_cidr}"#"${azurerm_subnet.master_subnet.address_prefix}"#"${var.etcd_network}"
+  source_address_prefix       = "${var.etcd_cidr}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.etcd.name}"
 }
 
 resource "azurerm_network_security_rule" "etcd_ingress_ssh_from_master" {
-  name                        = "${var.tectonic_cluster_name}-etcd_ingress_services_from_console"
-  priority                    = 400
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "tcp"
-  source_port_range           = "*"
-  destination_port_range      = "22"
+  name                   = "${var.tectonic_cluster_name}-etcd_ingress_services_from_console"
+  priority               = 400
+  direction              = "Inbound"
+  access                 = "Allow"
+  protocol               = "tcp"
+  source_port_range      = "*"
+  destination_port_range = "22"
+
   # TODO: Need to allow traffic from master
   source_address_prefix       = "${var.master_cidr}"
   destination_address_prefix  = "*"
@@ -94,13 +97,14 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_from_master" {
 }
 
 resource "azurerm_network_security_rule" "etcd_ingress_client_self" {
-  name                        = "${var.tectonic_cluster_name}-etcd_ingress_client_self"
-  priority                    = 500
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "tcp"
-  source_port_range           = "*"
-  destination_port_range      = "2379"
+  name                   = "${var.tectonic_cluster_name}-etcd_ingress_client_self"
+  priority               = 500
+  direction              = "Inbound"
+  access                 = "Allow"
+  protocol               = "tcp"
+  source_port_range      = "*"
+  destination_port_range = "2379"
+
   # TODO: Need to allow traffic from self
   source_address_prefix       = "${var.etcd_cidr}"
   destination_address_prefix  = "*"
@@ -109,13 +113,14 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_self" {
 }
 
 resource "azurerm_network_security_rule" "etcd_ingress_client_master" {
-  name                        = "${var.tectonic_cluster_name}-etcd_ingress_client_master"
-  priority                    = 600
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "tcp"
-  source_port_range           = "*"
-  destination_port_range      = "2379"
+  name                   = "${var.tectonic_cluster_name}-etcd_ingress_client_master"
+  priority               = 600
+  direction              = "Inbound"
+  access                 = "Allow"
+  protocol               = "tcp"
+  source_port_range      = "*"
+  destination_port_range = "2379"
+
   # TODO: Need to allow traffic from master
   source_address_prefix       = "${var.master_cidr}"
   destination_address_prefix  = "*"
@@ -124,13 +129,14 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_master" {
 }
 
 resource "azurerm_network_security_rule" "etcd_ingress_client_worker" {
-  name                        = "${var.tectonic_cluster_name}-etcd_ingress_client_worker"
-  priority                    = 700
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "tcp"
-  source_port_range           = "*"
-  destination_port_range      = "2379"
+  name                   = "${var.tectonic_cluster_name}-etcd_ingress_client_worker"
+  priority               = 700
+  direction              = "Inbound"
+  access                 = "Allow"
+  protocol               = "tcp"
+  source_port_range      = "*"
+  destination_port_range = "2379"
+
   # TODO: Need to allow traffic from workers
   source_address_prefix       = "${var.worker_cidr}"
   destination_address_prefix  = "*"
@@ -139,13 +145,14 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_worker" {
 }
 
 resource "azurerm_network_security_rule" "etcd_ingress_peer" {
-  name                        = "${var.tectonic_cluster_name}-etcd_ingress_peer"
-  priority                    = 800
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "tcp"
-  source_port_range           = "*"
-  destination_port_range      = "2380"
+  name                   = "${var.tectonic_cluster_name}-etcd_ingress_peer"
+  priority               = 800
+  direction              = "Inbound"
+  access                 = "Allow"
+  protocol               = "tcp"
+  source_port_range      = "*"
+  destination_port_range = "2380"
+
   # TODO: Need to allow traffic from self
   source_address_prefix       = "${var.etcd_cidr}"
   destination_address_prefix  = "*"
