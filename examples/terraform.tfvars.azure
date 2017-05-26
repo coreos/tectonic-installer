@@ -97,6 +97,9 @@ tectonic_cluster_cidr = "10.2.0.0/16"
 // Warning: Special characters in the name like '.' may cause errors on OpenStack platforms due to resource name constraints.
 tectonic_cluster_name = ""
 
+// 
+tectonic_enable_ssh_external = "false"
+
 // (optional) The path of the file containing the CA certificate for TLS communication with etcd.
 // 
 // Note: This works only when used in conjunction with an external etcd cluster.
@@ -149,6 +152,15 @@ tectonic_service_cidr = "10.3.0.0/16"
 
 // 
 tectonic_ssh_key = ""
+
+// (optional)
+// tectonic_ssh_network_ext = "*"
+
+// 
+tectonic_ssh_network_int = "VirtualNetwork"
+
+// (optional)
+// tectonic_use_jumpbox = "false"
 
 // If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
 tectonic_vanilla_k8s = false

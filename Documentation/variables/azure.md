@@ -22,5 +22,9 @@ This document gives an overview of variables used in the Azure platform of the T
 | tectonic_azure_use_custom_fqdn | (optional) If set to true, assemble the FQDN from the configuration. Otherwise, use the FQDN set up by Azure. | string | `false` |
 | tectonic_azure_vnet_cidr_block | Block of IP addresses used by the Resource Group. This should not overlap with any other networks, such as a private datacenter connected via ExpressRoute. | string | `10.0.0.0/16` |
 | tectonic_azure_worker_vm_size | Instance size for the worker node(s). Example: Standard_DS2_v2. | string | `Standard_DS2_v2` |
+| tectonic_enable_ssh_external | TODO: Add descriptions for SSH vars | string | `false` |
 | tectonic_ssh_key |  | string | `` |
+| tectonic_ssh_network_ext | (optional) | string | `*` |
+| tectonic_ssh_network_int |  | string | `VirtualNetwork` |
+| tectonic_use_jumpbox | (optional) | string | `false` |
 
