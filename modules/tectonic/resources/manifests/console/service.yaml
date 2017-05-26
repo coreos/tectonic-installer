@@ -14,4 +14,4 @@ spec:
   ports:
   - name: tectonic-console
     protocol: TCP
-    port: 80
+    port: 8080
