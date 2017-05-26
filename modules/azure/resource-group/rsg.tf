@@ -14,7 +14,7 @@ variable "tectonic_cluster_name" {
 resource "azurerm_resource_group" "tectonic_cluster" {
   count    = "${var.external_rsg_name == "" ? 1 : 0}"
   location = "${var.tectonic_azure_location}"
-  name     = "tectonic-cluster-${var.tectonic_cluster_name}"
+  name     = "${var.tectonic_cluster_name}"
 }
 
 output "name" {
