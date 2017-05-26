@@ -1,3 +1,11 @@
+variable "cluster_prefix" {
+  type = "string"
+}
+
+variable "cluster_name" {
+  type = "string"
+}
+
 variable "container_images" {
   description = "Container images to use. Leave blank for defaults."
   type        = "map"

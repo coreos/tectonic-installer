@@ -168,6 +168,12 @@ This applies only to cloud platforms.
 EOF
 }
 
+variable "tectonic_cluster_prefix" {
+  type = "string"
+  description = ""
+  default = ""
+}
+
 variable "tectonic_cluster_name" {
   type = "string"
 
