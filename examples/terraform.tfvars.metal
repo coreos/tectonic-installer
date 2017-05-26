@@ -193,6 +193,7 @@ tectonic_metal_worker_names = ""
 tectonic_pull_secret_path = ""
 
 // This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation.
+// Note: The maximum size of this IP range is /12
 tectonic_service_cidr = "10.3.0.0/16"
 
 // SSH public key to use as an authorized key.

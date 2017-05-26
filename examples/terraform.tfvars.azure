@@ -145,6 +145,7 @@ tectonic_master_count = "1"
 tectonic_pull_secret_path = ""
 
 // This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation.
+// Note: The maximum size of this IP range is /12
 tectonic_service_cidr = "10.3.0.0/16"
 
 // 
