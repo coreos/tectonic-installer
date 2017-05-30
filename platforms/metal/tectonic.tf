@@ -31,6 +31,9 @@ module "bootkube" {
   etcd_client_cert     = "${var.tectonic_etcd_client_cert_path}"
   etcd_client_key      = "${var.tectonic_etcd_client_key_path}"
   experimental_enabled = "${var.tectonic_experimental}"
+
+  rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+  rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
 }
 
 module "tectonic" {
