@@ -408,3 +408,49 @@ WARNING: Enabling an alpha feature means that future updates may become unsuppor
 This should only be enabled on clusters that are meant to be short-lived to begin validating the alpha feature.
 EOF
 }
+
+variable "tectonic_registry_cache_image" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) image string to pull tectonic registry cache image from. Leave blank to disable
+EOF
+}
+
+variable "tectonic_registry_cache_rkt_protocol" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) rkt image protocol string to pull tectonic registry cache image.
+EOF
+}
+
+variable "tectonic_rkt_image_protocol" {
+  type = "string"
+  description = <<EOF
+(optional) Protocol rkt will use when pulling images from registry.
+
+Example: `docker://`
+EOF
+}
+
+variable "tectonic_registry_cache_rkt_insecure_options" {
+  type    = "string"
+  default = "none"
+
+  description = <<EOF
+(optional) rkt insecure options to set when pulling tectonic registry cache image.
+EOF
+}
+
+variable "tectonic_rkt_insecure_options" {
+  type = "string"
+  default = "none"
+
+  description = <<EOF
+(optional) Comma-separated list of insecure options for rkt.
+Example: `image,tls`
+EOF
+}

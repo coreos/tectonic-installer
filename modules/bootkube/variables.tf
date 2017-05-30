@@ -113,6 +113,7 @@ variable "oidc_groups_claim" {
   type        = "string"
 }
 
+
 variable "master_count" {
   description = "The number of the master nodes"
   type        = "string"
@@ -128,4 +129,16 @@ variable "pod_eviction_timeout" {
   description = "The grace period for deleting pods on failed nodes. The eviction process will start after node_monitor_grace_period + pod_eviction_timeout."
   type        = "string"
   default     = "5m"
+}
+
+variable "rkt_insecure_options" {
+  description = "Comma-separted values to provide for --insecure-options rkt flag"
+  type        = "string"
+  default     = "none"
+}
+
+variable "rkt_image_protocol" {
+  description = "Image protocol to use when fetching rkt images (eg: `docker://`)"
+  type        = "string"
+  default     = ""
 }

@@ -43,6 +43,9 @@ module "bootkube" {
   experimental_enabled = "${var.tectonic_experimental}"
 
   master_count = "${length(var.tectonic_metal_controller_names)}"
+
+  rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+  rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
 }
 
 module "tectonic" {
@@ -83,6 +86,9 @@ module "tectonic" {
   stats_url         = "${var.tectonic_stats_url}"
 
   image_re = "${var.tectonic_image_re}"
+
+  rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+  rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
 }
 
 module "flannel_vxlan" {

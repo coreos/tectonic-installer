@@ -35,7 +35,7 @@ systemd:
         ConditionPathExists=!/etc/kubernetes/kubelet.env
         [Service]
         ExecStartPre=/usr/bin/bash -c "docker run --rm -v /etc/kubernetes:/etc/kubernetes {{.kube_version_image}} --kubeconfig=/etc/kubernetes/kubeconfig > /etc/kubernetes/kube.version"
-        ExecStart=/usr/bin/bash -c "echo KUBELET_IMAGE_URL={{.kubelet_image_url}} > /etc/kubernetes/kubelet.env; echo KUBELET_IMAGE_TAG=$(tr '+' '_' < /etc/kubernetes/kube.version) >> /etc/kubernetes/kubelet.env; rm /etc/kubernetes/kube.version"
+        ExecStart=/usr/bin/bash -c "echo KUBELET_IMAGE_URL={{.rkt_image_protocol}}{{.kubelet_image_url}} > /etc/kubernetes/kubelet.env; echo KUBELET_IMAGE_TAG=$(tr '+' '_' < /etc/kubernetes/kube.version) >> /etc/kubernetes/kubelet.env; rm /etc/kubernetes/kube.version"
         Restart=on-failure
         RestartSec=10
         [Install]
@@ -52,7 +52,8 @@ systemd:
           --volume var-lib-cni,kind=host,source=/var/lib/cni \
           --mount volume=var-lib-cni,target=/var/lib/cni \
           --volume var-log,kind=host,source=/var/log \
-          --mount volume=var-log,target=/var/log"
+          --mount volume=var-log,target=/var/log \
+          --insecure-options={{.rkt_insecure_options}}"
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/cni/net.d
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/checkpoint-secrets

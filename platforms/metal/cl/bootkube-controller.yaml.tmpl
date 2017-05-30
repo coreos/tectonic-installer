@@ -7,6 +7,9 @@ systemd:
         - name: 40-etcd-cluster.conf
           contents: |
             [Service]
+            Environment="RKT_RUN_ARGS=--uuid-file-save=/var/lib/coreos/etcd-member-wrapper.uuid \
+              --insecure-options={{.rkt_insecure_options}}"
+            Environment="ETCD_IMAGE_URL={{.rkt_image_protocol}}{{.etcd_image_url}}"
             Environment="ETCD_IMAGE_TAG={{.etcd_image_tag}}"
             Environment="ETCD_NAME={{.etcd_name}}"
             Environment="ETCD_ADVERTISE_CLIENT_URLS={{.etcd_scheme}}://{{.domain_name}}:2379"
@@ -61,7 +64,8 @@ systemd:
           --volume var-lib-cni,kind=host,source=/var/lib/cni \
           --mount volume=var-lib-cni,target=/var/lib/cni \
           --volume var-log,kind=host,source=/var/log \
-          --mount volume=var-log,target=/var/log"
+          --mount volume=var-log,target=/var/log \
+          --insecure-options={{.rkt_insecure_options}}"
         EnvironmentFile=/etc/kubernetes/kubelet.env
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/cni/net.d
@@ -133,7 +137,7 @@ storage:
       mode: 0644
       contents:
         inline: |
-          KUBELET_IMAGE_URL={{.kubelet_image_url}}
+          KUBELET_IMAGE_URL={{.rkt_image_protocol}}{{.kubelet_image_url}}
           KUBELET_IMAGE_TAG={{.kubelet_image_tag}}
     - path: /etc/hostname
       filesystem: root
