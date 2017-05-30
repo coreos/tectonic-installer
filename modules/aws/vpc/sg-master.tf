@@ -38,6 +38,26 @@ resource "aws_security_group_rule" "master_ingress_ssh" {
   to_port     = 22
 }
 
+resource "aws_security_group_rule" "master_ingress_gluster_mgt" {
+  type              = "ingress"
+  security_group_id = "${aws_security_group.master.id}"
+
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  from_port   = 24007
+  to_port     = 24008
+}
+
+resource "aws_security_group_rule" "master_ingress_gluster_bricks" {
+  type              = "ingress"
+  security_group_id = "${aws_security_group.master.id}"
+
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  from_port   = 49152
+  to_port     = 49251
+}
+
 resource "aws_security_group_rule" "master_ingress_http" {
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"

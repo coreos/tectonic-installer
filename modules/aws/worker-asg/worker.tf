@@ -45,6 +45,27 @@ resource "aws_launch_configuration" "worker_conf" {
     volume_size = "${var.root_volume_size}"
     iops        = "${var.root_volume_type == "io1" ? var.root_volume_iops : 0}"
   }
+
+  ebs_block_device {
+    device_name = "/dev/xvdc"
+    volume_type = "gp2"
+    volume_size = "256"
+    iops        = "${var.root_volume_type == "io1" ? var.root_volume_iops : 0}"
+  }
+
+  ebs_block_device {
+    device_name = "/dev/xvdd"
+    volume_type = "gp2"
+    volume_size = "256"
+    iops        = "${var.root_volume_type == "io1" ? var.root_volume_iops : 0}"
+  }
+
+  ebs_block_device {
+    device_name = "/dev/xvde"
+    volume_type = "gp2"
+    volume_size = "256"
+    iops        = "${var.root_volume_type == "io1" ? var.root_volume_iops : 0}"
+  }
 }
 
 resource "aws_autoscaling_group" "workers" {
