@@ -11,6 +11,7 @@ import { toError, toAsyncError, toExtraData, toInFly, toExtraDataInFly, toExtraD
 import { configActionTypes, dirtyActionTypes, configActions } from '../actions';
 import { DESELECTED_FIELDS } from '../cluster-config.js';
 
+import { Alert } from './alert';
 
 // Use this function to dirty a field due to
 // non-user interaction (like uploading a config file)
@@ -68,7 +69,7 @@ const FIELD_PROPS = ImmutableSet([
   'width',
 ]);
 
-export const ErrorComponent = props => props.error ? <div className="wiz-error-message">{props.error}</div> : <span/>;
+export const ErrorComponent = props => props.error ? <Alert severity='error'>{props.error}</Alert> : <span/>;
 
 const Field = connect(
   (state, {id}) => ({isDirty: _.get(state.dirty, id)}),
@@ -232,7 +233,7 @@ export const FileArea = connect(
 // <Select id:REQUIRED value onValue>
 //   <option....>
 // </Select>
-export const Select = ({id, children, value, onValue, invalid, isDirty, makeDirty, availableValues, className, disabled}) => {
+export const Select = ({id, children, value, onValue, invalid, isDirty, makeDirty, availableValues, className, disabled, style}) => {
   const optionElems = [];
   if (availableValues) {
     let options = availableValues.value;
@@ -259,7 +260,7 @@ export const Select = ({id, children, value, onValue, invalid, isDirty, makeDirt
   }
 
   return (
-    <div className={className}>
+    <div className={className} style={style}>
       <select id={id} value={value} disabled={disabled} onChange={e => {
         makeDirty();
         onValue(e.target.value);
@@ -274,6 +275,35 @@ export const Select = ({id, children, value, onValue, invalid, isDirty, makeDirt
       }
     </div>
   );
+};
+
+export const Selector = props => {
+  const value = props.value;
+  const options = _.get(props, 'extraData.options', []);
+
+  if (value && !options.map(r => r.value).includes(value)) {
+    options.splice(0, 0, {value, label: value});
+  }
+
+  const optionsElems = options.map(o => <option value={o.value} key={o.value}>{o.label}</option>);
+  if (props.disabledValue) {
+    optionsElems.splice(0, 0, <option disabled={true} key="disabled" value="">{props.disabledValue}</option>);
+  }
+
+  const style = Object.assign({}, props.style || {});
+  if (!props.refreshBtn) {
+    style.marginRight = 0;
+  }
+  const iClassNames = classNames('fa', 'fa-refresh', {
+    'fa-spin': props.inFly,
+  });
+
+  return <div className="async-select">
+    <Select className="async-select--select" {...props} style={style}>{optionsElems}</Select>
+    {props.refreshBtn && <button className="btn btn-default" onClick={props.refreshExtraData} title="Refresh">
+      <i className={iClassNames}></i>
+    </button>}
+  </div>;
 };
 
 const stateToProps = ({clusterConfig, dirty}, {field}) => ({
@@ -340,6 +370,7 @@ class Connect_ extends React.Component {
       props.checked = child.props.value === value;
       break;
     case Select:
+    case Selector:
       props.value = value || '';
       break;
     default:
@@ -651,3 +682,25 @@ export class AsyncSelect extends React.Component {
     );
   }
 }
+
+class InnerFieldList_ extends React.Component {
+  render() {
+    const {value, removeField, children, fields, id} = this.props;
+    const onlyChild = React.Children.only(children);
+    const newChildren = _.map(value, (unused, i) => {
+      const row = {};
+      _.keys(fields).forEach(k => row[k] = `${id}.${i}.${k}`);
+      const childProps = { row, i, key: i, remove: () => removeField(id, i) };
+      if (i === value.length - 1) {
+        childProps.autoFocus = true;
+      }
+      return React.cloneElement(onlyChild, childProps);
+    });
+    return <div>{newChildren}</div>;
+  }
+}
+
+export const ConnectedFieldList = connect(
+  ({clusterConfig}, {id}) => ({value: clusterConfig[id]}),
+  (dispatch) => ({removeField: (id, i) => dispatch(configActions.removeField(id, i))})
+)((props) => <InnerFieldList_ {...props} />);

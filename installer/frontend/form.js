@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { dispatch as dispatch_ } from './store';
 import { configActions, registerForm } from './actions';
 import { toError, toIgnore, toAsyncError, toExtraData, toInFly, toExtraDataInFly, toExtraDataError } from './utils';
-import { ErrorComponent } from './components/ui';
+import { ErrorComponent, ConnectedFieldList } from './components/ui';
 import { TectonicGA } from './tectonic-ga';
 
 const { setIn, batchSetIn, append, removeAt } = configActions;
@@ -81,8 +81,9 @@ class Node {
       batches.push([inFlyPath, false]);
     }
 
+    console.debug("validating", this.name);
     const syncError = this.validator(value, clusterConfig, oldValue, extraData);
-    if (syncError) {
+    if (!_.isEmpty(syncError)) {
       console.info("sync error", this.name, syncError);
       batches.push([syncErrorPath, syncError]);
       batchSetIn(dispatch, batches);
@@ -90,12 +91,13 @@ class Node {
     }
 
     const oldError = _.get(oldCC, syncErrorPath);
-    if (oldError) {
+    if (!_.isEmpty(oldError)) {
       batches.push([syncErrorPath, undefined]);
       batchSetIn(dispatch, batches);
     }
 
-    if (!this.isValid(getState().clusterConfig, true)) {
+    const isValid = this.isValid(getState().clusterConfig, true);
+    if (!isValid) {
       batchSetIn(dispatch, batches);
       return false;
     }
@@ -124,7 +126,7 @@ class Node {
 
     const asyncErrorPath = toAsyncError(id);
 
-    if (asyncError) {
+    if (!_.isEmpty(asyncError)) {
       if (!_.isString(asyncError)) {
         console.warn(`asyncError is not a string!?:\n${JSON.stringify(asyncError)}`);
         if (asyncError.type && asyncError.payload) {
@@ -163,6 +165,30 @@ class Node {
   }
 }
 
+async function promisify (dispatch, getState, oldCC, isNow, deps, FIELDS) {
+  const { clusterConfig } = getState();
+
+  // TODO: (kans) earlier return [] if not now?
+  const promises = deps.map(field => {
+    const { id } = field;
+    field.ignoreWhen(dispatch, clusterConfig);
+    return field.getExtraStuff(dispatch, clusterConfig, FIELDS, isNow)
+      .then(() => field.validate(dispatch, getState, oldCC, isNow))
+      .then(res => {
+        if (!res) {
+          console.debug(`${id} is invalid`);
+        } else {
+          console.debug(`${id} is valid`);
+        }
+        return res && id;
+      }).catch(err => {
+        console.error(err);
+      });
+  });
+
+  return await Promise.all(promises).then(p => p.filter(id => id));
+}
+
 export class Field extends Node {
   constructor(id, opts={}) {
     super(id, opts);
@@ -180,7 +206,7 @@ export class Field extends Node {
     return clusterConfig[this.id];
   }
 
-  async update (dispatch, value, getState, deps, FIELDS, split) {
+  async update (dispatch, value, getState, FIELDS, FIELD_TO_DEPS, split) {
     const oldCC = getState().clusterConfig;
 
     ++ this.clock_;
@@ -191,10 +217,11 @@ export class Field extends Node {
     if (split && split.length) {
       id = `${id}.${split.join('.')}`;
     }
+
+    console.info("updating", this.name);
     // TODO: (kans) - We need to lock the entire validation chain, not just validate proper
     setIn(id, value, dispatch);
 
-    console.info("validating", this.name);
     const isValid = await this.validate(dispatch, getState, oldCC, isNow);
 
     if (!isValid) {
@@ -207,11 +234,26 @@ export class Field extends Node {
       return;
     }
 
-    for (let dep of deps) {
-      const { clusterConfig } = getState();
-      dep.ignoreWhen(dispatch, clusterConfig);
-      await dep.getExtraStuff(dispatch, clusterConfig, FIELDS, isNow);
-      await dep.validate(dispatch, getState, oldCC, isNow);
+    const visited = new Set();
+    const toVisit = [FIELD_TO_DEPS[this.id]];
+
+    if (!toVisit[0].length) {
+      console.debug("no deps for", this.name);
+      return;
+    }
+
+    while (toVisit.length) {
+      const deps = toVisit.splice(0, 1)[0];
+      // TODO: check for relationship between deps
+      const nextDepIDs = await promisify(dispatch, getState, oldCC, isNow, deps, FIELDS);
+      nextDepIDs.forEach(depID => {
+        const nextDeps = _.filter(FIELD_TO_DEPS[depID], d => !visited.has(d.id));
+        if (!nextDeps.length) {
+          return;
+        }
+        nextDeps.forEach(d => visited.add(d.id));
+        toVisit.push(nextDeps);
+      });
     }
 
     console.info("finish validating", this.name);
@@ -307,8 +349,8 @@ export class Form extends Node {
 
 const toValidator = (fields, listValidator) => (value, clusterConfig, oldValue, extraData) => {
   const errs = listValidator ? listValidator(value, clusterConfig, oldValue, extraData) : [];
-  if (errs && !_.isArray(errs)) {
-    throw new Error(`FieldLists validator must return an Array, not:\n${errs}`);
+  if (errs && !_.isObject(errs)) {
+    throw new Error(`FieldLists validator must return an Array-like Object, not:\n${errs}`);
   }
   _.each(value, (child, i) => {
     errs[i] = errs[i] || {};
@@ -326,7 +368,7 @@ const toValidator = (fields, listValidator) => (value, clusterConfig, oldValue, 
     });
   });
 
-  return _.every(errs, err => _.isEmpty(err)) ? undefined : errs;
+  return _.every(errs, err => _.isEmpty(err)) ? {} : errs;
 };
 
 const toDefaultOpts = opts => {
@@ -338,22 +380,6 @@ const toDefaultOpts = opts => {
 
   return Object.assign({}, opts, {default: [default_], validator: toValidator(opts.fields, opts.validator)});
 };
-
-const InnerFieldList_ = ({value, removeField, children, fields, id}) => {
-  const onlyChild = React.Children.only(children);
-  const newChildren = _.map(value, (unused, i) => {
-    const row = {};
-    _.keys(fields).forEach(k => row[k] = `${id}.${i}.${k}`);
-    const childProps = { row, i, key: i, remove: () => removeField(id, i) };
-    return React.cloneElement(onlyChild, childProps);
-  });
-  return React.createElement('div', {}, newChildren);
-};
-
-const ConnectedFieldList_ = connect(
-  ({clusterConfig}, {id}) => ({value: clusterConfig[id]}),
-  (dispatch) => ({removeField: (id, i) => dispatch(configActions.removeField(id, i))})
-)(InnerFieldList_);
 
 export class FieldList extends Field {
   constructor(id, opts={}) {
@@ -369,7 +395,7 @@ export class FieldList extends Field {
     const fields = this.fields;
 
     this.OuterListComponent_ = function Outer ({children}) {
-      return React.createElement(ConnectedFieldList_, {id, children, fields});
+      return React.createElement(ConnectedFieldList, {id, children, fields});
     };
 
     return this.OuterListComponent_;
@@ -377,6 +403,20 @@ export class FieldList extends Field {
 
   get addOnClick () {
     return () => dispatch_(configActions.appendField(this.id));
+  }
+
+  get NonFieldErrors () {
+    if (this.errorComponent_) {
+      return this.errorComponent_;
+    }
+
+    const id = this.id;
+
+    this.errorComponent_ = connect(
+      ({clusterConfig}) => ({error: _.get(clusterConfig, toError(id), {})}),
+    )(({error}) => React.createElement(ErrorComponent, {error: error[-1]}));
+
+    return this.errorComponent_;
   }
 
   append (dispatch, getState) {

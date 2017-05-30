@@ -1,5 +1,5 @@
-hash: fa4ce61de4f1d341d916532bec759a7b7e77b9d793f8eb9b26665d156109c85f
-updated: 2017-05-12T13:32:15.225510604-07:00
+hash: 4379752c258fbaffb6f03df08432258f9d0f17649d0ff1c1f97f77dced177b0e
+updated: 2017-05-18T18:09:12.569439326-07:00
 imports:
 - name: github.com/ajeddeloh/yaml
   version: 1072abfea31191db507785e2e0c1b8d1440d35a5
@@ -133,7 +133,7 @@ imports:
   - httputil
   - timeutil
 - name: github.com/coreos/terraform-provider-matchbox
-  version: 4c66aa75b60489a4220730d70b0446e25b0c9a0a
+  version: 016482b8add5122d41cce5e05d4f1730c5a9ff77
   subpackages:
   - matchbox
 - name: github.com/coreos/yaml
@@ -232,7 +232,7 @@ imports:
 - name: github.com/hashicorp/logutils
   version: 0dc08b1671f34c4250ce212759ebd880f743d883
 - name: github.com/hashicorp/terraform
-  version: 277bbf65d1141207dbb30485bf124b1dba08f80f
+  version: fcdf494cffc06aac027f6cf904647051ab6d5015
   subpackages:
   - builtin/providers/template
   - builtin/providers/tls
@@ -301,7 +301,7 @@ imports:
 - name: github.com/mitchellh/mapstructure
   version: 281073eb9eb092240d33ef253c404f1cca550309
 - name: github.com/mitchellh/reflectwalk
-  version: 8d802ff4ae93611b807597f639c19f76074df5c6
+  version: 417edcfd99a4d472c262e58f22b4bfe97580f03e
 - name: github.com/pborman/uuid
   version: a97ce2ca70fa5a848076093f05e639a89ca34d06
 - name: github.com/pmezard/go-difflib

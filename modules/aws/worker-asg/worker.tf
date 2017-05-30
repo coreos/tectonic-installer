@@ -43,7 +43,7 @@ resource "aws_launch_configuration" "worker_conf" {
   root_block_device {
     volume_type = "${var.root_volume_type}"
     volume_size = "${var.root_volume_size}"
-    iops        = "${var.root_volume_iops}"
+    iops        = "${var.root_volume_type == "io1" ? var.root_volume_iops : 0}"
   }
 }
 
@@ -55,19 +55,24 @@ resource "aws_autoscaling_group" "workers" {
   launch_configuration = "${aws_launch_configuration.worker_conf.id}"
   vpc_zone_identifier  = ["${var.subnet_ids}"]
 
-  tag {
-    key                 = "Name"
-    value               = "${var.cluster_name}-worker"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "kubernetes.io/cluster/${var.cluster_name}"
-    value               = "owned"
-    propagate_at_launch = true
-  }
-
-  tags = ["${var.autoscaling_group_extra_tags}"]
+  tags = [
+    {
+      key                 = "Name"
+      value               = "${var.cluster_name}-worker"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "kubernetes.io/cluster/${var.cluster_name}"
+      value               = "owned"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "tectonicClusterID"
+      value               = "${var.cluster_id}"
+      propagate_at_launch = true
+    },
+    "${var.autoscaling_group_extra_tags}",
+  ]
 
   lifecycle {
     create_before_destroy = true
