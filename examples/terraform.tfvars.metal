@@ -114,6 +114,19 @@ tectonic_etcd_count = "0"
 // Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the experimental self-hosted etcd always uses TLS.
 // tectonic_etcd_tls_enabled = true
 
+// (optional) A set of paths that point to tls assets that have been pregenerated for the cluster. You can provide as many or as few certs as desired. The certificate files can include an intermediate certificate if necessary.<br>
+// ca_crt_path:         The file location of a PEM-encoded CA certificate, used to generate the certificates that we will use to secure the tls enabled endpoints in tectonic.<br>
+// ca_key_path:         The file location of a PEM-encoded CA key, used to sign all of the generated certificates. If left blank one will be generated.<br>
+// ca_key_alg:          The algorithm used to generate the ca_key. The default value is recommended. This field is mandatory if `ca_key` is set.<br>
+// ingress_crt_path:    The file location of the certificate that will be used to secure the ingress controller in front of the console and identity services.<br>
+//                      This certificate should have the CN and Subject Alternate Name set. See RFC2818 for details<br>
+// ingress_key_path:    The file location of the key that will be used to secure the ingress controller in front of the console and identity services.<br>
+// apiserver_cert_path: The file location of the certificate that will be used to secure communication with the kube apiserver.<br>
+//                      This certificate should have the following Subject Alternate Names set: "The common name used to address the api server", "kubernetes", "kubernetes.default",¬"kubernetes.default.svc",¬"kubernetes.default.svc.cluster.local" and a SAN IP of the ip in the service range. <br>
+// apiserver_key_path:  The file location of the key that will be used to secure communication with the kube apiserver.<br>
+// <br>
+// tectonic_existing_certs = ""
+
 // If set to true, experimental Tectonic assets are being deployed.
 tectonic_experimental = false
 

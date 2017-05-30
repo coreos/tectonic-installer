@@ -11,6 +11,7 @@ module "bootkube" {
   oidc_issuer_url = "https://${var.tectonic_metal_ingress_domain}/identity"
 
   # platform-independent defaults
+  existing_certs   = "${var.tectonic_existing_certs}"
   container_images = "${var.tectonic_container_images}"
   versions         = "${var.tectonic_versions}"
 
@@ -57,6 +58,7 @@ module "tectonic" {
   # Address of the Tectonic console (without protocol)
   base_address = "${var.tectonic_metal_ingress_domain}"
 
+  existing_certs   = "${var.tectonic_existing_certs}"
   container_images = "${var.tectonic_container_images}"
   versions         = "${var.tectonic_versions}"
 

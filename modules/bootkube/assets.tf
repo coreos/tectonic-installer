@@ -89,9 +89,12 @@ resource "template_dir" "bootkube" {
     oidc_username_claim = "${var.oidc_username_claim}"
     oidc_groups_claim   = "${var.oidc_groups_claim}"
 
-    ca_cert            = "${base64encode(var.ca_cert == "" ? join(" ", tls_self_signed_cert.kube_ca.*.cert_pem) : var.ca_cert)}"
-    apiserver_key      = "${base64encode(tls_private_key.apiserver.private_key_pem)}"
-    apiserver_cert     = "${base64encode(tls_locally_signed_cert.apiserver.cert_pem)}"
+    ca_cert            = "${base64encode(var.existing_certs["ca_cert_path"] == "/dev/null" ? join(" ", tls_self_signed_cert.kube_ca.*.cert_pem) : "${file(var.existing_certs["ca_cert_path"])}${tls_self_signed_cert.kube_ca.0.cert_pem}")}"
+    client_ca_cert     = "${base64encode(var.existing_certs["ca_key_path"] == "/dev/null" ? join(" ", tls_self_signed_cert.kube_ca.*.cert_pem) : file(var.existing_certs["ca_cert_path"]))}"
+    kubelet_cert       = "${base64encode(tls_locally_signed_cert.kubelet.cert_pem)}"
+    kubelet_key        = "${base64encode(tls_private_key.kubelet.private_key_pem)}"
+    apiserver_key      = "${base64encode(var.existing_certs["apiserver_cert_path"] == "/dev/null" ? join(" ", tls_private_key.apiserver.*.private_key_pem) : file(var.existing_certs["apiserver_key_path"]))}"
+    apiserver_cert     = "${base64encode(var.existing_certs["apiserver_cert_path"] == "/dev/null" ? join(" ", tls_locally_signed_cert.apiserver.*.cert_pem) : file(var.existing_certs["apiserver_cert_path"]))}"
     serviceaccount_pub = "${base64encode(tls_private_key.service_account.public_key_pem)}"
     serviceaccount_key = "${base64encode(tls_private_key.service_account.private_key_pem)}"
 
@@ -147,7 +150,7 @@ data "template_file" "kubeconfig" {
   template = "${file("${path.module}/resources/kubeconfig")}"
 
   vars {
-    ca_cert      = "${base64encode(var.ca_cert == "" ? join(" ", tls_self_signed_cert.kube_ca.*.cert_pem) : var.ca_cert)}"
+    ca_cert      = "${base64encode(var.existing_certs["ca_cert_path"] == "/dev/null" ? join(" ", tls_self_signed_cert.kube_ca.*.cert_pem) : "${file(var.existing_certs["ca_cert_path"])}${tls_self_signed_cert.kube_ca.0.cert_pem}")}"
     kubelet_cert = "${base64encode(tls_locally_signed_cert.kubelet.cert_pem)}"
     kubelet_key  = "${base64encode(tls_private_key.kubelet.private_key_pem)}"
     server       = "${var.kube_apiserver_url}"

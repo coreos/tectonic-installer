@@ -11,6 +11,7 @@ module "bootkube" {
   oidc_issuer_url = "https://${var.tectonic_vmware_ingress_domain}/identity"
 
   # Platform-independent variables wiring, do not modify.
+  existing_certs   = "${var.tectonic_existing_certs}"
   container_images = "${var.tectonic_container_images}"
   versions         = "${var.tectonic_versions}"
 
@@ -59,6 +60,7 @@ module "tectonic" {
   base_address = "${var.tectonic_vmware_ingress_domain}"
 
   # Platform-independent variables wiring, do not modify.
+  existing_certs   = "${var.tectonic_existing_certs}"
   container_images = "${var.tectonic_container_images}"
   versions         = "${var.tectonic_versions}"
 

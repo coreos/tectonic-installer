@@ -45,15 +45,15 @@ output "kubeconfig" {
 }
 
 output "ca_cert" {
-  value = "${var.ca_cert == "" ? join(" ", tls_self_signed_cert.kube_ca.*.cert_pem) : var.ca_cert}"
+  value = "${var.existing_certs["ca_cert_path"] == "/dev/null" ? join(" ", tls_self_signed_cert.kube_ca.*.cert_pem) : "${file(var.existing_certs["ca_cert_path"])}${tls_self_signed_cert.kube_ca.0.cert_pem}"}"
 }
 
 output "ca_key_alg" {
-  value = "${var.ca_cert == "" ? join(" ", tls_self_signed_cert.kube_ca.*.key_algorithm) : var.ca_key_alg}"
+  value = "${var.existing_certs["ca_cert_path"] == "/dev/null" ? join(" ", tls_self_signed_cert.kube_ca.*.key_algorithm) : var.existing_certs["ca_key_alg"]}"
 }
 
 output "ca_key" {
-  value = "${var.ca_cert == "" ? join(" ", tls_private_key.kube_ca.*.private_key_pem) : var.ca_key}"
+  value = "${var.existing_certs["ca_key_path"] == "/dev/null" ? join(" ", tls_private_key.kube_ca.*.private_key_pem) : file(var.existing_certs["ca_key_path"])}"
 }
 
 output "systemd_service" {
