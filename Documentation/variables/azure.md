@@ -22,9 +22,9 @@ This document gives an overview of variables used in the Azure platform of the T
 | tectonic_azure_use_custom_fqdn | (optional) If set to true, assemble the FQDN from the configuration. Otherwise, use the FQDN set up by Azure. | string | `false` |
 | tectonic_azure_vnet_cidr_block | Block of IP addresses used by the Resource Group. This should not overlap with any other networks, such as a private datacenter connected via ExpressRoute. | string | `10.0.0.0/16` |
 | tectonic_azure_worker_vm_size | Instance size for the worker node(s). Example: Standard_DS2_v2. | string | `Standard_DS2_v2` |
-| tectonic_enable_ssh_external | TODO: Add descriptions for SSH vars | string | `false` |
+| tectonic_enable_ssh_external | Specifies if SSH access should be allowed from external networks | string | `false` |
 | tectonic_ssh_key |  | string | `` |
-| tectonic_ssh_network_ext | (optional) | string | `*` |
-| tectonic_ssh_network_int |  | string | `VirtualNetwork` |
-| tectonic_use_jumpbox | (optional) | string | `false` |
+| tectonic_ssh_network_ext | (optional) Network (external) to allow SSH access from. Maps to `source_address_prefix` in Azure. Defaults to `*`. Can be external to Azure environment. Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ] | string | `*` |
+| tectonic_ssh_network_int | Network (internal) to allow SSH access from. Maps to `source_address_prefix` in Azure. Defaults to `VirtualNetwork`. Should be internal to Azure environment. Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ] | string | `VirtualNetwork` |
+| tectonic_use_jumpbox | (optional) Specifies whether a jumpbox should be created to manage cluster nodes. Experimental - DO NOT USE | string | `false` |
 

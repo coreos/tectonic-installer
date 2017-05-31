@@ -40,7 +40,7 @@ variable "external_worker_subnet_id" {
 }
 
 variable "etcd_lb_ip" {
-  type    = "string"
+  type = "string"
 }
 
 variable "etcd_cidr" {

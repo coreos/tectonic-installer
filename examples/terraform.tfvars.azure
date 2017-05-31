@@ -97,7 +97,7 @@ tectonic_cluster_cidr = "10.2.0.0/16"
 // Warning: Special characters in the name like '.' may cause errors on OpenStack platforms due to resource name constraints.
 tectonic_cluster_name = ""
 
-// 
+// Specifies if SSH access should be allowed from external networks
 tectonic_enable_ssh_external = "false"
 
 // (optional) The path of the file containing the CA certificate for TLS communication with etcd.
@@ -153,13 +153,18 @@ tectonic_service_cidr = "10.3.0.0/16"
 // 
 tectonic_ssh_key = ""
 
-// (optional)
+// (optional) Network (external) to allow SSH access from. Maps to `source_address_prefix` in Azure.
+// Defaults to `*`. Can be external to Azure environment.
+// Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ]
 // tectonic_ssh_network_ext = "*"
 
-// 
+// Network (internal) to allow SSH access from. Maps to `source_address_prefix` in Azure.
+// Defaults to `VirtualNetwork`. Should be internal to Azure environment.
+// Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ]
 tectonic_ssh_network_int = "VirtualNetwork"
 
-// (optional)
+// (optional) Specifies whether a jumpbox should be created to manage cluster nodes.
+// Experimental - DO NOT USE
 // tectonic_use_jumpbox = "false"
 
 // If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
