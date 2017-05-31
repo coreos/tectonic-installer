@@ -9,7 +9,7 @@ resource "null_resource" "bootstrap" {
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/generated"
+    source      = "./generated"
     destination = "$HOME/tectonic"
   }
 
