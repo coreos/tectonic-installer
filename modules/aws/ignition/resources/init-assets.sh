@@ -8,7 +8,7 @@ mkdir -p /run/metadata
 /usr/bin/rkt run \
     --dns=host --net=host --trust-keys-from-https --interactive \
     \
-    --set-env=CLUSTER_NAME=${cluster_name} \
+    --set-env=CLUSTER_NAME="${cluster_name}" \
     \
     --volume=metadata,kind=host,source=/run/metadata,readOnly=false \
     --mount=volume=metadata,target=/run/metadata \
@@ -16,7 +16,7 @@ mkdir -p /run/metadata
     --volume=detect-master,kind=host,source=/opt/detect-master.sh,readOnly=true \
     --mount=volume=detect-master,target=/detect-master.sh \
     \
-    ${awscli_image} \
+    "${awscli_image}" \
     --exec=/detect-master.sh
 
 MASTER=$(cat /run/metadata/master)
