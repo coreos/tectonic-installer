@@ -145,9 +145,24 @@ resource "azurerm_network_security_rule" "master_ingress_services_from_console" 
   network_security_group_name = "${azurerm_network_security_group.master.name}"
 }
 
-resource "azurerm_network_security_rule" "master_ingress_etcd" {
+resource "azurerm_network_security_rule" "master_ingress_etcd_lb" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_etcd"
   priority               = 1100
+  direction              = "Inbound"
+  access                 = "Allow"
+  protocol               = "tcp"
+  source_port_range      = "*"
+  destination_port_range = "2379"
+
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"#"${var.etcd_lb_ip}"
+  resource_group_name         = "${var.resource_group_name}"
+  network_security_group_name = "${azurerm_network_security_group.master.name}"
+}
+
+resource "azurerm_network_security_rule" "master_ingress_etcd_self" {
+  name                   = "${var.tectonic_cluster_name}-master_ingress_etcd_self"
+  priority               = 1150
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
