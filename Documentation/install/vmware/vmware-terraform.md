@@ -99,9 +99,54 @@ Next, deploy the cluster:
 $ terraform apply ../../platforms/vmware
 ```
 
-This should run for a little bit, and when complete, your Tectonic cluster should be ready on: https://$tectonic_cluster_name.$tectonic_base_domain. You can use the `kubeconfig` file in build/<cluster>/generated folder.
+Wait for `terraform apply` until all tasks complete. Your Tectonic cluster should be ready. If you encounter any issues, check the known issues and workarounds below.
 
-If you encounter any issues, please file an issue with the repository.
+## Access the cluster
+
+The Tectonic Console should be up and running after the containers have downloaded. You can access it at the DNS name configured as `tectonic_vmware_ingress_domain` in your `terraform.tfvars` variables file.
+
+Inside of the `/generated` folder you should find all credentials, including the CA if generated, and a kubeconfig. You can use this to control the cluster with `kubectl`:
+
+```
+$ export KUBECONFIG=generated/auth/kubeconfig
+$ kubectl cluster-info
+```
+
+## Working with the cluster
+
+### Scaling Tectonic VMware clusters
+
+This document describes how to add cluster nodes to Tectonic clusters on bare metal.
+
+#### Scaling worker nodes
+
+To scale worker nodes, adjust `tectonic_worker_count`, `tectonic_vmware_worker_hostnames` and `tectonic_vmware_worker_ip` variables in `terraform.tfvars` and run:
+
+```
+$ terraform plan \
+  ../../platforms/vmware
+$ terraform apply \
+  ../../platforms/vmware
+```
+Shortly after running `terraform apply` you should see new worker machines on Tectonic console.
+
+#### Scaling controller nodes
+
+To scale worker nodes, adjust `tectonic_master_count`, `tectonic_vmware_master_hostnames` and `tectonic_vmware_master_ip` variables in `terraform.tfvars` and run:
+
+```
+$ terraform plan \
+  ../../platforms/vmware
+$ terraform apply \
+  ../../platforms/vmware
+```
+Shortly after running `terraform apply` you should see new master machines on Tectonic console. 
+
+Make sure to add the new Controller nodes' IP addresses in DNS for `tectonic_vmware_controller_domain` variable or Update your Load balancer to include new Controller nodes.
+
+## Known issues and workarounds
+
+See the [troubleshooting][troubleshooting] document for workarounds for bugs that are being tracked
 
 ## Delete the cluster
 
@@ -118,3 +163,4 @@ $ terraform destroy ../../platforms/vmware
 [downloadterraform]: https://www.terraform.io/downloads.html
 [vmware]: ../../variables/vmware.md
 [vars]: ../../variables/config.md
+[troubleshooting]: ../../troubleshooting/faq.md
