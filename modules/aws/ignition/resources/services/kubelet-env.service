@@ -1,6 +1,9 @@
 [Unit]
 Description=Determine the Kubelet Image Version
 ConditionPathExists=!/etc/kubernetes/kubelet.env
+Requires=init-assets.service
+After=init-assets.service
+PartOf=init-assets.service
 
 [Service]
 

@@ -1,12 +1,13 @@
 [Unit]
 Description=Download Tectonic Assets
 ConditionPathExists=!/opt/tectonic/init_assets.done
-Before=bootkube.service kubelet-env.service
 
 [Service]
 Type=oneshot
 RemainAfterExit=true
 WorkingDirectory=/opt/tectonic
+Restart=on-failure
+RestartSec=10
 
 User=root
 Group=root
