@@ -192,6 +192,16 @@ tectonic_metal_worker_names = ""
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_pull_secret_path = ""
 
+// (optional) Protocol rkt will use when pulling images from registry.
+// 
+// Example: `docker://`
+// tectonic_rkt_image_protocol = ""
+
+// (optional) Comma-separated list of insecure options for rkt.
+// 
+// Example: `image,tls`
+// tectonic_rkt_insecure_options = "none"
+
 // This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation. The maximum size of this IP range is /12
 tectonic_service_cidr = "10.3.0.0/16"
 
