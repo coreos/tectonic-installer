@@ -9,13 +9,13 @@ resource "azurerm_network_security_group" "etcd" {
 
 resource "azurerm_network_security_rule" "etcd_egress" {
   name                        = "${var.tectonic_cluster_name}-etcd_egress"
-  priority                    = 100
+  priority                    = 2000
   direction                   = "Outbound"
   access                      = "Allow"
   protocol                    = "*"
   source_port_range           = "*"
   destination_port_range      = "*"
-  source_address_prefix       = "*"
+  source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.external_nsg_rsg_name}"
   network_security_group_name = "${var.external_etcd_nsg_name}"
@@ -38,7 +38,7 @@ resource "azurerm_network_security_rule" "etcd_egress" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
   name                        = "${var.tectonic_cluster_name}-etcd_ingress_ssh"
-  priority                    = 200
+  priority                    = 400
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "tcp"
@@ -53,7 +53,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
 # TODO: Add external SSH rule
 resource "azurerm_network_security_rule" "etcd_ingress_ssh_admin" {
   name                        = "${var.tectonic_cluster_name}-etcd_ingress_ssh_admin"
-  priority                    = 250
+  priority                    = 405
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "tcp"
@@ -67,7 +67,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_admin" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_ssh_self" {
   name                   = "${var.tectonic_cluster_name}-etcd_ingress_ssh_self"
-  priority               = 300
+  priority               = 410
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -83,7 +83,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_self" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_ssh_from_master" {
   name                   = "${var.tectonic_cluster_name}-etcd_ingress_services_from_console"
-  priority               = 400
+  priority               = 415
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -99,7 +99,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_from_master" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_client_self" {
   name                   = "${var.tectonic_cluster_name}-etcd_ingress_client_self"
-  priority               = 500
+  priority               = 420
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -115,7 +115,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_self" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_client_master" {
   name                   = "${var.tectonic_cluster_name}-etcd_ingress_client_master"
-  priority               = 600
+  priority               = 425
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -131,7 +131,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_master" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_client_worker" {
   name                   = "${var.tectonic_cluster_name}-etcd_ingress_client_worker"
-  priority               = 700
+  priority               = 430
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -147,7 +147,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_worker" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_peer" {
   name                   = "${var.tectonic_cluster_name}-etcd_ingress_peer"
-  priority               = 800
+  priority               = 435
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"

@@ -7,13 +7,13 @@ resource "azurerm_network_security_group" "master" {
 
 resource "azurerm_network_security_rule" "master_egress" {
   name                        = "${var.tectonic_cluster_name}-master_egress"
-  priority                    = 100
+  priority                    = 2005
   direction                   = "Outbound"
   access                      = "Allow"
   protocol                    = "*"
   source_port_range           = "*"
   destination_port_range      = "*"
-  source_address_prefix       = "*"
+  source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.external_nsg_rsg_name}"
   network_security_group_name = "${var.external_master_nsg_name}"
@@ -21,7 +21,7 @@ resource "azurerm_network_security_rule" "master_egress" {
 
 resource "azurerm_network_security_rule" "master_ingress_ssh" {
   name                        = "${var.tectonic_cluster_name}-master_ingress_ssh"
-  priority                    = 200
+  priority                    = 500
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "tcp"
@@ -36,7 +36,7 @@ resource "azurerm_network_security_rule" "master_ingress_ssh" {
 # TODO: Add external SSH rule
 resource "azurerm_network_security_rule" "master_ingress_ssh_admin" {
   name                        = "${var.tectonic_cluster_name}-master_ingress_ssh_admin"
-  priority                    = 250
+  priority                    = 505
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "tcp"
@@ -50,7 +50,7 @@ resource "azurerm_network_security_rule" "master_ingress_ssh_admin" {
 
 resource "azurerm_network_security_rule" "master_ingress_flannel" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_flannel"
-  priority               = 300
+  priority               = 510
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "udp"
@@ -66,7 +66,7 @@ resource "azurerm_network_security_rule" "master_ingress_flannel" {
 
 resource "azurerm_network_security_rule" "master_ingress_flannel_from_worker" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_flannel_from_worker"
-  priority               = 400
+  priority               = 515
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "udp"
@@ -84,7 +84,7 @@ resource "azurerm_network_security_rule" "master_ingress_flannel_from_worker" {
 
 resource "azurerm_network_security_rule" "master_ingress_node_exporter" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_node_exporter"
-  priority               = 700
+  priority               = 520
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -100,7 +100,7 @@ resource "azurerm_network_security_rule" "master_ingress_node_exporter" {
 
 resource "azurerm_network_security_rule" "master_ingress_node_exporter_from_worker" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_node_exporter_from_worker"
-  priority               = 800
+  priority               = 525
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -116,7 +116,7 @@ resource "azurerm_network_security_rule" "master_ingress_node_exporter_from_work
 
 resource "azurerm_network_security_rule" "master_ingress_services" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_services"
-  priority               = 900
+  priority               = 530
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -132,7 +132,7 @@ resource "azurerm_network_security_rule" "master_ingress_services" {
 
 resource "azurerm_network_security_rule" "master_ingress_services_from_console" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_services_from_console"
-  priority               = 1000
+  priority               = 535
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -148,7 +148,7 @@ resource "azurerm_network_security_rule" "master_ingress_services_from_console" 
 
 resource "azurerm_network_security_rule" "master_ingress_etcd_lb" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_etcd"
-  priority               = 1100
+  priority               = 540
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -163,7 +163,7 @@ resource "azurerm_network_security_rule" "master_ingress_etcd_lb" {
 
 resource "azurerm_network_security_rule" "master_ingress_etcd_self" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_etcd_self"
-  priority               = 1150
+  priority               = 545
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -179,7 +179,7 @@ resource "azurerm_network_security_rule" "master_ingress_etcd_self" {
 
 resource "azurerm_network_security_rule" "master_ingress_bootstrap_etcd" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_bootstrap_etcd"
-  priority               = 1200
+  priority               = 550
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -195,7 +195,7 @@ resource "azurerm_network_security_rule" "master_ingress_bootstrap_etcd" {
 
 resource "azurerm_network_security_rule" "master_ingress_kubelet_insecure" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_kubelet_insecure"
-  priority               = 1300
+  priority               = 555
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -211,7 +211,7 @@ resource "azurerm_network_security_rule" "master_ingress_kubelet_insecure" {
 
 resource "azurerm_network_security_rule" "master_ingress_kubelet_insecure_from_worker" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_kubelet_insecure_from_worker"
-  priority               = 1400
+  priority               = 560
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -227,7 +227,7 @@ resource "azurerm_network_security_rule" "master_ingress_kubelet_insecure_from_w
 
 resource "azurerm_network_security_rule" "master_ingress_kubelet_secure" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_kubelet_secure"
-  priority               = 1500
+  priority               = 565
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -243,7 +243,7 @@ resource "azurerm_network_security_rule" "master_ingress_kubelet_secure" {
 
 resource "azurerm_network_security_rule" "master_ingress_kubelet_secure_from_worker" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_kubelet_secure_from_worker"
-  priority               = 1600
+  priority               = 570
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -260,7 +260,7 @@ resource "azurerm_network_security_rule" "master_ingress_kubelet_secure_from_wor
 # TODO: Review NSG
 resource "azurerm_network_security_rule" "master_ingress_http" {
   name                        = "${var.tectonic_cluster_name}-master_ingress_http"
-  priority                    = 1700
+  priority                    = 575
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "tcp"
@@ -275,7 +275,7 @@ resource "azurerm_network_security_rule" "master_ingress_http" {
 # TODO: Review NSG
 resource "azurerm_network_security_rule" "master_ingress_https" {
   name                        = "${var.tectonic_cluster_name}-master_ingress_https"
-  priority                    = 1800
+  priority                    = 580
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "tcp"
@@ -290,7 +290,7 @@ resource "azurerm_network_security_rule" "master_ingress_https" {
 # TODO: Review NSG
 resource "azurerm_network_security_rule" "master_ingress_heapster" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_heapster"
-  priority               = 1900
+  priority               = 585
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
@@ -307,7 +307,7 @@ resource "azurerm_network_security_rule" "master_ingress_heapster" {
 # TODO: Review NSG
 resource "azurerm_network_security_rule" "master_ingress_heapster_from_worker" {
   name                   = "${var.tectonic_cluster_name}-master_ingress_heapster_from_worker"
-  priority               = 2000
+  priority               = 590
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "tcp"
