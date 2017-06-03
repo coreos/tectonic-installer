@@ -33,7 +33,7 @@ variable "cluster_name" {
   type = "string"
 }
 
-variable "public_ssh_key" {
+variable "ssh_key" {
   type = "string"
 }
 
