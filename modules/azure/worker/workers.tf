@@ -70,7 +70,7 @@ resource "azurerm_virtual_machine_scale_set" "tectonic_workers" {
   }
 
   os_profile {
-    computer_name_prefix = "tectonic-worker-"
+    computer_name_prefix = "${var.cluster_name}-worker-"
     admin_username       = "core"
     admin_password       = ""
     custom_data          = "${base64encode("${data.ignition_config.worker.rendered}")}"

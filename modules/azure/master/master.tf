@@ -66,7 +66,7 @@ resource "azurerm_virtual_machine_scale_set" "tectonic_masters" {
   }
 
   os_profile {
-    computer_name_prefix = "tectonic-master-"
+    computer_name_prefix = "${var.cluster_name}-master-"
     admin_username       = "core"
     admin_password       = ""
 
