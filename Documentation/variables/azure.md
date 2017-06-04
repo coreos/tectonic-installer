@@ -7,14 +7,23 @@ This document gives an overview of variables used in the Azure platform of the T
 | Name | Description | Type | Default |
 |------|-------------|:----:|:-----:|
 | tectonic_azure_config_version | (internal) This declares the version of the Azure configuration variables. It has no impact on generated assets but declares the version contract of the configuration. | string | `1.0` |
+| tectonic_azure_create_api_nsg_rules | If set to true, all required rules for the Tectonic Console and Kubernetes API Server will be created in its Network Security Group. Otherwise, no rules are added to the NSG and are expected to already exist. | string | `true` |
 | tectonic_azure_create_dns_zone | If set to true, create an Azure DNS zone | string | `true` |
+| tectonic_azure_create_etcd_nsg_rules | If set to true, all required rules for etcd will be created in its Network Security Group. Otherwise, no rules are added to the NSG and are expected to already exist. | string | `true` |
+| tectonic_azure_create_master_nsg_rules | If set to true, all required rules for the Masters will be created in its Network Security Group. Otherwise, no rules are added to the NSG and are expected to already exist. | string | `true` |
+| tectonic_azure_create_worker_nsg_rules | If set to true, all required rules for the Workers will be created in its Network Security Group. Otherwise, no rules are added to the NSG and are expected to already exist. | string | `true` |
 | tectonic_azure_dns_resource_group |  | string | `tectonic-dns-group` |
 | tectonic_azure_etcd_storage_account_type | Storage account type for the etcd node(s). Example: Premium_LRS. | string | `Premium_LRS` |
 | tectonic_azure_etcd_vm_size | Instance size for the etcd node(s). Example: Standard_DS2_v2. | string | `Standard_DS2_v2` |
+| tectonic_azure_external_api_nsg_name | (optional) The name of the external Network Security Group used for the Tectonic Console and Kubernetes API Server. This depends on `tectonic_azure_external_nsg_rsg_name` to also be specified. | string | `` |
+| tectonic_azure_external_etcd_nsg_name | (optional) The name of the external Network Security Group used for etcd. This depends on `tectonic_azure_external_nsg_rsg_name` to also be specified. | string | `` |
+| tectonic_azure_external_master_nsg_name | (optional) The name of the external Network Security Group used for masters. This depends on `tectonic_azure_external_nsg_rsg_name` to also be specified. | string | `` |
 | tectonic_azure_external_master_subnet_id | (optional) Subnet ID within an existing VNet to deploy master nodes into. Required to use an existing VNet.<br><br>Example: the subnet ID starts with `"/subscriptions/{subscriptionId}"` or `"/providers/{resourceProviderNamespace}"`. | string | `` |
+| tectonic_azure_external_nsg_rsg_name | (optional) The name of the resource group of the external Network Security Group used. This is required if specifying `tectonic_external_etcd_nsg_name`, `tectonic_external_master_nsg_name`, and/or `tectonic_external_worker_nsg_name`, | string | `` |
 | tectonic_azure_external_rsg_name | Pre-existing resource group to use as parent for cluster resources. | string | `` |
 | tectonic_azure_external_vnet_id | ID of an existing Virtual Network to launch nodes into. Example: VNet1. Leave blank to create a new Virtual Network. | string | `` |
 | tectonic_azure_external_vnet_name | Pre-existing virtual network to create cluster into. | string | `` |
+| tectonic_azure_external_worker_nsg_name | (optional) The name of the external Network Security Group used for workers. This depends on `tectonic_azure_external_nsg_rsg_name` to also be specified. | string | `` |
 | tectonic_azure_external_worker_subnet_id | (optional) Subnet ID within an existing VNet to deploy worker nodes into. Required to use an existing VNet.<br><br>Example: the subnet ID starts with `"/subscriptions/{subscriptionId}"` or `"/providers/{resourceProviderNamespace}"`. | string | `` |
 | tectonic_azure_image_reference | (optional) Specifies an image map with the following keys: `publisher`, `offer`, `sku`, `version` | map | `<map>` |
 | tectonic_azure_location |  | string | - |
