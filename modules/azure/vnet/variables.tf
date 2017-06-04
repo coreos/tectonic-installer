@@ -39,10 +39,6 @@ variable "external_worker_subnet_id" {
   default = ""
 }
 
-#variable "etcd_lb_ip" {
-#  type = "string"
-#}
-
 variable "etcd_cidr" {
   type    = "string"
   default = ""
