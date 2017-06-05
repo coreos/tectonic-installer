@@ -50,10 +50,10 @@ resource "azurerm_network_security_rule" "api_ingress_https" {
 }
 
 resource "azurerm_network_security_group" "console" {
-  count               = "${var.create_api_nsg_rules ? 1 : 0}"
+  count               = "${var.external_api_nsg_name == "" ? 1 : 0}"
   name                = "${var.tectonic_cluster_name}-console-nsg"
   location            = "${var.location}"
-  resource_group_name = "${var.external_nsg_rsg_name}"
+  resource_group_name = "${var.resource_group_name}"
 }
 
 resource "azurerm_network_security_rule" "console_egress" {
