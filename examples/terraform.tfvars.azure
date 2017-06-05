@@ -207,7 +207,7 @@ tectonic_ssh_key = ""
 // (optional) Network (external) to allow SSH access from. Maps to `source_address_prefix` in Azure.
 // Defaults to `*`. Can be external to Azure environment.
 // Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ]
-// tectonic_ssh_network_ext = "*"
+// tectonic_ssh_network_ext = "VirtualNetwork"
 
 // Network (internal) to allow SSH access from. Maps to `source_address_prefix` in Azure.
 // Defaults to `VirtualNetwork`. Should be internal to Azure environment.

@@ -36,7 +36,7 @@ This document gives an overview of variables used in the Azure platform of the T
 | tectonic_azure_worker_vm_size | Instance size for the worker node(s). Example: Standard_DS2_v2. | string | `Standard_DS2_v2` |
 | tectonic_enable_ssh_external | Specifies if SSH access should be allowed from external networks | string | `false` |
 | tectonic_ssh_key |  | string | `` |
-| tectonic_ssh_network_ext | (optional) Network (external) to allow SSH access from. Maps to `source_address_prefix` in Azure. Defaults to `*`. Can be external to Azure environment. Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ] | string | `*` |
+| tectonic_ssh_network_ext | (optional) Network (external) to allow SSH access from. Maps to `source_address_prefix` in Azure. Defaults to `*`. Can be external to Azure environment. Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ] | string | `VirtualNetwork` |
 | tectonic_ssh_network_int | Network (internal) to allow SSH access from. Maps to `source_address_prefix` in Azure. Defaults to `VirtualNetwork`. Should be internal to Azure environment. Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ] | string | `VirtualNetwork` |
 | tectonic_use_jumpbox | (optional) Specifies whether a jumpbox should be created to manage cluster nodes. Experimental - DO NOT USE | string | `false` |
 

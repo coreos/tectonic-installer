@@ -35,7 +35,7 @@ Defaults to `*`. Can be external to Azure environment.
 Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ]
 EOF
 
-  default = "*"
+  default = "VirtualNetwork"
 }
 
 # TODO: Check if similar var exists for AWS
