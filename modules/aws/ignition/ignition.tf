@@ -42,6 +42,10 @@ data "template_file" "kubelet" {
     node_label             = "${var.kubelet_node_label}"
     node_taints_param      = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
     kubeconfig_s3_location = "${var.kubeconfig_s3_location}"
+    rkt_image_protocol     = "${var.tectonic_rkt_image_protocol}"
+    rkt_insecure_options   = "${var.tectonic_rkt_insecure_options}"
+    kubelet_image_url      = "${element(split(":", var.container_images["hyperkube"]), 0)}"
+    kubelet_image_tag      = "${element(split(":", var.container_images["hyperkube"]), 1)}"
   }
 }
 
