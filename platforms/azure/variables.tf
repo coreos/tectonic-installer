@@ -8,13 +8,13 @@ EOF
 }
 
 # TODO: Add descriptions for SSH vars
-variable "tectonic_enable_ssh_external" {
+variable "tectonic_azure_enable_ssh_external" {
   type        = "string"
   description = "Specifies if SSH access should be allowed from external networks"
   default     = "false"
 }
 
-variable "tectonic_ssh_network_int" {
+variable "tectonic_azure_ssh_network_internal" {
   type = "string"
 
   description = <<EOF
@@ -26,28 +26,16 @@ EOF
   default = "VirtualNetwork"
 }
 
-variable "tectonic_ssh_network_ext" {
+variable "tectonic_azure_ssh_network_external" {
   type = "string"
 
   description = <<EOF
 (optional) Network (external) to allow SSH access from. Maps to `source_address_prefix` in Azure.
-Defaults to `*`. Can be external to Azure environment.
+Defaults to `VirtualNetwork`. Can be external to Azure environment.
 Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ]
 EOF
 
   default = "VirtualNetwork"
-}
-
-# TODO: Check if similar var exists for AWS
-variable "tectonic_use_jumpbox" {
-  type = "string"
-
-  description = <<EOF
-(optional) Specifies whether a jumpbox should be created to manage cluster nodes.
-Experimental - DO NOT USE
-EOF
-
-  default = "false"
 }
 
 variable "tectonic_azure_dns_resource_group" {
@@ -74,11 +62,6 @@ EOF
 
 variable "tectonic_azure_location" {
   type = "string"
-}
-
-variable "tectonic_ssh_key" {
-  type    = "string"
-  default = ""
 }
 
 // Name of an Azure ssh key to use

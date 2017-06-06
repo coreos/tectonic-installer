@@ -1,6 +1,6 @@
 resource "azurerm_network_security_group" "worker" {
   count               = "${var.external_worker_nsg_name == "" ? 1 : 0}"
-  name                = "${var.tectonic_cluster_name}-worker-nsg"
+  name                = "${var.tectonic_cluster_name}-worker"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
 }
