@@ -88,18 +88,6 @@ variable "external_nsg_worker" {
   default = ""
 }
 
-variable "create_api_nsg_rules" {
-  default = false
-}
-
-variable "create_etcd_nsg_rules" {
-  default = false
-}
-
-variable "create_master_nsg_rules" {
-  default = false
-}
-
-variable "create_worker_nsg_rules" {
+variable "create_nsg_rules" {
   default = false
 }

@@ -1,4 +1,5 @@
 resource "azurerm_network_security_rule" "alb_probe" {
+  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
   name                        = "${var.tectonic_cluster_name}-alb_probe"
   priority                    = 295
   direction                   = "Inbound"
@@ -9,7 +10,7 @@ resource "azurerm_network_security_rule" "alb_probe" {
   source_address_prefix       = "AzureLoadBalancer"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
-  network_security_group_name = "${var.external_nsg_api == "" ? join("",azurerm_network_security_group.api.*.name) : var.external_nsg_api }"
+  network_security_group_name = "${azurerm_network_security_group.api.name}"
 }
 
 resource "azurerm_network_security_group" "api" {
@@ -20,7 +21,7 @@ resource "azurerm_network_security_group" "api" {
 }
 
 resource "azurerm_network_security_rule" "api_egress" {
-  count                       = "${var.create_nsg_rules ? 1 : 0}"
+  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
   name                        = "${var.tectonic_cluster_name}-api_egress"
   priority                    = 100
   direction                   = "Outbound"
@@ -31,11 +32,11 @@ resource "azurerm_network_security_rule" "api_egress" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
-  network_security_group_name = "${var.external_nsg_api == "" ? join("",azurerm_network_security_group.api.*.name) : var.external_nsg_api }"
+  network_security_group_name = "${azurerm_network_security_group.api.name}"
 }
 
 resource "azurerm_network_security_rule" "api_ingress_https" {
-  count                       = "${var.create_nsg_rules ? 1 : 0}"
+  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
   name                        = "${var.tectonic_cluster_name}-api_ingress_https"
   priority                    = 200
   direction                   = "Inbound"
@@ -46,7 +47,7 @@ resource "azurerm_network_security_rule" "api_ingress_https" {
   source_address_prefix       = "VirtualNetwork"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
-  network_security_group_name = "${var.external_nsg_api == "" ? join("",azurerm_network_security_group.api.*.name) : var.external_nsg_api }"
+  network_security_group_name = "${azurerm_network_security_group.api.name}"
 }
 
 resource "azurerm_network_security_group" "console" {
@@ -57,7 +58,7 @@ resource "azurerm_network_security_group" "console" {
 }
 
 resource "azurerm_network_security_rule" "console_egress" {
-  count                       = "${var.create_nsg_rules ? 1 : 0}"
+  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
   name                        = "${var.tectonic_cluster_name}-console_egress"
   priority                    = 100
   direction                   = "Outbound"
@@ -68,11 +69,11 @@ resource "azurerm_network_security_rule" "console_egress" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
-  network_security_group_name = "${var.external_nsg_api == "" ?  join("",azurerm_network_security_group.console.*.name) : var.external_nsg_api }"
+  network_security_group_name = "${azurerm_network_security_group.console.name}"
 }
 
 resource "azurerm_network_security_rule" "console_ingress_https" {
-  count                       = "${var.create_nsg_rules ? 1 : 0}"
+  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
   name                        = "${var.tectonic_cluster_name}-console_ingress_https"
   priority                    = 200
   direction                   = "Inbound"
@@ -83,11 +84,11 @@ resource "azurerm_network_security_rule" "console_ingress_https" {
   source_address_prefix       = "VirtualNetwork"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
-  network_security_group_name = "${var.external_nsg_api == "" ?  join("",azurerm_network_security_group.console.*.name) : var.external_nsg_api }"
+  network_security_group_name = "${azurerm_network_security_group.console.name}"
 }
 
 resource "azurerm_network_security_rule" "console_ingress_http" {
-  count                       = "${var.create_nsg_rules ? 1 : 0}"
+  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
   name                        = "${var.tectonic_cluster_name}-console_ingress_http"
   priority                    = 300
   direction                   = "Inbound"
@@ -98,5 +99,5 @@ resource "azurerm_network_security_rule" "console_ingress_http" {
   source_address_prefix       = "VirtualNetwork"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
-  network_security_group_name = "${var.external_nsg_api == "" ?  join("",azurerm_network_security_group.console.*.name) : var.external_nsg_api }"
+  network_security_group_name = "${azurerm_network_security_group.console.name}"
 }
