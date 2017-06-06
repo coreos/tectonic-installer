@@ -6,7 +6,7 @@ The following is a list of confirmed issues or bugs in Tectonic, that will be fi
 
 **Version:** [Tectonic 1.6.2-tectonic.1](https://coreos.com/tectonic/releases/#1.6.2-tectonic.1)
 
-**Status:** open
+**Status:** Resolved with [Tectonic 1.6.4-tectonic.1](https://coreos.com/tectonic/releases/#1.6.4-tectonic.1)
 
 **Issue:**
 
@@ -16,7 +16,7 @@ Tectonic Identity, which uses the [dex open source project](https://github.com/c
 
 **Version:** [Tectonic 1.6.2-tectonic.1](https://coreos.com/tectonic/releases/#1.6.2-tectonic.1)
 
-**Status:** open
+**Status:** Resolved with [Tectonic 1.6.4-tectonic.1](https://coreos.com/tectonic/releases/#1.6.4-tectonic.1)
 
 **Issue:**
 
@@ -41,6 +41,4 @@ ${data.ignition_systemd_unit.etcd3.*.id[count.index]}
 
 **Workaround:**
 
-Download and use this [customized Terraform binary](https://github.com/coreos/terraform/releases/tag/v0.9.6-fcdf494) that will allow you to run commands after your cluster is booted.
-
-A future Tectonic release will update to Terraform 0.9.6, which will contain the bug fix and allow for normal operation.
+Download and use the [official Terraform 0.9.6 release](https://releases.hashicorp.com/terraform/0.9.6/) to run commands after your cluster is booted.
