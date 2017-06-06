@@ -15,6 +15,10 @@
 # the content of the resources on disk. Because this output is computed from the
 # combination of all the resources' IDs, it can't be guessed and can only be
 # interpolated once the assets have all been created.
+output "name" {
+  value = "${var.cluster_prefix != "" ? "${var.cluster_prefix}-${var.cluster_name}" : var.cluster_name}"
+}
+
 output "id" {
   value = "${sha1("${template_dir.tectonic.id} ${local_file.tectonic.id}")}"
 }

@@ -33,6 +33,9 @@ module "tectonic" {
   source   = "../../modules/tectonic"
   platform = "azure"
 
+  cluster_prefix = "${var.tectonic_cluster_prefix}"
+  cluster_name = "${var.tectonic_cluster_name}"
+
   base_address       = "${module.masters.ingress_internal_fqdn}"
   kube_apiserver_url = "https://${module.masters.api_internal_fqdn}:443"
 
