@@ -166,97 +166,67 @@ EOF
   default = ""
 }
 
-variable "tectonic_azure_external_nsg_rsg_name" {
+variable "tectonic_azure_external_resource_group" {
   type = "string"
 
   description = <<EOF
 (optional) The name of the resource group of the external Network Security
-Group used. This is required if specifying `tectonic_external_etcd_nsg_name`,
-`tectonic_external_master_nsg_name`, and/or `tectonic_external_worker_nsg_name`,
+Group used. This is required if specifying `tectonic_external_nsg_etcd`,
+`tectonic_external_nsg_master`, and/or `tectonic_external_nsg_worker`,
 EOF
 
   default = ""
 }
 
-variable "tectonic_azure_external_etcd_nsg_name" {
+variable "tectonic_azure_external_nsg_etcd" {
   type = "string"
 
   description = <<EOF
 (optional) The name of the external Network Security Group used for etcd. This
-depends on `tectonic_azure_external_nsg_rsg_name` to also be specified.
+depends on `tectonic_azure_external_resource_group` to also be specified.
 EOF
 
   default = ""
 }
 
-variable "tectonic_azure_external_api_nsg_name" {
+variable "tectonic_azure_external_nsg_api" {
   type = "string"
 
   description = <<EOF
 (optional) The name of the external Network Security Group used for the
 Tectonic Console and Kubernetes API Server. This depends on
-`tectonic_azure_external_nsg_rsg_name` to also be specified.
+`tectonic_azure_external_resource_group` to also be specified.
 EOF
 
   default = ""
 }
 
-variable "tectonic_azure_external_master_nsg_name" {
+variable "tectonic_azure_external_nsg_master" {
   type = "string"
 
   description = <<EOF
 (optional) The name of the external Network Security Group used for masters. This
-depends on `tectonic_azure_external_nsg_rsg_name` to also be specified.
+depends on `tectonic_azure_external_resource_group` to also be specified.
 EOF
 
   default = ""
 }
 
-variable "tectonic_azure_external_worker_nsg_name" {
+variable "tectonic_azure_external_nsg_worker" {
   type = "string"
 
   description = <<EOF
 (optional) The name of the external Network Security Group used for workers. This
-depends on `tectonic_azure_external_nsg_rsg_name` to also be specified.
+depends on `tectonic_azure_external_resource_group` to also be specified.
 EOF
 
   default = ""
 }
 
-variable "tectonic_azure_create_etcd_nsg_rules" {
+variable "tectonic_azure_create_nsg_rules" {
   description = <<EOF
-If set to true, all required rules for etcd will be created in its Network
-Security Group. Otherwise, no rules are added to the NSG and are expected
-to already exist.
-EOF
-
-  default = true
-}
-
-variable "tectonic_azure_create_api_nsg_rules" {
-  description = <<EOF
-If set to true, all required rules for the Tectonic Console and Kubernetes
-API Server will be created in its Network Security Group. Otherwise, no rules
-are added to the NSG and are expected to already exist.
-EOF
-
-  default = true
-}
-
-variable "tectonic_azure_create_master_nsg_rules" {
-  description = <<EOF
-If set to true, all required rules for the Masters will be created in its Network
-Security Group. Otherwise, no rules are added to the NSG and are expected
-to already exist.
-EOF
-
-  default = true
-}
-
-variable "tectonic_azure_create_worker_nsg_rules" {
-  description = <<EOF
-If set to true, all required rules for the Workers will be created in its Network
-Security Group. Otherwise, no rules are added to the NSG and are expected
+If set to true, all required rules will be created for all Network
+Security Groups. Otherwise, no rules are added to the NSGs and are expected
 to already exist.
 EOF
 

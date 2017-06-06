@@ -64,26 +64,26 @@ variable "ssh_network_external" {
   default = ""
 }
 
-variable "external_nsg_rsg_name" {
+variable "external_resource_group" {
   type = "string"
 }
 
-variable "external_etcd_nsg_name" {
+variable "external_nsg_etcd" {
   type    = "string"
   default = ""
 }
 
-variable "external_api_nsg_name" {
+variable "external_nsg_api" {
   type    = "string"
   default = ""
 }
 
-variable "external_master_nsg_name" {
+variable "external_nsg_master" {
   type    = "string"
   default = ""
 }
 
-variable "external_worker_nsg_name" {
+variable "external_nsg_worker" {
   type    = "string"
   default = ""
 }

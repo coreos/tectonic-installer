@@ -26,15 +26,15 @@ output "worker_cidr" {
 }
 
 output "etcd_nsg_name" {
-  value = "${var.external_etcd_nsg_name == "" ? join(" ", azurerm_network_security_group.etcd.*.name) : var.external_etcd_nsg_name }"
+  value = "${var.external_nsg_etcd == "" ? join(" ", azurerm_network_security_group.etcd.*.name) : var.external_nsg_etcd }"
 }
 
 # TODO: Allow user to provide their own network
 output "master_nsg_name" {
-  value = "${var.external_master_nsg_name == "" ? join(" ", azurerm_network_security_group.master.*.name) : var.external_master_nsg_name }"
+  value = "${var.external_nsg_master == "" ? join(" ", azurerm_network_security_group.master.*.name) : var.external_nsg_master }"
 }
 
 # TODO: Allow user to provide their own network
 output "worker_nsg_name" {
-  value = "${var.external_worker_nsg_name == "" ? join(" ", azurerm_network_security_group.worker.*.name) : var.external_worker_nsg_name }"
+  value = "${var.external_nsg_worker == "" ? join(" ", azurerm_network_security_group.worker.*.name) : var.external_nsg_worker }"
 }
