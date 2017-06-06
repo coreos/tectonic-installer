@@ -72,6 +72,11 @@ variable "cloud_provider" {
   default = "azure"
 }
 
+variable "cloud_provider_config" {
+  description = "Content of cloud provider config"
+  type        = "string"
+}
+
 variable "kubelet_node_label" {
   type = "string"
 }

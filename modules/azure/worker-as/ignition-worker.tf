@@ -82,6 +82,16 @@ data "ignition_file" "max-user-watches" {
   }
 }
 
+data "ignition_file" "cloud-provider-config" {
+  filesystem = "root"
+  path       = "/etc/kubernetes/cloud/config"
+  mode       = 0600
+
+  content {
+    content = "${var.cloud_provider_config}"
+  }
+}
+
 data "ignition_systemd_unit" "tectonic" {
   name   = "tectonic.service"
   enable = true

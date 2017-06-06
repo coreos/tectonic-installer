@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-cloud-cfg
+  namespace: kube-system
+data:
+  config: ${base64encode(cloud_provider_config)}
