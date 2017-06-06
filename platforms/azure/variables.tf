@@ -222,13 +222,3 @@ EOF
 
   default = ""
 }
-
-variable "tectonic_azure_create_nsg_rules" {
-  description = <<EOF
-If set to true, all required rules will be created for all Network
-Security Groups. Otherwise, no rules are added to the NSGs and are expected
-to already exist.
-EOF
-
-  default = true
-}

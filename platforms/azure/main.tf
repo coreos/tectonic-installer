@@ -27,7 +27,6 @@ module "vnet" {
   external_nsg_api          = "${var.tectonic_azure_external_nsg_api}"
   external_nsg_master       = "${var.tectonic_azure_external_nsg_master}"
   external_nsg_worker       = "${var.tectonic_azure_external_nsg_worker}"
-  create_nsg_rules          = "${var.tectonic_azure_create_nsg_rules}"
 }
 
 module "etcd" {

@@ -87,7 +87,3 @@ variable "external_nsg_worker" {
   type    = "string"
   default = ""
 }
-
-variable "create_nsg_rules" {
-  default = false
-}

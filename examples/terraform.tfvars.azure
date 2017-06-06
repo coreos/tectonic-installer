@@ -13,11 +13,6 @@ tectonic_admin_password_hash = ""
 // If set to true, create an Azure DNS zone
 tectonic_azure_create_dns_zone = true
 
-// If set to true, all required rules will be created for all Network
-// Security Groups. Otherwise, no rules are added to the NSGs and are expected
-// to already exist.
-tectonic_azure_create_nsg_rules = true
-
 // 
 tectonic_azure_dns_resource_group = "tectonic-dns-group"
 

@@ -8,7 +8,6 @@ This document gives an overview of variables used in the Azure platform of the T
 |------|-------------|:----:|:-----:|
 | tectonic_azure_config_version | (internal) This declares the version of the Azure configuration variables. It has no impact on generated assets but declares the version contract of the configuration. | string | `1.0` |
 | tectonic_azure_create_dns_zone | If set to true, create an Azure DNS zone | string | `true` |
-| tectonic_azure_create_nsg_rules | If set to true, all required rules will be created for all Network Security Groups. Otherwise, no rules are added to the NSGs and are expected to already exist. | string | `true` |
 | tectonic_azure_dns_resource_group |  | string | `tectonic-dns-group` |
 | tectonic_azure_enable_ssh_external | Specifies if SSH access should be allowed from external networks | string | `false` |
 | tectonic_azure_etcd_storage_account_type | Storage account type for the etcd node(s). Example: Premium_LRS. | string | `Premium_LRS` |
