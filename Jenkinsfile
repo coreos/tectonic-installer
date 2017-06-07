@@ -134,19 +134,21 @@ pipeline {
           },
           "IntegrationTest Installer Gui": {
             node('worker && ec2') {
-              withDockerContainer(builder_image) {
-                checkout scm
-                unstash 'installer'
-                sh """#!/bin/bash -ex
-                cd $GO_PROJECT/installer
-                make launch-installer-guitests
-                make gui-tests-cleanup
-                """
-              }
-            }
-          }
-        )
-      }
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  checkout scm
+                  unstash 'installer'
+                  sh """#!/bin/bash -ex
+                  cd $GO_PROJECT/installer
+                  make launch-installer-guitests
+                  make gui-tests-cleanup
+                  """
+               }
+             }
+           }
+         }
+       )
+     }
       post {
         failure {
           node('worker && ec2') {
