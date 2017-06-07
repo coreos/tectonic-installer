@@ -27,7 +27,7 @@ This document gives an overview of variables used in the Azure platform of the T
 | tectonic_azure_master_storage_account_type | Storage account type for the master node(s). Example: Premium_LRS. | string | `Premium_LRS` |
 | tectonic_azure_master_vm_size | Instance size for the master node(s). Example: Standard_DS2_v2. | string | `Standard_DS2_v2` |
 | tectonic_azure_ssh_key | Name of an Azure ssh key to use joe-sfo | string | - |
-| tectonic_azure_ssh_network_external | (optional) Network (external) to allow SSH access from. Maps to `source_address_prefix` in Azure. Defaults to `VirtualNetwork`. Can be external to Azure environment. Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ] | string | `VirtualNetwork` |
+| tectonic_azure_ssh_network_external | (optional) Network (external) to allow SSH access from. Maps to `source_address_prefix` in Azure. Defaults to `*`. Can be external to Azure environment. Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ] | string | `*` |
 | tectonic_azure_ssh_network_internal | Network (internal) to allow SSH access from. Maps to `source_address_prefix` in Azure. Defaults to `VirtualNetwork`. Should be internal to Azure environment. Allowed values: [network CIDR (i.e., 10.0.0.0/16) | `VirtualNetwork` | `Internet` | `*` ] | string | `VirtualNetwork` |
 | tectonic_azure_use_custom_fqdn | (optional) If set to true, assemble the FQDN from the configuration. Otherwise, use the FQDN set up by Azure. | string | `false` |
 | tectonic_azure_vnet_cidr_block | Block of IP addresses used by the Resource Group. This should not overlap with any other networks, such as a private datacenter connected via ExpressRoute. | string | `10.0.0.0/16` |
