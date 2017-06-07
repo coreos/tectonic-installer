@@ -131,7 +131,7 @@ pipeline {
                 }
               }
             }
-          }
+          },
           "IntegrationTest Installer Gui": {
             node('worker && ec2') {
               withDockerContainer(builder_image) {
