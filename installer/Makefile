@@ -106,7 +106,6 @@ bin/sanity:
 
 .PHONY: launch-installer
 launch-installer: build
-	mkdir -p frontend/ui-tests/reports/
 	./bin/$(OS)/installer $(INSTALLER_OPTS) & echo $$! > frontend/ui-tests/reports/installer.pid
 
 .PHONY: launch-installer-guitests

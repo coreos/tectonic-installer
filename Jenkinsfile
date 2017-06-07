@@ -68,13 +68,13 @@ pipeline {
       }
     }
 
-    stage("Smoke Tests") {
+    stage("Tests") {
       environment {
         TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
       }
       steps {
         parallel (
-          "TerraForm: AWS": {
+          "SmokeTest TerraForm: AWS": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
@@ -92,7 +92,7 @@ pipeline {
               }
             }
           },
-          "TerraForm: AWS (Experimental)": {
+          "SmokeTest TerraForm: AWS (Experimental)": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
@@ -106,7 +106,7 @@ pipeline {
               }
             }
           },
-          "TerraForm: AWS-custom-ca": {
+          "SmokeTest TerraForm: AWS (custom-ca)": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
@@ -120,7 +120,7 @@ pipeline {
               }
             }
           },
-          "Terraform: Bare Metal": {
+          "SmokeTest Terraform: Bare Metal": {
             node('worker && bare-metal') {
               checkout scm
               unstash 'installer'
@@ -129,6 +129,19 @@ pipeline {
                 timeout(30) {
                   sh '${WORKSPACE}/tests/smoke/bare-metal/smoke.sh vars/metal.tfvars'
                 }
+              }
+            }
+          }
+          "IntegrationTest Installer Gui": {
+            node('worker && ec2') {
+              withDockerContainer(builder_image) {
+                checkout scm
+                unstash 'installer'
+                sh """#!/bin/bash -ex
+                cd $GO_PROJECT/installer
+                make launch-installer-guitests
+                make gui-tests-cleanup
+                """
               }
             }
           }
