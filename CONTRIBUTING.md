@@ -21,7 +21,6 @@ The project currently uses the general CoreOS email list and IRC channel:
 Please avoid emailing maintainers found in the MAINTAINERS file directly. They
 are very busy and read the mailing lists.
 
-<<<<<<< HEAD
 ##  Reporting a security vulnerability
 
 Due to their public nature, GitHub and mailing lists are not appropriate places for reporting vulnerabilities. Please refer to CoreOS's [security disclosure][disclosure] process when reporting issues that may be security related.
@@ -49,6 +48,10 @@ Thanks for your contributions!
 
 CoreOS projects written in Go follow a set of style guidelines that we've documented [here](https://github.com/coreos/docs/tree/master/golang). Please follow them when working on your contributions.
 
+Tectonic Installer includes syntax checks on the Terraform templates which will fail the PR checker for non-standard formatted code.
+
+Use `make structure-check` to identify files that don't meet the canonical format and style. Then, use `terraform fmt` to align the template syntax, if necessary.
+
 ## Format of the Commit Message
 
 We follow a rough convention for commit messages that is designed to answer two
@@ -58,7 +61,7 @@ the body of the commit should describe the why.
 ```
 scripts: add the test-cluster command
 
-this uses tmux to setup a test cluster that you can easily kill and
+this uses tmux to set up a test cluster that you can easily kill and
 start for debugging.
 
 Fixes #38
