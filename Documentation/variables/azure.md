@@ -9,7 +9,6 @@ This document gives an overview of variables used in the Azure platform of the T
 | tectonic_azure_config_version | (internal) This declares the version of the Azure configuration variables. It has no impact on generated assets but declares the version contract of the configuration. | string | `1.0` |
 | tectonic_azure_create_dns_zone | If set to true, create an Azure DNS zone | string | `true` |
 | tectonic_azure_dns_resource_group |  | string | `tectonic-dns-group` |
-| tectonic_azure_enable_ssh_external | Specifies if SSH access should be allowed from external networks | string | `false` |
 | tectonic_azure_etcd_storage_account_type | Storage account type for the etcd node(s). Example: Premium_LRS. | string | `Premium_LRS` |
 | tectonic_azure_etcd_vm_size | Instance size for the etcd node(s). Example: Standard_DS2_v2. | string | `Standard_DS2_v2` |
 | tectonic_azure_external_master_subnet_id | (optional) Subnet ID within an existing VNet to deploy master nodes into. Required to use an existing VNet.<br><br>Example: the subnet ID starts with `"/subscriptions/{subscriptionId}"` or `"/providers/{resourceProviderNamespace}"`. | string | `` |

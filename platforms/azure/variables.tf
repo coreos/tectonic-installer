@@ -7,13 +7,6 @@ EOF
   default = "1.0"
 }
 
-# TODO: Add descriptions for SSH vars
-variable "tectonic_azure_enable_ssh_external" {
-  type        = "string"
-  description = "Specifies if SSH access should be allowed from external networks"
-  default     = "false"
-}
-
 variable "tectonic_azure_ssh_network_internal" {
   type = "string"
 
