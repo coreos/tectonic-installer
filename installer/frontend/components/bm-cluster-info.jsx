@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Input, Connect } from './ui';
 import { TectonicLicense, licenseForm } from './tectonic-license';
-import { ExperimentalFeatures } from './experimental-features';
 import { CLUSTER_NAME } from '../cluster-config';
 import { Form } from '../form';
 import fields from '../fields';
@@ -28,7 +27,6 @@ export const BM_ClusterInfo = () => {
       </div>
       <TectonicLicense />
       <br />
-      <ExperimentalFeatures />
     </div>
   );
 };
