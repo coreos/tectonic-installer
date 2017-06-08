@@ -139,7 +139,7 @@ pipeline {
                   checkout scm
                   unstash 'installer'
                   sh """#!/bin/bash -ex
-                  cd $GO_PROJECT/installer
+                  cd installer
                   make launch-installer-guitests
                   make gui-tests-cleanup
                   """
