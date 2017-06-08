@@ -148,12 +148,7 @@ input[type="text"].wiz-node-field {
 
 .wiz-launch-progress__step {
   list-style: none;
-  margin: 0 0 10px 0;
   padding: 0;
-}
-
-.wiz-launch-progress__step:last-child {
-  margin: 0;
 }
 
 .wiz-minitable__header {
