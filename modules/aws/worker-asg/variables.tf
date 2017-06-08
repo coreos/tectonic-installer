@@ -67,3 +67,9 @@ variable "root_volume_iops" {
   default     = "100"
   description = "The amount of provisioned IOPS for the root block device."
 }
+
+variable "external_worker_arn" {
+  type        = "string"
+  default     = ""
+  description = "Instance Profile ARNs value of Worker IAM"
+}

@@ -239,3 +239,23 @@ variable "tectonic_aws_region" {
   default     = "eu-west-1"
   description = "The target AWS region for the cluster."
 }
+
+variable "tectonic_aws_external_master_arn" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) Instance Profile ARNs to use for Master AutoScalingGroup instances. If variable is provided Master ASG will use an existing IAM Role. By default roles and
+role policies will be created unless variable is provided. Example: `"arn:aws:iam::982404467199:instance-profile/demo-cluster-master-profile"`
+EOF
+}
+
+variable "tectonic_aws_external_worker_arn" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) Instance Profile ARNs to use for Worker AutoScalingGroup instances. If variable is provided Worker ASG will use an existing IAM Role. By default roles and
+role policies will be created unless variable is provided. Example: `"arn:aws:iam::982404467199:instance-profile/demo-cluster-worker-profile"`
+EOF
+}
