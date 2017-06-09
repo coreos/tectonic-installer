@@ -5,7 +5,7 @@ const sshKey = installerInput.sshKeys();
 const keysPageCommands = {
   selectSshKeys() {
     return this
-      .waitForElementPresent('@sshKeys', 10000)
+      .waitForElementPresent('@sshKeys', 60000)
       .click('@sshKeys')
       .waitForElementPresent('@nextStep', 10000)
       .click('@nextStep');
