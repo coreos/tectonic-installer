@@ -105,14 +105,14 @@ bin/sanity:
 	go test tests/sanity/k8s_test.go -c -o bin/sanity
 
 .PHONY: launch-installer
-launch-installer:
+launch-installer: build
 	mkdir -p frontend/ui-tests/reports/
 	./bin/$(OS)/installer $(INSTALLER_OPTS) & echo $$! > frontend/ui-tests/reports/installer.pid
 
 .PHONY: launch-installer-guitests
 launch-installer-guitests: launch-installer
 	Xvfb -ac :99 -screen 0 1280x1024x16 & echo $$! > frontend/ui-tests/reports/xvfb.pid
-	cd frontend && export DISPLAY=:99; yarn run installer-tests
+	cd frontend && export DISPLAY=:99 yarn run installer-tests
 
 .PHONY: gui-tests-cleanup
 gui-tests-cleanup:
