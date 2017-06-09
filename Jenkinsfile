@@ -62,7 +62,7 @@ pipeline {
             make test
             """
             stash name: 'installer', includes: 'installer/bin/linux/installer'
-            stash name: 'node_modules', includes: 'installer/frontend/node_modules'
+            stash name: 'node_modules', includes: 'installer/frontend/node_modules/*'
             stash name: 'sanity', includes: 'installer/bin/sanity'
           }
         }
