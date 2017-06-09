@@ -70,6 +70,8 @@ pipeline {
 
     stage("Tests") {
       environment {
+        GO_PROJECT = '/go/src/github.com/coreos/tectonic-installer'
+        MAKEFLAGS = '-j4'
         TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
       }
       steps {
