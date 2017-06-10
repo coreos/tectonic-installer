@@ -64,7 +64,6 @@ pipeline {
             make gui-tests-cleanup
             """
             stash name: 'installer', includes: 'installer/bin/linux/installer'
-            #stash name: 'node_modules', includes: 'installer/frontend/node_modules/*'
             stash name: 'sanity', includes: 'installer/bin/sanity'
           }
         }
@@ -141,11 +140,8 @@ pipeline {
                 withDockerContainer(builder_image) {
                   checkout scm
                   unstash 'installer'
-                  unstash 'node_modules'
                   sh """#!/bin/bash -ex
                   cd installer
-                  #make launch-installer-guitests
-                  #make gui-tests-cleanup
                   """
                }
              }
