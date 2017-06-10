@@ -60,6 +60,8 @@ pipeline {
             make dirtycheck
             make lint
             make test
+            make launch-installer-guitests
+            make gui-tests-cleanup
             """
             stash name: 'installer', includes: 'installer/bin/linux/installer'
             stash name: 'node_modules', includes: 'installer/frontend/node_modules/*'
@@ -142,8 +144,8 @@ pipeline {
                   unstash 'node_modules'
                   sh """#!/bin/bash -ex
                   cd installer
-                  make launch-installer-guitests
-                  make gui-tests-cleanup
+                  #make launch-installer-guitests
+                  #make gui-tests-cleanup
                   """
                }
              }
