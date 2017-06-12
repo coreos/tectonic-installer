@@ -110,7 +110,7 @@ pipeline {
               }
             }
           },
-          "TerraForm: AWS-custom-ca": {
+          "TerraForm: AWS (Custom CA)": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
@@ -120,6 +120,27 @@ pipeline {
                     sh """#!/bin/bash -ex
                     . ${WORKSPACE}/tests/smoke/aws/smoke.sh assume-role "$TECTONIC_INSTALLER_ROLE"
                     ${WORKSPACE}/tests/smoke/aws/smoke.sh plan vars/aws-ca.tfvars
+                    """
+                  }
+                }
+              }
+            }
+          },
+          "TerraForm: AWS (Private VPC)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  checkout scm
+                  unstash 'installer'
+                  unstash 'sanity'
+                  timeout(30) {
+                    sh """#!/bin/bash -ex
+                    .${WORKSPACE}/tests/smoke/aws/smoke.sh create-vpc'
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh plan vars/aws-vpc.tfvars'
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh create vars/aws-vpc.tfvars'
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh test vars/aws-vpc.tfvars'
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy-vpc'
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy vars/aws-vpc.tfvars'
                     """
                   }
                 }
