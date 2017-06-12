@@ -4,6 +4,9 @@ const coreOSLicensePath = require('path').resolve(__dirname, '..') +
   '/tectonic-license.txt';
 const configPath = require('path').resolve(__dirname, '..') + '/config.json';
   // reading TF_VAR_tectonic_license_path
+
+console.log(process.env.TF_VAR_tectonic_license_path);
+console.log(process.env.TF_VAR_tectonic_pull_secret_path);
   //eslint-disable-next-line no-sync
 const tectonic_license = fs.readFileSync(process.env.TF_VAR_tectonic_license_path, 'utf8');
   //eslint-disable-next-line no-sync
