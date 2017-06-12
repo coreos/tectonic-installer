@@ -105,7 +105,7 @@ bin/sanity:
 	go test tests/sanity/k8s_test.go -c -o bin/sanity
 
 .PHONY: launch-installer
-launch-installer:
+launch-installer: build
 	mkdir -p frontend/ui-tests/reports/
 	./bin/$(OS)/installer $(INSTALLER_OPTS) & echo $$! > frontend/ui-tests/reports/installer.pid
 

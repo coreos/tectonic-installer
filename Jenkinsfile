@@ -40,31 +40,35 @@ pipeline {
       }
       steps {
         node('worker && ec2') {
-          withDockerContainer(builder_image) {
-            checkout scm
-            sh """#!/bin/bash -ex
-            mkdir -p \$(dirname $GO_PROJECT) && ln -sf $WORKSPACE $GO_PROJECT
+          withCredentials(creds) {
+            withDockerContainer(builder_image) {
+              checkout scm
+              sh """#!/bin/bash -ex
+              mkdir -p \$(dirname $GO_PROJECT) && ln -sf $WORKSPACE $GO_PROJECT
 
-            # TODO: Remove me.
-            go get github.com/segmentio/terraform-docs
-            go get github.com/s-urbaniak/terraform-examples
+              # TODO: Remove me.
+              go get github.com/segmentio/terraform-docs
+              go get github.com/s-urbaniak/terraform-examples
 
-            cd $GO_PROJECT/
-            make structure-check
+              cd $GO_PROJECT/
+              make structure-check
 
-            cd $GO_PROJECT/installer
-            make clean
-            make tools
-            make build
+              cd $GO_PROJECT/installer
+              make clean
+              make tools
+              make build
 
-            make dirtycheck
-            make lint
-            make test
-            make launch-installer-guitests
-            make gui-tests-cleanup
-            """
-            stash name: 'installer', includes: 'installer/bin/linux/installer'
-            stash name: 'sanity', includes: 'installer/bin/sanity'
+              make dirtycheck
+              make lint
+              make test
+
+              # TODO: move these to a separate step
+              make launch-installer-guitests
+              make gui-tests-cleanup
+              """
+              stash name: 'installer', includes: 'installer/bin/linux/installer'
+              stash name: 'sanity', includes: 'installer/bin/sanity'
+            }
           }
         }
       }
@@ -141,7 +145,17 @@ pipeline {
                   checkout scm
                   unstash 'installer'
                   sh """#!/bin/bash -ex
+                  mkdir -p \$(dirname $GO_PROJECT) && ln -sf $WORKSPACE $GO_PROJECT
+
+                  # TODO: Remove me.
+                  go get github.com/segmentio/terraform-docs
+                  go get github.com/s-urbaniak/terraform-examples
+
+                  cd $GO_PROJECT/
                   cd installer
+                  echo license path2: $TF_VAR_tectonic_license_path
+                  make launch-installer-guitests
+                  make gui-tests-cleanup
                   """
                }
              }
