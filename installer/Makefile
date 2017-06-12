@@ -111,13 +111,14 @@ launch-installer: build
 
 .PHONY: launch-installer-guitests
 launch-installer-guitests: launch-installer
-	cd frontend && yarn run installer-tests
+	Xvfb -ac :99 -screen 0 1280x1024x16 & echo $$! > frontend/ui-tests/reports/xvfb.pid
+	cd frontend && DISPLAY=:99 ./node_modules/.bin/nightwatch --verbose
 
 .PHONY: gui-tests-cleanup
 gui-tests-cleanup:
 	kill `cat frontend/ui-tests/reports/installer.pid`
+	kill `cat frontend/ui-tests/reports/xvfb.pid`
 	rm -fr frontend/ui-tests/reports/
-	killall chromedriver
 
 .PHONY: clean
 clean:

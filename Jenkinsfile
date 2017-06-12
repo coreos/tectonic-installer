@@ -22,7 +22,7 @@ def quay_creds = [
   )
 ]
 
-def builder_image = 'quay.io/coreos/tectonic-builder:v1.12'
+def builder_image = 'quay.io/coreos/tectonic-builder:v1.13'
 
 pipeline {
   agent none
@@ -40,41 +40,47 @@ pipeline {
       }
       steps {
         node('worker && ec2') {
-          withDockerContainer(builder_image) {
-            checkout scm
-            sh """#!/bin/bash -ex
-            mkdir -p \$(dirname $GO_PROJECT) && ln -sf $WORKSPACE $GO_PROJECT
+          withCredentials(creds) {
+            withDockerContainer(builder_image) {
+              checkout scm
+              sh """#!/bin/bash -ex
+              mkdir -p \$(dirname $GO_PROJECT) && ln -sf $WORKSPACE $GO_PROJECT
 
-            # TODO: Remove me.
-            go get github.com/segmentio/terraform-docs
-            go get github.com/s-urbaniak/terraform-examples
+              # TODO: Remove me.
+              go get github.com/segmentio/terraform-docs
+              go get github.com/s-urbaniak/terraform-examples
 
-            cd $GO_PROJECT/
-            make structure-check
+              cd $GO_PROJECT/
+              make structure-check
 
-            cd $GO_PROJECT/installer
-            make clean
-            make tools
-            make build
+              cd $GO_PROJECT/installer
+              make clean
+              make tools
+              make build
 
-            make dirtycheck
-            make lint
-            make test
-            """
-            stash name: 'installer', includes: 'installer/bin/linux/installer'
-            stash name: 'sanity', includes: 'installer/bin/sanity'
+              make dirtycheck
+              make lint
+              make test
+
+              # TODO: move these to a separate step
+              make launch-installer-guitests
+              make gui-tests-cleanup
+              """
+              stash name: 'installer', includes: 'installer/bin/linux/installer'
+              stash name: 'sanity', includes: 'installer/bin/sanity'
+            }
           }
         }
       }
     }
 
-    stage("Smoke Tests") {
+    stage("Tests") {
       environment {
         TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
       }
       steps {
         parallel (
-          "TerraForm: AWS": {
+          "SmokeTest TerraForm: AWS": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
@@ -94,7 +100,7 @@ pipeline {
               }
             }
           },
-          "TerraForm: AWS (Experimental)": {
+          "SmokeTest TerraForm: AWS (Experimental)": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
@@ -110,7 +116,7 @@ pipeline {
               }
             }
           },
-          "TerraForm: AWS-custom-ca": {
+          "SmokeTest TerraForm: AWS (custom-ca)": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
@@ -126,7 +132,7 @@ pipeline {
               }
             }
           },
-          "Terraform: Bare Metal": {
+          "SmokeTest Terraform: Bare Metal": {
             node('worker && bare-metal') {
               checkout scm
               unstash 'installer'
@@ -139,9 +145,32 @@ pipeline {
                 }
               }
             }
-          }
-        )
-      }
+          },
+          "IntegrationTest Installer Gui": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  checkout scm
+                  unstash 'installer'
+                  sh """#!/bin/bash -ex
+                  mkdir -p \$(dirname $GO_PROJECT) && ln -sf $WORKSPACE $GO_PROJECT
+
+                  # TODO: Remove me.
+                  go get github.com/segmentio/terraform-docs
+                  go get github.com/s-urbaniak/terraform-examples
+
+                  cd $GO_PROJECT/
+                  cd installer
+                  echo license path2: $TF_VAR_tectonic_license_path
+                  make launch-installer-guitests
+                  make gui-tests-cleanup
+                  """
+               }
+             }
+           }
+         }
+       )
+     }
       post {
         failure {
           node('worker && ec2') {
