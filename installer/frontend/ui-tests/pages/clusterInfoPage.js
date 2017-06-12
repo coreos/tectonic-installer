@@ -3,10 +3,11 @@ const installerInput = require('../utils/installerInput');
 const coreOSLicensePath = require('path').resolve(__dirname, '..') +
   '/tectonic-license.txt';
 const configPath = require('path').resolve(__dirname, '..') + '/config.json';
+  // reading TF_VAR_tectonic_license_path
   //eslint-disable-next-line no-sync
-const tectonic_license = JSON.parse(fs.readFileSync(process.env.TF_VAR_tectonic_license_path, 'utf8'));
+const tectonic_license = fs.readFileSync(process.env.TF_VAR_tectonic_license_path, 'utf8');
   //eslint-disable-next-line no-sync
-const pull_secret = JSON.parse(fs.readFileSync(process.env.TF_VAR_tectonic_pull_secret_path, 'utf8'));
+const pull_secret = fs.readFileSync(process.env.TF_VAR_tectonic_pull_secret_path, 'utf8');
 
 
 const clusterInfoPageCommands = {
