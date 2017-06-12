@@ -57,6 +57,11 @@ resource "aws_route_table_association" "route_net" {
 resource "aws_eip" "nat_eip" {
   count = "${var.external_vpc_id == "" ? min(var.master_az_count, var.worker_az_count) : 0}"
   vpc   = true
+
+  # Terraform does not declare an explicit dependency towards the internet gateway.
+  # this can cause the internet gateway to be deleted/detached before the EIPs.
+  # https://github.com/coreos/tectonic-installer/issues/1017#issuecomment-307780549
+  depends_on = ["aws_internet_gateway.igw"]
 }
 
 resource "aws_nat_gateway" "nat_gw" {
