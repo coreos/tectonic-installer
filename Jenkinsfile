@@ -6,11 +6,30 @@
 
 def creds = [
   file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_license_path'),
-  file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'), [
+  file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'),
+  [
     $class: 'UsernamePasswordMultiBinding',
-    credentialsId: 'jenkins-tectonic-installer',
-    usernameVariable: 'AWS_ACCESS_KEY_ID',
-    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+    credentialsId: 'azure-smoke-ssh-key',
+    passwordVariable: 'AZURE_SMOKE_SSH_KEY',
+    usernameVariable: 'AZURE_SMOKE_SSH_KEY_PUB'
+  ],
+  [
+    $class: 'UsernamePasswordMultiBinding',
+    credentialsId: 'tectonic-console-login',
+    passwordVariable: 'TF_VAR_tectonic_admin_email',
+    usernameVariable: 'TF_VAR_tectonic_admin_password_hash'
+  ],
+  [
+    $class: 'AmazonWebServicesCredentialsBinding',
+    credentialsId: 'tectonic-jenkins-installer'
+  ],
+  [
+    $class: 'AzureCredentialsBinding',
+    credentialsId: 'azure-tectonic-test-service-principal',
+    subscriptionIdVariable: 'ARM_SUBSCRIPTION_ID',
+    clientIdVariable: 'ARM_CLIENT_ID',
+    clientSecretVariable: 'ARM_CLIENT_SECRET',
+    tenantIdVariable: 'ARM_TENANT_ID'
   ]
 ]
 
@@ -190,7 +209,227 @@ pipeline {
               }
             }
           },
-          "SmokeTest Terraform: Bare Metal": {
+          "SmokeTest: Azure": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    unstash 'smoke'
+                    script {
+                      try {
+                        timeout(45) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure.tfvars
+                        """
+                        }
+                      }
+                      catch (error) {
+                          throw error
+                      }
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure.tfvars
+                              """
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "SmokeTest: Azure (Experimental)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    unstash 'smoke'
+                    script {
+                      try {
+                        timeout(45) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-exper.tfvars
+                        """
+                        }
+                      }
+                      catch (error) {
+                          throw error
+                      }
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-exper.tfvars
+                              """
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+/*
+ * Test temporarily disabled
+ *
+          "SmokeTest: Azure (existing DNS)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    unstash 'smoke'
+                    script {
+                      try {
+                        timeout(45) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-dns.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-dns.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-dns.tfvars
+                        """
+                        }
+                      }
+                      catch (error) {
+                          throw error
+                      }
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-dns.tfvars
+                              """
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+*/
+          "SmokeTest: Azure (external network)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    unstash 'smoke'
+                    script {
+                      try {
+                        timeout(45) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-extern.tfvars
+                        """
+                        }
+                      }
+                      catch (error) {
+                          throw error
+                      }
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-extern.tfvars
+                              """
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "SmokeTest: Azure (external network, experimental)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    unstash 'smoke'
+                    script {
+                      try {
+                        timeout(45) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-extern-exper.tfvars
+                        """
+                        }
+                      }
+                      catch (error) {
+                          throw error
+                      }
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-extern-exper.tfvars
+                              """
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "SmokeTest: Azure (example file)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    unstash 'smoke'
+                    script {
+                      try {
+                        timeout(45) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-example.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-example.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-example.tfvars
+                        """
+                        }
+                      }
+                      catch (error) {
+                          throw error
+                      }
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-example.tfvars
+                              """
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "SmokeTest: Bare Metal": {
             node('worker && bare-metal') {
               checkout scm
               unstash 'installer'
