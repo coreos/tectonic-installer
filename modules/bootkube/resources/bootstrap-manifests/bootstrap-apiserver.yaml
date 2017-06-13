@@ -41,8 +41,8 @@ spec:
     - mountPath: /etc/kubernetes/secrets
       name: secrets
       readOnly: true
-    - mountPath: /etc/kubernetes
-      name: etc-kubernetes
+    - mountPath: /etc/kubernetes/cloud
+      name: etc-kubernetes-cloud
       readOnly: true
     - mountPath: /var/lock
       name: var-lock
@@ -54,7 +54,7 @@ spec:
       path: /etc/kubernetes/bootstrap-secrets
   - name: etc-kubernetes-cloud
     hostPath:
-      path: /etc/kubernetes-cloud
+      path: /etc/kubernetes/cloud
   - name: ssl-certs-host
     hostPath:
       path: /usr/share/ca-certificates
