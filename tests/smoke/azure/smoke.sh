@@ -38,7 +38,7 @@ common() {
     export TF_VAR_tectonic_cluster_name=$CLUSTER
     
     # randomly select region
-    REGIONS=(westus westus2 westcentralus centralus)
+    REGIONS=(eastus)
     export CHANGE_ID=${CHANGE_ID:-${BUILD_ID}}
     i=$(( CHANGE_ID % ${#REGIONS[@]} ))
     export TF_VAR_tectonic_azure_location="${REGIONS[$i]}"
