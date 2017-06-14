@@ -66,8 +66,7 @@ data "null_data_source" "cloud-provider" {
     "aadClientSecret"   = "${var.tectonic_azure_client_secret}"
     "resourceGroup"     = "${module.resource_group.name}"
     "location"          = "${var.tectonic_azure_location}"
-    "subnetName"        = "${module.vnet.master_subnet}"
-    "securityGroupName" = "${module.vnet.default_security_group}"
+    "subnetName"        = "${module.vnet.worker_subnet_name}"
     "vnetName"          = "${module.vnet.vnet_id}"
   }
 }

@@ -10,6 +10,10 @@ output "worker_subnet" {
   value = "${var.external_vnet_name == "" ?  join(" ", azurerm_subnet.worker_subnet.*.id) : var.external_worker_subnet_id }"
 }
 
+output "worker_subnet_name" {
+  value = "${var.external_vnet_name == "" ?  join(" ", azurerm_subnet.worker_subnet.*.id) : var.external_vnet_name }"
+}
+
 # TODO: Allow user to provide their own network
 output "etcd_cidr" {
   value = "${azurerm_subnet.master_subnet.address_prefix}"
@@ -49,8 +53,4 @@ output "etcd_private_ips" {
 
 output "etcd_public_ip" {
   value = "${azurerm_public_ip.etcd_publicip.ip_address}"
-}
-
-output "default_security_group" {
-  value = "${azurerm_network_security_group.cluster_default.id}"
 }
