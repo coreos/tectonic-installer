@@ -65,7 +65,7 @@ module "tectonic" {
 }
 
 resource "null_resource" "tectonic" {
-  depends_on = ["module.tectonic", "module.masters"]
+  depends_on = ["module.etcd", "module.tectonic", "module.masters"]
 
   triggers {
     api-endpoint = "${module.masters.api_external_fqdn}"
