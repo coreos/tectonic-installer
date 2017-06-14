@@ -67,6 +67,7 @@ data "null_data_source" "cloud-provider" {
     "resourceGroup"     = "${module.resource_group.name}"
     "location"          = "${var.tectonic_azure_location}"
     "subnetName"        = "${module.vnet.worker_subnet_name}"
+    "securityGroupName" = "${module.vnet.worker_nsg_name}"
     "vnetName"          = "${module.vnet.vnet_id}"
   }
 }

@@ -94,8 +94,8 @@ spec:
         secret:
           secretName: kube-apiserver
       - name: cloud-config
-        configMap:
-          name: kube-cloud-cfg
+        secret:
+          secretName: kube-cloud-cfg
       - name: var-lock
         hostPath:
           path: /var/lock

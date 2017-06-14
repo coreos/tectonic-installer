@@ -78,8 +78,8 @@ spec:
         secret:
           secretName: kube-controller-manager
       - name: cloud-config
-        configMap:
-          name: kube-cloud-cfg
+        secret:
+          secretName: kube-cloud-cfg
       - name: ssl-host
         hostPath:
           path: /usr/share/ca-certificates
