@@ -10,6 +10,7 @@ This document gives an overview of variables used in the VMware platform of the 
 | tectonic_vmware_controller_domain | The domain name which resolves to controller node(s) | string | - |
 | tectonic_vmware_datacenter | Virtual DataCenter to deploy VMs | string | - |
 | tectonic_vmware_datastore | Datastore to deploy Tectonic | string | - |
+| tectonic_vmware_resource_pool | The name of a Resource Pool in which to launch the virtual machine. Requires full path  | string | - |
 | tectonic_vmware_etcd_gateway | Default Gateway IP address for etcd nodes(s) | string | - |
 | tectonic_vmware_etcd_hostnames | Terraform map of etcd node(s) Hostnames, Example:    tectonic_vmware_etcd_hostnames = {   "0" = "mycluster-etcd-0"   "1" = "mycluster-etcd-1"   "2" = "mycluster-etcd-2" } | map | - |
 | tectonic_vmware_etcd_ip | Terraform map of etcd node(s) IP Addresses, Example:    tectonic_vmware_etcd_ip = {   "0" = "192.168.246.10/24"   "1" = "192.168.246.11/24"   "2" = "192.168.246.12/24" } | map | - |

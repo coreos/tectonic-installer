@@ -77,6 +77,11 @@ variable vmware_cluster {
   description = "vSphere Cluster to create VMs in"
 }
 
+variable vmware_resource_pool {
+  type        = "string"
+  description = "vSphere resource pool to create VMs in"
+}
+
 variable vm_vcpu {
   type        = "string"
   description = "ETCD VMs vCPU count"

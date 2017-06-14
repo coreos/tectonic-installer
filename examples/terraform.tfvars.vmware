@@ -102,6 +102,9 @@ tectonic_vanilla_k8s = false
 // vCenter Cluster used to create VMs under
 tectonic_vmware_cluster = ""
 
+// (optional) The name of a Resource Pool in which to launch the virtual machine. Requires full path
+tectonic_vmware_resource_pool = ""
+
 // The domain name which resolves to controller node(s)
 tectonic_vmware_controller_domain = ""
 
