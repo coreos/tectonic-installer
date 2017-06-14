@@ -59,16 +59,17 @@ module "etcd" {
 # Workaround for https://github.com/hashicorp/terraform/issues/4084
 data "null_data_source" "cloud-provider" {
   inputs = {
-    "cloud"             = "${var.tectonic_azure_cloud_environment}"
-    "tenantId"          = "${var.tectonic_azure_tenant_id}"
-    "subscriptionId"    = "${var.tectonic_azure_subscription_id}"
-    "aadClientId"       = "${var.tectonic_azure_client_id}"
-    "aadClientSecret"   = "${var.tectonic_azure_client_secret}"
-    "resourceGroup"     = "${module.resource_group.name}"
-    "location"          = "${var.tectonic_azure_location}"
-    "subnetName"        = "${module.vnet.worker_subnet_name}"
-    "securityGroupName" = "${module.vnet.worker_nsg_name}"
-    "vnetName"          = "${module.vnet.vnet_id}"
+    "cloud"                      = "${var.tectonic_azure_cloud_environment}"
+    "tenantId"                   = "${var.tectonic_azure_tenant_id}"
+    "subscriptionId"             = "${var.tectonic_azure_subscription_id}"
+    "aadClientId"                = "${var.tectonic_azure_client_id}"
+    "aadClientSecret"            = "${var.tectonic_azure_client_secret}"
+    "resourceGroup"              = "${module.resource_group.name}"
+    "location"                   = "${var.tectonic_azure_location}"
+    "subnetName"                 = "${module.vnet.worker_subnet_name}"
+    "securityGroupName"          = "${module.vnet.worker_nsg_name}"
+    "vnetName"                   = "${module.vnet.vnet_id}"
+    "primaryAvailabilitySetName" = "${module.workers.availability_set_name}"
   }
 }
 
