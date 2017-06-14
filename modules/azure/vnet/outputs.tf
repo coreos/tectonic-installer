@@ -54,7 +54,3 @@ output "etcd_private_ips" {
 output "etcd_public_ip" {
   value = "${azurerm_public_ip.etcd_publicip.ip_address}"
 }
-
-output "default_security_group" {
-  value = "${azurerm_network_security_group.cluster_default.id}"
-}
