@@ -102,9 +102,6 @@ tectonic_vanilla_k8s = false
 // vCenter Cluster used to create VMs under
 tectonic_vmware_cluster = ""
 
-// (optional) The name of a Resource Pool in which to launch the virtual machine. Requires full path
-tectonic_vmware_resource_pool = ""
-
 // The domain name which resolves to controller node(s)
 tectonic_vmware_controller_domain = ""
 
@@ -117,7 +114,7 @@ tectonic_vmware_datastore = ""
 // Default Gateway IP address for etcd nodes(s)
 tectonic_vmware_etcd_gateway = ""
 
-// Terraform map of etcd node(s) Hostnames, Example: 
+// Terraform map of etcd node(s) Hostnames, Example:
 //   tectonic_vmware_etcd_hostnames = {
 //   "0" = "mycluster-etcd-0"
 //   "1" = "mycluster-etcd-1"
@@ -125,7 +122,7 @@ tectonic_vmware_etcd_gateway = ""
 // }
 tectonic_vmware_etcd_hostnames = ""
 
-// Terraform map of etcd node(s) IP Addresses, Example: 
+// Terraform map of etcd node(s) IP Addresses, Example:
 //   tectonic_vmware_etcd_ip = {
 //   "0" = "192.168.246.10/24"
 //   "1" = "192.168.246.11/24"
@@ -148,14 +145,14 @@ tectonic_vmware_ingress_domain = ""
 // Default Gateway IP address for Master nodes(s)
 tectonic_vmware_master_gateway = ""
 
-// Terraform map of Master node(s) Hostnames, Example: 
+// Terraform map of Master node(s) Hostnames, Example:
 //   tectonic_vmware_master_hostnames = {
 //   "0" = "mycluster-master-0"
 //   "1" = "mycluster-master-1"
 // }
 tectonic_vmware_master_hostnames = ""
 
-// Terraform map of Master node(s) IP Addresses, Example: 
+// Terraform map of Master node(s) IP Addresses, Example:
 //   tectonic_vmware_vm_masterips = {
 //   "0" = "192.168.246.20/24"
 //   "1" = "192.168.246.21/24"
@@ -173,6 +170,9 @@ tectonic_vmware_network = ""
 
 // DNS Server to be useddd by Virtual Machine(s)
 tectonic_vmware_node_dns = ""
+
+// (optional) The name of a Resource Pool in which to launch the virtual machine. Requires full path
+// tectonic_vmware_resource_pool = ""
 
 // vCenter Server IP/FQDN
 tectonic_vmware_server = ""
@@ -195,14 +195,14 @@ tectonic_vmware_vm_template_folder = ""
 // Default Gateway IP address for Master nodes(s)
 tectonic_vmware_worker_gateway = ""
 
-// Terraform map of Worker node(s) Hostnames, Example: 
+// Terraform map of Worker node(s) Hostnames, Example:
 //   tectonic_vmware_vm_worker_hostnames = {
 //   "0" = "mycluster-worker-0"
 //   "1" = "mycluster-worker-1"
 // }
 tectonic_vmware_worker_hostnames = ""
 
-// Terraform map of Worker node(s) IP Addresses, Example: 
+// Terraform map of Worker node(s) IP Addresses, Example:
 //   tectonic_vmware_vm_workerips = {
 //   "0" = "192.168.246.30/24"
 //   "1" = "192.168.246.31/24"
