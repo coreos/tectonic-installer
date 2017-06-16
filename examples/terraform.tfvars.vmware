@@ -171,7 +171,7 @@ tectonic_vmware_network = ""
 // DNS Server to be useddd by Virtual Machine(s)
 tectonic_vmware_node_dns = ""
 
-// (optional) The name of a Resource Pool in which to launch the virtual machine. Requires full path
+// (optional) The name of a Resource Pool in which to launch the virtual machine. Requires full path. Full path can be obtained by executing `govc pool.info $ResourcePoolName`
 // tectonic_vmware_resource_pool = ""
 
 // vCenter Server IP/FQDN

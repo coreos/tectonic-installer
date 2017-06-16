@@ -47,7 +47,7 @@ variable "tectonic_vmware_cluster" {
 
 variable "tectonic_vmware_resource_pool" {
   type        = "string"
-  description = "(optional) The name of a Resource Pool in which to launch the virtual machine. Requires full path"
+  description = "(optional) The name of a Resource Pool in which to launch the virtual machine. Requires full path. Full path can be obtained by executing `govc pool.info $ResourcePoolName`"
   default     = ""
 }
 
