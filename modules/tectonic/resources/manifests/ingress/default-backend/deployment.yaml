@@ -4,7 +4,7 @@ metadata:
   name: default-http-backend
   namespace: tectonic-system
 spec:
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
