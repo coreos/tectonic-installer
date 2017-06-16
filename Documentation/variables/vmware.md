@@ -24,7 +24,7 @@ This document gives an overview of variables used in the VMware platform of the 
 | tectonic_vmware_master_vcpu | Master node(s) vCPU count | string | `1` |
 | tectonic_vmware_network | Portgroup to attach the cluster nodes | string | - |
 | tectonic_vmware_node_dns | DNS Server to be useddd by Virtual Machine(s) | string | - |
-| tectonic_vmware_resource_pool | (optional) The name of a Resource Pool in which to launch the virtual machine. Requires full path | string | `` |
+| tectonic_vmware_resource_pool | (optional) The name of a Resource Pool in which to launch the virtual machine. Requires full path. Full path can be obtained by executing `govc pool.info $ResourcePoolName` | string | `` |
 | tectonic_vmware_server | vCenter Server IP/FQDN | string | - |
 | tectonic_vmware_ssh_authorized_key | SSH public key to use as an authorized key. Example: `"ssh-rsa AAAB3N..."` | string | - |
 | tectonic_vmware_ssh_private_key_path | SSH private key file corresponding to tectonic_vmware_ssh_authorized_key. If not provided, SSH agent will be used. | string | `` |
