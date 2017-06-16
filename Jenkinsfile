@@ -6,11 +6,22 @@
 
 def creds = [
   file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_license_path'),
-  file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'), [
+  file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'),
+  [
     $class: 'UsernamePasswordMultiBinding',
-    credentialsId: 'jenkins-tectonic-installer',
-    usernameVariable: 'AWS_ACCESS_KEY_ID',
-    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+    credentialsId: 'tectonic-console-login',
+    passwordVariable: 'TF_VAR_tectonic_admin_email',
+    usernameVariable: 'TF_VAR_tectonic_password_hash'
+  ],
+  [
+    $class: 'AmazonWebServicesCredentialsBinding',
+    credentialsId: 'tectonic-aws-1'
+  ],
+  [
+    string(credentialsId: 'AZURE-SUBSCRIPTION-ID', variable: 'ARM_SUBSCRIPTION_ID'), 
+    string(credentialsId: 'AZURE-TENANT-ID', variable: 'ARM_TENANT_ID'),
+    string(credentialsId: 'AZURE-CLIENT-ID	', variable: 'ARM_CLIENT_ID'),
+    string(credentialsId: 'AZURE-CLIENT-SECRET', variable: 'ARM_CLIENT_SECRET'),
   ]
 ]
 
@@ -177,6 +188,61 @@ pipeline {
                     ${WORKSPACE}/tests/smoke/aws/smoke.sh test vars/aws-vpc.tfvars
                     ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy vars/aws-vpc.tfvars
                     ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy-vpc
+                    """
+                  }
+                }
+              }
+            }
+          },
+          "SmokeTest TerraForm: Azure": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  checkout scm
+                  unstash 'installer'
+                  unstash 'sanity'
+                  timeout(30) {
+                    sh """#!/bin/bash -ex
+                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
+                    ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars
+                    ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure.tfvars
+                  """
+                  }
+                  retry(3) {
+                    timeout(15) {
+                        sh """#!/bin/bash -ex
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure.tfvars
+                        """
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "SmokeTest TerraForm: Azure (Experimental)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  checkout scm
+                  unstash 'installer'
+                  timeout(5) {
+                    sh """#!/bin/bash -ex
+                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-exp.tfvars
+                    """
+                  }
+                }
+              }
+            }
+          },
+          "SmokeTest TerraForm: Azure (custom-ca)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  checkout scm
+                  unstash 'installer'
+                  timeout(5) {
+                    sh """#!/bin/bash -ex
+                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-ca.tfvars
                     """
                   }
                 }
