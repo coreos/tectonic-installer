@@ -54,6 +54,6 @@ variable "network_interface_ids" {
   type = "list"
 }
 
-variable "endpoints" {
+variable "external_endpoints" {
   type = "list"
 }
