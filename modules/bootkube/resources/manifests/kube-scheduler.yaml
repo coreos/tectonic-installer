@@ -21,6 +21,9 @@ spec:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
             podAffinityTerm:
+              topologyKey: failure-domain.beta.kubernetes.io/zone
+          - weight: 50
+            podAffinityTerm:
               labelSelector:
                 matchExpressions:
                 - key: tier
@@ -31,7 +34,6 @@ spec:
                   operator: In
                   values:
                   - kube-scheduler
-              topologyKey: kubernetes.io/hostname
       containers:
       - name: kube-scheduler
         image: ${hyperkube_image}
