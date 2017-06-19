@@ -20,12 +20,13 @@ Development workflows only
 ### Alpha
 
 - Manually tested and can reliably produce minimally functioning clusters
-  - Kuberntes API works
-  - Authenticated Tectonic Console works
+- Kuberntes API works
+- Authenticated Tectonic Console works
 
 *Packaging*
 
 - Assets are packaged into the official Tectonic Installer tarball with every Tectonic release.
+- Documentation is published to Tectonic docs on coreos.com
 
 *User Flow*
 
@@ -54,27 +55,8 @@ Development workflows only
 *Packaging*
 
 - Assets are packaged into the official Tectonic Installer tarball with every Tectonic release.
+- Documentation is published to Tectonic docs on coreos.com
 - (Optional) Installer UI is built to guide user through the configuration process.
-
-*User Flow*
-
-1. Use GUI installer to generate `terraform.tfvars` file, or manually create it.
-1. Use static Terraform assets contained in installer tarball
-1. Manually run terraform
-
-
-### Stable
-
-*Requirements*
-
-- Automated tests pass for all supported releases
-- Tectonic Installer UI for platform (optional)
-
-*Packaging*
-
-- (Optional) GUI Installer reads Terraform assets
-- (Optional) GUI Installer backend runs equivalent of `terraform apply` on behalf of the user via Go client libraries
-- (Optional) GUI shows status info and links to Console once complete
 
 *User Flow*
 
@@ -83,7 +65,37 @@ GUI Only
 1. Use GUI installer configure cluster
 1. Click to provision cluster
 1. GUI shows status info
-1. Click to go directly to  Tectonic Console
+1. Click to go directly to Tectonic Console
+
+Non-GUI
+
+1. Manually create `terraform.tfvars` file
+1. Use static Terraform assets contained in installer tarball
+1. Manually run terraform
+
+
+### Stable
+
+*Requirements*
+
+- Assets are packaged into the official Tectonic Installer tarball with every Tectonic release.
+- Automated tests pass for all supported releases
+- (Optional) Tectonic Installer UI for platform
+
+*Packaging*
+
+- Assets are packaged into the official Tectonic Installer tarball with every Tectonic release.
+- Documentation is published to Tectonic docs on coreos.com
+- (Optional) Installer UI is built to guide user through the configuration process.
+
+*User Flow*
+
+GUI Only
+
+1. Use GUI installer configure cluster
+1. Click to provision cluster
+1. GUI shows status info
+1. Click to go directly to Tectonic Console
 
 Non-GUI
 
