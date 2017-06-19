@@ -39,9 +39,13 @@ resource "matchbox_group" "controller" {
     exclude_tectonic     = "${var.tectonic_vanilla_k8s}"
 
     # extra data
+    etcd_image_url    = "${element(split(":", var.tectonic_container_images["etcd"]), 0)}"
     etcd_image_tag    = "v${var.tectonic_versions["etcd"]}"
     kubelet_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
     kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+
+    rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
+    rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
   }
 }
 
@@ -64,5 +68,8 @@ resource "matchbox_group" "worker" {
     kubelet_image_url  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
     kubelet_image_tag  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
     kube_version_image = "${var.tectonic_container_images["kube_version"]}"
+
+    rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
+    rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
   }
 }

@@ -94,3 +94,15 @@ variable "oidc_groups_claim" {
   description = "The OpenID claim to use for specifying user groups (string or array of strings)"
   type        = "string"
 }
+
+variable "rkt_insecure_options" {
+  description = "Comma-separted values to provide for --insecure-options rkt flag"
+  type        = "string"
+  default     = "none"
+}
+
+variable "rkt_image_protocol" {
+  description = "Image protocol to use when fetching rkt images (eg: `docker://`)"
+  type        = "string"
+  default     = ""
+}
