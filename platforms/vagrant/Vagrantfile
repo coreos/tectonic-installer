@@ -1,0 +1,116 @@
+# -*- mode: ruby -*-
+# # vi: set ft=ruby :
+
+require 'fileutils'
+require 'open-uri'
+require 'tempfile'
+require 'yaml'
+
+Vagrant.require_version ">= 1.6.0"
+
+# Make sure the vagrant-ignition plugin is installed
+required_plugins = %w(vagrant-ignition)
+
+plugins_to_install = required_plugins.select { |plugin| not Vagrant.has_plugin? plugin }
+if not plugins_to_install.empty?
+  puts "Installing plugins: #{plugins_to_install.join(' ')}"
+  if system "vagrant plugin install #{plugins_to_install.join(' ')}"
+    exec "vagrant #{ARGV.join(' ')}"
+  else
+    abort "Installation of one or more plugins has failed. Aborting."
+  end
+end
+
+# this needs to remain as alpha until a version >= 1451 is bumped to beta or stable
+$update_channel = "alpha"
+$controller_count = 1
+$controller_vm_memory = 2048
+$worker_count = 2
+$worker_vm_memory = 1024
+
+if $worker_vm_memory < 1024
+  puts "Workers should have at least 1024 MB of memory"
+end
+
+IGNITION_CONTROLLER_DATA_PATH = File.expand_path("config-controller.ign")
+IGNITION_WORKER_DATA_PATH = File.expand_path("config-worker.ign")
+
+def controllerIP(num)
+  return "172.17.4.#{num+100}"
+end
+
+def workerIP(num)
+  return "172.17.4.#{num+200}"
+end
+
+Vagrant.configure("2") do |config|
+  # always use Vagrant's insecure key
+  config.ssh.insert_key = false
+
+  config.vm.box = "coreos-%s" % $update_channel
+  config.vm.box_version = ">= 1451.0.0"
+  config.vm.box_url = "http://%s.release.core-os.net/amd64-usr/current/coreos_production_vagrant.json" % $update_channel
+
+  config.vm.provider :virtualbox do |v|
+    # On VirtualBox, we don't have guest additions or a functional vboxsf
+    # in CoreOS, so tell Vagrant that so it can be smarter.
+    v.check_guest_additions = false
+    v.functional_vboxsf     = false
+    # enable ignition (this is always done on virtualbox as this is how the ssh key is added to the system)
+    config.ignition.enabled = true
+  end
+
+  # plugin conflict
+  if Vagrant.has_plugin?("vagrant-vbguest") then
+    config.vbguest.auto_update = false
+  end
+
+  config.vm.provider :virtualbox do |vb|
+    vb.cpus = 1
+    vb.gui = false
+  end
+
+  (1..$controller_count).each do |i|
+    config.vm.define vm_name = "c%d" % i do |controller|
+      controller.vm.hostname = vm_name
+
+      controller.vm.provider :virtualbox do |vb|
+        vb.memory = $controller_vm_memory
+        config.ignition.config_obj = vb
+      end
+
+      controllerIP = controllerIP(i)
+      controller.vm.network :private_network, ip: controllerIP
+      # This is necessary for ignition
+      config.ignition.ip = ip
+      config.vm.provider :virtualbox do |vb|
+        config.ignition.hostname = controller.vm.hostname
+        config.ignition.config_vmdk = File.join(File.dirname(__FILE__), "config-controller-" + i.to_s  + ".vmdk")
+        config.ignition.config_img = "config-controller-" + i.to_s  + ".img"
+        config.ignition.path = IGNITION_CONTROLLER_DATA_PATH
+      end
+    end
+  end
+
+  (1..$worker_count).each do |i|
+    config.vm.define vm_name = "w%d" % i do |worker|
+      worker.vm.hostname = vm_name
+
+      worker.vm.provider :virtualbox do |vb|
+        vb.memory = $worker_vm_memory
+        config.ignition.config_obj = vb
+      end
+
+      workerIP = workerIP(i)
+      worker.vm.network :private_network, ip: workerIP
+      # This is necessary for ignition
+      config.ignition.ip = ip
+      config.vm.provider :virtualbox do |vb|
+        config.ignition.hostname = worker.vm.hostname
+        config.ignition.config_vmdk = File.join(File.dirname(__FILE__), "config-worker-" + i.to_s  + ".vmdk")
+        config.ignition.config_img = "config-worker-" + i.to_s  + ".img"
+        config.ignition.path = IGNITION_WORKER_DATA_PATH
+      end
+    end
+  end
+end
