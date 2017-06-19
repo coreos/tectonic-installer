@@ -53,7 +53,7 @@ module "network" {
   # element() won't work on empty lists. See https://github.com/hashicorp/terraform/issues/11210
   #master_subnets = "${concat(values(var.tectonic_gcp_master_custom_subnets),list("padding"))}"
   #worker_subnets = "${concat(values(var.tectonic_gcp_worker_custom_subnets),list("padding"))}"
-  # The split() / join() trick works around the limitation of tenrary operator expressions 
+  # The split() / join() trick works around the limitation of tenrary operator expressions
   # only being able to return strings.
   #master_azs = ["${ split("|", "${length(keys(var.tectonic_gcp_master_custom_subnets))}" > 0 ?
   #  join("|", keys(var.tectonic_gcp_master_custom_subnets)) :
@@ -134,7 +134,7 @@ module "ignition-masters" {
 
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
-  kube_dns_service_ip       = "${var.tectonic_kube_dns_service_ip}"
+  kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   etcd_endpoints            = ["${module.etcd.etcd_ip}"]
   kubeconfig_gcs_location   = "${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.kubeconfig.name}"
   assets_gcs_location       = "${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.tectonic-assets.name}"
@@ -150,7 +150,7 @@ module "ignition-workers" {
 
   kubelet_node_label      = "node-role.kubernetes.io/node"
   kubelet_node_taints     = ""
-  kube_dns_service_ip     = "${var.tectonic_kube_dns_service_ip}"
+  kube_dns_service_ip     = "${module.bootkube.kube_dns_service_ip}"
   etcd_endpoints          = ["${module.etcd.etcd_ip}"]
   kubeconfig_gcs_location = "${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.kubeconfig.name}"
   assets_gcs_location     = ""
