@@ -18,6 +18,7 @@ limitations under the License.
 resource "google_compute_address" "tectonic-masters-ip" {
   name = "tectonic-masters-ip"
 }
+
 resource "google_compute_address" "tectonic-workers-ip" {
   name = "tectonic-workers-ip"
 }
@@ -35,6 +36,7 @@ resource "google_compute_subnetwork" "tectonic-master-subnet" {
   network       = "${google_compute_network.tectonic-network.self_link}"
   region        = "${var.gcp_region}"
 }
+
 resource "google_compute_subnetwork" "tectonic-worker-subnet" {
   name          = "tectonic-worker-subnet"
   ip_cidr_range = "${var.worker_ip_cidr_range}"
@@ -46,6 +48,7 @@ resource "google_compute_subnetwork" "tectonic-worker-subnet" {
 resource "google_compute_target_pool" "tectonic-master-targetpool" {
   name = "tectonic-master-targetpool"
 }
+
 resource "google_compute_target_pool" "tectonic-worker-targetpool" {
   name = "tectonic-worker-targetpool"
 }
@@ -58,6 +61,7 @@ resource "google_compute_forwarding_rule" "tectonic-master-fwd-rule" {
   target      = "${google_compute_target_pool.tectonic-master-targetpool.self_link}"
   description = "Regional TCP forwarding rule for masters."
 }
+
 resource "google_compute_forwarding_rule" "tectonic-worker-fwd-rule" {
   name        = "tectonic-worker-fwd-rule"
   ip_address  = "${google_compute_address.tectonic-workers-ip.self_link}"
@@ -71,76 +75,99 @@ resource "google_compute_forwarding_rule" "tectonic-worker-fwd-rule" {
 resource "google_compute_firewall" "tectonic-allow-https" {
   name    = "tectonic-allow-https"
   network = "${google_compute_network.tectonic-network.name}"
+
   allow {
     protocol = "tcp"
     ports    = ["443"]
   }
+
   source_ranges = ["0.0.0.0/0"]
 }
 
 resource "google_compute_firewall" "tectonic-allow-ssh" {
   name    = "tectonic-allow-ssh"
   network = "${google_compute_network.tectonic-network.name}"
+
   allow {
     protocol = "tcp"
     ports    = ["22"]
   }
+
   source_ranges = ["0.0.0.0/0"]
 }
+
 resource "google_compute_firewall" "tectonic-master-ingress" {
   name    = "tectonic-master-ingress"
   network = "${google_compute_network.tectonic-network.name}"
+
   allow {
     protocol = "tcp"
     ports    = ["32000-32002"]
   }
+
   source_ranges = ["0.0.0.0/0"]
 }
+
 resource "google_compute_firewall" "tectonic-prometheus" {
   name    = "tectonic-prometheus"
   network = "${google_compute_network.tectonic-network.name}"
+
   allow {
     protocol = "tcp"
     ports    = ["9100"]
   }
+
   source_tags = ["tectonic-workers", "tectonic-masters"]
 }
+
 resource "google_compute_firewall" "tectonic-master-kubelet-ro" {
   name    = "tectonic-master-kubelet-ro"
   network = "${google_compute_network.tectonic-network.name}"
+
   allow {
     protocol = "tcp"
     ports    = ["10255"]
   }
+
   source_ranges = ["0.0.0.0/0"]
 }
+
 resource "google_compute_firewall" "tectonic-worker-openmasters" {
   name    = "tectonic-worker-openmasters"
   network = "${google_compute_network.tectonic-network.name}"
+
   allow {
     protocol = "tcp"
+
     # includes tcp:10250 for k8s features
     # includes tcp:9100 for prometheus (also covered in another rule)
     # includes tcp:4194 for heapster to cadvisor
   }
+
   source_tags = ["tectonic-masters"]
 }
+
 resource "google_compute_firewall" "tectonic-worker-nodeports" {
   name    = "tectonic-worker-nodeports"
   network = "${google_compute_network.tectonic-network.name}"
+
   allow {
     protocol = "tcp"
     ports    = ["30000-32767"]
   }
+
   source_ranges = ["0.0.0.0/0"]
 }
+
 resource "google_compute_firewall" "tectonic-worker-etcd" {
   name    = "tectonic-worker-etcd"
   network = "${google_compute_network.tectonic-network.name}"
+
   allow {
     protocol = "tcp"
     ports    = ["2379-2380"] # self-hosted etcd and etcd-operator
   }
+
   source_ranges = ["0.0.0.0/0"]
 }
 
@@ -149,7 +176,7 @@ resource "google_dns_record_set" "cluster-api" {
   type         = "A"
   ttl          = 300
   managed_zone = "${var.managed_zone_name}"
-  rrdatas = ["${google_compute_address.tectonic-masters-ip.address}"]
+  rrdatas      = ["${google_compute_address.tectonic-masters-ip.address}"]
 }
 
 resource "google_dns_record_set" "cluster-apps" {
@@ -157,7 +184,8 @@ resource "google_dns_record_set" "cluster-apps" {
   type         = "A"
   ttl          = 300
   managed_zone = "${var.managed_zone_name}"
-  rrdatas = ["${google_compute_address.tectonic-workers-ip.address}"]
+  rrdatas      = ["${google_compute_address.tectonic-workers-ip.address}"]
 }
 
 # vim: ts=2:sw=2:sts=2:et:ai
+

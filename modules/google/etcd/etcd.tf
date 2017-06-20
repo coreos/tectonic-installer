@@ -19,6 +19,7 @@ resource "google_compute_instance" "etcd-node" {
   machine_type   = "${var.machine_type}"
   can_ip_forward = false
   zone           = "${element(var.zone_list,0)}" # pick first zone
+
   disk {
     image = "coreos-${var.cl_channel}"
     type  = "${var.disk_type}"
@@ -27,6 +28,7 @@ resource "google_compute_instance" "etcd-node" {
 
   network_interface {
     subnetwork = "${var.master_subnetwork_name}"
+
     access_config = {
       // Ephemeral IP
     }
@@ -42,3 +44,4 @@ resource "google_compute_instance" "etcd-node" {
 }
 
 # vim: ts=2:sw=2:sts=2:et:ai
+

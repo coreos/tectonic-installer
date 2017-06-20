@@ -28,6 +28,7 @@ resource "google_compute_instance_template" "tectonic-worker-it" {
 
   network_interface {
     subnetwork = "${var.worker_subnetwork_name}"
+
     access_config = {
       // Ephemeral IP
     }
@@ -45,18 +46,18 @@ resource "google_compute_instance_template" "tectonic-worker-it" {
 }
 
 resource "google_compute_instance_group_manager" "tectonic-worker-igm" {
-  count = "${length(var.zone_list)}"
-  name = "tectonic-worker-igm"
-  zone = "${element(var.zone_list, count.index)}"
+  count              = "${length(var.zone_list)}"
+  name               = "tectonic-worker-igm"
+  zone               = "${element(var.zone_list, count.index)}"
   instance_template  = "${google_compute_instance_template.tectonic-worker-it.self_link}"
   target_pools       = ["${var.worker_targetpool_self_link}"]
   base_instance_name = "tectonic-worker-igm"
 }
 
 resource "google_compute_autoscaler" "tectonic-worker-as" {
-  count = "${length(var.zone_list)}"
+  count  = "${length(var.zone_list)}"
   name   = "tectonic-worker-as"
-  zone = "${element(var.zone_list, count.index)}"
+  zone   = "${element(var.zone_list, count.index)}"
   target = "${google_compute_instance_group_manager.tectonic-worker-igm.*.self_link[count.index]}"
 
   autoscaling_policy = {
@@ -71,3 +72,4 @@ resource "google_compute_autoscaler" "tectonic-worker-as" {
 }
 
 # vim: ts=2:sw=2:sts=2:et:ai
+
