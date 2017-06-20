@@ -68,12 +68,12 @@ module "network" {
 module "etcd" {
   source = "../../modules/google/etcd"
 
-  zone_list      = "${var.tectonic_gcp_zones}"
-  machine_type   = "${var.tectonic_gcp_etcd_gce_type}"
+  zone_list         = "${var.tectonic_gcp_zones}"
+  machine_type      = "${var.tectonic_gcp_etcd_gce_type}"
   managed_zone_name = "${var.google_managedzone_name}"
-  cluster_name   = "${var.tectonic_cluster_name}"
-  base_domain     = "${var.tectonic_base_domain}"
-  container_image = "${var.tectonic_container_images["etcd"]}"
+  cluster_name      = "${var.tectonic_cluster_name}"
+  base_domain       = "${var.tectonic_base_domain}"
+  container_image   = "${var.tectonic_container_images["etcd"]}"
 
   cl_channel = "${var.tectonic_cl_channel}"
 
@@ -81,7 +81,7 @@ module "etcd" {
   disk_size = "${var.tectonic_gcp_etcd_disk_size}"
 
   master_subnetwork_name = "${module.network.master_subnetwork_name}"
-  dns_enabled = "${!var.tectonic_experimental && length(compact(var.tectonic_etcd_servers)) == 0}"
+  dns_enabled            = "${!var.tectonic_experimental && length(compact(var.tectonic_etcd_servers)) == 0}"
 }
 
 module "masters" {
@@ -95,7 +95,7 @@ module "masters" {
   cluster_name   = "${var.tectonic_cluster_name}"
   user_data      = "${module.ignition-masters.ignition}"
 
-  master_subnetwork_name = "${module.network.master_subnetwork_name}"
+  master_subnetwork_name      = "${module.network.master_subnetwork_name}"
   master_targetpool_self_link = "${module.network.master_targetpool_self_link}"
 
   cl_channel = "${var.tectonic_cl_channel}"
@@ -117,7 +117,7 @@ module "workers" {
   cluster_name   = "${var.tectonic_cluster_name}"
   user_data      = "${module.ignition-workers.ignition}"
 
-  worker_subnetwork_name = "${module.network.worker_subnetwork_name}"
+  worker_subnetwork_name      = "${module.network.worker_subnetwork_name}"
   worker_targetpool_self_link = "${module.network.worker_targetpool_self_link}"
 
   cl_channel = "${var.tectonic_cl_channel}"
@@ -161,3 +161,4 @@ module "ignition-workers" {
 }
 
 # vim: ts=2:sw=2:sts=2:et:ai
+

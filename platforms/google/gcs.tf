@@ -18,23 +18,25 @@ resource "google_storage_bucket" "tectonic" {
   location      = "${var.tectonic_gcp_region}"
   storage_class = "REGIONAL"
 }
+
 resource "google_storage_bucket_acl" "private_acl" {
-  bucket = "${google_storage_bucket.tectonic.name}"
+  bucket         = "${google_storage_bucket.tectonic.name}"
   predefined_acl = "projectprivate"
 }
 
 # Bootkube / Tectonic assets
 resource "google_storage_bucket_object" "tectonic-assets" {
-  name    = "assets.zip"
+  name   = "assets.zip"
   bucket = "${google_storage_bucket.tectonic.name}"
   source = "${data.archive_file.assets.output_path}"
 }
 
 # kubeconfig
 resource "google_storage_bucket_object" "kubeconfig" {
-  name     = "kubeconfig"
+  name    = "kubeconfig"
   bucket  = "${google_storage_bucket.tectonic.name}"
   content = "${module.bootkube.kubeconfig}"
 }
 
 # vim: ts=2:sw=2:sts=2:et
+

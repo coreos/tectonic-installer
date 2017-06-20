@@ -56,6 +56,7 @@ resource "google_compute_instance_template" "tectonic-master-it" {
 
   network_interface {
     subnetwork = "${var.master_subnetwork_name}"
+
     access_config = {
       // Ephemeral IP
     }
@@ -68,25 +69,25 @@ resource "google_compute_instance_template" "tectonic-master-it" {
   }
 
   service_account {
-#    email  = "${google_service_account.tectonic-master-sa.email}"
-#    scopes = ["compute", "storage-ro"]
+    #    email  = "${google_service_account.tectonic-master-sa.email}"
+    #    scopes = ["compute", "storage-ro"]
     scopes = ["cloud-platform"]
   }
 }
 
 resource "google_compute_instance_group_manager" "tectonic-master-igm" {
-  count = "${length(var.zone_list)}"
-  name = "tectonic-master-igm"
-  zone = "${element(var.zone_list, count.index)}"
+  count              = "${length(var.zone_list)}"
+  name               = "tectonic-master-igm"
+  zone               = "${element(var.zone_list, count.index)}"
   instance_template  = "${google_compute_instance_template.tectonic-master-it.self_link}"
   target_pools       = ["${var.master_targetpool_self_link}"]
   base_instance_name = "tectonic-master-igm"
 }
 
 resource "google_compute_autoscaler" "tectonic-master-as" {
-  count = "${length(var.zone_list)}"
+  count  = "${length(var.zone_list)}"
   name   = "tectonic-master-as"
-  zone = "${element(var.zone_list, count.index)}"
+  zone   = "${element(var.zone_list, count.index)}"
   target = "${google_compute_instance_group_manager.tectonic-master-igm.*.self_link[count.index]}"
 
   autoscaling_policy = {
@@ -101,3 +102,4 @@ resource "google_compute_autoscaler" "tectonic-master-as" {
 }
 
 # vim: ts=2:sw=2:sts=2:et:ai
+

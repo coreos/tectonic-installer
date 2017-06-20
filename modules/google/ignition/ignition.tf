@@ -37,11 +37,11 @@ data "template_file" "kubelet" {
   template = "${file("${path.module}/resources/services/kubelet.service")}"
 
   vars {
-    aci                    = "${element(split(":", var.container_images["hyperkube"]), 0)}"
-    version                = "${element(split(":", var.container_images["hyperkube"]), 1)}"
-    cluster_dns_ip         = "${var.kube_dns_service_ip}"
-    node_label             = "${var.kubelet_node_label}"
-    node_taints_param      = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
+    aci                     = "${element(split(":", var.container_images["hyperkube"]), 0)}"
+    version                 = "${element(split(":", var.container_images["hyperkube"]), 1)}"
+    cluster_dns_ip          = "${var.kube_dns_service_ip}"
+    node_label              = "${var.kubelet_node_label}"
+    node_taints_param       = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
     kubeconfig_gcs_location = "${var.kubeconfig_gcs_location}"
   }
 }
