@@ -6,7 +6,7 @@ Each platform is marked as either pre-alpha, alpha, beta, or stable. This docume
 
 *Requirements*
 
-- Initial static Terraform assets are added to this repo and underging active development
+- Initial static Terraform assets are added to this repo and undergoing active development
 - No installer integration
 
 *Packaging*
@@ -20,7 +20,7 @@ Development workflows only
 ### Alpha
 
 - Manually tested and can reliably produce minimally functioning clusters
-- Kuberntes API works
+- Kubernetes API works
 - Authenticated Tectonic Console works
 
 *Packaging*
@@ -65,7 +65,7 @@ Development workflows only
 
 *User Flow*
 
-GUI Only
+GUI if available
 
 1. Use GUI installer configure cluster
 1. Click to provision cluster
@@ -81,7 +81,7 @@ Non-GUI
 *Suitable Workloads*
 
 - Testing in pre-production environments
-- Not recommended production 
+- Not recommended for production 
 
 
 ### Stable
@@ -100,7 +100,7 @@ Non-GUI
 
 *User Flow*
 
-GUI Only
+GUI if available
 
 1. Use GUI installer configure cluster
 1. Click to provision cluster
