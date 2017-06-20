@@ -91,4 +91,8 @@ resource "azurerm_virtual_machine" "tectonic_worker" {
   tags {
     environment = "staging"
   }
+
+  lifecycle {
+    ignore_changes = [ "storage_data_disk" ]
+  }
 }
