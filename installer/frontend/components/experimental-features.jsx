@@ -13,13 +13,13 @@ const experimentalFeaturesForm = new Form(EXPERIMENTAL_FEATURES, [
 
 export const ExperimentalFeatures = () => <div className="row form-group">
   <div className="col-xs-3">
-    <label htmlFor={UPDATER_ENABLED}>Automated Updates</label>
+    <label htmlFor={UPDATER_ENABLED}>Self-Hosted</label>
   </div>
   <div className="col-xs-9">
     <Connect field={UPDATER_ENABLED}>
       <CheckBox suffix={
         <label htmlFor={UPDATER_ENABLED}>
-          Enable one-click updates for Tectonic, etcd, Prometheus.
+          Host etcd on cluster in a "self-hosted" manner (alpha)
         </label>
       } />
     </Connect>
