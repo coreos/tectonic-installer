@@ -85,7 +85,7 @@ module "etcd" {
 }
 
 module "masters" {
-  source = "../../modules/google/master-mig"
+  source = "../../modules/google/master-igm"
 
   project_id     = "${var.tectonic_gcp_project_id}"
   instance_count = "${var.tectonic_master_count}"
@@ -108,7 +108,7 @@ module "masters" {
 }
 
 module "workers" {
-  source = "../../modules/google/worker-mig"
+  source = "../../modules/google/worker-igm"
 
   instance_count = "${var.tectonic_worker_count}"
   zone_list      = "${var.tectonic_gcp_zones}"

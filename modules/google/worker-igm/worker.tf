@@ -44,19 +44,19 @@ resource "google_compute_instance_template" "tectonic-worker-it" {
   }
 }
 
-resource "google_compute_instance_group_manager" "tectonic-worker-mig" {
+resource "google_compute_instance_group_manager" "tectonic-worker-igm" {
   count = "${var.instance_count}"
-  name = "tectonic-worker-mig"
+  name = "tectonic-worker-igm"
   zone = "${element(var.zone_list, count.index)}"
   instance_template  = "${google_compute_instance_template.tectonic-worker-it.self_link}"
   target_pools       = ["${var.worker_targetpool_self_link}"]
-  base_instance_name = "tectonic-worker-mig"
+  base_instance_name = "tectonic-worker-igm"
 }
 
 resource "google_compute_autoscaler" "tectonic-worker-as" {
   name   = "tectonic-worker-as"
   zone = "${element(var.zone_list, count.index)}"
-  target = "${google_compute_instance_group_manager.tectonic-worker-mig.self_link}"
+  target = "${google_compute_instance_group_manager.tectonic-worker-igm.self_link}"
 
   autoscaling_policy = {
     max_replicas    = "${var.max_workers}"
