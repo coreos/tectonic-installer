@@ -34,6 +34,11 @@ Development workflows only
 1. Use static Terraform assets contained in installer tarball
 1. Manually run Terraform
 
+*Suitable Workloads*
+
+- Testing in select environments
+- Not recommended for pre-prod or production 
+
 
 ### Beta
 
@@ -73,6 +78,11 @@ Non-GUI
 1. Use static Terraform assets contained in installer tarball
 1. Manually run terraform
 
+*Suitable Workloads*
+
+- Testing in pre-production environments
+- Not recommended production 
+
 
 ### Stable
 
@@ -102,3 +112,7 @@ Non-GUI
 1. Manually create `terraform.tfvars` file
 1. Use static Terraform assets contained in installer tarball
 1. Manually run Terraform
+
+*Suitable Workloads*
+
+- Recommended for all environments
