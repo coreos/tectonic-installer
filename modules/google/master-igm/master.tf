@@ -76,18 +76,18 @@ resource "google_compute_instance_template" "tectonic-master-it" {
 }
 
 resource "google_compute_instance_group_manager" "tectonic-master-igm" {
-  count              = "${length(var.zone_list)}"
+  #count              = "${length(var.zone_list)}"
   name               = "tectonic-master-igm"
-  zone               = "${element(var.zone_list, count.index)}"
+  zone               = "${element(var.zone_list, 0)}"                                     # 0 -> count.index
   instance_template  = "${google_compute_instance_template.tectonic-master-it.self_link}"
   target_pools       = ["${var.master_targetpool_self_link}"]
   base_instance_name = "tectonic-master-igm"
 }
 
 resource "google_compute_autoscaler" "tectonic-master-as" {
-  count  = "${length(var.zone_list)}"
+  #count  = "${length(var.zone_list)}"
   name   = "tectonic-master-as"
-  zone   = "${element(var.zone_list, count.index)}"
+  zone   = "${element(var.zone_list, 0)}"                                                          # 0 -> count.index
   target = "${google_compute_instance_group_manager.tectonic-master-igm.*.self_link[count.index]}"
 
   autoscaling_policy = {
