@@ -148,7 +148,7 @@ EOF
 
 variable "tectonic_etcd_client_cert_path" {
   type    = "string"
-  default = ""
+  default = "/dev/null"
 
   description = <<EOF
 (optional) The path of the file containing the client certificate for TLS communication with etcd.
@@ -160,7 +160,7 @@ EOF
 
 variable "tectonic_etcd_client_key_path" {
   type    = "string"
-  default = ""
+  default = "/dev/null"
 
   description = <<EOF
 (optional) The path of the file containing the client key for TLS communication with etcd.
