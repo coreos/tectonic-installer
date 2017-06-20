@@ -45,7 +45,7 @@ resource "google_compute_instance_template" "tectonic-worker-it" {
 }
 
 resource "google_compute_instance_group_manager" "tectonic-worker-igm" {
-  count = "${var.instance_count}"
+  count = "${length(var.zone_list)}"
   name = "tectonic-worker-igm"
   zone = "${element(var.zone_list, count.index)}"
   instance_template  = "${google_compute_instance_template.tectonic-worker-it.self_link}"
@@ -54,9 +54,10 @@ resource "google_compute_instance_group_manager" "tectonic-worker-igm" {
 }
 
 resource "google_compute_autoscaler" "tectonic-worker-as" {
+  count = "${length(var.zone_list)}"
   name   = "tectonic-worker-as"
   zone = "${element(var.zone_list, count.index)}"
-  target = "${google_compute_instance_group_manager.tectonic-worker-igm.self_link}"
+  target = "${google_compute_instance_group_manager.tectonic-worker-igm.*.self_link[count.index]}"
 
   autoscaling_policy = {
     max_replicas    = "${var.max_workers}"

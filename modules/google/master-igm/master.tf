@@ -75,7 +75,7 @@ resource "google_compute_instance_template" "tectonic-master-it" {
 }
 
 resource "google_compute_instance_group_manager" "tectonic-master-igm" {
-  count = "${var.instance_count}"
+  count = "${length(var.zone_list)}"
   name = "tectonic-master-igm"
   zone = "${element(var.zone_list, count.index)}"
   instance_template  = "${google_compute_instance_template.tectonic-master-it.self_link}"
@@ -84,9 +84,10 @@ resource "google_compute_instance_group_manager" "tectonic-master-igm" {
 }
 
 resource "google_compute_autoscaler" "tectonic-master-as" {
+  count = "${length(var.zone_list)}"
   name   = "tectonic-master-as"
   zone = "${element(var.zone_list, count.index)}"
-  target = "${google_compute_instance_group_manager.tectonic-master-igm.self_link}"
+  target = "${google_compute_instance_group_manager.tectonic-master-igm.*.self_link[count.index]}"
 
   autoscaling_policy = {
     max_replicas    = "${var.max_masters}"
