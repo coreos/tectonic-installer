@@ -38,7 +38,7 @@ spec:
         - --root-ca-file=/etc/kubernetes/secrets/ca.crt
         - --service-account-private-key-file=/etc/kubernetes/secrets/service-account.key
         - --leader-elect=true
-        - --cloud-provider=${cloud_provider}
+        #- --cloud-provider=${cloud_provider}
         livenessProbe:
           httpGet:
             path: /healthz

@@ -14,10 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-output "worker_ip" {
-  value = "${google_compute_address.tectonic-workers-ip.address}"
-}
-
 output "master_ip" {
   value = "${google_compute_address.tectonic-masters-ip.address}"
 }
@@ -43,7 +39,17 @@ output "tectonic_network_name" {
 }
 
 output "kube_apiserver_fqdn" {
-  value = "${google_dns_record_set.cluster-api.name}"
+  # Remove trailing dot from the name
+  value = "${join(".", compact(split(".", google_dns_record_set.api-external.name)))}"
+}
+
+output "kube_apiserver_internal_fqdn" {
+  value = "${google_compute_forwarding_rule.tectonic-api-internal-fwd-rule.ip_address}"
+}
+
+output "kube_ingress_fqdn" {
+  # Remove trailing dot from the name
+  value = "${join(".", compact(split(".", google_dns_record_set.ingress-external.name)))}"
 }
 
 # vim: ts=2:sw=2:sts=2:et:ai

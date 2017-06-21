@@ -34,6 +34,8 @@ resource "google_compute_instance" "etcd-node" {
     }
   }
 
+  tags = ["tectonic-masters"]
+
   metadata = {
     user-data = "${data.ignition_config.etcd.rendered}"
   }
