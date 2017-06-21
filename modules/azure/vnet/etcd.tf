@@ -6,10 +6,9 @@ resource "azurerm_network_interface" "etcd_nic" {
   resource_group_name       = "${var.resource_group_name}"
 
   ip_configuration {
-    name                                    = "tectonic_etcd_configuration"
-    subnet_id                               = "${var.external_vnet_name == "" ?  join(" ", azurerm_subnet.master_subnet.*.id) : var.external_master_subnet_id }"
-    private_ip_address_allocation           = "dynamic"
-    load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.etcd-lb.id}"]
+    name                          = "tectonic_etcd_configuration"
+    subnet_id                     = "${var.external_vnet_name == "" ?  join(" ", azurerm_subnet.master_subnet.*.id) : var.external_master_subnet_id }"
+    private_ip_address_allocation = "dynamic"
   }
 }
 
