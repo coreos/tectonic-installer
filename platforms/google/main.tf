@@ -31,6 +31,8 @@ module "network" {
   base_domain       = "${var.tectonic_base_domain}"
   cluster_name      = "${var.tectonic_cluster_name}"
 
+  master_instance_group = "${module.masters.instance_group}"
+
   # VPC layout settings.
   #
   # The following parameters control the layout of the VPC accross availability zones.

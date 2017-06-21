@@ -14,32 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-variable "gcp_region" {
-  type = "string"
-}
-
-variable "master_ip_cidr_range" {
-  type = "string"
-}
-
-variable "worker_ip_cidr_range" {
-  type = "string"
-}
-
-variable "managed_zone_name" {
-  type = "string"
-}
-
-variable "cluster_name" {
-  type = "string"
-}
-
-variable "base_domain" {
-  type = "string"
-}
-
-variable "master_instance_group" {
-  type = "string"
+output "instance_group" {
+  value = "${google_compute_instance_group_manager.tectonic-master-igm.instance_group}"
 }
 
 # vim: ts=2:sw=2:sts=2:et:ai
