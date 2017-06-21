@@ -18,7 +18,7 @@ def creds = [
     credentialsId: 'tectonic-aws-1'
   ],
   [
-    $class: 'azureServicePrincipal',
+    $class: 'AzureCredentialsBinding',
     credentialsId: 'azure-tectonic-test-service-principal',
     subscriptionIdVariable: 'ARM_SUBSCRIPTION_ID',
     clientIdVariable: 'ARM_CLIENT_ID',
