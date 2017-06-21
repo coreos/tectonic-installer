@@ -202,7 +202,7 @@ pipeline {
                 withDockerContainer(builder_image) {
                   checkout scm
                   unstash 'installer'
-                  unstash 'sanity'
+                  unstash 'smoke'
                   timeout(30) {
                     sh """#!/bin/bash -ex
                     ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
