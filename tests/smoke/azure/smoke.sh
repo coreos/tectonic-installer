@@ -27,6 +27,10 @@ common() {
         echo "Cluster name too long. Truncated to $CLUSTER"
     elif [ "$LENGTH" -lt "$MAX_LENGTH" ]
     then
+        # Shellcheck v0.4.4 does not detect that 'APPEND' is used two lines
+        # further below. This comment can be removed once we (/debian) moves to
+        # v0.4.6
+        # shellcheck disable=SC2034
         APPEND=$(( MAX_LENGTH - LENGTH ))
         APPEND_STR="012345678901234567890123456789"
         CLUSTER="$CLUSTER${APPEND_STR:0:APPEND}"
