@@ -18,10 +18,12 @@ def creds = [
     credentialsId: 'tectonic-aws-1'
   ],
   [
-    string(credentialsId: 'AZURE-SUBSCRIPTION-ID', variable: 'ARM_SUBSCRIPTION_ID'), 
-    string(credentialsId: 'AZURE-TENANT-ID', variable: 'ARM_TENANT_ID'),
-    string(credentialsId: 'AZURE-CLIENT-ID	', variable: 'ARM_CLIENT_ID'),
-    string(credentialsId: 'AZURE-CLIENT-SECRET', variable: 'ARM_CLIENT_SECRET'),
+    $class: 'azureServicePrincipal',
+    credentialsId: 'azure-tectonic-test-service-principal',
+    subscriptionIdVariable: 'ARM_SUBSCRIPTION_ID',
+    clientIdVariable: 'ARM_CLIENT_ID',
+    clientSecretVariable: 'ARM_CLIENT_SECRET',
+    tenantIdVariable: 'ARM_TENANT_ID'
   ]
 ]
 
