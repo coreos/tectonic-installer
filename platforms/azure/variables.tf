@@ -228,24 +228,6 @@ EOF
   default = "AZUREPUBLICCLOUD"
 }
 
-variable "tectonic_azure_tenant_id" {
-  type = "string"
-
-  description = "The tenant ID to use."
-}
-
-variable "tectonic_azure_subscription_id" {
-  type = "string"
-
-  description = "The subscription ID to use."
-}
-
-variable "tectonic_azure_client_id" {
-  type = "string"
-
-  description = "The client ID to use."
-}
-
 variable "tectonic_azure_client_secret" {
   type = "string"
 

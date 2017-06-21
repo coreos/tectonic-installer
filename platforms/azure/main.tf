@@ -1,9 +1,9 @@
 provider "azurerm" {
-  subscription_id = "${var.tectonic_azure_subscription_id}"
-  client_id       = "${var.tectonic_azure_client_id}"
-  client_secret   = "${var.tectonic_azure_client_secret}"
-  tenant_id       = "${var.tectonic_azure_tenant_id}"
+  environment   = "${var.tectonic_azure_cloud_environment}"
+  client_secret = "${var.tectonic_azure_client_secret}"
 }
+
+data "azurerm_client_config" "current" {}
 
 module "resource_group" {
   source = "../../modules/azure/resource-group"
@@ -60,9 +60,9 @@ module "etcd" {
 data "null_data_source" "cloud-provider" {
   inputs = {
     "cloud"                      = "${var.tectonic_azure_cloud_environment}"
-    "tenantId"                   = "${var.tectonic_azure_tenant_id}"
-    "subscriptionId"             = "${var.tectonic_azure_subscription_id}"
-    "aadClientId"                = "${var.tectonic_azure_client_id}"
+    "tenantId"                   = "${data.azurerm_client_config.current.tenant_id}"
+    "subscriptionId"             = "${data.azurerm_client_config.current.subscription_id}"
+    "aadClientId"                = "${data.azurerm_client_config.current.client_id}"
     "aadClientSecret"            = "${var.tectonic_azure_client_secret}"
     "resourceGroup"              = "${module.resource_group.name}"
     "location"                   = "${var.tectonic_azure_location}"
