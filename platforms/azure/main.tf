@@ -12,7 +12,7 @@ module "vnet" {
   location              = "${var.tectonic_azure_location}"
   resource_group_name   = "${module.resource_group.name}"
   tectonic_cluster_name = "${var.tectonic_cluster_name}"
-  vnet_cidr_block       = "${var.tectonic_azure_vnet_cidr_block}"
+  vnet_cidr_block       = "${var.tectonic_cluster_cidr}"
 
   etcd_count                = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count}"
   etcd_cidr                 = "${module.vnet.etcd_cidr}"
@@ -74,8 +74,6 @@ module "masters" {
   bootkube_service             = "${module.bootkube.systemd_service}"
   tectonic_service             = "${module.tectonic.systemd_service}"
   tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
-
-  use_custom_fqdn = "${var.tectonic_azure_use_custom_fqdn}"
 }
 
 module "workers" {
@@ -112,8 +110,7 @@ module "dns" {
 
   location            = "${var.tectonic_azure_location}"
   resource_group_name = "${var.tectonic_azure_dns_resource_group}"
-
-  create_dns_zone = "${var.tectonic_azure_create_dns_zone}"
+  external_dns_zone   = "${var.tectonic_azure_external_dns_zone}"
 
   // TODO etcd list
   // TODO worker list

@@ -99,12 +99,6 @@ variable "tectonic_azure_etcd_storage_account_type" {
   default     = "Premium_LRS"
 }
 
-variable "tectonic_azure_vnet_cidr_block" {
-  type        = "string"
-  default     = "10.0.0.0/16"
-  description = "Block of IP addresses used by the Resource Group. This should not overlap with any other networks, such as a private datacenter connected via ExpressRoute."
-}
-
 variable "tectonic_azure_external_vnet_id" {
   type        = "string"
   description = "ID of an existing Virtual Network to launch nodes into. Example: VNet1. Leave blank to create a new Virtual Network."
@@ -121,16 +115,6 @@ variable "tectonic_azure_external_vnet_name" {
   type        = "string"
   default     = ""
   description = "Pre-existing virtual network to create cluster into."
-}
-
-variable "tectonic_azure_create_dns_zone" {
-  description = "If set to true, create an Azure DNS zone"
-  default     = true
-}
-
-variable "tectonic_azure_use_custom_fqdn" {
-  description = "(optional) If set to true, assemble the FQDN from the configuration. Otherwise, use the FQDN set up by Azure."
-  default     = false
 }
 
 variable "tectonic_azure_external_master_subnet_id" {
@@ -214,4 +198,12 @@ depends on `tectonic_azure_external_resource_group` to also be specified.
 EOF
 
   default = ""
+}
+
+variable "tectonic_azure_external_dns_zone" {
+  description = <<EOF
+(optional) The name of the external Azure DNS zone used for endpoint FQDNs.
+EOF
+
+  default = false
 }

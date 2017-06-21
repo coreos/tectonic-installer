@@ -26,10 +26,4 @@ variable "console_ip_address" {
   type = "string"
 }
 
-variable "etcd_ip_addresses" {
-  type = "list"
-}
-
-variable "create_dns_zone" {
-  default = true
-}
+variable "external_dns_zone" {}

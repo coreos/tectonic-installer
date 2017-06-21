@@ -65,30 +65,35 @@ module "tectonic" {
   stats_url         = "${var.tectonic_stats_url}"
 }
 
-resource "null_resource" "tectonic" {
-  depends_on = ["module.tectonic", "module.masters"]
+# resource "null_resource" "tectonic" {
+#   depends_on = ["module.tectonic", "module.masters"]
 
-  triggers {
-    api-endpoint = "${module.masters.api_external_fqdn}"
-  }
 
-  connection {
-    host  = "${module.masters.api_external_fqdn}"
-    user  = "core"
-    agent = true
-  }
+#   triggers {
+#     api-endpoint = "${module.masters.api_external_fqdn}"
+#   }
 
-  provisioner "file" {
-    source      = "./generated"
-    destination = "$HOME/tectonic"
-  }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo mkdir -p /opt",
-      "sudo rm -rf /opt/tectonic",
-      "sudo mv /home/core/tectonic /opt/",
-      "sudo systemctl start ${var.tectonic_vanilla_k8s ? "bootkube.service" : "tectonic.service"}",
-    ]
-  }
-}
+#   connection {
+#     host  = "${module.masters.api_external_fqdn}"
+#     user  = "core"
+#     agent = true
+#   }
+
+
+#   provisioner "file" {
+#     source      = "./generated"
+#     destination = "$HOME/tectonic"
+#   }
+
+
+#   provisioner "remote-exec" {
+#     inline = [
+#       "sudo mkdir -p /opt",
+#       "sudo rm -rf /opt/tectonic",
+#       "sudo mv /home/core/tectonic /opt/",
+#       "sudo systemctl start ${var.tectonic_vanilla_k8s ? "bootkube.service" : "tectonic.service"}",
+#     ]
+#   }
+# }
+

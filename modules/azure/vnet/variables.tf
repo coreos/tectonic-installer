@@ -3,7 +3,7 @@ variable "tectonic_azure_external_vnet_id" {
   default = ""
 }
 
-variable "tectonic_azure_vnet_cidr_block" {
+variable "tectonic_cluster_cidr" {
   type    = "string"
   default = "10.0.0.0/16"
 }
