@@ -15,7 +15,7 @@ def creds = [
   ],
   [
     $class: 'AmazonWebServicesCredentialsBinding',
-    credentialsId: 'tectonic-aws-1'
+    credentialsId: 'tectonic-jenkins-installer'
   ],
   [
     $class: 'AzureCredentialsBinding',
