@@ -6,7 +6,8 @@
 
 def creds = [
   file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_license_path'),
-  file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'), [
+  file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'),
+  [
     $class: 'UsernamePasswordMultiBinding',
     credentialsId: 'jenkins-tectonic-installer',
     usernameVariable: 'AWS_ACCESS_KEY_ID',
@@ -79,17 +80,31 @@ pipeline {
           "SmokeTest TerraForm: AWS": {
             node('worker && ec2') {
               withCredentials(creds) {
-                withDockerContainer(builder_image) {
+                withDockerContainer(args: '-v /etc/passwd:/etc/passwd', image: builder_image) {
                   checkout scm
                   unstash 'installer'
                   unstash 'smoke'
                   timeout(30) {
-                    sh """#!/bin/bash -ex
-                    . ${WORKSPACE}/tests/smoke/aws/smoke.sh assume-role "$TECTONIC_INSTALLER_ROLE"
-                    ${WORKSPACE}/tests/smoke/aws/smoke.sh plan vars/aws-tls.tfvars
-                    ${WORKSPACE}/tests/smoke/aws/smoke.sh create vars/aws-tls.tfvars
-                    ${WORKSPACE}/tests/smoke/aws/smoke.sh test vars/aws-tls.tfvars
-                    """
+                    sshagent(['aws-smoke-test-ssh-key']) {
+                      sh """#!/bin/bash -ex
+                      . ${WORKSPACE}/tests/smoke/aws/smoke.sh assume-role "$TECTONIC_INSTALLER_ROLE"
+                      ${WORKSPACE}/tests/smoke/aws/smoke.sh plan vars/aws-tls.tfvars
+                      ${WORKSPACE}/tests/smoke/aws/smoke.sh create vars/aws-tls.tfvars
+                      . ${WORKSPACE}/tests/smoke/aws/smoke.sh common vars/aws-tls.tfvars
+                      ${WORKSPACE}/tests/smoke/aws/cluster-foreach.sh ${WORKSPACE}/tests/smoke/forensics.sh
+                      ${WORKSPACE}/tests/smoke/aws/smoke.sh test vars/aws-tls.tfvars
+                      """
+                    }
+                  }
+                  post {
+                    failure {
+                      sshagent(['aws-smoke-test-ssh-key']) {
+                        sh """#!/bin/bash -ex
+                        . ${WORKSPACE}/tests/smoke/aws/smoke.sh common vars/aws-tls.tfvars
+                        ${WORKSPACE}/tests/smoke/aws/cluster-foreach.sh ${WORKSPACE}/tests/smoke/forensics.sh
+                        """
+                      }
+                    }
                   }
                   retry(3) {
                     timeout(15) {
