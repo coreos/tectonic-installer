@@ -1,13 +1,13 @@
 resource "azurerm_network_security_group" "etcd" {
   count               = "${var.external_nsg_etcd == "" ? 1 : 0}"
-  name                = "${var.tectonic_cluster_name}-etcd"
+  name                = "${var.cluster_name}-etcd"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
 }
 
 resource "azurerm_network_security_rule" "etcd_egress" {
   count                       = "${var.external_nsg_etcd == "" ? 1 : 0}"
-  name                        = "${var.tectonic_cluster_name}-etcd_egress"
+  name                        = "${var.cluster_name}-etcd_egress"
   priority                    = 2000
   direction                   = "Outbound"
   access                      = "Allow"
@@ -22,7 +22,7 @@ resource "azurerm_network_security_rule" "etcd_egress" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
   count                       = "${var.external_nsg_etcd == "" ? 1 : 0}"
-  name                        = "${var.tectonic_cluster_name}-etcd_ingress_ssh"
+  name                        = "${var.cluster_name}-etcd_ingress_ssh"
   priority                    = 400
   direction                   = "Inbound"
   access                      = "Allow"
@@ -38,7 +38,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
 # TODO: Add external SSH rule
 resource "azurerm_network_security_rule" "etcd_ingress_ssh_admin" {
   count                       = "${var.external_nsg_etcd == "" ? 1 : 0}"
-  name                        = "${var.tectonic_cluster_name}-etcd_ingress_ssh_admin"
+  name                        = "${var.cluster_name}-etcd_ingress_ssh_admin"
   priority                    = 405
   direction                   = "Inbound"
   access                      = "Allow"
@@ -53,7 +53,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_admin" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_ssh_self" {
   count                  = "${var.external_nsg_etcd == "" ? 1 : 0}"
-  name                   = "${var.tectonic_cluster_name}-etcd_ingress_ssh_self"
+  name                   = "${var.cluster_name}-etcd_ingress_ssh_self"
   priority               = 410
   direction              = "Inbound"
   access                 = "Allow"
@@ -70,7 +70,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_self" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_ssh_from_master" {
   count                  = "${var.external_nsg_etcd == "" ? 1 : 0}"
-  name                   = "${var.tectonic_cluster_name}-etcd_ingress_services_from_console"
+  name                   = "${var.cluster_name}-etcd_ingress_services_from_console"
   priority               = 415
   direction              = "Inbound"
   access                 = "Allow"
@@ -87,7 +87,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_from_master" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_client_self" {
   count                  = "${var.external_nsg_etcd == "" ? 1 : 0}"
-  name                   = "${var.tectonic_cluster_name}-etcd_ingress_client_self"
+  name                   = "${var.cluster_name}-etcd_ingress_client_self"
   priority               = 420
   direction              = "Inbound"
   access                 = "Allow"
@@ -104,7 +104,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_self" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_client_master" {
   count                  = "${var.external_nsg_etcd == "" ? 1 : 0}"
-  name                   = "${var.tectonic_cluster_name}-etcd_ingress_client_master"
+  name                   = "${var.cluster_name}-etcd_ingress_client_master"
   priority               = 425
   direction              = "Inbound"
   access                 = "Allow"
@@ -121,7 +121,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_master" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_client_worker" {
   count                  = "${var.external_nsg_etcd == "" ? 1 : 0}"
-  name                   = "${var.tectonic_cluster_name}-etcd_ingress_client_worker"
+  name                   = "${var.cluster_name}-etcd_ingress_client_worker"
   priority               = 430
   direction              = "Inbound"
   access                 = "Allow"
@@ -138,7 +138,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_worker" {
 
 resource "azurerm_network_security_rule" "etcd_ingress_peer" {
   count                  = "${var.external_nsg_etcd == "" ? 1 : 0}"
-  name                   = "${var.tectonic_cluster_name}-etcd_ingress_peer"
+  name                   = "${var.cluster_name}-etcd_ingress_peer"
   priority               = 435
   direction              = "Inbound"
   access                 = "Allow"

@@ -8,7 +8,7 @@ variable "tectonic_cluster_cidr" {
   default = "10.0.0.0/16"
 }
 
-variable "tectonic_cluster_name" {
+variable "cluster_name" {
   type = "string"
 }
 
@@ -91,4 +91,12 @@ variable "external_nsg_master" {
 variable "external_nsg_worker" {
   type    = "string"
   default = ""
+}
+
+variable "master_count" {
+  type = "string"
+}
+
+variable "worker_count" {
+  type = "string"
 }

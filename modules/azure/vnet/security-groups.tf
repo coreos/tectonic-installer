@@ -1,5 +1,5 @@
 resource "azurerm_network_security_group" "cluster_default" {
-  name                = "${var.tectonic_cluster_name}"
+  name                = "${var.cluster_name}"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
 
