@@ -17,7 +17,7 @@ resource "azurerm_virtual_machine" "etcd_node" {
     publisher = "CoreOS"
     offer     = "CoreOS"
     sku       = "Stable"
-    version   = "latest"
+    version   = "${var.versions["container_linux"]}"
   }
 
   storage_os_disk {
@@ -28,7 +28,7 @@ resource "azurerm_virtual_machine" "etcd_node" {
   }
 
   os_profile {
-    computer_name  = "etcd"
+    computer_name  = "etcd-${count.index}"
     admin_username = "core"
     admin_password = ""
     custom_data    = "${base64encode("${data.ignition_config.etcd.*.rendered[count.index]}")}"

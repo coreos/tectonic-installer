@@ -2,8 +2,8 @@ module "bootkube" {
   source         = "../../modules/bootkube"
   cloud_provider = ""
 
-  kube_apiserver_url = "https://${module.masters.api_internal_fqdn}:443"
-  oidc_issuer_url    = "https://${module.masters.ingress_internal_fqdn}/identity"
+  kube_apiserver_url = "https://${module.vnet.api_internal_fqdn}:443"
+  oidc_issuer_url    = "https://${module.vnet.ingress_internal_fqdn}/identity"
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
@@ -23,20 +23,23 @@ module "bootkube" {
   oidc_groups_claim   = "groups"
   oidc_client_id      = "tectonic-kubectl"
 
-  etcd_endpoints   = ["${module.vnet.etcd_endpoints}"]
+  # etcd_endpoints   = ["${module.etcd.node_names}"]
+  etcd_endpoints   = ["etcd-0", "etcd-1", "etcd-2"]
   etcd_ca_cert     = "${var.tectonic_etcd_ca_cert_path}"
   etcd_client_cert = "${var.tectonic_etcd_client_cert_path}"
   etcd_client_key  = "${var.tectonic_etcd_client_key_path}"
 
   master_count = "${var.tectonic_master_count}"
+
+  etcd_cert_dns_names = ["${module.etcd.node_names}"]
 }
 
 module "tectonic" {
   source   = "../../modules/tectonic"
   platform = "azure"
 
-  base_address       = "${module.masters.ingress_internal_fqdn}"
-  kube_apiserver_url = "https://${module.masters.api_internal_fqdn}:443"
+  base_address       = "${module.vnet.ingress_internal_fqdn}"
+  kube_apiserver_url = "https://${module.vnet.api_internal_fqdn}:443"
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
@@ -65,35 +68,30 @@ module "tectonic" {
   stats_url         = "${var.tectonic_stats_url}"
 }
 
-# resource "null_resource" "tectonic" {
-#   depends_on = ["module.tectonic", "module.masters"]
+resource "null_resource" "tectonic" {
+  depends_on = ["module.tectonic", "module.masters"]
 
+  triggers {
+    api-endpoint = "${module.vnet.api_external_fqdn}"
+  }
 
-#   triggers {
-#     api-endpoint = "${module.masters.api_external_fqdn}"
-#   }
+  connection {
+    host  = "${module.vnet.api_external_fqdn}"
+    user  = "core"
+    agent = true
+  }
 
+  provisioner "file" {
+    source      = "./generated"
+    destination = "$HOME/tectonic"
+  }
 
-#   connection {
-#     host  = "${module.masters.api_external_fqdn}"
-#     user  = "core"
-#     agent = true
-#   }
-
-
-#   provisioner "file" {
-#     source      = "./generated"
-#     destination = "$HOME/tectonic"
-#   }
-
-
-#   provisioner "remote-exec" {
-#     inline = [
-#       "sudo mkdir -p /opt",
-#       "sudo rm -rf /opt/tectonic",
-#       "sudo mv /home/core/tectonic /opt/",
-#       "sudo systemctl start ${var.tectonic_vanilla_k8s ? "bootkube.service" : "tectonic.service"}",
-#     ]
-#   }
-# }
-
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mkdir -p /opt",
+      "sudo rm -rf /opt/tectonic",
+      "sudo mv /home/core/tectonic /opt/",
+      "sudo systemctl start ${var.tectonic_vanilla_k8s ? "bootkube.service" : "tectonic.service"}",
+    ]
+  }
+}

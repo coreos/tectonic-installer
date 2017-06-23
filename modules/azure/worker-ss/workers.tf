@@ -58,7 +58,7 @@ resource "azurerm_virtual_machine_scale_set" "tectonic_workers" {
     publisher = "CoreOS"
     offer     = "CoreOS"
     sku       = "Stable"
-    version   = "latest"
+    version   = "${var.versions["container_linux"]}"
   }
 
   storage_profile_os_disk {

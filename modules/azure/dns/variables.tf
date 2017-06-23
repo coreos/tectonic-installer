@@ -26,4 +26,6 @@ variable "console_ip_address" {
   type = "string"
 }
 
-variable "external_dns_zone" {}
+variable "external_dns_zone" {
+  type = "string"
+}

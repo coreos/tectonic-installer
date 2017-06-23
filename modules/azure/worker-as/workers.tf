@@ -21,31 +21,10 @@ resource "azurerm_storage_container" "tectonic_worker" {
   container_access_type = "private"
 }
 
-# resource "azurerm_lb_backend_address_pool" "workers" {
-#   name                = "workers-lb-pool"
-#   resource_group_name = "${var.resource_group_name}"
-#   loadbalancer_id     = "${azurerm_lb.tectonic_lb.id}"
-# }
-
 resource "azurerm_availability_set" "tectonic_workers" {
   name                = "${var.cluster_name}-workers"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
-}
-
-resource "azurerm_network_interface" "tectonic_worker" {
-  count               = "${var.worker_count}"
-  name                = "${var.cluster_name}-worker${count.index}"
-  location            = "${var.location}"
-  resource_group_name = "${var.resource_group_name}"
-
-  ip_configuration {
-    private_ip_address_allocation = "dynamic"
-    name                          = "${var.cluster_name}-WorkerIPConfiguration"
-    subnet_id                     = "${var.subnet}"
-
-    # load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.workers.id}"]
-  }
 }
 
 resource "azurerm_virtual_machine" "tectonic_worker" {
@@ -53,15 +32,20 @@ resource "azurerm_virtual_machine" "tectonic_worker" {
   name                  = "${var.cluster_name}-worker${count.index}"
   location              = "${var.location}"
   resource_group_name   = "${var.resource_group_name}"
-  network_interface_ids = ["${element(azurerm_network_interface.tectonic_worker.*.id, count.index)}"]
+  network_interface_ids = ["${var.network_interface_ids[count.index]}"]
   vm_size               = "${var.vm_size}"
   availability_set_id   = "${azurerm_availability_set.tectonic_workers.id}"
+
+  boot_diagnostics {
+    enabled     = true
+    storage_uri = "${azurerm_storage_account.tectonic_worker.primary_blob_endpoint}"
+  }
 
   storage_image_reference {
     publisher = "CoreOS"
     offer     = "CoreOS"
     sku       = "Stable"
-    version   = "latest"
+    version   = "${var.versions["container_linux"]}"
   }
 
   storage_os_disk {

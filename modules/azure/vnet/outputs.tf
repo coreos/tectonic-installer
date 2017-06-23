@@ -30,11 +30,6 @@ output "etcd_nsg_name" {
 }
 
 # TODO: Allow user to provide their own network
-output "master_nsg_name" {
-  value = "${var.external_nsg_master == "" ? join(" ", azurerm_network_security_group.master.*.name) : var.external_nsg_master }"
-}
-
-# TODO: Allow user to provide their own network
 output "worker_nsg_name" {
   value = "${var.external_nsg_worker == "" ? join(" ", azurerm_network_security_group.worker.*.name) : var.external_nsg_worker }"
 }
@@ -45,4 +40,40 @@ output "etcd_network_interface_ids" {
 
 output "etcd_endpoints" {
   value = ["${azurerm_network_interface.etcd_nic.*.private_ip_address}"]
+}
+
+output "master_network_interface_ids" {
+  value = ["${azurerm_network_interface.tectonic_master.*.id}"]
+}
+
+output "master_ip_addresses" {
+  value = ["${azurerm_network_interface.tectonic_master.*.private_ip_address}"]
+}
+
+output "worker_network_interface_ids" {
+  value = ["${azurerm_network_interface.tectonic_worker.*.id}"]
+}
+
+output "ip_address" {
+  value = ["${azurerm_public_ip.tectonic_api_ip.ip_address}"]
+}
+
+output "console_ip_address" {
+  value = "${azurerm_public_ip.tectonic_console_ip.ip_address}"
+}
+
+output "ingress_external_fqdn" {
+  value = "${azurerm_public_ip.tectonic_console_ip.fqdn}"
+}
+
+output "ingress_internal_fqdn" {
+  value = "${azurerm_public_ip.tectonic_console_ip.fqdn}"
+}
+
+output "api_external_fqdn" {
+  value = "${azurerm_public_ip.tectonic_api_ip.fqdn}"
+}
+
+output "api_internal_fqdn" {
+  value = "${azurerm_public_ip.tectonic_api_ip.fqdn}"
 }

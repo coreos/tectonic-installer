@@ -7,11 +7,6 @@ variable "resource_group_name" {
   type = "string"
 }
 
-// Image refernce to use for master instances
-variable "image_reference" {
-  type = "map"
-}
-
 // VM Size name
 variable "vm_size" {
   type = "string"
@@ -42,18 +37,15 @@ variable "public_ssh_key" {
   type = "string"
 }
 
-variable "virtual_network" {
-  type = "string"
-}
-
-variable "subnet" {
-  type = "string"
-}
-
 variable "network_interface_ids" {
   type = "list"
 }
 
 variable "endpoints" {
   type = "list"
+}
+
+variable "versions" {
+  description = "(internal) Versions of the components to use"
+  type        = "map"
 }
