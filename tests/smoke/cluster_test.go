@@ -162,55 +162,54 @@ func validatePodLogging(c *kubernetes.Clientset, namespace, podPrefix string) ([
 
 func testKillAPIServer(t *testing.T) {
 	c := newClient(t)
+
+	// List the initial API servers.
 	pods, err := getAPIServers(c)
 	if err != nil {
 		t.Fatalf("Failed to get API server pod: %v", err)
 	}
 
-	oldPod := map[string]bool{}
-
 	// Nuke all API servers.
+	oldPods := map[string]bool{}
 	for _, pod := range pods.Items {
 		if err := c.Core().Pods(pod.Namespace).Delete(pod.Name, nil); err != nil {
 			t.Fatalf("Failed to delete API server pod %s: %v", pod.Name, err)
 		}
-		oldPod[pod.Name] = true
+		oldPods[pod.Name] = true
 	}
 
-	// API servers and temp API servers come in and out. Ensure
-	// that the API server we detect is running for a couple
-	// iterations.
-	runningLastTime := false
-
 	apiServerUp := func(t *testing.T) error {
+		// Re-list API servers.
 		pods, err := getAPIServers(c)
 		if err != nil {
 			return fmt.Errorf("failed to get API server pod: %v", err)
 		}
 
-		for _, pod := range pods.Items {
-			if oldPod[pod.Name] {
-				return fmt.Errorf("old API server %s still running", pod.Name)
-			}
-		}
+		var stillRunningOldPods []string
+		allReady := true
 
-		allReady := len(pods.Items) != 0
-		for _, p := range pods.Items {
-			if p.Status.Phase != v1.PodRunning {
+		for _, pod := range pods.Items {
+			// An old API server is still running.
+			if oldPods[pod.Name] && pod.Status.Phase == v1.PodRunning {
+				t.Logf("old API server %s still running", pod.Name)
+				stillRunningOldPods = append(stillRunningOldPods, pod.Name)
+				continue
+			}
+
+			// A newly created API server is not yet running.
+			if pod.Status.Phase != v1.PodRunning {
+				t.Logf("new API server %s not yet running (%s)", pod.Name, pod.Status.Phase)
 				allReady = false
 			}
 		}
 
-		if allReady {
-			if runningLastTime {
-				return nil
-			}
-			runningLastTime = true
+		if !allReady || len(stillRunningOldPods) > 0 {
+			return errors.New("old/new API servers not in desired state, retrying")
 		}
-		return fmt.Errorf("API server has not yet been running for more than one check")
+		return nil
 	}
 
-	max := 6 * time.Minute
+	max := 10 * time.Minute
 	err = retry(apiServerUp, t, 10*time.Second, max)
 	if err != nil {
 		t.Fatalf("Failed waiting for API server pods to be ready in %v.", max)
