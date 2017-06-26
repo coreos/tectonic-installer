@@ -50,19 +50,19 @@ tectonic_cluster_name = ""
 // 
 // Note: This works only when used in conjunction with an external etcd cluster.
 // If set, the variables `tectonic_etcd_servers`, `tectonic_etcd_client_cert_path`, and `tectonic_etcd_client_key_path` must also be set.
-// tectonic_etcd_ca_cert_path = ""
+// tectonic_etcd_ca_cert_path = "/dev/null"
 
 // (optional) The path of the file containing the client certificate for TLS communication with etcd.
 // 
 // Note: This works only when used in conjunction with an external etcd cluster.
 // If set, the variables `tectonic_etcd_servers`, `tectonic_etcd_ca_cert_path`, and `tectonic_etcd_client_key_path` must also be set.
-// tectonic_etcd_client_cert_path = ""
+// tectonic_etcd_client_cert_path = "/dev/null"
 
 // (optional) The path of the file containing the client key for TLS communication with etcd.
 // 
 // Note: This works only when used in conjunction with an external etcd cluster.
 // If set, the variables `tectonic_etcd_servers`, `tectonic_etcd_ca_cert_path`, and `tectonic_etcd_client_cert_path` must also be set.
-// tectonic_etcd_client_key_path = ""
+// tectonic_etcd_client_key_path = "/dev/null"
 
 // The number of etcd nodes to be created.
 // If set to zero, the count of etcd nodes will be determined automatically.
@@ -75,6 +75,11 @@ tectonic_etcd_count = "0"
 // 
 // Example: `["etcd1", "etcd2", "etcd3"]`
 // tectonic_etcd_servers = ""
+
+// (optional) If set to `true`, TLS secure communication for self-provisioned etcd. will be used.
+// 
+// Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the experimental self-hosted etcd always uses TLS.
+// tectonic_etcd_tls_enabled = true
 
 // If set to true, experimental Tectonic assets are being deployed.
 tectonic_experimental = false
@@ -95,6 +100,9 @@ tectonic_pull_secret_path = ""
 
 // This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation. The maximum size of this IP range is /12
 tectonic_service_cidr = "10.3.0.0/16"
+
+// The Tectonic statistics collection URL to which to report.
+tectonic_stats_url = "https://stats-collector.tectonic.com"
 
 // If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
 tectonic_vanilla_k8s = false
@@ -152,8 +160,8 @@ tectonic_vmware_master_gateway = ""
 // }
 tectonic_vmware_master_hostnames = ""
 
-// Terraform map of Master node(s) IP Addresses, Example:
-//   tectonic_vmware_vm_masterips = {
+// Terraform map of Master node(s) IP Addresses, Example: 
+//   tectonic_vmware_master_ip = {
 //   "0" = "192.168.246.20/24"
 //   "1" = "192.168.246.21/24"
 // }
@@ -195,15 +203,15 @@ tectonic_vmware_vm_template_folder = ""
 // Default Gateway IP address for Master nodes(s)
 tectonic_vmware_worker_gateway = ""
 
-// Terraform map of Worker node(s) Hostnames, Example:
-//   tectonic_vmware_vm_worker_hostnames = {
+// Terraform map of Worker node(s) Hostnames, Example: 
+//   tectonic_vmware_worker_hostnames = {
 //   "0" = "mycluster-worker-0"
 //   "1" = "mycluster-worker-1"
 // }
 tectonic_vmware_worker_hostnames = ""
 
-// Terraform map of Worker node(s) IP Addresses, Example:
-//   tectonic_vmware_vm_workerips = {
+// Terraform map of Worker node(s) IP Addresses, Example: 
+//   tectonic_vmware_worker_ip = {
 //   "0" = "192.168.246.30/24"
 //   "1" = "192.168.246.31/24"
 // }

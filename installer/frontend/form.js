@@ -13,11 +13,14 @@ const nop = () => undefined;
 
 // TODO: (kans) make a sideffectful field instead of putting all side effects in async validate
 
+let clock_ = 0;
+
 class Node {
   constructor (id, opts) {
     if (!id) {
       throw new Error("I need a id");
     }
+    this.clock_ = 0;
     this.id = id;
     this.name = opts.name || id;
     this.validator = opts.validator || nop;
@@ -25,10 +28,18 @@ class Node {
     this.ignoreWhen_ = opts.ignoreWhen;
     this.asyncValidator_ = opts.asyncValidator;
     this.getExtraStuff_ = opts.getExtraStuff;
-    this.clock_ = 0;
   }
 
-  getExtraStuff (dispatch, clusterConfig, FIELDS, isNow) {
+  updateClock (now) {
+    return this.clock_ = Math.max(now || clock_, this.clock_);
+  }
+
+  get isNow () {
+    const now = this.clock_;
+    return () => this.clock_ === now;
+  }
+
+  getExtraStuff (dispatch, clusterConfig, FIELDS, now) {
     if (!this.getExtraStuff_) {
       return Promise.resolve();
     }
@@ -42,7 +53,11 @@ class Node {
       return setIn(toExtraData(this.id), undefined, dispatch);
     }
 
+    this.updateClock(now);
+
     setIn(path, true, dispatch);
+    const isNow = this.isNow;
+
     return this.getExtraStuff_(dispatch, isNow).then(data => {
       if (!isNow()) {
         return;
@@ -64,7 +79,7 @@ class Node {
     });
   }
 
-  async validate (dispatch, getState, oldCC, isNow) {
+  async validate (dispatch, getState, oldCC, now) {
     const id = this.id;
     const clusterConfig = getState().clusterConfig;
     const value = this.getData(clusterConfig);
@@ -81,10 +96,10 @@ class Node {
       batches.push([inFlyPath, false]);
     }
 
-    console.debug("validating", this.name);
+    console.debug(`validating ${this.name}`);
     const syncError = this.validator(value, clusterConfig, oldValue, extraData);
     if (!_.isEmpty(syncError)) {
-      console.info("sync error", this.name, syncError);
+      console.info(`sync error ${this.name}: ${JSON.stringify(syncError)}`);
       batches.push([syncErrorPath, syncError]);
       batchSetIn(dispatch, batches);
       return false;
@@ -112,13 +127,16 @@ class Node {
 
     let asyncError;
 
+    this.updateClock(now);
+
     try {
-      asyncError = await this.asyncValidator_(dispatch, getState, value, oldValue, isNow, extraData);
+      asyncError = await this.asyncValidator_(dispatch, getState, value, oldValue, this.isNow, extraData);
     } catch (e) {
       asyncError = e.message || e.toString();
     }
-    if (!isNow()) {
-      console.log(`${this.name} is stale`);
+
+    if (this.clock_ !== now) {
+      console.log(`${this.name} is stale ${this.clock_} ${now}`);
       return false;
     }
 
@@ -136,6 +154,7 @@ class Node {
           asyncError = asyncError.toString ? asyncError.toString() : JSON.stringify(asyncError);
         }
       }
+      console.log(`asyncError for ${this.name}: ${asyncError}`);
       batches.push([asyncErrorPath, asyncError]);
       batchSetIn(dispatch, batches);
       return false;
@@ -155,7 +174,7 @@ class Node {
       return false;
     }
     const value = !!this.ignoreWhen_(clusterConfig);
-    console.debug('ignoring', this.id, value);
+    console.debug(`ignoring ${this.id} value ${value}`);
     setIn(toIgnore(this.id), value, dispatch);
     return value;
   }
@@ -165,15 +184,15 @@ class Node {
   }
 }
 
-async function promisify (dispatch, getState, oldCC, isNow, deps, FIELDS) {
+async function promisify (dispatch, getState, oldCC, now, deps, FIELDS) {
   const { clusterConfig } = getState();
 
   // TODO: (kans) earlier return [] if not now?
   const promises = deps.map(field => {
     const { id } = field;
     field.ignoreWhen(dispatch, clusterConfig);
-    return field.getExtraStuff(dispatch, clusterConfig, FIELDS, isNow)
-      .then(() => field.validate(dispatch, getState, oldCC, isNow))
+    return field.getExtraStuff(dispatch, clusterConfig, FIELDS, now)
+      .then(() => field.validate(dispatch, getState, oldCC, now))
       .then(res => {
         if (!res) {
           console.debug(`${id} is invalid`);
@@ -209,20 +228,18 @@ export class Field extends Node {
   async update (dispatch, value, getState, FIELDS, FIELD_TO_DEPS, split) {
     const oldCC = getState().clusterConfig;
 
-    ++ this.clock_;
-    const now = this.clock_;
-    const isNow = () => now === this.clock_;
+    const now = ++ clock_;
 
     let id = this.id;
     if (split && split.length) {
       id = `${id}.${split.join('.')}`;
     }
 
-    console.info("updating", this.name);
+    console.info(`updating ${this.name}`);
     // TODO: (kans) - We need to lock the entire validation chain, not just validate proper
     setIn(id, value, dispatch);
 
-    const isValid = await this.validate(dispatch, getState, oldCC, isNow);
+    const isValid = await this.validate(dispatch, getState, oldCC, now);
 
     if (!isValid) {
       const dirty = getState().dirty;
@@ -238,14 +255,14 @@ export class Field extends Node {
     const toVisit = [FIELD_TO_DEPS[this.id]];
 
     if (!toVisit[0].length) {
-      console.debug("no deps for", this.name);
+      console.debug(`no deps for ${this.name}`);
       return;
     }
 
     while (toVisit.length) {
       const deps = toVisit.splice(0, 1)[0];
       // TODO: check for relationship between deps
-      const nextDepIDs = await promisify(dispatch, getState, oldCC, isNow, deps, FIELDS);
+      const nextDepIDs = await promisify(dispatch, getState, oldCC, now, deps, FIELDS);
       nextDepIDs.forEach(depID => {
         const nextDeps = _.filter(FIELD_TO_DEPS[depID], d => !visited.has(d.id));
         if (!nextDeps.length) {
@@ -256,7 +273,7 @@ export class Field extends Node {
       });
     }
 
-    console.info("finish validating", this.name);
+    console.info(`finish validating ${this.name} ${isValid}`);
   }
 
   validationData_ (clusterConfig, syncOnly) {

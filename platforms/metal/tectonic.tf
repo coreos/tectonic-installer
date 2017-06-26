@@ -26,11 +26,21 @@ module "bootkube" {
   oidc_groups_claim   = "groups"
   oidc_client_id      = "tectonic-kubectl"
 
-  etcd_endpoints       = ["${split(",", length(var.tectonic_etcd_servers) == 0 ? "127.0.0.1" : join(",", var.tectonic_etcd_servers))}"]
-  etcd_ca_cert         = "${var.tectonic_etcd_ca_cert_path}"
-  etcd_client_cert     = "${var.tectonic_etcd_client_cert_path}"
-  etcd_client_key      = "${var.tectonic_etcd_client_key_path}"
+  etcd_endpoints = ["${split(",",
+    length(compact(var.tectonic_etcd_servers)) == 0
+      ? join(",", var.tectonic_metal_controller_domains)
+      : join(",", var.tectonic_etcd_servers)
+    )}"]
+
+  etcd_ca_cert        = "${var.tectonic_etcd_ca_cert_path}"
+  etcd_client_cert    = "${var.tectonic_etcd_client_cert_path}"
+  etcd_client_key     = "${var.tectonic_etcd_client_key_path}"
+  etcd_tls_enabled    = "${var.tectonic_etcd_tls_enabled}"
+  etcd_cert_dns_names = ["${var.tectonic_metal_controller_domains}"]
+
   experimental_enabled = "${var.tectonic_experimental}"
+
+  master_count = "${length(var.tectonic_metal_controller_names)}"
 }
 
 module "tectonic" {
@@ -66,6 +76,7 @@ module "tectonic" {
   ingress_kind      = "HostPort"
   experimental      = "${var.tectonic_experimental}"
   master_count      = "${length(var.tectonic_metal_controller_names)}"
+  stats_url         = "${var.tectonic_stats_url}"
 }
 
 data "archive_file" "assets" {

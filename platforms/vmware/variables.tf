@@ -156,8 +156,8 @@ variable "tectonic_vmware_master_ip" {
   type = "map"
 
   description = <<EOF
-  Terraform map of Master node(s) IP Addresses, Example:
-  tectonic_vmware_vm_masterips = {
+  Terraform map of Master node(s) IP Addresses, Example: 
+  tectonic_vmware_master_ip = {
   "0" = "192.168.246.20/24"
   "1" = "192.168.246.21/24"
 }
@@ -187,8 +187,8 @@ variable "tectonic_vmware_worker_hostnames" {
   type = "map"
 
   description = <<EOF
-  Terraform map of Worker node(s) Hostnames, Example:
-  tectonic_vmware_vm_worker_hostnames = {
+  Terraform map of Worker node(s) Hostnames, Example: 
+  tectonic_vmware_worker_hostnames = {
   "0" = "mycluster-worker-0"
   "1" = "mycluster-worker-1"
 }
@@ -199,8 +199,8 @@ variable "tectonic_vmware_worker_ip" {
   type = "map"
 
   description = <<EOF
-  Terraform map of Worker node(s) IP Addresses, Example:
-  tectonic_vmware_vm_workerips = {
+  Terraform map of Worker node(s) IP Addresses, Example: 
+  tectonic_vmware_worker_ip = {
   "0" = "192.168.246.30/24"
   "1" = "192.168.246.31/24"
 }

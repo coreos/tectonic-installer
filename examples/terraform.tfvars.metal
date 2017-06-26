@@ -50,19 +50,19 @@ tectonic_cluster_name = ""
 // 
 // Note: This works only when used in conjunction with an external etcd cluster.
 // If set, the variables `tectonic_etcd_servers`, `tectonic_etcd_client_cert_path`, and `tectonic_etcd_client_key_path` must also be set.
-// tectonic_etcd_ca_cert_path = ""
+// tectonic_etcd_ca_cert_path = "/dev/null"
 
 // (optional) The path of the file containing the client certificate for TLS communication with etcd.
 // 
 // Note: This works only when used in conjunction with an external etcd cluster.
 // If set, the variables `tectonic_etcd_servers`, `tectonic_etcd_ca_cert_path`, and `tectonic_etcd_client_key_path` must also be set.
-// tectonic_etcd_client_cert_path = ""
+// tectonic_etcd_client_cert_path = "/dev/null"
 
 // (optional) The path of the file containing the client key for TLS communication with etcd.
 // 
 // Note: This works only when used in conjunction with an external etcd cluster.
 // If set, the variables `tectonic_etcd_servers`, `tectonic_etcd_ca_cert_path`, and `tectonic_etcd_client_cert_path` must also be set.
-// tectonic_etcd_client_key_path = ""
+// tectonic_etcd_client_key_path = "/dev/null"
 
 // The number of etcd nodes to be created.
 // If set to zero, the count of etcd nodes will be determined automatically.
@@ -75,6 +75,11 @@ tectonic_etcd_count = "0"
 // 
 // Example: `["etcd1", "etcd2", "etcd3"]`
 // tectonic_etcd_servers = ""
+
+// (optional) If set to `true`, TLS secure communication for self-provisioned etcd. will be used.
+// 
+// Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the experimental self-hosted etcd always uses TLS.
+// tectonic_etcd_tls_enabled = true
 
 // If set to true, experimental Tectonic assets are being deployed.
 tectonic_experimental = false
@@ -199,6 +204,9 @@ tectonic_service_cidr = "10.3.0.0/16"
 // 
 // Example: `ssh-rsa AAAB3N...`
 tectonic_ssh_authorized_key = ""
+
+// The Tectonic statistics collection URL to which to report.
+tectonic_stats_url = "https://stats-collector.tectonic.com"
 
 // If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
 tectonic_vanilla_k8s = false

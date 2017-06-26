@@ -22,6 +22,7 @@ resource "template_dir" "tectonic" {
     node_exporter_image                   = "${var.container_images["node_exporter"]}"
     kube_state_metrics_image              = "${var.container_images["kube_state_metrics"]}"
     prometheus_operator_image             = "${var.container_images["prometheus_operator"]}"
+    tectonic_monitoring_auth_image        = "${var.container_images["tectonic_monitoring_auth"]}"
     prometheus_image                      = "${var.container_images["prometheus"]}"
     prometheus_config_reload_image        = "${var.container_images["prometheus_config_reload"]}"
     alertmanager_image                    = "${var.container_images["alertmanager"]}"
@@ -29,13 +30,15 @@ resource "template_dir" "tectonic" {
     stats_extender_image                  = "${var.container_images["stats_extender"]}"
     tectonic_channel_operator_image       = "${var.container_images["tectonic_channel_operator"]}"
     tectonic_prometheus_operator_image    = "${var.container_images["tectonic_prometheus_operator"]}"
+    tectonic_etcd_operator_image          = "${var.container_images["tectonic_etcd_operator"]}"
 
-    kubernetes_version   = "${var.versions["kubernetes"]}"
-    monitoring_version   = "${var.versions["monitoring"]}"
-    prometheus_version   = "${var.versions["prometheus"]}"
-    alertmanager_version = "${var.versions["alertmanager"]}"
-    tectonic_version     = "${var.versions["tectonic"]}"
-    etcd_version         = "${var.versions["etcd"]}"
+    kubernetes_version             = "${var.versions["kubernetes"]}"
+    monitoring_version             = "${var.versions["monitoring"]}"
+    prometheus_version             = "${var.versions["prometheus"]}"
+    alertmanager_version           = "${var.versions["alertmanager"]}"
+    tectonic_version               = "${var.versions["tectonic"]}"
+    etcd_version                   = "${var.versions["etcd"]}"
+    tectonic_etcd_operator_version = "${element(split(":", var.container_images["tectonic_etcd_operator"]), 1)}"
 
     etcd_cluster_size = "${var.master_count > 2 ? 3 : 1}"
 
@@ -56,6 +59,13 @@ resource "template_dir" "tectonic" {
     console_secret       = "${random_id.console_secret.b64}"
     console_callback     = "https://${var.base_address}/auth/callback"
 
+    tectonic_monitoring_auth_cookie_secret = "${base64encode(random_id.tectonic_monitoring_auth_cookie_secret.b64)}"
+
+    alertmanager_external_url = "https://${var.base_address}/alertmanager"
+    alertmanager_callback     = "https://${var.base_address}/alertmanager/auth/callback"
+    prometheus_external_url   = "https://${var.base_address}/prometheus"
+    prometheus_callback       = "https://${var.base_address}/prometheus/auth/callback"
+
     ingress_kind     = "${var.ingress_kind}"
     ingress_tls_cert = "${base64encode(tls_locally_signed_cert.ingress.cert_pem)}"
     ingress_tls_key  = "${base64encode(tls_private_key.ingress.private_key_pem)}"
@@ -70,6 +80,7 @@ resource "template_dir" "tectonic" {
 
     kube_apiserver_url = "${var.kube_apiserver_url}"
     oidc_issuer_url    = "https://${var.base_address}/identity"
+    stats_url          = "${var.stats_url}"
 
     # TODO: We could also patch https://www.terraform.io/docs/providers/random/ to add an UUID resource.
     cluster_id = "${format("%s-%s-%s-%s-%s", substr(random_id.cluster_id.hex, 0, 8), substr(random_id.cluster_id.hex, 8, 4), substr(random_id.cluster_id.hex, 12, 4), substr(random_id.cluster_id.hex, 16, 4), substr(random_id.cluster_id.hex, 20, 12))}"

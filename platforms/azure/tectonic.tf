@@ -27,6 +27,8 @@ module "bootkube" {
   etcd_ca_cert     = "${var.tectonic_etcd_ca_cert_path}"
   etcd_client_cert = "${var.tectonic_etcd_client_cert_path}"
   etcd_client_key  = "${var.tectonic_etcd_client_key_path}"
+
+  master_count = "${var.tectonic_master_count}"
 }
 
 module "tectonic" {
@@ -60,6 +62,7 @@ module "tectonic" {
   ingress_kind      = "NodePort"
   experimental      = "${var.tectonic_experimental}"
   master_count      = "${var.tectonic_master_count}"
+  stats_url         = "${var.tectonic_stats_url}"
 }
 
 resource "null_resource" "tectonic" {

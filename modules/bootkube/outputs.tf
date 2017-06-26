@@ -21,6 +21,11 @@ output "id" {
   ${local_file.bootkube-sh.id}
   ${template_dir.bootkube.id} ${template_dir.bootkube-bootstrap.id}
   ${join(" ",
+    local_file.etcd_ca_crt.*.id,
+    local_file.etcd_client_crt.*.id,
+    local_file.etcd_client_key.*.id,
+    local_file.etcd_peer_crt.*.id,
+    local_file.etcd_peer_key.*.id,
     template_dir.experimental.*.id,
     template_dir.bootstrap-experimental.*.id,
     template_dir.etcd-experimental.*.id,
@@ -50,4 +55,24 @@ output "systemd_service" {
 
 output "kube_dns_service_ip" {
   value = "${cidrhost(var.service_cidr, 10)}"
+}
+
+output "etcd_ca_crt_pem" {
+  value = "${join("", tls_self_signed_cert.etcd-ca.*.cert_pem)}"
+}
+
+output "etcd_client_crt_pem" {
+  value = "${join("", tls_locally_signed_cert.etcd_client.*.cert_pem)}"
+}
+
+output "etcd_client_key_pem" {
+  value = "${join("", tls_private_key.etcd_client.*.private_key_pem)}"
+}
+
+output "etcd_peer_crt_pem" {
+  value = "${join("", tls_locally_signed_cert.etcd_peer.*.cert_pem)}"
+}
+
+output "etcd_peer_key_pem" {
+  value = "${join("", tls_private_key.etcd_peer.*.private_key_pem)}"
 }

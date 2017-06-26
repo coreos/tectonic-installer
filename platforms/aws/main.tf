@@ -38,7 +38,7 @@ module "vpc" {
   # element() won't work on empty lists. See https://github.com/hashicorp/terraform/issues/11210
   master_subnets = "${concat(values(var.tectonic_aws_master_custom_subnets),list("padding"))}"
   worker_subnets = "${concat(values(var.tectonic_aws_worker_custom_subnets),list("padding"))}"
-  # The split() / join() trick works around the limitation of tenrary operator expressions 
+  # The split() / join() trick works around the limitation of ternary operator expressions 
   # only being able to return strings.
   master_azs = ["${ split("|", "${length(keys(var.tectonic_aws_master_custom_subnets))}" > 0 ?
     join("|", keys(var.tectonic_aws_master_custom_subnets)) :
@@ -76,6 +76,13 @@ module "etcd" {
   root_volume_iops = "${var.tectonic_aws_etcd_root_volume_iops}"
 
   dns_enabled = "${!var.tectonic_experimental && length(compact(var.tectonic_etcd_servers)) == 0}"
+  tls_enabled = "${var.tectonic_etcd_tls_enabled}"
+
+  tls_ca_crt_pem     = "${module.bootkube.etcd_ca_crt_pem}"
+  tls_client_crt_pem = "${module.bootkube.etcd_client_crt_pem}"
+  tls_client_key_pem = "${module.bootkube.etcd_client_key_pem}"
+  tls_peer_crt_pem   = "${module.bootkube.etcd_peer_crt_pem}"
+  tls_peer_key_pem   = "${module.bootkube.etcd_peer_key_pem}"
 }
 
 module "ignition-masters" {

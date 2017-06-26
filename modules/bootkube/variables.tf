@@ -13,6 +13,14 @@ variable "kube_apiserver_url" {
   type        = "string"
 }
 
+variable "etcd_tls_enabled" {
+  default = false
+}
+
+variable "etcd_cert_dns_names" {
+  type = "list"
+}
+
 variable "etcd_endpoints" {
   description = "List of etcd endpoints to connect with (hostnames/IPs only)"
   type        = "list"
@@ -92,5 +100,10 @@ variable "oidc_username_claim" {
 
 variable "oidc_groups_claim" {
   description = "The OpenID claim to use for specifying user groups (string or array of strings)"
+  type        = "string"
+}
+
+variable "master_count" {
+  description = "The number of the master nodes"
   type        = "string"
 }

@@ -8,7 +8,7 @@ def creds = [
   file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_license_path'),
   file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'), [
     $class: 'UsernamePasswordMultiBinding',
-    credentialsId: 'tectonic-aws',
+    credentialsId: 'jenkins-tectonic-installer',
     usernameVariable: 'AWS_ACCESS_KEY_ID',
     passwordVariable: 'AWS_SECRET_ACCESS_KEY'
   ]
@@ -22,14 +22,14 @@ def quay_creds = [
   )
 ]
 
-def builder_image = 'quay.io/coreos/tectonic-builder:v1.13'
+def builder_image = 'quay.io/coreos/tectonic-builder:v1.20'
 
 pipeline {
   agent none
   options {
     timeout(time:60, unit:'MINUTES')
     timestamps()
-    buildDiscarder(logRotator(numToKeepStr:'20'))
+    buildDiscarder(logRotator(numToKeepStr:'100'))
   }
 
   stages {
@@ -51,6 +51,7 @@ pipeline {
 
             cd $GO_PROJECT/
             make structure-check
+            make bin/smoke
 
             cd $GO_PROJECT/installer
             make clean
@@ -63,7 +64,7 @@ pipeline {
             """
             stash name: 'installer', includes: 'installer/bin/linux/installer'
             stash name: 'node_modules', includes: 'installer/frontend/node_modules/**'
-            stash name: 'sanity', includes: 'installer/bin/sanity'
+            stash name: 'smoke', includes: 'bin/smoke'
           }
         }
       }
@@ -81,20 +82,20 @@ pipeline {
                 withDockerContainer(builder_image) {
                   checkout scm
                   unstash 'installer'
-                  unstash 'sanity'
+                  unstash 'smoke'
                   timeout(30) {
                     sh """#!/bin/bash -ex
                     . ${WORKSPACE}/tests/smoke/aws/smoke.sh assume-role "$TECTONIC_INSTALLER_ROLE"
-                    ${WORKSPACE}/tests/smoke/aws/smoke.sh plan vars/aws.tfvars
-                    ${WORKSPACE}/tests/smoke/aws/smoke.sh create vars/aws.tfvars
-                    ${WORKSPACE}/tests/smoke/aws/smoke.sh test vars/aws.tfvars
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh plan vars/aws-tls.tfvars
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh create vars/aws-tls.tfvars
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh test vars/aws-tls.tfvars
                     """
                   }
                   retry(3) {
                     timeout(15) {
                       sh """#!/bin/bash -ex
                       . ${WORKSPACE}/tests/smoke/aws/smoke.sh assume-role "$TECTONIC_INSTALLER_ROLE"
-                      ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy vars/aws.tfvars
+                      ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy vars/aws-tls.tfvars
                       """
                     }
                   }
@@ -102,7 +103,23 @@ pipeline {
               }
             }
           },
-          "SmokeTest TerraForm: AWS (Experimental)": {
+          "SmokeTest TerraForm: AWS (non-TLS)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  checkout scm
+                  unstash 'installer'
+                  timeout(5) {
+                    sh """#!/bin/bash -ex
+                    . ${WORKSPACE}/tests/smoke/aws/smoke.sh assume-role "$TECTONIC_INSTALLER_ROLE"
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh plan vars/aws.tfvars
+                    """
+                  }
+                }
+              }
+            }
+          },
+          "SmokeTest TerraForm: AWS (experimental)": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
@@ -118,7 +135,7 @@ pipeline {
               }
             }
           },
-          "SmokeTest TerraForm: AWS (custom-ca)": {
+          "SmokeTest TerraForm: AWS (custom ca)": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
@@ -134,11 +151,32 @@ pipeline {
               }
             }
           },
+          "SmokeTest TerraForm: AWS (private vpc)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(image: builder_image, args: '--device=/dev/net/tun --cap-add=NET_ADMIN') {
+                  checkout scm
+                  unstash 'installer'
+                  unstash 'smoke'
+                  timeout(40) {
+                    sh """#!/bin/bash -ex
+                    . ${WORKSPACE}/tests/smoke/aws/smoke.sh create-vpc
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh plan vars/aws-vpc.tfvars
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh create vars/aws-vpc.tfvars
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh test vars/aws-vpc.tfvars
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy vars/aws-vpc.tfvars
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy-vpc
+                    """
+                  }
+                }
+              }
+            }
+          },
           "SmokeTest Terraform: Bare Metal": {
             node('worker && bare-metal') {
               checkout scm
               unstash 'installer'
-              unstash 'sanity'
+              unstash 'smoke'
               withCredentials(creds) {
                 timeout(30) {
                   sh """#!/bin/bash -ex
@@ -160,12 +198,12 @@ pipeline {
                   make launch-installer-guitests
                   make gui-tests-cleanup
                   """
-               }
-             }
-           }
-         }
-       )
-     }
+                }
+              }
+            }
+          }
+        )
+      }
       post {
         failure {
           node('worker && ec2') {
@@ -176,8 +214,15 @@ pipeline {
                 retry(3) {
                   timeout(15) {
                     sh """#!/bin/bash -ex
-                    . ${WORKSPACE}/tests/smoke/aws/smoke.sh assume-role "$TECTONIC_INSTALLER_ROLE"
                     ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy vars/aws.tfvars
+                    """
+                  }
+                }
+                retry(3) {
+                  timeout(20) {
+                    sh """#!/bin/bash -ex
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy vars/aws-vpc.tfvars
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy-vpc
                     """
                   }
                 }

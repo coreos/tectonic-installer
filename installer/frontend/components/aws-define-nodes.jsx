@@ -10,7 +10,6 @@ import {
   STORAGE_IOPS,
   STORAGE_SIZE_IN_GIB,
   STORAGE_TYPE,
-  UPDATER_ENABLED,
 } from '../cluster-config';
 
 import { Form } from '../form';
@@ -76,6 +75,9 @@ export const DefineNode = ({name, type, disabled, withoutTitle, max}) =>
           }
         </Select>
       </Connect>
+      {type === 'aws_etcds' && <p className="text-muted wiz-help-text">
+        Read the <a href="https://coreos.com/etcd/docs/latest/op-guide/hardware.html" target="_blank">etcd recommended hardware</a> guide for best performance.
+      </p>}
     </Row>
     <Row htmlFor={`${name}--storage-size`} label="Storage Size">
       <Connect field={toKey(type, STORAGE_SIZE_IN_GIB)}>
@@ -98,6 +100,7 @@ export const DefineNode = ({name, type, disabled, withoutTitle, max}) =>
     <Errors type={type} />
   </div>;
 
+// TODO (kans): add ectdForm here
 const fields = [
   makeNodeForm(AWS_CONTROLLERS),
   makeNodeForm(AWS_WORKERS),
@@ -109,29 +112,15 @@ const form = new Form(DefineNodesForm, fields, {
   // dependencies: [ENTITLEMENTS],
 });
 
-const stateToProps = ({clusterConfig}) => ({
-  updaterEnabled: clusterConfig[UPDATER_ENABLED],
-});
+export const AWS_DefineNodes = () => <div>
+  <DefineNode type={AWS_CONTROLLERS} name="Master Nodes" max={10} />
+  <hr/>
+  <DefineNode type={AWS_WORKERS} name="Worker Nodes" />
+  <form.Errors />
+  <hr />
+  <h3>etcd Nodes</h3>
+  <br />
+  <Etcd />
+</div>;
 
-export const AWS_DefineNodes = connect(stateToProps)(({updaterEnabled}) =>
-  <div>
-    <DefineNode type={AWS_CONTROLLERS} name="Master Nodes" max={10} />
-    <hr/>
-    <DefineNode type={AWS_WORKERS} name="Worker Nodes" />
-    <form.Errors />
-    { !updaterEnabled &&
-      <div>
-        <hr />
-        <h3>etcd Nodes</h3>
-        <br />
-        <Etcd />
-      </div> }
-  </div>);
-
-AWS_DefineNodes.canNavigateForward = state => {
-  let ok = form.canNavigateForward(state);
-  if (!state.clusterConfig[UPDATER_ENABLED]) {
-    ok = ok && Etcd.canNavigateForward(state);
-  }
-  return ok;
-};
+AWS_DefineNodes.canNavigateForward = state => form.canNavigateForward(state) && Etcd.canNavigateForward(state);

@@ -32,6 +32,8 @@ module "bootkube" {
   etcd_client_key  = "${var.tectonic_etcd_client_key_path}"
 
   experimental_enabled = "${var.tectonic_experimental}"
+
+  master_count = "${var.tectonic_master_count}"
 }
 
 module "tectonic" {
@@ -48,8 +50,8 @@ module "tectonic" {
   container_images = "${var.tectonic_container_images}"
   versions         = "${var.tectonic_versions}"
 
-  license_path     = "${pathexpand(var.tectonic_license_path)}"
-  pull_secret_path = "${pathexpand(var.tectonic_pull_secret_path)}"
+  license_path     = "${var.tectonic_vanilla_k8s ? "/dev/null" : pathexpand(var.tectonic_license_path)}"
+  pull_secret_path = "${var.tectonic_vanilla_k8s ? "/dev/null" : pathexpand(var.tectonic_pull_secret_path)}"
 
   admin_email         = "${var.tectonic_admin_email}"
   admin_password_hash = "${var.tectonic_admin_password_hash}"
@@ -68,6 +70,7 @@ module "tectonic" {
   ingress_kind      = "HostPort"
   experimental      = "${var.tectonic_experimental}"
   master_count      = "${var.tectonic_master_count}"
+  stats_url         = "${var.tectonic_stats_url}"
 }
 
 data "archive_file" "assets" {
