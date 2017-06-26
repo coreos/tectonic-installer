@@ -7,11 +7,30 @@ EOF
   default = "1.0"
 }
 
-variable "tectonic_openstack_flavor_id" {
+variable "tectonic_openstack_master_flavor_id" {
   type = "string"
 
   description = <<EOF
-The flavor ID as given in `openstack flavor list`. Specifies the size (CPU/Memory/Drive) of the VM.
+The master flavor ID as given in `openstack flavor list`. Specifies the size (CPU/Memory/Drive) of the VM.
+EOF
+}
+
+variable "tectonic_openstack_worker_flavor_id" {
+  type = "string"
+
+  description = <<EOF
+The worker flavor ID as given in `openstack flavor list`. Specifies the size (CPU/Memory/Drive) of the VM.
+EOF
+}
+
+variable "tectonic_openstack_etcd_flavor_id" {
+  type = "string"
+
+  description = <<EOF
+(optional) The etcd flavor ID as given in `openstack flavor list`. Specifies the size (CPU/Memory/Drive) of the VM.
+Needs to be set if not using experimental self-hosted mode.
+
+Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the cluster doesn't use dedicated etcd nodes.
 EOF
 }
 
