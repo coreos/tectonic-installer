@@ -71,6 +71,8 @@ module "tectonic" {
   experimental      = "${var.tectonic_experimental}"
   master_count      = "${var.tectonic_master_count}"
   stats_url         = "${var.tectonic_stats_url}"
+
+  image_re = "${var.tectonic_image_re}"
 }
 
 data "archive_file" "assets" {

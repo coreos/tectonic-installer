@@ -60,6 +60,7 @@ variable "tectonic_container_images" {
     awscli                          = "quay.io/coreos/awscli:025a357f05242fdad6a81e8a6b520098aa65a600"
     kube_version                    = "quay.io/coreos/kube-version:0.1.0"
     tectonic_etcd_operator          = "quay.io/coreos/tectonic-etcd-operator:v0.0.1"
+    pod_infra_image                 = "gcr.io/google_containers/pause-amd64:3.0"
   }
 }
 

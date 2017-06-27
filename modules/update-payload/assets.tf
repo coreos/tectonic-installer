@@ -27,6 +27,6 @@ resource "template_dir" "upload_payload" {
     kubernetes_version             = "${var.tectonic_versions["kubernetes"]}"
     monitoring_version             = "${var.tectonic_versions["monitoring"]}"
     tectonic_version               = "${var.tectonic_versions["tectonic"]}"
-    tectonic_etcd_operator_version = "${element(split(":", var.tectonic_container_images["tectonic_etcd_operator"]), 1)}"
+    tectonic_etcd_operator_version = "${replace(var.tectonic_container_images["tectonic_etcd_operator"],var.tectonic_image_re,"$2")}"
   }
 }
