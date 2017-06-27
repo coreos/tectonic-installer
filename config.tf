@@ -12,7 +12,14 @@ terraform {
 }
 
 variable "tectonic_user_container_images" {
-  type = "map"
+  type    = "map"
+  default = {}
+
+  description = <<EOF
+(optional) Use this map to override individual container images as defaulted in `tectonic_container_images`.
+At runtime the contents of this map will be merged with contents of `tectonic_container_images`.
+Items specified here take precendence.
+EOF
 }
 
 variable "tectonic_container_images" {
