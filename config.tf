@@ -65,6 +65,7 @@ variable "tectonic_versions" {
     monitoring   = "1.3.0"
     kubernetes   = "1.6.7+tectonic.1"
     tectonic     = "1.6.7-tectonic.1"
+    tectonic-etcd = "0.0.1"
   }
 }
 
