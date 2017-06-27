@@ -6,7 +6,7 @@ module "bootkube" {
   oidc_issuer_url    = "https://${var.tectonic_cluster_name}.${var.tectonic_base_domain}/identity"
 
   # Platform-independent variables wiring, do not modify.
-  container_images = "${var.tectonic_container_images}"
+  container_images = "${merge(var.tectonic_container_images, var.tectonic_user_container_images)}"
   versions         = "${var.tectonic_versions}"
 
   ca_cert    = "${var.tectonic_ca_cert}"
@@ -52,7 +52,7 @@ module "tectonic" {
   kube_apiserver_url = "https://${var.tectonic_cluster_name}-k8s.${var.tectonic_base_domain}:443"
 
   # Platform-independent variables wiring, do not modify.
-  container_images = "${var.tectonic_container_images}"
+  container_images = "${merge(var.tectonic_container_images, var.tectonic_user_container_images)}"
   versions         = "${var.tectonic_versions}"
 
   license_path     = "${var.tectonic_vanilla_k8s ? "/dev/null" : pathexpand(var.tectonic_license_path)}"
@@ -81,8 +81,8 @@ module "tectonic" {
 
 data "null_data_source" "local" {
   inputs = {
-    kube_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
-    kube_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+    kube_image_url = "${element(split(":", lookup(merge(var.tectonic_container_images, var.tectonic_user_container_images),"hyperkube")), 0)}"
+    kube_image_tag = "${element(split(":", lookup(merge(var.tectonic_container_images, var.tectonic_user_container_images),"hyperkube")), 1)}"
   }
 }
 
@@ -97,7 +97,7 @@ EOF
 
   base_domain           = "${var.tectonic_base_domain}"
   cluster_name          = "${var.tectonic_cluster_name}"
-  container_image       = "${var.tectonic_container_images["etcd"]}"
+  container_image       = "${lookup(merge(var.tectonic_container_images, var.tectonic_user_container_images), "etcd")}"
   core_public_keys      = ["${module.secrets.core_public_key_openssh}"]
   tectonic_experimental = "${var.tectonic_experimental}"
   tls_enabled           = "${var.tectonic_etcd_tls_enabled}"

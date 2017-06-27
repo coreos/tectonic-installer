@@ -51,8 +51,8 @@ resource "matchbox_group" "controller" {
 
     # extra data
     etcd_image_tag    = "v${var.tectonic_versions["etcd"]}"
-    kubelet_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
-    kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+    kubelet_image_url = "${element(split(":", lookup(merge(var.tectonic_container_images, var.tectonic_user_container_images), "hyperkube")), 0)}"
+    kubelet_image_tag = "${element(split(":", lookup(merge(var.tectonic_container_images, var.tectonic_user_container_images), "hyperkube")), 1)}"
   }
 }
 
@@ -72,8 +72,8 @@ resource "matchbox_group" "worker" {
     ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
 
     # extra data
-    kubelet_image_url  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
-    kubelet_image_tag  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
-    kube_version_image = "${var.tectonic_container_images["kube_version"]}"
+    kubelet_image_url  = "${element(split(":", lookup(merge(var.tectonic_container_images, var.tectonic_user_container_images), "hyperkube")), 0)}"
+    kubelet_image_tag  = "${element(split(":", lookup(merge(var.tectonic_container_images, var.tectonic_user_container_images), "hyperkube")), 1)}"
+    kube_version_image = "${lookup(merge(var.tectonic_container_images, var.tectonic_user_container_images), "kube_version")}"
   }
 }
