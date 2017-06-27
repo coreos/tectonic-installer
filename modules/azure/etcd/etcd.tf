@@ -49,16 +49,15 @@ resource "random_id" "storage" {
 }
 
 resource "azurerm_storage_account" "etcd_storage" {
-  name                = "${random_id.storage.hex}"
+  name                = "etcd${random_id.storage.hex}"
   resource_group_name = "${var.resource_group_name}"
   location            = "${var.location}"
   account_type        = "${var.storage_account_type}"
 }
 
 resource "azurerm_storage_container" "etcd_storage_container" {
-  name                  = "${var.cluster_name}-etcd-storage-container"
+  name                  = "etcd-storage-container"
   resource_group_name   = "${var.resource_group_name}"
   storage_account_name  = "${azurerm_storage_account.etcd_storage.name}"
   container_access_type = "private"
-  depends_on            = ["azurerm_storage_account.etcd_storage"]
 }
