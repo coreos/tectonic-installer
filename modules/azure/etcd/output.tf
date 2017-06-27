@@ -1,3 +1,6 @@
 output "node_names" {
-  value = "${azurerm_virtual_machine.etcd_node.*.os_profile.computer_name}"
+  value = ["${slice(
+    list("etcd-0", "etcd-1", "etcd-2", "etcd-3", "etcd-4", "etcd-5"),
+    0, var.etcd_count
+  )}"]
 }
