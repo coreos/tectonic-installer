@@ -32,6 +32,7 @@ This document gives an overview of variables used in all platforms of the Tecton
 | tectonic_update_app_id | (internal) The Tectonic Omaha update App ID | string | `6bc7b986-4654-4a0f-94b3-84ce6feb1db4` |
 | tectonic_update_channel | (internal) The Tectonic Omaha update channel | string | `tectonic-1.6` |
 | tectonic_update_server | (internal) The URL of the Tectonic Omaha update server | string | `https://tectonic.update.core-os.net` |
+| tectonic_user_container_images | (optional) Use this map to override individual container images as defaulted in `tectonic_container_images`. At runtime the contents of this map will be merged with contents of `tectonic_container_images`. Items specified here take precendence. | map | `<map>` |
 | tectonic_vanilla_k8s | If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets. | string | `false` |
 | tectonic_versions | (internal) Versions of the components to use | map | `<map>` |
 | tectonic_worker_count | The number of worker nodes to be created. This applies only to cloud platforms. | string | `3` |

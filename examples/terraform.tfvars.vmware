@@ -104,6 +104,11 @@ tectonic_service_cidr = "10.3.0.0/16"
 // The Tectonic statistics collection URL to which to report.
 tectonic_stats_url = "https://stats-collector.tectonic.com"
 
+// (optional) Use this map to override individual container images as defaulted in `tectonic_container_images`.
+// At runtime the contents of this map will be merged with contents of `tectonic_container_images`.
+// Items specified here take precendence.
+// tectonic_user_container_images = ""
+
 // If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
 tectonic_vanilla_k8s = false
 

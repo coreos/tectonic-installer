@@ -11,6 +11,17 @@ terraform {
   required_version = ">= 0.9.6"
 }
 
+variable "tectonic_user_container_images" {
+  type    = "map"
+  default = {}
+
+  description = <<EOF
+(optional) Use this map to override individual container images as defaulted in `tectonic_container_images`.
+At runtime the contents of this map will be merged with contents of `tectonic_container_images`.
+Items specified here take precendence.
+EOF
+}
+
 variable "tectonic_container_images" {
   description = "(internal) Container images to use"
   type        = "map"

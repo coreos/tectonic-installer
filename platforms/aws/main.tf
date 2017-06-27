@@ -59,7 +59,7 @@ module "etcd" {
 
   ssh_key         = "${var.tectonic_aws_ssh_key}"
   cl_channel      = "${var.tectonic_cl_channel}"
-  container_image = "${var.tectonic_container_images["etcd"]}"
+  container_image = "${lookup(merge(var.tectonic_container_images, var.tectonic_user_container_images), "etcd")}"
 
   subnets = ["${module.vpc.worker_subnet_ids}"]
 
@@ -93,7 +93,7 @@ module "ignition-masters" {
   kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   kubeconfig_s3_location    = "${aws_s3_bucket_object.kubeconfig.bucket}/${aws_s3_bucket_object.kubeconfig.key}"
   assets_s3_location        = "${aws_s3_bucket_object.tectonic-assets.bucket}/${aws_s3_bucket_object.tectonic-assets.key}"
-  container_images          = "${var.tectonic_container_images}"
+  container_images          = "${merge(var.tectonic_container_images, var.tectonic_user_container_images)}"
   bootkube_service          = "${module.bootkube.systemd_service}"
   tectonic_service          = "${module.tectonic.systemd_service}"
   tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
@@ -140,7 +140,7 @@ module "ignition-workers" {
   kube_dns_service_ip    = "${module.bootkube.kube_dns_service_ip}"
   kubeconfig_s3_location = "${aws_s3_bucket_object.kubeconfig.bucket}/${aws_s3_bucket_object.kubeconfig.key}"
   assets_s3_location     = ""
-  container_images       = "${var.tectonic_container_images}"
+  container_images       = "${merge(var.tectonic_container_images, var.tectonic_user_container_images)}"
   bootkube_service       = ""
   tectonic_service       = ""
   cluster_name           = ""
