@@ -23,14 +23,16 @@ module "bootkube" {
   oidc_groups_claim   = "groups"
   oidc_client_id      = "tectonic-kubectl"
 
-  etcd_endpoints   = ["${module.etcd.node_names}"]
-  etcd_ca_cert     = "${var.tectonic_etcd_ca_cert_path}"
-  etcd_client_cert = "${var.tectonic_etcd_client_cert_path}"
-  etcd_client_key  = "${var.tectonic_etcd_client_key_path}"
+  etcd_endpoints      = ["${module.etcd.node_names}"]
+  etcd_ca_cert        = "${var.tectonic_etcd_ca_cert_path}"
+  etcd_client_cert    = "${var.tectonic_etcd_client_cert_path}"
+  etcd_client_key     = "${var.tectonic_etcd_client_key_path}"
+  etcd_tls_enabled    = "${var.tectonic_etcd_tls_enabled}"
+  etcd_cert_dns_names = ["${module.etcd.node_names}"]
+
+  experimental_enabled = "${var.tectonic_experimental}"
 
   master_count = "${var.tectonic_master_count}"
-
-  etcd_cert_dns_names = ["${module.etcd.node_names}"]
 }
 
 module "tectonic" {
@@ -68,7 +70,7 @@ module "tectonic" {
 }
 
 resource "null_resource" "tectonic" {
-  depends_on = ["module.tectonic", "module.masters"]
+  depends_on = ["module.bootkube", "module.tectonic", "module.masters"]
 
   triggers {
     api-endpoint = "${module.vnet.api_external_fqdn}"

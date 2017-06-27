@@ -39,6 +39,7 @@ module "etcd" {
   resource_group_name  = "${module.resource_group.name}"
   vm_size              = "${var.tectonic_azure_etcd_vm_size}"
   storage_account_type = "${var.tectonic_azure_etcd_storage_account_type}"
+  container_image      = "${var.tectonic_container_images["etcd"]}"
 
   etcd_count            = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count}"
   base_domain           = "${var.tectonic_base_domain}"
@@ -47,6 +48,13 @@ module "etcd" {
   endpoints             = "${module.vnet.etcd_endpoints}"
   network_interface_ids = "${module.vnet.etcd_network_interface_ids}"
   versions              = "${var.tectonic_versions}"
+
+  tls_enabled        = "${var.tectonic_etcd_tls_enabled}"
+  tls_ca_crt_pem     = "${module.bootkube.etcd_ca_crt_pem}"
+  tls_client_crt_pem = "${module.bootkube.etcd_client_crt_pem}"
+  tls_client_key_pem = "${module.bootkube.etcd_client_key_pem}"
+  tls_peer_crt_pem   = "${module.bootkube.etcd_peer_crt_pem}"
+  tls_peer_key_pem   = "${module.bootkube.etcd_peer_key_pem}"
 }
 
 module "masters" {

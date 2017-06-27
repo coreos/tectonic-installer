@@ -49,3 +49,31 @@ variable "versions" {
   description = "(internal) Versions of the components to use"
   type        = "map"
 }
+
+variable "tls_enabled" {
+  default = false
+}
+
+variable "tls_ca_crt_pem" {
+  default = ""
+}
+
+variable "tls_client_key_pem" {
+  default = ""
+}
+
+variable "tls_client_crt_pem" {
+  default = ""
+}
+
+variable "tls_peer_key_pem" {
+  default = ""
+}
+
+variable "tls_peer_crt_pem" {
+  default = ""
+}
+
+variable "container_image" {
+  type = "string"
+}
