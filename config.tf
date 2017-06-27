@@ -11,6 +11,10 @@ terraform {
   required_version = ">= 0.9.6"
 }
 
+variable "tectonic_user_container_images" {
+  type = "map"
+}
+
 variable "tectonic_container_images" {
   description = "(internal) Container images to use"
   type        = "map"

@@ -6,7 +6,7 @@ module "bootkube" {
   oidc_issuer_url    = "https://${module.masters.ingress_internal_fqdn}/identity"
 
   # Platform-independent variables wiring, do not modify.
-  container_images = "${var.tectonic_container_images}"
+  container_images = "${merge(var.tectonic_container_images, var.tectonic_user_container_images)}"
   versions         = "${var.tectonic_versions}"
 
   ca_cert    = "${var.tectonic_ca_cert}"
@@ -39,7 +39,7 @@ module "tectonic" {
   kube_apiserver_url = "https://${module.masters.api_internal_fqdn}:443"
 
   # Platform-independent variables wiring, do not modify.
-  container_images = "${var.tectonic_container_images}"
+  container_images = "${merge(var.tectonic_container_images, var.tectonic_user_container_images)}"
   versions         = "${var.tectonic_versions}"
 
   license_path     = "${var.tectonic_vanilla_k8s ? "/dev/null" : pathexpand(var.tectonic_license_path)}"
