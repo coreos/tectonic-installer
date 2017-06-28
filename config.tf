@@ -62,6 +62,7 @@ variable "tectonic_container_images" {
     tectonic_etcd_operator          = "quay.io/coreos/tectonic-etcd-operator:v0.0.1"
     calico                          = "quay.io/calico/node:v1.3.0"
     calico_cni                      = "quay.io/calico/cni:v1.9.1-4-g23fcd5f"
+    pod_infra_image                 = "gcr.io/google_containers/pause-amd64:3.0"
   }
 }
 
