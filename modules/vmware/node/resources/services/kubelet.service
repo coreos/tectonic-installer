@@ -33,7 +33,8 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --cluster-dns=${cluster_dns_ip} \
   --cluster-domain=cluster.local \
   --client-ca-file=/etc/kubernetes/ca.crt \
-  --anonymous-auth=false   
+  --anonymous-auth=false \
+  --pod-infra-container-image=${pod_infra_image}
 ExecStop=-/usr/bin/rkt stop --uuid-file=/var/cache/kubelet-pod.uuid
 
 Restart=always
