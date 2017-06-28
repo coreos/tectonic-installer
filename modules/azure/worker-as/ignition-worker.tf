@@ -42,6 +42,7 @@ data "template_file" "kubelet-worker" {
     cloud_provider   = "${var.cloud_provider}"
     cluster_dns      = "${var.tectonic_kube_dns_service_ip}"
     cni_bin_dir_flag = "${var.kubelet_cni_bin_dir != "" ? "--cni-bin-dir=${var.kubelet_cni_bin_dir}" : ""}"
+    pod_infra_image  = "${var.container_images["pod_infra_image"]}"
   }
 }
 

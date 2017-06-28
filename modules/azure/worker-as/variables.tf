@@ -83,3 +83,7 @@ variable "cl_channel" {
 variable "kubelet_cni_bin_dir" {
   type = "string"
 }
+
+variable "container_images" {
+  type = "map"
+}

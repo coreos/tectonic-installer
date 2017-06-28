@@ -53,6 +53,7 @@ data "template_file" "kubelet-master" {
     cni_bin_dir_flag  = "${var.kubelet_cni_bin_dir != "" ? "--cni-bin-dir=${var.kubelet_cni_bin_dir}" : ""}"
     cloud_provider    = "${var.cloud_provider}"
     cluster_dns       = "${var.tectonic_kube_dns_service_ip}"
+    pod_infra_image   = "${var.container_images["pod_infra_image"]}"
   }
 }
 
