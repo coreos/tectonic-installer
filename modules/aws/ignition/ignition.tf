@@ -43,6 +43,7 @@ data "template_file" "kubelet" {
     node_taints_param      = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
     cni_bin_dir_flag       = "${var.kubelet_cni_bin_dir != "" ? "--cni-bin-dir=${var.kubelet_cni_bin_dir}" : ""}"
     kubeconfig_s3_location = "${var.kubeconfig_s3_location}"
+    pod_infra_image        = "${var.container_images["pod_infra_image"]}"
   }
 }
 

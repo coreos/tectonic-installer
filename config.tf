@@ -62,6 +62,7 @@ variable "tectonic_container_images" {
     tectonic_monitoring_auth     = "quay.io/coreos/tectonic-monitoring-auth:v0.0.1"
     tectonic_prometheus_operator = "quay.io/coreos/tectonic-prometheus-operator:v1.5.2"
     tectonic_cluo_operator       = "quay.io/coreos/tectonic-cluo-operator:v0.1.3"
+    pod_infra_image              = "gcr.io/google_containers/pause-amd64:3.0"
   }
 }
 

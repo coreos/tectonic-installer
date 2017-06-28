@@ -90,7 +90,8 @@ systemd:
           {{.cni_bin_dir_flag}} \
           --register-with-taints=node-role.kubernetes.io/master=:NoSchedule \
           --cluster_dns={{.k8s_dns_service_ip}} \
-          --cluster_domain=cluster.local
+          --cluster_domain=cluster.local \
+          --pod-infra-container-image={{.pod_infra_image}}
         ExecStop=-/usr/bin/rkt stop --uuid-file=/var/run/kubelet-pod.uuid
         Restart=always
         RestartSec=10
