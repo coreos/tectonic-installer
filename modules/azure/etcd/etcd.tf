@@ -1,4 +1,5 @@
 resource "azurerm_availability_set" "etcd" {
+  count               = "${var.etcd_count > 0 ? 1 : 0}"
   name                = "${var.cluster_name}-etcd"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"

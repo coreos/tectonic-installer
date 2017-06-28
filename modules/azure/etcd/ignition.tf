@@ -20,6 +20,8 @@ data "ignition_config" "etcd" {
 }
 
 data "ignition_file" "etcd_ca" {
+  count = "${var.etcd_count > 0 ? 1 : 0}"
+
   path       = "/etc/ssl/etcd/ca.crt"
   mode       = 0644
   uid        = 232
@@ -32,6 +34,8 @@ data "ignition_file" "etcd_ca" {
 }
 
 data "ignition_file" "etcd_client_key" {
+  count = "${var.etcd_count > 0 ? 1 : 0}"
+
   path       = "/etc/ssl/etcd/client.key"
   mode       = 0400
   uid        = 232
@@ -44,6 +48,8 @@ data "ignition_file" "etcd_client_key" {
 }
 
 data "ignition_file" "etcd_client_crt" {
+  count = "${var.etcd_count > 0 ? 1 : 0}"
+
   path       = "/etc/ssl/etcd/client.crt"
   mode       = 0400
   uid        = 232
@@ -56,6 +62,8 @@ data "ignition_file" "etcd_client_crt" {
 }
 
 data "ignition_file" "etcd_peer_key" {
+  count = "${var.etcd_count > 0 ? 1 : 0}"
+
   path       = "/etc/ssl/etcd/peer.key"
   mode       = 0400
   uid        = 232
@@ -68,6 +76,8 @@ data "ignition_file" "etcd_peer_key" {
 }
 
 data "ignition_file" "etcd_peer_crt" {
+  count = "${var.etcd_count > 0 ? 1 : 0}"
+
   path       = "/etc/ssl/etcd/peer.crt"
   mode       = 0400
   uid        = 232
@@ -80,6 +90,8 @@ data "ignition_file" "etcd_peer_crt" {
 }
 
 data "ignition_user" "core" {
+  count = "${var.etcd_count > 0 ? 1 : 0}"
+
   name = "core"
 
   ssh_authorized_keys = [
@@ -110,7 +122,8 @@ EOF
 }
 
 data "ignition_systemd_unit" "etcd3" {
-  count  = "${var.etcd_count}"
+  count = "${var.etcd_count}"
+
   name   = "etcd-member.service"
   enable = true
 
