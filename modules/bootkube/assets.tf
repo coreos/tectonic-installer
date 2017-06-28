@@ -60,7 +60,7 @@ resource "template_dir" "bootkube" {
     # 3. Else (if etcd TLS certific are provided), then use the secure https
     # var.etcd_endpoints.
     etcd_servers = "${
-      var.experimental_enabled 
+      var.experimental_enabled
         ? format("https://%s:2379", cidrhost(var.service_cidr, 15))
         : data.template_file.etcd_ca_cert_pem.rendered == ""
           ? join(",", formatlist("http://%s:2379", var.etcd_endpoints))
@@ -99,7 +99,9 @@ resource "template_dir" "bootkube" {
 
     tectonic_version = "${var.versions["tectonic"]}"
 
-    master_count = "${var.master_count}"
+    master_count              = "${var.master_count}"
+    node_monitor_grace_period = "${var.node_monitor_grace_period}"
+    pod_eviction_timeout      = "${var.pod_eviction_timeout}"
   }
 }
 
@@ -113,7 +115,7 @@ resource "template_dir" "bootkube-bootstrap" {
     etcd_image      = "${var.container_images["etcd"]}"
 
     etcd_servers = "${
-      var.experimental_enabled 
+      var.experimental_enabled
         ? format("https://%s:2379,https://127.0.0.1:12379", cidrhost(var.service_cidr, 15))
         : data.template_file.etcd_ca_cert_pem.rendered == ""
           ? join(",", formatlist("http://%s:2379", var.etcd_endpoints))
