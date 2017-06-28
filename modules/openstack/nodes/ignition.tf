@@ -75,6 +75,7 @@ data "template_file" "kubelet" {
     node_labels       = "${var.node_labels}"
     node_taints_param = "${var.node_taints != "" ? "--register-with-taints=${var.node_taints}" : ""}"
     cni_bin_dir_flag  = "${var.kubelet_cni_bin_dir != "" ? "--cni-bin-dir=${var.kubelet_cni_bin_dir}" : ""}"
+    pod_infra_image   = "${var.container_images["pod_infra_image"]}"
   }
 }
 

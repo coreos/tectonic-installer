@@ -140,6 +140,7 @@ EOF
   kubelet_cni_bin_dir          = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   tectonic_experimental        = "${var.tectonic_experimental}"
   tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
+  container_images             = "${var.tectonic_container_images}"
 }
 
 module "worker_nodes" {
@@ -165,6 +166,7 @@ EOF
   node_taints                  = ""
   kubelet_cni_bin_dir          = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
+  container_images             = "${var.tectonic_container_images}"
 }
 
 module "secrets" {
