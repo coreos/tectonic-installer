@@ -28,7 +28,7 @@ resource "azurerm_virtual_machine" "etcd_node" {
   }
 
   os_profile {
-    computer_name  = "etcd-${count.index}"
+    computer_name  = "${var.const_internal_node_names[count.index]}"
     admin_username = "core"
     admin_password = ""
     custom_data    = "${base64encode("${data.ignition_config.etcd.*.rendered[count.index]}")}"
@@ -49,6 +49,7 @@ resource "random_id" "storage" {
 }
 
 resource "azurerm_storage_account" "etcd_storage" {
+  count               = "${var.etcd_count > 0 ? 1 : 0}"
   name                = "etcd${random_id.storage.hex}"
   resource_group_name = "${var.resource_group_name}"
   location            = "${var.location}"
@@ -56,6 +57,7 @@ resource "azurerm_storage_account" "etcd_storage" {
 }
 
 resource "azurerm_storage_container" "etcd_storage_container" {
+  count                 = "${var.etcd_count > 0 ? 1 : 0}"
   name                  = "etcd-storage-container"
   resource_group_name   = "${var.resource_group_name}"
   storage_account_name  = "${azurerm_storage_account.etcd_storage.name}"

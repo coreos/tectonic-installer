@@ -41,13 +41,15 @@ variable "network_interface_ids" {
   type = "list"
 }
 
-variable "endpoints" {
-  type = "list"
-}
-
 variable "versions" {
   description = "(internal) Versions of the components to use"
   type        = "map"
+}
+
+variable "const_internal_node_names" {
+  type        = "list"
+  default     = ["etcd-0", "etcd-1", "etcd-2", "etcd-3", "etcd-4"]
+  description = "(internal) The list of hostnames assigned to etcd member nodes."
 }
 
 variable "tls_enabled" {
