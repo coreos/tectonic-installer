@@ -85,11 +85,6 @@ variable "tectonic_service_disabled" {
   default     = false
 }
 
-variable "vnet_cidr_block" {
-  description = "Address range of VNet"
-  type        = "string"
-}
-
 variable "network_interface_ids" {
   type        = "list"
   description = "List of NICs to use for master VMs"

@@ -12,7 +12,7 @@ module "vnet" {
   location            = "${var.tectonic_azure_location}"
   resource_group_name = "${module.resource_group.name}"
   cluster_name        = "${var.tectonic_cluster_name}"
-  vnet_cidr_block     = "${var.tectonic_cluster_cidr}"
+  vnet_cidr_block     = "${var.tectonic_azure_vnet_cidr_block}"
 
   etcd_count                = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count}"
   master_count              = "${var.tectonic_master_count}"
@@ -71,7 +71,6 @@ module "masters" {
   public_ssh_key               = "${var.tectonic_azure_ssh_key}"
   virtual_network              = "${module.vnet.vnet_id}"
   network_interface_ids        = "${module.vnet.master_network_interface_ids}"
-  vnet_cidr_block              = "${var.tectonic_cluster_cidr}"
   kube_image_url               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
   kube_image_tag               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
   kubeconfig_content           = "${module.bootkube.kubeconfig}"
