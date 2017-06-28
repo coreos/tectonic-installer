@@ -130,7 +130,7 @@ Environment="RKT_RUN_ARGS=--volume etcd-ssl,kind=host,source=/etc/ssl/etcd \
   --mount volume=etcd-ssl,target=/etc/ssl/etcd"
 ExecStart=
 ExecStart=/usr/lib/coreos/etcd-wrapper \
-  --name=${element(var.endpoints, count.index)} \
+  --name=${var.const_internal_node_names[count.index]} \
   --advertise-client-urls=${var.tls_enabled ? "https" : "http"}://$${COREOS_AZURE_IPV4_DYNAMIC}:2379 \
   ${var.tls_enabled
       ? "--cert-file=/etc/ssl/etcd/client.crt --key-file=/etc/ssl/etcd/client.key --peer-cert-file=/etc/ssl/etcd/peer.crt --peer-key-file=/etc/ssl/etcd/peer.key --peer-trusted-ca-file=/etc/ssl/etcd/ca.crt -peer-client-cert-auth=true"
@@ -139,9 +139,11 @@ ExecStart=/usr/lib/coreos/etcd-wrapper \
   --listen-client-urls=${var.tls_enabled ? "https" : "http"}://0.0.0.0:2379 \
   --listen-peer-urls=${var.tls_enabled ? "https" : "http"}://0.0.0.0:2380 \
   --initial-cluster=${
-    var.tls_enabled
-      ? join(",",formatlist("%s=https://%s:2380",var.endpoints,var.endpoints))
-      : join(",",formatlist("%s=http://%s:2380",var.endpoints,var.endpoints))
+    join(",",
+      formatlist("%s=${var.tls_enabled ? "https" : "http"}://%s:2380", 
+      slice(var.const_internal_node_names, 0, var.etcd_count), 
+      slice(var.const_internal_node_names, 0, var.etcd_count)
+    ))
   }
 EOF
     },

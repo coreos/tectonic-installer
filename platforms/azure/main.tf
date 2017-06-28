@@ -45,7 +45,6 @@ module "etcd" {
   base_domain           = "${var.tectonic_base_domain}"
   cluster_name          = "${var.tectonic_cluster_name}"
   public_ssh_key        = "${var.tectonic_azure_ssh_key}"
-  endpoints             = "${module.vnet.etcd_endpoints}"
   network_interface_ids = "${module.vnet.etcd_network_interface_ids}"
   versions              = "${var.tectonic_versions}"
 
