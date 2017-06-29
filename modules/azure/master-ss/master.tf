@@ -64,6 +64,7 @@ resource "azurerm_virtual_machine_scale_set" "tectonic_masters" {
     os_type        = "linux"
     vhd_containers = ["${azurerm_storage_account.tectonic_master.primary_blob_endpoint}${azurerm_storage_container.tectonic_master.name}"]
   }
+  delete_os_disk_on_termination = "true"
 
   os_profile {
     computer_name_prefix = "tectonic-master-"

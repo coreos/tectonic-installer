@@ -71,6 +71,7 @@ resource "azurerm_virtual_machine" "tectonic_worker" {
     os_type       = "linux"
     vhd_uri       = "${azurerm_storage_account.tectonic_worker.primary_blob_endpoint}${azurerm_storage_container.tectonic_worker.name}/${var.cluster_name}-worker${count.index}.vhd"
   }
+  delete_os_disk_on_termination = "true"
 
   os_profile {
     computer_name  = "${var.cluster_name}-worker${count.index}"

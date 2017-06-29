@@ -68,6 +68,7 @@ resource "azurerm_virtual_machine_scale_set" "tectonic_workers" {
     os_type        = "linux"
     vhd_containers = ["${azurerm_storage_account.tectonic_worker.primary_blob_endpoint}${azurerm_storage_container.tectonic_worker.name}"]
   }
+  delete_os_disk_on_termination = "true"
 
   os_profile {
     computer_name_prefix = "tectonic-worker-"
