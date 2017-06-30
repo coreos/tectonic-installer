@@ -73,10 +73,6 @@ output "vpc_etcd_sg_id" {
   value = "${module.vpc.etcd_sg_id}"
 }
 
-output "vpc_etcd_sg_id" {
-  value = "${module.vpc.etcd_sg_id}"
-}
-
 output "vpc_master_sg_id" {
   value = "${module.vpc.master_sg_id}"
 }
