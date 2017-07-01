@@ -24,6 +24,7 @@ resource "aws_security_group" "api" {
 }
 
 resource "aws_security_group" "console" {
+  count  = "${var.vanilla_k8s ? 0 : 1}"
   vpc_id = "${data.aws_vpc.cluster_vpc.id}"
 
   tags = "${merge(map(

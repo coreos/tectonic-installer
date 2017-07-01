@@ -16,6 +16,7 @@ module "vpc" {
   cluster_id              = "${module.tectonic.cluster_id}"
   extra_tags              = "${var.tectonic_aws_extra_tags}"
   enable_etcd_sg          = "${!var.tectonic_experimental && length(compact(var.tectonic_etcd_servers)) == 0 ? 1 : 0}"
+  vanilla_k8s             = "${var.tectonic_vanilla_k8s}"
 
   # VPC layout settings.
   #
@@ -127,6 +128,7 @@ module "masters" {
   extra_tags                   = "${var.tectonic_aws_extra_tags}"
   autoscaling_group_extra_tags = "${var.tectonic_autoscaling_group_extra_tags}"
   custom_dns_name              = "${var.tectonic_dns_name}"
+  vanilla_k8s                  = "${var.tectonic_vanilla_k8s}"
 
   root_volume_type = "${var.tectonic_aws_master_root_volume_type}"
   root_volume_size = "${var.tectonic_aws_master_root_volume_size}"

@@ -56,3 +56,8 @@ variable "master_azs" {
 variable "worker_azs" {
   type = "list"
 }
+
+variable "vanilla_k8s" {
+  description = "If true, no infrastructure will be created to access tectonic services on any nodes."
+  default     = false
+}

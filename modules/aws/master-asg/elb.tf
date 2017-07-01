@@ -89,6 +89,7 @@ resource "aws_route53_record" "api-external" {
 }
 
 resource "aws_elb" "console" {
+  count           = "${var.vanilla_k8s ? 0 : 1}"
   name            = "${var.custom_dns_name == "" ? var.cluster_name : var.custom_dns_name}-con"
   subnets         = ["${var.subnet_ids}"]
   internal        = "${var.public_vpc ? false : true}"
@@ -126,7 +127,7 @@ resource "aws_elb" "console" {
 }
 
 resource "aws_route53_record" "ingress-public" {
-  count   = "${var.public_vpc}"
+  count   = "${var.vanilla_k8s ? 0 : var.public_vpc}"
   zone_id = "${var.external_zone_id}"
   name    = "${var.custom_dns_name == "" ? var.cluster_name : var.custom_dns_name}.${var.base_domain}"
   type    = "A"
@@ -139,6 +140,7 @@ resource "aws_route53_record" "ingress-public" {
 }
 
 resource "aws_route53_record" "ingress-private" {
+  count   = "${var.vanilla_k8s ? 0 : 1}"
   zone_id = "${var.internal_zone_id}"
   name    = "${var.custom_dns_name == "" ? var.cluster_name : var.custom_dns_name}.${var.base_domain}"
   type    = "A"
