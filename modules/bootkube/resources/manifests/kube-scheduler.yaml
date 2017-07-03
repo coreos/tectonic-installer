@@ -10,6 +10,10 @@ metadata:
     scheduler.alpha.kubernetes.io/critical-pod: ""
 spec:
   replicas: ${master_count}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
   template:
     metadata:
       labels:
