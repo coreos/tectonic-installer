@@ -8,6 +8,12 @@ module "etcd" {
   base_domain        = "${var.tectonic_base_domain}"
   external_endpoints = ["${compact(var.tectonic_etcd_servers)}"]
 
+  tls_ca_crt_pem     = "${module.bootkube.etcd_ca_crt_pem}"
+  tls_server_crt_pem = "${module.bootkube.etcd_server_crt_pem}"
+  tls_server_key_pem = "${module.bootkube.etcd_server_key_pem}"
+  tls_peer_key_pem   = "${module.bootkube.etcd_peer_crt_pem}"
+  tls_peer_crt_pem   = "${module.bootkube.etcd_peer_key_pem}"
+
   hostname   = "${var.tectonic_vmware_etcd_hostnames}"
   dns_server = "${var.tectonic_vmware_node_dns}"
   ip_address = "${var.tectonic_vmware_etcd_ip}"
@@ -41,8 +47,8 @@ module "masters" {
   bootkube_service          = "${module.bootkube.systemd_service}"
   tectonic_service          = "${module.tectonic.systemd_service}"
   tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
-  kube_image_url            = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
-  kube_image_tag            = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+  kube_image_url            = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
+  kube_image_tag            = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
 
   vmware_datacenter       = "${var.tectonic_vmware_datacenter}"
   vmware_cluster          = "${var.tectonic_vmware_cluster}"
@@ -54,6 +60,8 @@ module "masters" {
   vm_disk_template_folder = "${var.tectonic_vmware_vm_template_folder}"
   vmware_folder           = "${vsphere_folder.tectonic_vsphere_folder.path}"
   kubeconfig              = "${module.bootkube.kubeconfig}"
+  private_key             = "${var.tectonic_vmware_ssh_private_key_path}"
+  image_re                = "${var.tectonic_image_re}"
 }
 
 module "workers" {
@@ -72,8 +80,8 @@ module "workers" {
   container_images    = "${var.tectonic_container_images}"
   bootkube_service    = ""
   tectonic_service    = ""
-  kube_image_url      = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
-  kube_image_tag      = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+  kube_image_url      = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
+  kube_image_tag      = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
 
   vmware_datacenter       = "${var.tectonic_vmware_datacenter}"
   vmware_cluster          = "${var.tectonic_vmware_cluster}"
@@ -85,4 +93,6 @@ module "workers" {
   vm_disk_template_folder = "${var.tectonic_vmware_vm_template_folder}"
   vmware_folder           = "${vsphere_folder.tectonic_vsphere_folder.path}"
   kubeconfig              = "${module.bootkube.kubeconfig}"
+  private_key             = "${var.tectonic_vmware_ssh_private_key_path}"
+  image_re                = "${var.tectonic_image_re}"
 }
