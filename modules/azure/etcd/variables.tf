@@ -46,6 +46,10 @@ variable "versions" {
   type        = "map"
 }
 
+variable "cl_channel" {
+  type = "string"
+}
+
 variable "const_internal_node_names" {
   type        = "list"
   default     = ["etcd-0", "etcd-1", "etcd-2", "etcd-3", "etcd-4"]

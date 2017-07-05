@@ -94,3 +94,7 @@ variable "versions" {
   description = "(internal) Versions of the components to use"
   type        = "map"
 }
+
+variable "cl_channel" {
+  type = "string"
+}
