@@ -7,7 +7,7 @@ resource "azurerm_network_interface" "etcd_nic" {
 
   ip_configuration {
     name                          = "tectonic_etcd_configuration"
-    subnet_id                     = "${var.external_vnet_name == "" ?  join(" ", azurerm_subnet.master_subnet.*.id) : var.external_master_subnet_id }"
+    subnet_id                     = "${var.external_master_subnet_id == "" ?  join(" ", azurerm_subnet.master_subnet.*.id) : var.external_master_subnet_id }"
     private_ip_address_allocation = "dynamic"
   }
 }

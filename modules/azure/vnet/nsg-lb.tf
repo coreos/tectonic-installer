@@ -1,5 +1,5 @@
 resource "azurerm_network_security_rule" "alb_probe" {
-  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                        = "${var.cluster_name}-alb_probe"
   priority                    = 295
   direction                   = "Inbound"
@@ -9,19 +9,19 @@ resource "azurerm_network_security_rule" "alb_probe" {
   destination_port_range      = "*"
   source_address_prefix       = "AzureLoadBalancer"
   destination_address_prefix  = "*"
-  resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
+  resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.api.name}"
 }
 
 resource "azurerm_network_security_group" "api" {
-  count               = "${var.external_nsg_api == "" ? 1 : 0}"
+  count               = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                = "${var.cluster_name}-api"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
 }
 
 resource "azurerm_network_security_rule" "api_egress" {
-  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                        = "${var.cluster_name}-api_egress"
   priority                    = 1990
   direction                   = "Outbound"
@@ -31,12 +31,12 @@ resource "azurerm_network_security_rule" "api_egress" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
+  resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.api.name}"
 }
 
 resource "azurerm_network_security_rule" "api_ingress_https" {
-  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                        = "${var.cluster_name}-api_ingress_https"
   priority                    = 300
   direction                   = "Inbound"
@@ -46,19 +46,19 @@ resource "azurerm_network_security_rule" "api_ingress_https" {
   destination_port_range      = "443"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
+  resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.api.name}"
 }
 
 resource "azurerm_network_security_group" "console" {
-  count               = "${var.external_nsg_api == "" ? 1 : 0}"
+  count               = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                = "${var.cluster_name}-console"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
 }
 
 resource "azurerm_network_security_rule" "console_egress" {
-  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                        = "${var.cluster_name}-console_egress"
   priority                    = 1995
   direction                   = "Outbound"
@@ -68,12 +68,12 @@ resource "azurerm_network_security_rule" "console_egress" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
+  resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.console.name}"
 }
 
 resource "azurerm_network_security_rule" "console_ingress_https" {
-  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                        = "${var.cluster_name}-console_ingress_https"
   priority                    = 305
   direction                   = "Inbound"
@@ -83,12 +83,12 @@ resource "azurerm_network_security_rule" "console_ingress_https" {
   destination_port_range      = "443"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
+  resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.console.name}"
 }
 
 resource "azurerm_network_security_rule" "console_ingress_http" {
-  count                       = "${var.external_nsg_api == "" ? 1 : 0}"
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                        = "${var.cluster_name}-console_ingress_http"
   priority                    = 310
   direction                   = "Inbound"
@@ -98,6 +98,6 @@ resource "azurerm_network_security_rule" "console_ingress_http" {
   destination_port_range      = "80"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "${var.external_resource_group == "" ? var.resource_group_name : var.external_resource_group}"
+  resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.console.name}"
 }
