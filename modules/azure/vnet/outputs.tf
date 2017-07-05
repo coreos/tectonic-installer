@@ -39,39 +39,43 @@ output "etcd_network_interface_ids" {
 }
 
 output "etcd_endpoints" {
-  value = ["${azurerm_network_interface.etcd_nic.*.private_ip_address}"]
+  value = "${azurerm_network_interface.etcd_nic.*.private_ip_address}"
 }
 
 output "master_network_interface_ids" {
   value = ["${azurerm_network_interface.tectonic_master.*.id}"]
 }
 
-output "master_ip_addresses" {
-  value = ["${azurerm_network_interface.tectonic_master.*.private_ip_address}"]
-}
-
 output "worker_network_interface_ids" {
   value = ["${azurerm_network_interface.tectonic_worker.*.id}"]
 }
 
-output "ip_address" {
+output "master_private_ip_addresses" {
+  value = ["${azurerm_network_interface.tectonic_master.*.private_ip_address}"]
+}
+
+output "worker_private_ip_addresses" {
+  value = ["${azurerm_network_interface.tectonic_worker.*.private_ip_address}"]
+}
+
+output "api_ip_addresses" {
   value = ["${azurerm_public_ip.tectonic_api_ip.ip_address}"]
 }
 
-output "console_ip_address" {
-  value = "${azurerm_public_ip.tectonic_console_ip.ip_address}"
+output "console_ip_addresses" {
+  value = ["${azurerm_public_ip.tectonic_console_ip.ip_address}"]
 }
 
 output "ingress_external_fqdn" {
-  value = "${azurerm_public_ip.tectonic_console_ip.fqdn}"
+  value = "${var.base_domain == "" ? azurerm_public_ip.tectonic_console_ip.fqdn : "${var.cluster_name}.${var.base_domain}"}"
 }
 
 output "ingress_internal_fqdn" {
-  value = "${azurerm_public_ip.tectonic_console_ip.fqdn}"
+  value = "${var.base_domain == "" ? azurerm_public_ip.tectonic_console_ip.fqdn : "${var.cluster_name}.${var.base_domain}"}"
 }
 
 output "api_external_fqdn" {
-  value = "${azurerm_public_ip.tectonic_api_ip.fqdn}"
+  value = "${var.base_domain == "" ? azurerm_public_ip.tectonic_api_ip.fqdn : "${var.cluster_name}-api.${var.base_domain}"}"
 }
 
 output "api_internal_fqdn" {

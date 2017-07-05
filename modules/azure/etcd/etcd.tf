@@ -29,7 +29,7 @@ resource "azurerm_virtual_machine" "etcd_node" {
   }
 
   os_profile {
-    computer_name  = "${var.const_internal_node_names[count.index]}"
+    computer_name  = "${var.cluster_name}-etcd-${count.index}"
     admin_username = "core"
     admin_password = ""
     custom_data    = "${base64encode("${data.ignition_config.etcd.*.rendered[count.index]}")}"

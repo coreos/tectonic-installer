@@ -55,7 +55,7 @@ resource "azurerm_virtual_machine" "tectonic_worker" {
     vhd_uri       = "${azurerm_storage_account.tectonic_worker.primary_blob_endpoint}${azurerm_storage_container.tectonic_worker.name}/${var.cluster_name}-worker${count.index}.vhd"
   }
   os_profile {
-    computer_name  = "${var.cluster_name}-worker${count.index}"
+    computer_name  = "${var.cluster_name}-worker-${count.index}"
     admin_username = "core"
     admin_password = ""
     custom_data    = "${base64encode("${data.ignition_config.worker.rendered}")}"
