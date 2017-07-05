@@ -143,7 +143,9 @@ Environment="RKT_RUN_ARGS=--volume etcd-ssl,kind=host,source=/etc/ssl/etcd \
   --mount volume=etcd-ssl,target=/etc/ssl/etcd"
 ExecStart=
 ExecStart=/usr/lib/coreos/etcd-wrapper \
-  --name=${var.const_internal_node_names[count.index]} \
+  --name=${element(split(";", var.base_domain == "" ? 
+          join(";", slice(formatlist("${var.cluster_name}-%s", var.const_internal_node_names), 0, var.etcd_count)) : 
+          join(";", formatlist("%s.${var.base_domain}", slice(formatlist("${var.cluster_name}-%s", var.const_internal_node_names), 0, var.etcd_count)))), count.index)} \
   --advertise-client-urls=${var.tls_enabled ? "https" : "http"}://$${COREOS_AZURE_IPV4_DYNAMIC}:2379 \
   ${var.tls_enabled
       ? "--cert-file=/etc/ssl/etcd/client.crt --key-file=/etc/ssl/etcd/client.key --peer-cert-file=/etc/ssl/etcd/peer.crt --peer-key-file=/etc/ssl/etcd/peer.key --peer-trusted-ca-file=/etc/ssl/etcd/ca.crt -peer-client-cert-auth=true"
@@ -154,11 +156,17 @@ ExecStart=/usr/lib/coreos/etcd-wrapper \
   --initial-cluster=${
     join(",",
       formatlist("%s=${var.tls_enabled ? "https" : "http"}://%s:2380", 
-      slice(var.const_internal_node_names, 0, var.etcd_count), 
-      slice(var.const_internal_node_names, 0, var.etcd_count)
+        split(";", var.base_domain == "" ? 
+          join(";", slice(formatlist("${var.cluster_name}-%s", var.const_internal_node_names), 0, var.etcd_count)) : 
+          join(";", formatlist("%s.${var.base_domain}", slice(formatlist("${var.cluster_name}-%s", var.const_internal_node_names), 0, var.etcd_count)))), 
+        split(";", var.base_domain == "" ? 
+          join(";", slice(formatlist("${var.cluster_name}-%s", var.const_internal_node_names), 0, var.etcd_count)) : 
+          join(";", formatlist("%s.${var.base_domain}", slice(formatlist("${var.cluster_name}-%s", var.const_internal_node_names), 0, var.etcd_count))))
     ))
   }
 EOF
+
+      // The abomination of an expression above will go away once we refactor ignition rendering into it's own module.
     },
   ]
 }

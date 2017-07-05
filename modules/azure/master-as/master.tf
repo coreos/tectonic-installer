@@ -52,7 +52,7 @@ resource "azurerm_virtual_machine" "tectonic_master" {
   }
 
   os_profile {
-    computer_name  = "${var.cluster_name}-master${count.index}"
+    computer_name  = "${var.cluster_name}-master-${count.index}"
     admin_username = "core"
     admin_password = ""
 

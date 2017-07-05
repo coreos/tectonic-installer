@@ -2,7 +2,7 @@ module "bootkube" {
   source         = "../../modules/bootkube"
   cloud_provider = ""
 
-  kube_apiserver_url = "https://${module.vnet.api_internal_fqdn}:443"
+  kube_apiserver_url = "https://${module.vnet.api_external_fqdn}:443"
   oidc_issuer_url    = "https://${module.vnet.ingress_internal_fqdn}/identity"
 
   # Platform-independent variables wiring, do not modify.
@@ -24,11 +24,11 @@ module "bootkube" {
   oidc_client_id      = "tectonic-kubectl"
 
   etcd_endpoints      = ["${module.etcd.node_names}"]
+  etcd_cert_dns_names = ["${module.etcd.node_names}"]
   etcd_ca_cert        = "${var.tectonic_etcd_ca_cert_path}"
   etcd_client_cert    = "${var.tectonic_etcd_client_cert_path}"
   etcd_client_key     = "${var.tectonic_etcd_client_key_path}"
   etcd_tls_enabled    = "${var.tectonic_etcd_tls_enabled}"
-  etcd_cert_dns_names = ["${module.etcd.node_names}"]
 
   experimental_enabled = "${var.tectonic_experimental}"
 
@@ -40,7 +40,7 @@ module "tectonic" {
   platform = "azure"
 
   base_address       = "${module.vnet.ingress_internal_fqdn}"
-  kube_apiserver_url = "https://${module.vnet.api_internal_fqdn}:443"
+  kube_apiserver_url = "https://${module.vnet.api_external_fqdn}:443"
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"

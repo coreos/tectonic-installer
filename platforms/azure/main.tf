@@ -108,13 +108,19 @@ module "workers" {
 module "dns" {
   source = "../../modules/azure/dns"
 
-  master_ip_addresses = "${module.vnet.master_ip_addresses}"
-  console_ip_address  = "${module.vnet.console_ip_address}"
+  etcd_count   = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count}"
+  master_count = "${var.tectonic_master_count}"
+  worker_count = "${var.tectonic_worker_count}"
+
+  etcd_ip_addresses    = "${module.vnet.etcd_endpoints}"
+  master_ip_addresses  = "${module.vnet.master_private_ip_addresses}"
+  worker_ip_addresses  = "${module.vnet.worker_private_ip_addresses}"
+  api_ip_addresses     = "${module.vnet.api_ip_addresses}"
+  console_ip_addresses = "${module.vnet.console_ip_addresses}"
 
   base_domain  = "${var.tectonic_base_domain}"
   cluster_name = "${var.tectonic_cluster_name}"
 
-  location            = "${var.tectonic_azure_location}"
-  resource_group_name = "${var.tectonic_azure_dns_resource_group == "" ? module.resource_group.name : var.tectonic_azure_dns_resource_group}"
-  external_dns_zone   = "${var.tectonic_azure_external_dns_zone}"
+  location             = "${var.tectonic_azure_location}"
+  external_dns_zone_id = "${var.tectonic_azure_external_dns_zone_id}"
 }
