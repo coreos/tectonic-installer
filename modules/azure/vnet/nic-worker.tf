@@ -7,6 +7,6 @@ resource "azurerm_network_interface" "tectonic_worker" {
   ip_configuration {
     private_ip_address_allocation = "dynamic"
     name                          = "${var.cluster_name}-WorkerIPConfiguration"
-    subnet_id                     = "${azurerm_subnet.worker_subnet.id}"
+    subnet_id                     = "${var.external_worker_subnet_id == "" ? join("",azurerm_subnet.worker_subnet.*.id) : var.external_worker_subnet_id}"
   }
 }

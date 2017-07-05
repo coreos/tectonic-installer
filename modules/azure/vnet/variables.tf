@@ -28,7 +28,7 @@ variable "location" {
   type = "string"
 }
 
-variable "external_vnet_name" {
+variable "external_vnet_id" {
   type    = "string"
   default = ""
 }
@@ -39,6 +39,26 @@ variable "external_master_subnet_id" {
 }
 
 variable "external_worker_subnet_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "external_nsg_etcd_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "external_nsg_api_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "external_nsg_master_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "external_nsg_worker_id" {
   type    = "string"
   default = ""
 }
@@ -69,30 +89,6 @@ variable "ssh_network_internal" {
 }
 
 variable "ssh_network_external" {
-  type    = "string"
-  default = ""
-}
-
-variable "external_resource_group" {
-  type = "string"
-}
-
-variable "external_nsg_etcd" {
-  type    = "string"
-  default = ""
-}
-
-variable "external_nsg_api" {
-  type    = "string"
-  default = ""
-}
-
-variable "external_nsg_master" {
-  type    = "string"
-  default = ""
-}
-
-variable "external_nsg_worker" {
   type    = "string"
   default = ""
 }

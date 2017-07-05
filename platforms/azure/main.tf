@@ -1,9 +1,9 @@
 module "resource_group" {
   source = "../../modules/azure/resource-group"
 
-  external_rsg_name       = "${var.tectonic_azure_external_rsg_name}"
-  tectonic_azure_location = "${var.tectonic_azure_location}"
-  cluster_name            = "${var.tectonic_cluster_name}"
+  external_rsg_id = "${var.tectonic_azure_external_resource_group}"
+  azure_location  = "${var.tectonic_azure_location}"
+  cluster_name    = "${var.tectonic_cluster_name}"
 }
 
 module "vnet" {
@@ -12,24 +12,25 @@ module "vnet" {
   location            = "${var.tectonic_azure_location}"
   resource_group_name = "${module.resource_group.name}"
   cluster_name        = "${var.tectonic_cluster_name}"
+  base_domain         = "${var.tectonic_base_domain}"
   vnet_cidr_block     = "${var.tectonic_azure_vnet_cidr_block}"
 
-  etcd_count                = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count}"
-  master_count              = "${var.tectonic_master_count}"
-  worker_count              = "${var.tectonic_worker_count}"
-  etcd_cidr                 = "${module.vnet.etcd_cidr}"
-  master_cidr               = "${module.vnet.master_cidr}"
-  worker_cidr               = "${module.vnet.worker_cidr}"
-  external_vnet_name        = "${var.tectonic_azure_external_vnet_name}"
+  etcd_count           = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count}"
+  master_count         = "${var.tectonic_master_count}"
+  worker_count         = "${var.tectonic_worker_count}"
+  etcd_cidr            = "${module.vnet.etcd_cidr}"
+  master_cidr          = "${module.vnet.master_cidr}"
+  worker_cidr          = "${module.vnet.worker_cidr}"
+  ssh_network_internal = "${var.tectonic_azure_ssh_network_internal}"
+  ssh_network_external = "${var.tectonic_azure_ssh_network_external}"
+
+  external_vnet_id          = "${var.tectonic_azure_external_vnet_id}"
   external_master_subnet_id = "${var.tectonic_azure_external_master_subnet_id}"
   external_worker_subnet_id = "${var.tectonic_azure_external_worker_subnet_id}"
-  ssh_network_internal      = "${var.tectonic_azure_ssh_network_internal}"
-  ssh_network_external      = "${var.tectonic_azure_ssh_network_external}"
-  external_resource_group   = "${var.tectonic_azure_external_resource_group}"
-  external_nsg_etcd         = "${var.tectonic_azure_external_nsg_etcd}"
-  external_nsg_api          = "${var.tectonic_azure_external_nsg_api}"
-  external_nsg_master       = "${var.tectonic_azure_external_nsg_master}"
-  external_nsg_worker       = "${var.tectonic_azure_external_nsg_worker}"
+  external_nsg_etcd_id      = "${var.tectonic_azure_external_nsg_etcd_id}"
+  external_nsg_api_id       = "${var.tectonic_azure_external_nsg_api_id}"
+  external_nsg_master_id    = "${var.tectonic_azure_external_nsg_master_id}"
+  external_nsg_worker_id    = "${var.tectonic_azure_external_nsg_worker_id}"
 }
 
 module "etcd" {

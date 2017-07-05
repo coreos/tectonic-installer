@@ -94,18 +94,6 @@ variable "tectonic_azure_external_vnet_id" {
   default     = ""
 }
 
-variable "tectonic_azure_external_rsg_name" {
-  type        = "string"
-  default     = ""
-  description = "Pre-existing resource group to use as parent for cluster resources."
-}
-
-variable "tectonic_azure_external_vnet_name" {
-  type        = "string"
-  default     = ""
-  description = "Pre-existing virtual network to create cluster into."
-}
-
 variable "tectonic_azure_external_master_subnet_id" {
   type = "string"
 
@@ -144,7 +132,7 @@ EOF
   default = ""
 }
 
-variable "tectonic_azure_external_nsg_etcd" {
+variable "tectonic_azure_external_nsg_etcd_id" {
   type = "string"
 
   description = <<EOF
@@ -155,7 +143,7 @@ EOF
   default = ""
 }
 
-variable "tectonic_azure_external_nsg_api" {
+variable "tectonic_azure_external_nsg_api_id" {
   type = "string"
 
   description = <<EOF
@@ -167,7 +155,7 @@ EOF
   default = ""
 }
 
-variable "tectonic_azure_external_nsg_master" {
+variable "tectonic_azure_external_nsg_master_id" {
   type = "string"
 
   description = <<EOF
@@ -178,7 +166,7 @@ EOF
   default = ""
 }
 
-variable "tectonic_azure_external_nsg_worker" {
+variable "tectonic_azure_external_nsg_worker_id" {
   type = "string"
 
   description = <<EOF
@@ -189,10 +177,10 @@ EOF
   default = ""
 }
 
-variable "tectonic_azure_external_dns_zone" {
+variable "tectonic_azure_external_dns_zone_id" {
   description = <<EOF
 (optional) The name of the external Azure DNS zone used for endpoint FQDNs.
 EOF
 
-  default = false
+  default = ""
 }
