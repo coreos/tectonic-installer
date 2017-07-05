@@ -39,7 +39,7 @@ resource "azurerm_virtual_machine" "tectonic_master" {
   storage_image_reference {
     publisher = "CoreOS"
     offer     = "CoreOS"
-    sku       = "Stable"
+    sku       = "${var.cl_channel}"
     version   = "${var.versions["container_linux"]}"
   }
 

@@ -48,6 +48,7 @@ module "etcd" {
   public_ssh_key        = "${var.tectonic_azure_ssh_key}"
   network_interface_ids = "${module.vnet.etcd_network_interface_ids}"
   versions              = "${var.tectonic_versions}"
+  cl_channel            = "${var.tectonic_cl_channel}"
 
   tls_enabled        = "${var.tectonic_etcd_tls_enabled}"
   tls_ca_crt_pem     = "${module.bootkube.etcd_ca_crt_pem}"
@@ -82,6 +83,7 @@ module "masters" {
   tectonic_service             = "${module.tectonic.systemd_service}"
   tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
   versions                     = "${var.tectonic_versions}"
+  cl_channel                   = "${var.tectonic_cl_channel}"
 }
 
 module "workers" {
@@ -104,6 +106,7 @@ module "workers" {
   cloud_provider               = ""
   kubelet_node_label           = "node-role.kubernetes.io/node"
   versions                     = "${var.tectonic_versions}"
+  cl_channel                   = "${var.tectonic_cl_channel}"
 }
 
 module "dns" {
