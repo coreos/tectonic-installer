@@ -42,7 +42,7 @@ module "etcd" {
   storage_account_type = "${var.tectonic_azure_etcd_storage_account_type}"
   container_image      = "${var.tectonic_container_images["etcd"]}"
 
-  etcd_count            = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count}"
+  etcd_count            = "${var.tectonic_experimental ? 0 : min(var.tectonic_etcd_count, 1)}"
   base_domain           = "${var.tectonic_base_domain}"
   cluster_name          = "${var.tectonic_cluster_name}"
   public_ssh_key        = "${var.tectonic_azure_ssh_key}"
