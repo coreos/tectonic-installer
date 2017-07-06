@@ -109,9 +109,11 @@ module "tectonic" {
 module "flannel-vxlan" {
   source = "../../modules/net/flannel-vxlan"
 
-  flannel_image     = "${var.tectonic_container_images["flannel"]}"
-  flannel_cni_image = "${var.tectonic_container_images["flannel_cni"]}"
-  cluster_cidr      = "${var.tectonic_cluster_cidr}"
+  flannel_image        = "${var.tectonic_container_images["flannel"]}"
+  flannel_cni_image    = "${var.tectonic_container_images["flannel_cni"]}"
+  flannel_backend_type = "${var.tectonic_flannel_backend_type}"
+  flannel_backend_port = "${var.tectonic_flannel_backend_port}"
+  cluster_cidr         = "${var.tectonic_cluster_cidr}"
 
   bootkube_id = "${module.bootkube.id}"
 }

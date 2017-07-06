@@ -29,6 +29,8 @@ This document gives an overview of variables used in all platforms of the Tecton
 | tectonic_etcd_servers | (optional) List of external etcd v3 servers to connect with (hostnames/IPs only). Needs to be set if using an external etcd cluster.<br><br>Example: `["etcd1", "etcd2", "etcd3"]` | list | `<list>` |
 | tectonic_etcd_tls_enabled | (optional) If set to `true`, TLS secure communication for self-provisioned etcd. will be used.<br><br>Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the experimental self-hosted etcd always uses TLS. | string | `true` |
 | tectonic_experimental | If set to true, experimental Tectonic assets are being deployed. | string | `false` |
+| tectonic_flannel_backend_port | (optional) The port of the backend protocol type used for Flannel. The current supported options are '4789' for VXLAN, or '8285' for UDP, and it is suggested that port used matches the protocol set in `tectonic_flannel_backend_type`. | string | `4789` |
+| tectonic_flannel_backend_type | (optional) The backend protocol type to use for Flannel. The current supported options are 'vxlan' and 'udp'. | string | `vxlan` |
 | tectonic_image_re | (internal) Regular expression used to extract repo and tag components | string | `/^([^/]+/[^/]+/[^/]+):(.*)$/` |
 | tectonic_license_path | The path to the tectonic licence file.<br><br>Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`. | string | `` |
 | tectonic_master_count | The number of master nodes to be created. This applies only to cloud platforms. | string | `1` |

@@ -95,6 +95,27 @@ variable "tectonic_cluster_cidr" {
   description = "This declares the IP range to assign Kubernetes pod IPs in CIDR notation."
 }
 
+variable "tectonic_flannel_backend_type" {
+  type    = "string"
+  default = "vxlan"
+
+  description = <<EOF
+(optional) The backend protocol type to use for Flannel. The current supported options
+are 'vxlan' and 'udp'.
+EOF
+}
+
+variable "tectonic_flannel_backend_port" {
+  type    = "string"
+  default = "4789"
+
+  description = <<EOF
+(optional) The port of the backend protocol type used for Flannel. The current supported options
+are '4789' for VXLAN, or '8285' for UDP, and it is suggested that port used
+matches the protocol set in `tectonic_flannel_backend_type`.
+EOF
+}
+
 variable "tectonic_master_count" {
   type    = "string"
   default = "1"
