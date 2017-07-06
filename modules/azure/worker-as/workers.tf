@@ -93,6 +93,6 @@ resource "azurerm_virtual_machine" "tectonic_worker" {
   }
 
   lifecycle {
-    ignore_changes = [ "storage_data_disk" ]
+    ignore_changes = ["storage_data_disk"]
   }
 }
