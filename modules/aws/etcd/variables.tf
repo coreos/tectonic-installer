@@ -18,6 +18,10 @@ variable "container_linux_version" {
   type = "string"
 }
 
+variable "custom_dns_name" {
+  type = "string"
+}
+
 variable "dns_zone_id" {
   type = "string"
 }

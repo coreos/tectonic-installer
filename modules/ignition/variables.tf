@@ -111,3 +111,7 @@ variable "metadata_provider" {
 variable "use_metadata" {
   default = true
 }
+
+variable "custom_dns_name" {
+  type = "string"
+}

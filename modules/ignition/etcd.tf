@@ -22,7 +22,7 @@ EOF
 
 data "template_file" "etcd_names" {
   count    = "${var.etcd_count}"
-  template = "${var.cluster_name}-etcd-${count.index}${var.base_domain == "" ? "" : ".${var.base_domain}"}"
+  template = "etcd-${count.index}.${var.custom_dns_name}${var.base_domain == "" ? "" : ".${var.base_domain}"}"
 }
 
 data "template_file" "advertise_client_urls" {
