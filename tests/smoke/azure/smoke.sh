@@ -52,7 +52,7 @@ common() {
 
     # Set ssh key injected in Jenkinsfile as TF_VAR
     export TF_VAR_tectonic_azure_ssh_key
-    TF_VAR_tectonic_azure_ssh_key=$(realpath ~/.ssh/azure-smoke-ssh-key)
+    TF_VAR_tectonic_azure_ssh_key=$(realpath ~/.ssh/id_rsa)
 
     # Create local config
     make localconfig
