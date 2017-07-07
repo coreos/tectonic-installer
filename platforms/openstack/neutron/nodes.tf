@@ -1,5 +1,10 @@
 # etcd
 
+resource "openstack_compute_servergroup_v2" "etcd_group" {
+  name     = "${var.tectonic_cluster_name}-etcd-group"
+  policies = ["anti-affinity"]
+}
+
 resource "openstack_compute_instance_v2" "etcd_node" {
   count     = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count}"
   name      = "${var.tectonic_cluster_name}_etcd_node_${count.index}"
@@ -14,11 +19,20 @@ resource "openstack_compute_instance_v2" "etcd_node" {
     port = "${openstack_networking_port_v2.etcd.*.id[count.index]}"
   }
 
+  scheduler_hints {
+    group = "${openstack_compute_servergroup_v2.etcd_group.id}"
+  }
+
   user_data    = "${module.etcd.user_data[count.index]}"
   config_drive = false
 }
 
 # master
+
+resource "openstack_compute_servergroup_v2" "master_group" {
+  name     = "${var.tectonic_cluster_name}-master-group"
+  policies = ["anti-affinity"]
+}
 
 resource "openstack_compute_instance_v2" "master_node" {
   count     = "${var.tectonic_master_count}"
@@ -34,6 +48,10 @@ resource "openstack_compute_instance_v2" "master_node" {
     port = "${openstack_networking_port_v2.master.*.id[count.index]}"
   }
 
+  scheduler_hints {
+    group = "${openstack_compute_servergroup_v2.master_group.id}"
+  }
+
   user_data    = "${module.master_nodes.user_data[count.index]}"
   config_drive = false
 }
@@ -47,6 +65,11 @@ resource "openstack_compute_floatingip_associate_v2" "master" {
 
 # worker
 
+resource "openstack_compute_servergroup_v2" "worker_group" {
+  name     = "${var.tectonic_cluster_name}-worker-group"
+  policies = ["anti-affinity"]
+}
+
 resource "openstack_compute_instance_v2" "worker_node" {
   count     = "${var.tectonic_worker_count}"
   name      = "${var.tectonic_cluster_name}-worker-${count.index}"
@@ -59,6 +82,10 @@ resource "openstack_compute_instance_v2" "worker_node" {
 
   network {
     port = "${openstack_networking_port_v2.worker.*.id[count.index]}"
+  }
+
+  scheduler_hints {
+    group = "${openstack_compute_servergroup_v2.worker_group.id}"
   }
 
   user_data    = "${module.worker_nodes.user_data[count.index]}"
