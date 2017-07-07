@@ -212,7 +212,7 @@ pipeline {
                     unstash 'smoke'
                     script {
                       try {
-                        timeout(30) {
+                        timeout(45) {
                           sh """#!/bin/bash -ex
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars
@@ -245,9 +245,10 @@ pipeline {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     checkout scm
                     unstash 'installer'
+                    unstash 'smoke'
                     script {
                       try {
-                        timeout(30) {
+                        timeout(45) {
                           sh """#!/bin/bash -ex
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-exper.tfvars
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-exper.tfvars
@@ -280,9 +281,10 @@ pipeline {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     checkout scm
                     unstash 'installer'
+                    unstash 'smoke'
                     script {
                       try {
-                        timeout(30) {
+                        timeout(45) {
                           sh """#!/bin/bash -ex
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-dns.tfvars
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-dns.tfvars
@@ -318,9 +320,10 @@ pipeline {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     checkout scm
                     unstash 'installer'
+                    unstash 'smoke'
                     script {
                       try {
-                        timeout(30) {
+                        timeout(45) {
                           sh """#!/bin/bash -ex
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern.tfvars
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern.tfvars
@@ -354,9 +357,10 @@ pipeline {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     checkout scm
                     unstash 'installer'
+                    unstash 'smoke'
                     script {
                       try {
-                        timeout(30) {
+                        timeout(45) {
                           sh """#!/bin/bash -ex
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern-exper.tfvars
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern-exper.tfvars
@@ -389,9 +393,10 @@ pipeline {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     checkout scm
                     unstash 'installer'
+                    unstash 'smoke'
                     script {
                       try {
-                        timeout(30) {
+                        timeout(45) {
                           sh """#!/bin/bash -ex
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-example.tfvars
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-example.tfvars
