@@ -200,7 +200,7 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
-                  sshagent(['azure-smoke-test-ssh-key']) {
+                  sshagent(['azure-smoke-ssh-key']) {
                     checkout scm
                     unstash 'installer'
                     unstash 'smoke'
