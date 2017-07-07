@@ -220,6 +220,9 @@ pipeline {
                         """
                         }
                       }
+                      catch (error) {
+                          throw error
+                      }
                       finally {
                         retry(3) {
                           timeout(15) {
@@ -251,6 +254,9 @@ pipeline {
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-exper.tfvars
                         """
                         }
+                      }
+                      catch (error) {
+                          throw error
                       }
                       finally {
                         retry(3) {
@@ -284,6 +290,9 @@ pipeline {
                         """
                         }
                       }
+                      catch (error) {
+                          throw error
+                      }
                       finally {
                         retry(3) {
                           timeout(15) {
@@ -315,6 +324,9 @@ pipeline {
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-extern.tfvars
                         """
                         }
+                      }
+                      catch (error) {
+                          throw error
                       }
                       finally {
                         retry(3) {
@@ -348,6 +360,9 @@ pipeline {
                         """
                         }
                       }
+                      catch (error) {
+                          throw error
+                      }
                       finally {
                         retry(3) {
                           timeout(15) {
@@ -379,6 +394,9 @@ pipeline {
                           ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-example.tfvars
                         """
                         }
+                      }
+                      catch (error) {
+                          throw error
                       }
                       finally {
                         retry(3) {
