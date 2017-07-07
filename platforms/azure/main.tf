@@ -110,7 +110,7 @@ module "workers" {
 }
 
 module "dns" {
-  source = "../../modules/azure/dns"
+  source = "../../modules/dns/azure"
 
   etcd_count   = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count}"
   master_count = "${var.tectonic_master_count}"
