@@ -43,6 +43,7 @@ variable "cloud_provider" {
 variable "cloud_provider_config" {
   description = "Content of cloud provider config"
   type        = "string"
+  default     = ""
 }
 
 variable "service_cidr" {
