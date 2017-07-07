@@ -70,7 +70,7 @@ module "tectonic" {
 }
 
 resource "null_resource" "tectonic" {
-  depends_on = ["module.bootkube", "module.tectonic", "module.masters"]
+  depends_on = ["module.vnet", "module.dns", "module.etcd", "module.masters", "module.bootkube", "module.tectonic"]
 
   triggers {
     api-endpoint = "${module.vnet.api_external_fqdn}"
