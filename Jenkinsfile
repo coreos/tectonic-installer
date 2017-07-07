@@ -203,21 +203,23 @@ pipeline {
                   checkout scm
                   unstash 'installer'
                   unstash 'smoke'
-                  try {
-                    timeout(30) {
-                      sh """#!/bin/bash -ex
-                      ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
-                      ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars
-                      ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure.tfvars
-                    """
+                  script {
+                    try {
+                      timeout(30) {
+                        sh """#!/bin/bash -ex
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure.tfvars
+                      """
+                      }
                     }
-                  }
-                  finally {
-                    retry(3) {
-                      timeout(15) {
-                          sh """#!/bin/bash -ex
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure.tfvars
-                          """
+                    finally {
+                      retry(3) {
+                        timeout(15) {
+                            sh """#!/bin/bash -ex
+                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure.tfvars
+                            """
+                        }
                       }
                     }
                   }
