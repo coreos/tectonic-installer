@@ -155,7 +155,7 @@ variable "tectonic_azure_external_resource_group" {
 
   description = <<EOF
 (optional) Name of an external resource group to place created resources in.
-Leave blank to create a new one.
+Leave blank to have a new one created.
 EOF
 
   default = ""
@@ -166,6 +166,7 @@ variable "tectonic_azure_external_nsg_etcd_id" {
 
   description = <<EOF
 (optional) The ID of the external Network Security Group used for etcd.
+Leave blank to have a new one created.
 
 Note this is the complete ID as returned in the "id" field by the Azure client, not just the name of the resource.
 
@@ -180,6 +181,7 @@ variable "tectonic_azure_external_nsg_api_id" {
 
   description = <<EOF
 (optional) The ID of the external Network Security Group used for the Tectonic Console and Kubernetes API Server.
+Leave blank to have a new one created.
 
 Note this is the complete ID as returned in the "id" field by the Azure client, not just the name of the resource.
 
@@ -194,6 +196,7 @@ variable "tectonic_azure_external_nsg_master_id" {
 
   description = <<EOF
 (optional) The ID of the external Network Security Group used for masters.
+Leave blank to have a new one created.
 
 Note this is the complete ID as returned in the "id" field by the Azure client, not just the name of the resource.
 
@@ -208,6 +211,7 @@ variable "tectonic_azure_external_nsg_worker_id" {
 
   description = <<EOF
 (optional) The ID of the external Network Security Group used for workers.
+Leave blank to have a new one created.
 
 Note this is the complete ID as returned in the "id" field by the Azure client, not just the name of the resource.
 
@@ -220,6 +224,7 @@ EOF
 variable "tectonic_azure_external_dns_zone_id" {
   description = <<EOF
 (optional) The ID of the external Azure DNS zone used for nodes & endpoints FQDNs.
+Required when 'tectonic_base_domain' is set. This be an existing pre-registerd Azure DNS zone.
 
 Note this is the complete ID as returned in the "id" field by the Azure client, not just the name of the resource.
 

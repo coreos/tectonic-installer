@@ -19,6 +19,7 @@ tectonic_admin_password_hash = ""
 // tectonic_azure_etcd_vm_size = "Standard_DS2_v2"
 
 // (optional) The ID of the external Azure DNS zone used for nodes & endpoints FQDNs.
+// Required when 'tectonic_base_domain' is set. This be an existing pre-registerd Azure DNS zone.
 // 
 // Note this is the complete ID as returned in the "id" field by the Azure client, not just the name of the resource.
 // 
@@ -34,6 +35,7 @@ tectonic_admin_password_hash = ""
 // tectonic_azure_external_master_subnet_id = ""
 
 // (optional) The ID of the external Network Security Group used for the Tectonic Console and Kubernetes API Server.
+// Leave blank to have a new one created.
 // 
 // Note this is the complete ID as returned in the "id" field by the Azure client, not just the name of the resource.
 // 
@@ -41,6 +43,7 @@ tectonic_admin_password_hash = ""
 // tectonic_azure_external_nsg_api_id = ""
 
 // (optional) The ID of the external Network Security Group used for etcd.
+// Leave blank to have a new one created.
 // 
 // Note this is the complete ID as returned in the "id" field by the Azure client, not just the name of the resource.
 // 
@@ -48,6 +51,7 @@ tectonic_admin_password_hash = ""
 // tectonic_azure_external_nsg_etcd_id = ""
 
 // (optional) The ID of the external Network Security Group used for masters.
+// Leave blank to have a new one created.
 // 
 // Note this is the complete ID as returned in the "id" field by the Azure client, not just the name of the resource.
 // 
@@ -55,6 +59,7 @@ tectonic_admin_password_hash = ""
 // tectonic_azure_external_nsg_master_id = ""
 
 // (optional) The ID of the external Network Security Group used for workers.
+// Leave blank to have a new one created.
 // 
 // Note this is the complete ID as returned in the "id" field by the Azure client, not just the name of the resource.
 // 
@@ -62,7 +67,7 @@ tectonic_admin_password_hash = ""
 // tectonic_azure_external_nsg_worker_id = ""
 
 // (optional) Name of an external resource group to place created resources in.
-// Leave blank to create a new one.
+// Leave blank to have a new one created.
 // tectonic_azure_external_resource_group = ""
 
 // (optional) Resource ID of an existing Virtual Network to launch nodes into.
