@@ -250,7 +250,7 @@ pipeline {
                   unstash 'installer'
                   timeout(5) {
                     sh """#!/bin/bash -ex
-                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azuretest-dns.tfvars || true
+                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azuretest-dns.tfvars
                     """
                   }
                 }
