@@ -79,7 +79,10 @@ test_cluster() {
     WORKER_COUNT=$(grep tectonic_worker_count "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}')
     export NODE_COUNT=$(( MASTER_COUNT + WORKER_COUNT ))
     export TEST_KUBECONFIG=$WORKSPACE/build/$CLUSTER/generated/auth/kubeconfig
-    installer/bin/smoke -test.v -test.parallel=1
+    export MANIFEST_PATHS=$WORKSPACE/build/$CLUSTER/generated/
+    # shellcheck disable=SC2155
+    export MANIFEST_EXPERIMENTAL=$(grep tectonic_experimental "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}' | tr -d ' ')
+    bin/smoke -test.v -test.parallel=1 --cluster
 }
 
 usage() {
