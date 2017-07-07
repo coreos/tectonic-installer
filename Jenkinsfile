@@ -274,6 +274,9 @@ pipeline {
               }
             }
           },
+/*
+ * Test temporarily disabled
+ *
           "SmokeTest: Azure (existing DNS)": {
             node('worker && ec2') {
               withCredentials(creds) {
@@ -310,6 +313,7 @@ pipeline {
               }
             }
           },
+*/
 /*
  * Temporarily disabled to avoid resource starvation in 'northeurope' location
  *
@@ -350,6 +354,9 @@ pipeline {
             }
           },
 */
+/*
+ * Test temporarily disabled
+ * 
           "SmokeTest: Azure (external network, experimental)": {
             node('worker && ec2') {
               withCredentials(creds) {
@@ -422,6 +429,7 @@ pipeline {
               }
             }
           },
+*/
           "SmokeTest: Bare Metal": {
             node('worker && bare-metal') {
               checkout scm
