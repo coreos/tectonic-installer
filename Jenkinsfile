@@ -196,32 +196,36 @@ pipeline {
               }
             }
           },
-          "SmokeTest TerraForm: Azure": {
+          "SmokeTest: Azure": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
                   checkout scm
                   unstash 'installer'
                   unstash 'smoke'
-                  timeout(30) {
-                    sh """#!/bin/bash -ex
-                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars || true
-                    ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars || true
-                    ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure.tfvars || true
-                  """
+                  try {
+                    timeout(30) {
+                      sh """#!/bin/bash -ex
+                      ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
+                      ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars
+                      ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure.tfvars
+                    """
+                    }
                   }
-                  retry(3) {
-                    timeout(15) {
-                        sh """#!/bin/bash -ex
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure.tfvars
-                        """
+                  finally {
+                    retry(3) {
+                      timeout(15) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure.tfvars
+                          """
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "SmokeTest TerraForm: Azure (Experimental)": {
+          "SmokeTest: Azure (Experimental)": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
@@ -229,14 +233,14 @@ pipeline {
                   unstash 'installer'
                   timeout(5) {
                     sh """#!/bin/bash -ex
-                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-exp.tfvars || true
+                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-exper.tfvars
                     """
                   }
                 }
               }
             }
           },
-          "SmokeTest TerraForm: Azure (custom-ca)": {
+          "SmokeTest: Azure (existing DNS)": {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
@@ -244,14 +248,14 @@ pipeline {
                   unstash 'installer'
                   timeout(5) {
                     sh """#!/bin/bash -ex
-                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-ca.tfvars || true
+                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azuretest-dns.tfvars || true
                     """
                   }
                 }
               }
             }
           },
-          "SmokeTest Terraform: Bare Metal": {
+          "SmokeTest: Bare Metal": {
             node('worker && bare-metal') {
               checkout scm
               unstash 'installer'

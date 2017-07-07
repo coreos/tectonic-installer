@@ -41,8 +41,9 @@ common() {
     export CLUSTER
     export TF_VAR_tectonic_cluster_name=$CLUSTER
     
-    # randomly select region
-    REGIONS=(eastus)
+    # so far we only have increased CPU quotas in westeurope region
+    # please stick to this one unless a new quota increase happens
+    REGIONS=(westeurope)
     export CHANGE_ID=${CHANGE_ID:-${BUILD_ID}}
     i=$(( CHANGE_ID % ${#REGIONS[@]} ))
     export TF_VAR_tectonic_azure_location="${REGIONS[$i]}"
