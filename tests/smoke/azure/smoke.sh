@@ -50,7 +50,7 @@ common() {
     echo "selected region: $TF_VAR_tectonic_azure_location"
     echo "cluster name: $CLUSTER"
 
-    ssh-keygen -t rsa -f "$HOME/.ssh/id_rsa_azure" -N ""
+    echo $AZURE_SMOKE_SSH_KEY_PUB > ~/.ssh/id_rsa_azure.pub
     export TF_VAR_tectonic_azure_ssh_key
     TF_VAR_tectonic_azure_ssh_key=$(realpath ~/.ssh/id_rsa_azure.pub)
 
