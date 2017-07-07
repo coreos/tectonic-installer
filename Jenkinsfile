@@ -239,10 +239,25 @@ pipeline {
                 withDockerContainer(builder_image) {
                   checkout scm
                   unstash 'installer'
-                  timeout(5) {
-                    sh """#!/bin/bash -ex
-                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-exper.tfvars
-                    """
+                  script {
+                    try {
+                      timeout(30) {
+                        sh """#!/bin/bash -ex
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-exper.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-exper.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-exper.tfvars
+                      """
+                      }
+                    }
+                    finally {
+                      retry(3) {
+                        timeout(15) {
+                            sh """#!/bin/bash -ex
+                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-exper.tfvars
+                            """
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -254,10 +269,115 @@ pipeline {
                 withDockerContainer(builder_image) {
                   checkout scm
                   unstash 'installer'
-                  timeout(5) {
-                    sh """#!/bin/bash -ex
-                    ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-dns.tfvars
-                    """
+                  script {
+                    try {
+                      timeout(30) {
+                        sh """#!/bin/bash -ex
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-dns.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-dns.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-dns.tfvars
+                      """
+                      }
+                    }
+                    finally {
+                      retry(3) {
+                        timeout(15) {
+                            sh """#!/bin/bash -ex
+                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-dns.tfvars
+                            """
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "SmokeTest: Azure (external network)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  checkout scm
+                  unstash 'installer'
+                  script {
+                    try {
+                      timeout(30) {
+                        sh """#!/bin/bash -ex
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-extern.tfvars
+                      """
+                      }
+                    }
+                    finally {
+                      retry(3) {
+                        timeout(15) {
+                            sh """#!/bin/bash -ex
+                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-extern.tfvars
+                            """
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "SmokeTest: Azure (external network, experimental)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  checkout scm
+                  unstash 'installer'
+                  script {
+                    try {
+                      timeout(30) {
+                        sh """#!/bin/bash -ex
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern-exper.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern-exper.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-extern-exper.tfvars
+                      """
+                      }
+                    }
+                    finally {
+                      retry(3) {
+                        timeout(15) {
+                            sh """#!/bin/bash -ex
+                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-extern-exper.tfvars
+                            """
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "SmokeTest: Azure (example file)": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                withDockerContainer(builder_image) {
+                  checkout scm
+                  unstash 'installer'
+                  script {
+                    try {
+                      timeout(30) {
+                        sh """#!/bin/bash -ex
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-example.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-example.tfvars
+                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-example.tfvars
+                      """
+                      }
+                    }
+                    finally {
+                      retry(3) {
+                        timeout(15) {
+                            sh """#!/bin/bash -ex
+                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-example.tfvars
+                            """
+                        }
+                      }
+                    }
                   }
                 }
               }
