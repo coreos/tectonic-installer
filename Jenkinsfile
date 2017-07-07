@@ -308,6 +308,9 @@ pipeline {
               }
             }
           },
+/*
+ * Temporarily disabled to avoid resource starvation in 'northeurope' location
+ *
           "SmokeTest: Azure (external network)": {
             node('worker && ec2') {
               withCredentials(creds) {
@@ -343,6 +346,7 @@ pipeline {
               }
             }
           },
+*/
           "SmokeTest: Azure (external network, experimental)": {
             node('worker && ec2') {
               withCredentials(creds) {
