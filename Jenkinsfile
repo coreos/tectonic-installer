@@ -7,7 +7,12 @@
 def creds = [
   file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_license_path'),
   file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'),
-  file(credentialsId: 'azure-smoke-ssh-key-pub', variable: 'AZURE_SMOKE_SSH_KEY_PUB'),
+  [
+    $class: 'UsernamePasswordMultiBinding',
+    credentialsId: 'azure-smoke-ssh-key',
+    passwordVariable: 'AZURE_SMOKE_SSH_KEY',
+    usernameVariable: 'AZURE_SMOKE_SSH_KEY_PUB'
+  ],
   [
     $class: 'UsernamePasswordMultiBinding',
     credentialsId: 'tectonic-console-login',

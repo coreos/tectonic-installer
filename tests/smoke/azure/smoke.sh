@@ -51,9 +51,10 @@ common() {
     echo "cluster name: $CLUSTER"
 
     mkdir -p "$HOME/.ssh"
-    echo "$AZURE_SMOKE_SSH_KEY_PUB" > "$HOME/.ssh/id_rsa_azure.pub"
+    echo "$AZURE_SMOKE_SSH_KEY_PUB" > "$HOME/.ssh/id_rsa.pub"
+    echo "$AZURE_SMOKE_SSH_KEY" > "$HOME/.ssh/id_rsa"
     export TF_VAR_tectonic_azure_ssh_key
-    TF_VAR_tectonic_azure_ssh_key=$(realpath "$HOME/.ssh/id_rsa_azure.pub")
+    TF_VAR_tectonic_azure_ssh_key=$(realpath "$HOME/.ssh/id_rsa.pub")
 
     # Create local config
     make localconfig
