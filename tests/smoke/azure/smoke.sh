@@ -50,9 +50,9 @@ common() {
     echo "selected region: $TF_VAR_tectonic_azure_location"
     echo "cluster name: $CLUSTER"
 
-    # Set ssh key injected in Jenkinsfile as TF_VAR
+    ssh-keygen -t rsa -f "$HOME/.ssh/id_rsa_azure" -N ""
     export TF_VAR_tectonic_azure_ssh_key
-    TF_VAR_tectonic_azure_ssh_key=$(realpath ~/.ssh/id_rsa)
+    TF_VAR_tectonic_azure_ssh_key=$(realpath ~/.ssh/id_rsa_azure.pub)
 
     # Create local config
     make localconfig
