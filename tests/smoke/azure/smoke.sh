@@ -50,6 +50,10 @@ common() {
     echo "selected region: $TF_VAR_tectonic_azure_location"
     echo "cluster name: $CLUSTER"
 
+    # Set ssh key injected in Jenkinsfile as TF_VAR
+    export TF_VAR_tectonic_azure_ssh_key
+    TF_VAR_tectonic_azure_ssh_key=$(realpath ~/.ssh/azure-smoke-ssh-key)
+
     # Create local config
     make localconfig
     # Use smoke test configuration for deployment

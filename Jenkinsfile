@@ -200,25 +200,27 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
-                  checkout scm
-                  unstash 'installer'
-                  unstash 'smoke'
-                  script {
-                    try {
-                      timeout(30) {
-                        sh """#!/bin/bash -ex
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure.tfvars
-                      """
+                  sshagent(['azure-smoke-test-ssh-key']) {
+                    checkout scm
+                    unstash 'installer'
+                    unstash 'smoke'
+                    script {
+                      try {
+                        timeout(30) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure.tfvars
+                        """
+                        }
                       }
-                    }
-                    finally {
-                      retry(3) {
-                        timeout(15) {
-                            sh """#!/bin/bash -ex
-                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure.tfvars
-                            """
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure.tfvars
+                              """
+                          }
                         }
                       }
                     }
