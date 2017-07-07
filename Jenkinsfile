@@ -206,25 +206,27 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
-                  checkout scm
-                  unstash 'installer'
-                  unstash 'smoke'
-                  script {
-                    try {
-                      timeout(30) {
-                        sh """#!/bin/bash -ex
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure.tfvars
-                      """
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    unstash 'smoke'
+                    script {
+                      try {
+                        timeout(30) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure.tfvars
+                        """
+                        }
                       }
-                    }
-                    finally {
-                      retry(3) {
-                        timeout(15) {
-                            sh """#!/bin/bash -ex
-                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure.tfvars
-                            """
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure.tfvars
+                              """
+                          }
                         }
                       }
                     }
@@ -237,24 +239,26 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
-                  checkout scm
-                  unstash 'installer'
-                  script {
-                    try {
-                      timeout(30) {
-                        sh """#!/bin/bash -ex
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-exper.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-exper.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-exper.tfvars
-                      """
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    script {
+                      try {
+                        timeout(30) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-exper.tfvars
+                        """
+                        }
                       }
-                    }
-                    finally {
-                      retry(3) {
-                        timeout(15) {
-                            sh """#!/bin/bash -ex
-                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-exper.tfvars
-                            """
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-exper.tfvars
+                              """
+                          }
                         }
                       }
                     }
@@ -267,24 +271,26 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
-                  checkout scm
-                  unstash 'installer'
-                  script {
-                    try {
-                      timeout(30) {
-                        sh """#!/bin/bash -ex
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-dns.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-dns.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-dns.tfvars
-                      """
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    script {
+                      try {
+                        timeout(30) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-dns.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-dns.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-dns.tfvars
+                        """
+                        }
                       }
-                    }
-                    finally {
-                      retry(3) {
-                        timeout(15) {
-                            sh """#!/bin/bash -ex
-                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-dns.tfvars
-                            """
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-dns.tfvars
+                              """
+                          }
                         }
                       }
                     }
@@ -297,24 +303,26 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
-                  checkout scm
-                  unstash 'installer'
-                  script {
-                    try {
-                      timeout(30) {
-                        sh """#!/bin/bash -ex
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-extern.tfvars
-                      """
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    script {
+                      try {
+                        timeout(30) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-extern.tfvars
+                        """
+                        }
                       }
-                    }
-                    finally {
-                      retry(3) {
-                        timeout(15) {
-                            sh """#!/bin/bash -ex
-                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-extern.tfvars
-                            """
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-extern.tfvars
+                              """
+                          }
                         }
                       }
                     }
@@ -327,24 +335,26 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
-                  checkout scm
-                  unstash 'installer'
-                  script {
-                    try {
-                      timeout(30) {
-                        sh """#!/bin/bash -ex
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern-exper.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern-exper.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-extern-exper.tfvars
-                      """
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    script {
+                      try {
+                        timeout(30) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-extern-exper.tfvars
+                        """
+                        }
                       }
-                    }
-                    finally {
-                      retry(3) {
-                        timeout(15) {
-                            sh """#!/bin/bash -ex
-                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-extern-exper.tfvars
-                            """
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-extern-exper.tfvars
+                              """
+                          }
                         }
                       }
                     }
@@ -357,24 +367,26 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(builder_image) {
-                  checkout scm
-                  unstash 'installer'
-                  script {
-                    try {
-                      timeout(30) {
-                        sh """#!/bin/bash -ex
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-example.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-example.tfvars
-                        ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-example.tfvars
-                      """
+                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                    checkout scm
+                    unstash 'installer'
+                    script {
+                      try {
+                        timeout(30) {
+                          sh """#!/bin/bash -ex
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-example.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-example.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-example.tfvars
+                        """
+                        }
                       }
-                    }
-                    finally {
-                      retry(3) {
-                        timeout(15) {
-                            sh """#!/bin/bash -ex
-                            ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-example.tfvars
-                            """
+                      finally {
+                        retry(3) {
+                          timeout(15) {
+                              sh """#!/bin/bash -ex
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-example.tfvars
+                              """
+                          }
                         }
                       }
                     }
