@@ -100,7 +100,14 @@ tectonic_openstack_dns_nameservers = ""
 tectonic_openstack_external_gateway_id = ""
 
 // The flavor ID as given in `openstack flavor list`. Specifies the size (CPU/Memory/Drive) of the VM.
-tectonic_openstack_flavor_id = ""
+tectonic_openstack_master_flavor_id = ""
+tectonic_openstack_worker_flavor_id = ""
+
+// (optional) The etcd flavor ID as given in `openstack flavor list`. Specifies the size (CPU/Memory/Drive) of the VM.
+// Needs to be set if not using experimental self-hosted mode.
+//
+// Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the cluster doesn't use dedicated etcd nodes.
+tectonic_openstack_etcd_flavor_id = ""
 
 // The name name of the floating IP pool
 // as given in `openstack floating ip list`.
