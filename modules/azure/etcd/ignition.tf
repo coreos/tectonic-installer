@@ -12,6 +12,8 @@ data "ignition_config" "etcd" {
 
   files = [
     "${data.ignition_file.etcd_ca.id}",
+    "${data.ignition_file.etcd_server_crt.id}",
+    "${data.ignition_file.etcd_server_key.id}",
     "${data.ignition_file.etcd_client_crt.id}",
     "${data.ignition_file.etcd_client_key.id}",
     "${data.ignition_file.etcd_peer_crt.id}",
@@ -34,12 +36,10 @@ data "ignition_file" "etcd_ca" {
 }
 
 data "ignition_file" "etcd_client_key" {
-  count = "${var.etcd_count > 0 ? 1 : 0}"
-
   path       = "/etc/ssl/etcd/client.key"
   mode       = 0400
-  uid        = 232
-  gid        = 232
+  uid        = 0
+  gid        = 0
   filesystem = "root"
 
   content {
@@ -48,16 +48,42 @@ data "ignition_file" "etcd_client_key" {
 }
 
 data "ignition_file" "etcd_client_crt" {
+  path       = "/etc/ssl/etcd/client.crt"
+  mode       = 0400
+  uid        = 0
+  gid        = 0
+  filesystem = "root"
+
+  content {
+    content = "${var.tls_client_crt_pem}"
+  }
+}
+
+data "ignition_file" "etcd_server_key" {
   count = "${var.etcd_count > 0 ? 1 : 0}"
 
-  path       = "/etc/ssl/etcd/client.crt"
+  path       = "/etc/ssl/etcd/server.key"
   mode       = 0400
   uid        = 232
   gid        = 232
   filesystem = "root"
 
   content {
-    content = "${var.tls_client_crt_pem}"
+    content = "${var.tls_server_key_pem}"
+  }
+}
+
+data "ignition_file" "etcd_server_crt" {
+  count = "${var.etcd_count > 0 ? 1 : 0}"
+
+  path       = "/etc/ssl/etcd/server.crt"
+  mode       = 0400
+  uid        = 232
+  gid        = 232
+  filesystem = "root"
+
+  content {
+    content = "${var.tls_server_crt_pem}"
   }
 }
 
@@ -148,7 +174,7 @@ ExecStart=/usr/lib/coreos/etcd-wrapper \
           join(";", formatlist("%s.${var.base_domain}", slice(formatlist("${var.cluster_name}-%s", var.const_internal_node_names), 0, var.etcd_count)))), count.index)} \
   --advertise-client-urls=${var.tls_enabled ? "https" : "http"}://$${COREOS_AZURE_IPV4_DYNAMIC}:2379 \
   ${var.tls_enabled
-      ? "--cert-file=/etc/ssl/etcd/client.crt --key-file=/etc/ssl/etcd/client.key --peer-cert-file=/etc/ssl/etcd/peer.crt --peer-key-file=/etc/ssl/etcd/peer.key --peer-trusted-ca-file=/etc/ssl/etcd/ca.crt -peer-client-cert-auth=true"
+      ? "--cert-file=/etc/ssl/etcd/server.crt --key-file=/etc/ssl/etcd/server.key --peer-cert-file=/etc/ssl/etcd/peer.crt --peer-key-file=/etc/ssl/etcd/peer.key --peer-trusted-ca-file=/etc/ssl/etcd/ca.crt -peer-client-cert-auth=true"
       : ""} \
   --initial-advertise-peer-urls=${var.tls_enabled ? "https" : "http"}://$${COREOS_AZURE_IPV4_DYNAMIC}:2380 \
   --listen-client-urls=${var.tls_enabled ? "https" : "http"}://0.0.0.0:2379 \
