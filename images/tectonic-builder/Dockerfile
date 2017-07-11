@@ -19,6 +19,9 @@ RUN go get github.com/jstemmer/go-junit-report
 ### License parser
 RUN go get github.com/coreos/license-bill-of-materials
 
+# /go needs to be writable by jenkins user like it is in the upstream golang image
+RUN chmod 777 -R /go
+
 ### Install Terraform, NodeJS and Yarn
 ENV TERRAFORM_VERSION="0.9.6"
 ENV NODE_VERSION="v8.1.2"
