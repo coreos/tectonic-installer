@@ -15,3 +15,11 @@ variable "ign_kubelet_service_id" {
 variable "ign_locksmithd_service_id" {
   type = "string"
 }
+
+variable "ign_update_ca_certificates_dropin_id" {
+  type = "string"
+}
+
+variable "ign_kube_ca_id" {
+  type = "string"
+}

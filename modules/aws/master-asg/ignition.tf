@@ -4,6 +4,7 @@ data "ignition_config" "main" {
     "${var.ign_s3_puller_id}",
     "${data.ignition_file.init_assets.id}",
     "${data.ignition_file.detect_master.id}",
+    "${var.ign_kube_ca_id}",
   ]
 
   systemd = [
@@ -14,6 +15,7 @@ data "ignition_config" "main" {
     "${data.ignition_systemd_unit.init_assets.id}",
     "${data.ignition_systemd_unit.bootkube.id}",
     "${data.ignition_systemd_unit.tectonic.id}",
+    "${var.ign_update_ca_certificates_dropin_id}",
   ]
 }
 

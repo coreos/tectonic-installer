@@ -48,3 +48,7 @@ variable "cloud_provider_config" {
   description = "(optional) The cloud provider config to be used for the kubelet."
   default     = ""
 }
+
+variable "kube_ca_crt_pem" {
+  type = "string"
+}
