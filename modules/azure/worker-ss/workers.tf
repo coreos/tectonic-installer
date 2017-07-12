@@ -3,11 +3,11 @@
 
 # Generate unique storage name
 resource "random_id" "tectonic_storage_name" {
-  byte_length = 4
+  byte_length = 2
 }
 
 resource "azurerm_storage_account" "tectonic_worker" {
-  name                = "${random_id.tectonic_storage_name.hex}"
+  name                = "${var.cluster_name}${random_id.tectonic_storage_name.hex}wrk"
   resource_group_name = "${var.resource_group_name}"
   location            = "${var.location}"
   account_type        = "${var.storage_account_type}"
