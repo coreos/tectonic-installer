@@ -46,7 +46,3 @@ output "etcd_network_interface_ids" {
 output "etcd_private_ips" {
   value = ["${azurerm_network_interface.etcd_nic.*.private_ip_address}"]
 }
-
-output "etcd_public_ip" {
-  value = "${azurerm_public_ip.etcd_publicip.ip_address}"
-}

@@ -106,7 +106,7 @@ module "dns" {
 
   master_ip_addresses = "${module.masters.ip_address}"
   console_ip_address  = "${module.masters.console_ip_address}"
-  etcd_ip_addresses   = ["${module.vnet.etcd_public_ip}"]
+  etcd_ip_addresses   = "${module.vnet.etcd_private_ips}"
 
   base_domain  = "${var.tectonic_base_domain}"
   cluster_name = "${var.tectonic_cluster_name}"
