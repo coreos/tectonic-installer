@@ -76,7 +76,8 @@ resource "template_dir" "bootkube" {
     etcd_service_ip           = "${cidrhost(var.service_cidr, 15)}"
     bootstrap_etcd_service_ip = "${cidrhost(var.service_cidr, 20)}"
 
-    cloud_provider = "${var.cloud_provider}"
+    cloud_provider        = "${var.cloud_provider}"
+    cloud_provider_config = "${var.cloud_provider_config}"
 
     cluster_cidr        = "${var.cluster_cidr}"
     service_cidr        = "${var.service_cidr}"

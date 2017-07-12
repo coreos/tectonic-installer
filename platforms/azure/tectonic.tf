@@ -1,6 +1,8 @@
 module "bootkube" {
-  source         = "../../modules/bootkube"
-  cloud_provider = ""
+  source = "../../modules/bootkube"
+
+  cloud_provider        = "azure"
+  cloud_provider_config = "${jsonencode(data.null_data_source.cloud-provider.inputs)}"
 
   kube_apiserver_url = "https://${module.masters.api_internal_fqdn}:443"
   oidc_issuer_url    = "https://${module.masters.ingress_internal_fqdn}/identity"
@@ -66,7 +68,7 @@ module "tectonic" {
 }
 
 resource "null_resource" "tectonic" {
-  depends_on = ["module.tectonic", "module.masters"]
+  depends_on = ["module.etcd", "module.tectonic", "module.masters"]
 
   triggers {
     api-endpoint = "${module.masters.api_external_fqdn}"

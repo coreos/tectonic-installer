@@ -10,6 +10,10 @@ output "worker_subnet" {
   value = "${var.external_vnet_name == "" ?  join(" ", azurerm_subnet.worker_subnet.*.id) : var.external_worker_subnet_id }"
 }
 
+output "worker_subnet_name" {
+  value = "${var.external_vnet_name == "" ?  join(" ", azurerm_subnet.worker_subnet.*.id) : var.external_vnet_name }"
+}
+
 # TODO: Allow user to provide their own network
 output "etcd_cidr" {
   value = "${azurerm_subnet.master_subnet.address_prefix}"

@@ -1,3 +1,10 @@
+provider "azurerm" {
+  environment   = "${var.tectonic_azure_cloud_environment}"
+  client_secret = "${var.tectonic_azure_client_secret}"
+}
+
+data "azurerm_client_config" "current" {}
+
 module "resource_group" {
   source = "../../modules/azure/resource-group"
 
@@ -49,6 +56,23 @@ module "etcd" {
   network_interface_ids = "${module.vnet.etcd_network_interface_ids}"
 }
 
+# Workaround for https://github.com/hashicorp/terraform/issues/4084
+data "null_data_source" "cloud-provider" {
+  inputs = {
+    "cloud"                      = "${var.tectonic_azure_cloud_environment}"
+    "tenantId"                   = "${data.azurerm_client_config.current.tenant_id}"
+    "subscriptionId"             = "${data.azurerm_client_config.current.subscription_id}"
+    "aadClientId"                = "${data.azurerm_client_config.current.client_id}"
+    "aadClientSecret"            = "${var.tectonic_azure_client_secret}"
+    "resourceGroup"              = "${module.resource_group.name}"
+    "location"                   = "${var.tectonic_azure_location}"
+    "subnetName"                 = "${module.vnet.worker_subnet_name}"
+    "securityGroupName"          = "${module.vnet.worker_nsg_name}"
+    "vnetName"                   = "${module.vnet.vnet_id}"
+    "primaryAvailabilitySetName" = "${module.workers.availability_set_name}"
+  }
+}
+
 module "masters" {
   source = "../../modules/azure/master-as"
 
@@ -68,7 +92,8 @@ module "masters" {
   kube_image_tag               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
   kubeconfig_content           = "${module.bootkube.kubeconfig}"
   tectonic_kube_dns_service_ip = "${module.bootkube.kube_dns_service_ip}"
-  cloud_provider               = ""
+  cloud_provider               = "azure"
+  cloud_provider_config        = "${jsonencode(data.null_data_source.cloud-provider.inputs)}"
   kubelet_node_label           = "node-role.kubernetes.io/master"
   kubelet_node_taints          = "node-role.kubernetes.io/master=:NoSchedule"
   bootkube_service             = "${module.bootkube.systemd_service}"
@@ -97,7 +122,8 @@ module "workers" {
   kube_image_tag               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
   kubeconfig_content           = "${module.bootkube.kubeconfig}"
   tectonic_kube_dns_service_ip = "${module.bootkube.kube_dns_service_ip}"
-  cloud_provider               = ""
+  cloud_provider               = "azure"
+  cloud_provider_config        = "${jsonencode(data.null_data_source.cloud-provider.inputs)}"
   kubelet_node_label           = "node-role.kubernetes.io/node"
 }
 

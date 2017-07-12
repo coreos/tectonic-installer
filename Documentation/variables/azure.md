@@ -6,6 +6,8 @@ This document gives an overview of variables used in the Azure platform of the T
 
 | Name | Description | Type | Default |
 |------|-------------|:----:|:-----:|
+| tectonic_azure_client_secret | The client secret to use. | string | - |
+| tectonic_azure_cloud_environment | (optional) Azure cloud environment to use. See https://github.com/Azure/go-autorest/blob/ec5f4903f77ed9927ac95b19ab8e44ada64c1356/autorest/azure/environments.go#L13 for available environments. | string | `AZUREPUBLICCLOUD` |
 | tectonic_azure_config_version | (internal) This declares the version of the Azure configuration variables. It has no impact on generated assets but declares the version contract of the configuration. | string | `1.0` |
 | tectonic_azure_create_dns_zone | If set to true, create an Azure DNS zone | string | `true` |
 | tectonic_azure_dns_resource_group |  | string | `tectonic-dns-group` |
