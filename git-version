@@ -13,7 +13,7 @@ if [ -z "$TAG" ]; then
 fi
 
 # check for changed files (not untracked files)
-if [ -n "$(git diff --shortstat 2> /dev/null | tail -n1)" ]; then
+if [ -n "$(git diff -G. --shortstat 2> /dev/null | tail -n1)" ]; then
 	VERSION="${VERSION}_dirty"
 fi
 

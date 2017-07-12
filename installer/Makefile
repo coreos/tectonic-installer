@@ -68,7 +68,7 @@ shellcheck: $(SHELL_FILES)
 
 .PHONY: dirtycheck
 dirtycheck:
-	@if git status --short | grep 'yarn.lock' > /dev/null; then echo "outdated yarn.lock (commit it to fix)"; exit 1; fi
+	@if git diff -G. | grep 'yarn.lock' > /dev/null; then echo "outdated yarn.lock (commit it to fix)"; exit 1; fi
 
 .PHONY: dist
 dist: release-bins
