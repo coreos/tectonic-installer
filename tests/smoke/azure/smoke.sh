@@ -16,7 +16,7 @@ common() {
     TF_VARS_FILE=$1
 
     TEST_NAME=$(basename "$TF_VARS_FILE" | cut -d "." -f 1)
-    MAX_NAME_LENGTH=18
+    MAX_NAME_LENGTH=10
 
     LENGTH=${#TEST_NAME}
     if [ "$LENGTH" -gt "$MAX_NAME_LENGTH" ]

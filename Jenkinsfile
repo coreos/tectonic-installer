@@ -221,9 +221,9 @@ pipeline {
                       try {
                         timeout(45) {
                           sh """#!/bin/bash -ex
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/basic.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/basic.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/basic.tfvars
                         """
                         }
                       }
@@ -234,7 +234,7 @@ pipeline {
                         retry(3) {
                           timeout(15) {
                               sh """#!/bin/bash -ex
-                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure.tfvars
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/basic.tfvars
                               """
                           }
                         }
@@ -257,9 +257,9 @@ pipeline {
                       try {
                         timeout(45) {
                           sh """#!/bin/bash -ex
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-exper.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-exper.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/exper.tfvars
                         """
                         }
                       }
@@ -270,7 +270,7 @@ pipeline {
                         retry(3) {
                           timeout(15) {
                               sh """#!/bin/bash -ex
-                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-exper.tfvars
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/exper.tfvars
                               """
                           }
                         }
@@ -296,9 +296,9 @@ pipeline {
                       try {
                         timeout(45) {
                           sh """#!/bin/bash -ex
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-dns.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-dns.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-dns.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/dns.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/dns.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/dns.tfvars
                         """
                         }
                       }
@@ -309,7 +309,7 @@ pipeline {
                         retry(3) {
                           timeout(15) {
                               sh """#!/bin/bash -ex
-                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-dns.tfvars
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/dns.tfvars
                               """
                           }
                         }
@@ -333,9 +333,9 @@ pipeline {
                       try {
                         timeout(45) {
                           sh """#!/bin/bash -ex
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-extern.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/extern.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/extern.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/extern.tfvars
                         """
                         }
                       }
@@ -369,9 +369,9 @@ pipeline {
                       try {
                         timeout(45) {
                           sh """#!/bin/bash -ex
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-extern-exper.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-extern-exper.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-extern-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/extern-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/extern-exper.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/extern-exper.tfvars
                         """
                         }
                       }
@@ -382,7 +382,7 @@ pipeline {
                         retry(3) {
                           timeout(15) {
                               sh """#!/bin/bash -ex
-                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-extern-exper.tfvars
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/extern-exper.tfvars
                               """
                           }
                         }
@@ -405,9 +405,9 @@ pipeline {
                       try {
                         timeout(45) {
                           sh """#!/bin/bash -ex
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/azure-example.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/azure-example.tfvars
-                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/azure-example.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh plan vars/example.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh create vars/example.tfvars
+                          ${WORKSPACE}/tests/smoke/azure/smoke.sh test vars/example.tfvars
                         """
                         }
                       }
@@ -418,7 +418,7 @@ pipeline {
                         retry(3) {
                           timeout(15) {
                               sh """#!/bin/bash -ex
-                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-example.tfvars
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/example.tfvars
                               """
                           }
                         }
