@@ -55,7 +55,7 @@ variable "tectonic_container_images" {
     flannel                         = "quay.io/coreos/flannel:v0.7.1-amd64"
     flannel_cni                     = "quay.io/coreos/flannel-cni:0.1.0"
     etcd                            = "quay.io/coreos/etcd:v3.1.8"
-    etcd_operator                   = "quay.io/coreos/etcd-operator:v0.4.0"
+    etcd_operator                   = "quay.io/coreos/etcd-operator:v0.4.1"
     kenc                            = "quay.io/coreos/kenc:8f6e2e885f790030fbbb0496ea2a2d8830e58b8f"
     awscli                          = "quay.io/coreos/awscli:025a357f05242fdad6a81e8a6b520098aa65a600"
     kube_version                    = "quay.io/coreos/kube-version:0.1.0"
