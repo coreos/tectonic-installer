@@ -70,6 +70,7 @@ resource "azurerm_virtual_machine" "tectonic_master" {
     os_type       = "linux"
     vhd_uri       = "${azurerm_storage_account.tectonic_master.primary_blob_endpoint}${azurerm_storage_container.tectonic_master.name}/${var.cluster_name}-master${count.index}.vhd"
   }
+  delete_os_disk_on_termination = "true"
 
   os_profile {
     computer_name  = "${var.cluster_name}-master${count.index}"

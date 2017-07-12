@@ -26,6 +26,7 @@ resource "azurerm_virtual_machine" "etcd_node" {
     caching       = "ReadWrite"
     create_option = "FromImage"
   }
+  delete_os_disk_on_termination = "true"
 
   os_profile {
     computer_name  = "etcd"
