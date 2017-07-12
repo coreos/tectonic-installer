@@ -346,7 +346,7 @@ pipeline {
                         retry(3) {
                           timeout(15) {
                               sh """#!/bin/bash -ex
-                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/azure-extern.tfvars
+                              ${WORKSPACE}/tests/smoke/azure/smoke.sh destroy vars/extern.tfvars
                               """
                           }
                         }
