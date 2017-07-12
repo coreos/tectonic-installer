@@ -14,8 +14,17 @@ common() {
 
     # Set the specified vars file
     TF_VARS_FILE=$1
+
     TEST_NAME=$(basename "$TF_VARS_FILE" | cut -d "." -f 1)
-    
+    MAX_NAME_LENGTH=18
+
+    LENGTH=${#TEST_NAME}
+    if [ "$LENGTH" -gt "$MAX_NAME_LENGTH" ]
+    then
+        TEST_NAME="${TEST_NAME:0:MAX_LENGTH}"
+        echo "TEST_NAME too long. Truncated to $TEST_NAME"
+    fi
+
     # Set required configuration
     CLUSTER="$TEST_NAME-$BRANCH_NAME-$BUILD_ID"
     MAX_LENGTH=28
