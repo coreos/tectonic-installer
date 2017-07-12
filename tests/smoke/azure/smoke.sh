@@ -21,7 +21,7 @@ common() {
     LENGTH=${#TEST_NAME}
     if [ "$LENGTH" -gt "$MAX_NAME_LENGTH" ]
     then
-        TEST_NAME="${TEST_NAME:0:MAX_LENGTH}"
+        TEST_NAME="${TEST_NAME:0:MAX_NAME_LENGTH}"
         echo "TEST_NAME too long. Truncated to $TEST_NAME"
     fi
 
