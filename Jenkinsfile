@@ -203,6 +203,9 @@ pipeline {
                     ${WORKSPACE}/tests/smoke/aws/smoke.sh test vars/aws-vpc.tfvars
                     ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy vars/aws-vpc.tfvars
                     ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy-vpc
+                    # As /build is created by root, make sure to remove it again
+                    # so non-root can create it later.
+                    rm -r ${WORKSPACE}/build
                     """
                   }
                 }
