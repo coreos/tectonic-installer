@@ -181,10 +181,16 @@ module "workers" {
   root_volume_type             = "${var.tectonic_aws_worker_root_volume_type}"
   sg_ids                       = "${concat(var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id))}"
   ssh_key                      = "${var.tectonic_aws_ssh_key}"
+  subnet_azs                   = ["${module.vpc.worker_external_subnet_azs}"]
   subnet_ids                   = "${module.vpc.worker_subnet_ids}"
-  vpc_id                       = "${module.vpc.vpc_id}"
-  worker_iam_role              = "${var.tectonic_aws_worker_iam_role_name}"
-  load_balancers               = ["${var.tectonic_aws_worker_load_balancers}"]
+
+  # This count could be deducted by length(keys(var.tectonic_aws_master_custom_subnets))
+  # but there is a restriction on passing computed values as counts. This approach works around that.
+  subnet_qty = "${length(var.tectonic_aws_external_master_subnet_ids) > 0 ? "${length(var.tectonic_aws_external_master_subnet_ids)}" : "${length(data.aws_availability_zones.azs.names)}"}"
+
+  vpc_id          = "${module.vpc.vpc_id}"
+  worker_iam_role = "${var.tectonic_aws_worker_iam_role_name}"
+  load_balancers  = ["${var.tectonic_aws_worker_load_balancers}"]
 
   ign_docker_dropin_id              = "${module.ignition_workers.docker_dropin_id}"
   ign_installer_kubelet_env_id      = "${module.ignition_workers.installer_kubelet_env_id}"
@@ -193,4 +199,20 @@ module "workers" {
   ign_locksmithd_service_id         = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id           = "${module.ignition_workers.max_user_watches_id}"
   ign_s3_puller_id                  = "${module.ignition_workers.s3_puller_id}"
+
+  elastic_group_extra_tags       = "${var.tectonic_elastic_group_extra_tags}"
+  use_spotinst                   = "${var.tectonic_aws_spotinst_worker_pool}"
+  spot_group_prefix              = "${var.tectonic_aws_spotinst_group_prefix}"
+  spot_capacity_target           = "${var.tectonic_aws_spotinst_capacity_target}"
+  spot_capacity_min              = "${var.tectonic_aws_spotinst_capacity_min}"
+  spot_capacity_max              = "${var.tectonic_aws_spotinst_capacity_max}"
+  spot_instance_types            = "${var.tectonic_aws_spotinst_instance_types}"
+  spot_strategy_risk             = "${var.tectonic_aws_spotinst_strategy_risk}"
+  spot_strategy_draining_timeout = "${var.tectonic_aws_spotinst_strategy_draining_timeout}"
+  spot_avail_vs_cost             = "${var.tectonic_aws_spotinst_cluster_orientation}"
+  spot_fallback_to_ondemand      = "${var.tectonic_aws_spotinst_fallback_to_ondemand}"
+
+  root_volume_type = "${var.tectonic_aws_worker_root_volume_type}"
+  root_volume_size = "${var.tectonic_aws_worker_root_volume_size}"
+  root_volume_iops = "${var.tectonic_aws_worker_root_volume_iops}"
 }
