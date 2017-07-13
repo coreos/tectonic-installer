@@ -192,9 +192,29 @@ module "workers" {
   root_volume_type                  = "${var.tectonic_aws_worker_root_volume_type}"
   sg_ids                            = "${concat(var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id))}"
   ssh_key                           = "${var.tectonic_aws_ssh_key}"
-  subnet_ids                        = "${module.vpc.worker_subnet_ids}"
-  vpc_id                            = "${module.vpc.vpc_id}"
-  worker_iam_role                   = "${var.tectonic_aws_worker_iam_role_name}"
+
+  #subnet_ids                        = "${module.vpc.worker_subnet_ids}"
+  worker_iam_role = "${var.tectonic_aws_worker_iam_role_name}"
+
+  vpc_id     = "${module.vpc.vpc_id}"
+  subnet_ids = ["${module.vpc.worker_subnet_ids}"]
+  subnet_azs = ["${module.vpc.worker_external_subnet_azs}"]
+
+  # This count could be deducted by length(keys(var.tectonic_aws_master_custom_subnets))
+  # but there is a restriction on passing computed values as counts. This approach works around that.
+  subnet_qty = "${length(var.tectonic_aws_external_master_subnet_ids) > 0 ? "${length(var.tectonic_aws_external_master_subnet_ids)}" : "${length(data.aws_availability_zones.azs.names)}"}"
+
+  use_spotinst                   = "${var.tectonic_aws_spotinst_worker_pool}"
+  elastic_group_extra_tags       = "${var.tectonic_elastic_group_extra_tags}"
+  spot_group_prefix              = "${var.tectonic_aws_spotinst_group_prefix}"
+  spot_capacity_target           = "${var.tectonic_aws_spotinst_capacity_target}"
+  spot_capacity_min              = "${var.tectonic_aws_spotinst_capacity_min}"
+  spot_capacity_max              = "${var.tectonic_aws_spotinst_capacity_max}"
+  spot_instance_types            = "${var.tectonic_aws_spotinst_instance_types}"
+  spot_strategy_risk             = "${var.tectonic_aws_spotinst_strategy_risk}"
+  spot_strategy_draining_timeout = "${var.tectonic_aws_spotinst_strategy_draining_timeout}"
+  spot_avail_vs_cost             = "${var.tectonic_aws_spotinst_cluster_orientation}"
+  spot_fallback_to_ondemand      = "${var.tectonic_aws_spotinst_fallback_to_ondemand}"
 }
 
 module "dns" {

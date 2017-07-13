@@ -102,6 +102,38 @@ tectonic_aws_master_root_volume_type = "gp2"
 // The target AWS region for the cluster.
 tectonic_aws_region = "eu-west-1"
 
+// Choose the orientation the Spotinst’s algorithm will lean towards. Appropriate values are:
+// 
+// balanced - (Default) Optimize towards both continuity and cost-effective infrastructure - We highly
+// recommend using this orientation
+// 
+// availability - Optimize towards the continuity of your instances. Please note: no instance
+// replacement will take place - not while replacing On-demand instances nor replacement of expensive
+// Spot instances. 
+// 
+// cost - Optimized towards the most cost-effective infrastructure
+tectonic_aws_spotinst_cluster_orientation = "balanced"
+
+// In the case of no available spot instances, this will enable the fallback to On-Demand instances.
+tectonic_aws_spotinst_fallback_to_ondemand = "true"
+
+// Prefix added to the name of every Spotinst Elasticgroup.
+tectonic_aws_spotinst_group_prefix = ""
+
+// List of instance types Spotinst should consider when bidding.
+tectonic_aws_spotinst_instance_types = ""
+
+// The time in seconds, the instance is allowed to run while detached from the ELB.  This is to allow 
+// the instance time to be drained from incoming TCP connections before terminating it, during a scale 
+// down operation.
+tectonic_aws_spotinst_strategy_draining_timeout = "600"
+
+// The percentage of Spot instances that would spin up from the spot_capacity_target number
+tectonic_aws_spotinst_strategy_risk = "100"
+
+// Enables use of Spotinst for worker pool rather than AWS Autoscaling Group.
+tectonic_aws_spotinst_worker_pool = "false"
+
 // Name of an SSH key located within the AWS region. Example: coreos-user.
 tectonic_aws_ssh_key = ""
 
@@ -223,6 +255,12 @@ tectonic_container_linux_version = "latest"
 // (optional) The name of an existing Kubernetes StorageClass that will be used for handling etcd backups.
 // tectonic_etcd_backup_storage_class = ""
 
+// (optional) Extra AWS tags to be applied to Spotinst elasticgroup instances. This is only applicable
+// when using Spotinst.
+// 
+// Example: `[ { key = "foo", value = "bar" } ]`
+// tectonic_elastic_group_extra_tags = ""
+
 // (optional) The path of the file containing the CA certificate for TLS communication with etcd.
 // 
 // Note: This works only when used in conjunction with an external etcd cluster.
@@ -310,3 +348,20 @@ tectonic_vanilla_k8s = false
 // The number of worker nodes to be created.
 // This applies only to cloud platforms.
 tectonic_worker_count = "3"
+
+// If set to true, a Spotinst elastic group is setup for every AZ/Subnet that will run worker nodes.
+// Enabling this feature requires setting spotinst provider environment variables so terraform can
+// talk to Spotinst api. See https://www.terraform.io/docs/providers/spotinst/index.html for details.
+tectonic_aws_spotinst_worker_pool = false
+
+// (Optional) When tectonic_aws_spotinst_worker_pool is set to true, defines the target number of
+// instances you'd like spotinst to create.
+//tectonic_aws_spotinst_capacity_target = 1
+
+// (Optional) When tectonic_aws_spotinst_worker_pool is set to true, defines the minimum number of
+// instances you'd like spotinst to create.
+//tectonic_aws_spotinst_capacity_min = 1
+
+// (Optional) When tectonic_aws_spotinst_worker_pool is set to true, defines the maximum number of
+// instances you'd like spotinst to create.
+//tectonic_aws_spotinst_capacity_max = 1

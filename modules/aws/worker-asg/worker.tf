@@ -28,6 +28,7 @@ resource "aws_launch_configuration" "worker_conf" {
   security_groups      = ["${var.sg_ids}"]
   iam_instance_profile = "${aws_iam_instance_profile.worker_profile.arn}"
   user_data            = "${data.ignition_config.main.rendered}"
+  count                = "${var.use_spotinst == true ? 0 : 1}"
 
   lifecycle {
     create_before_destroy = true
@@ -52,6 +53,7 @@ resource "aws_autoscaling_group" "workers" {
   min_size             = "${var.instance_count}"
   launch_configuration = "${aws_launch_configuration.worker_conf.id}"
   vpc_zone_identifier  = ["${var.subnet_ids}"]
+  count                = "${var.use_spotinst == true ? 0 : 1}"
 
   tags = [
     {
@@ -78,10 +80,79 @@ resource "aws_autoscaling_group" "workers" {
 }
 
 resource "aws_autoscaling_attachment" "workers" {
-  count = "${length(var.load_balancers)}"
+  count = "${var.use_spotinst == true ? 0 : length(var.load_balancers)}"
 
   autoscaling_group_name = "${aws_autoscaling_group.workers.name}"
   elb                    = "${var.load_balancers[count.index]}"
+}
+
+resource "spotinst_aws_group" "workers" {
+  name        = "${var.spot_group_prefix}-${element(var.subnet_azs, count.index)}-${element(var.subnet_ids, count.index)}-workers"
+  description = "created by Terraform"
+  product     = "Linux/UNIX"
+  count       = "${var.use_spotinst == true ? var.subnet_qty : 0}"
+
+  capacity {
+    target  = "${var.spot_capacity_target}"
+    minimum = "${var.spot_capacity_min}"
+    maximum = "${var.spot_capacity_max}"
+  }
+
+  strategy {
+    risk                 = "${var.spot_strategy_risk}"
+    draining_timeout     = "${var.spot_strategy_draining_timeout}"
+    availability_vs_cost = "${var.spot_avail_vs_cost}"
+    fallback_to_ondemand = "${var.spot_fallback_to_ondemand}"
+  }
+
+  instance_types {
+    ondemand = "${var.ec2_type}"
+    spot     = "${var.spot_instance_types}"
+  }
+
+  availability_zone {
+    name      = "${element(var.subnet_azs, count.index)}"
+    subnet_id = "${element(var.subnet_ids, count.index)}"
+  }
+
+  launch_specification {
+    monitoring           = false
+    image_id             = "${data.aws_ami.coreos_ami.image_id}"
+    key_pair             = "${var.ssh_key}"
+    security_group_ids   = ["${var.sg_ids}"]
+    iam_instance_profile = "${aws_iam_instance_profile.worker_profile.arn}"
+    user_data            = "${data.ignition_config.main.rendered}"
+  }
+
+  ebs_block_device {
+    # Setting the device_name to /dev/xvda ensures this setting is for the root volume
+    device_name = "/dev/xvda"
+    volume_type = "${var.root_volume_type}"
+    volume_size = "${var.root_volume_size}"
+    iops        = "${var.root_volume_type == "io1" ? var.root_volume_iops : 0}"
+  }
+
+  tags_kv = [
+    {
+      key   = "Name"
+      value = "${var.cluster_name}-worker"
+    },
+    {
+      key   = "kubernetes.io/cluster/${var.cluster_name}"
+      value = "owned"
+    },
+    {
+      key   = "tectonicClusterID"
+      value = "${var.cluster_id}"
+    },
+    "${var.elastic_group_extra_tags}",
+  ]
+
+  # Since autoscalers and such will constantly alter capacity, ignore this here to prevent
+  # terraform apply from altering.
+  lifecycle {
+    ignore_changes = ["capacity"]
+  }
 }
 
 resource "aws_iam_instance_profile" "worker_profile" {

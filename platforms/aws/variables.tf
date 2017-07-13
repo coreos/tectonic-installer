@@ -184,6 +184,18 @@ Example: `[ { key = "foo", value = "bar", propagate_at_launch = true } ]`
 EOF
 }
 
+variable "tectonic_elastic_group_extra_tags" {
+  type    = "list"
+  default = []
+
+  description = <<EOF
+(optional) Extra AWS tags to be applied to Spotinst elasticgroup instances. This is only applicable
+when using Spotinst.
+
+Example: `[ { key = "foo", value = "bar" } ]`
+EOF
+}
+
 variable "tectonic_dns_name" {
   type        = "string"
   default     = ""
@@ -323,5 +335,109 @@ This is useful for exposing NodePort services via load-balancers managed separat
 
 Example:
  * `["ingress-nginx"]`
+EOF
+}
+
+variable "tectonic_aws_spotinst_worker_pool" {
+  type    = "string"
+  default = "false"
+
+  description = <<EOF
+Enables use of Spotinst for worker pool rather than AWS Autoscaling Group.
+EOF
+}
+
+variable "tectonic_aws_spotinst_capacity_target" {
+  type    = "string"
+  default = "0"
+
+  description = <<EOF
+Number of instances you'd like Spotinst to target.
+EOF
+}
+
+variable "tectonic_aws_spotinst_capacity_min" {
+  type    = "string"
+  default = "0"
+
+  description = <<EOF
+Number of instance you'd like Spotinst to run at minimum.
+EOF
+}
+
+variable "tectonic_aws_spotinst_capacity_max" {
+  type    = "string"
+  default = "0"
+
+  description = <<EOF
+Number of instances you'd like Spotinst to run at maximum.
+EOF
+}
+
+variable "tectonic_aws_spotinst_instance_types" {
+  description = "List of instance types Spotinst should consider when bidding."
+  type        = "list"
+
+  default = [
+    "m3.large",
+    "m4.large",
+    "c3.large",
+    "c4.large",
+  ]
+}
+
+variable "tectonic_aws_spotinst_group_prefix" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+Prefix added to the name of every Spotinst Elasticgroup.
+EOF
+}
+
+variable "tectonic_aws_spotinst_strategy_draining_timeout" {
+  type    = "string"
+  default = "600"
+
+  description = <<EOF
+The time in seconds, the instance is allowed to run while detached from the ELB.  This is to allow 
+the instance time to be drained from incoming TCP connections before terminating it, during a scale 
+down operation.
+EOF
+}
+
+variable "tectonic_aws_spotinst_strategy_risk" {
+  type    = "string"
+  default = "100"
+
+  description = <<EOF
+The percentage of Spot instances that would spin up from the spot_capacity_target number
+EOF
+}
+
+variable "tectonic_aws_spotinst_cluster_orientation" {
+  type    = "string"
+  default = "balanced"
+
+  description = <<EOF
+Choose the orientation the Spotinst’s algorithm will lean towards. Appropriate values are:
+
+balanced - (Default) Optimize towards both continuity and cost-effective infrastructure - We highly
+recommend using this orientation
+
+availability - Optimize towards the continuity of your instances. Please note: no instance
+replacement will take place - not while replacing On-demand instances nor replacement of expensive
+Spot instances. 
+
+cost - Optimized towards the most cost-effective infrastructure
+EOF
+}
+
+variable "tectonic_aws_spotinst_fallback_to_ondemand" {
+  type    = "string"
+  default = "true"
+
+  description = <<EOF
+In the case of no available spot instances, this will enable the fallback to On-Demand instances.
 EOF
 }

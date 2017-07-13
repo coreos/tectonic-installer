@@ -30,6 +30,16 @@ This document gives an overview of variables used in the AWS platform of the Tec
 | tectonic_aws_profile | (optional) This declares the AWS credentials profile to use. | string | `default` |
 | tectonic_aws_public_endpoints | (optional) If set to true, create public-facing ingress resources (ELB, A-records). If set to false, no public-facing ingress resources will be created. | string | `true` |
 | tectonic_aws_region | The target AWS region for the cluster. | string | `eu-west-1` |
+| tectonic_aws_spotinst_capacity_max | Number of instances you'd like Spotinst to run at maximum. | string | `0` |
+| tectonic_aws_spotinst_capacity_min | Number of instance you'd like Spotinst to run at minimum. | string | `0` |
+| tectonic_aws_spotinst_capacity_target | Number of instances you'd like Spotinst to target. | string | `0` |
+| tectonic_aws_spotinst_cluster_orientation | Choose the orientation the Spotinst’s algorithm will lean towards. Appropriate values are:<br><br>balanced - (Default) Optimize towards both continuity and cost-effective infrastructure - We highly recommend using this orientation<br><br>availability - Optimize towards the continuity of your instances. Please note: no instance replacement will take place - not while replacing On-demand instances nor replacement of expensive Spot instances. <br><br>cost - Optimized towards the most cost-effective infrastructure | string | `balanced` |
+| tectonic_aws_spotinst_fallback_to_ondemand | In the case of no available spot instances, this will enable the fallback to On-Demand instances. | string | `true` |
+| tectonic_aws_spotinst_group_prefix | Prefix added to the name of every Spotinst Elasticgroup. | string | `` |
+| tectonic_aws_spotinst_instance_types | List of instance types Spotinst should consider when bidding. | list | `<list>` |
+| tectonic_aws_spotinst_strategy_draining_timeout | The time in seconds, the instance is allowed to run while detached from the ELB.  This is to allow  the instance time to be drained from incoming TCP connections before terminating it, during a scale  down operation. | string | `600` |
+| tectonic_aws_spotinst_strategy_risk | The percentage of Spot instances that would spin up from the spot_capacity_target number | string | `100` |
+| tectonic_aws_spotinst_worker_pool | Enables use of Spotinst for worker pool rather than AWS Autoscaling Group. | string | `false` |
 | tectonic_aws_ssh_key | Name of an SSH key located within the AWS region. Example: coreos-user. | string | - |
 | tectonic_aws_vpc_cidr_block | Block of IP addresses used by the VPC. This should not overlap with any other networks, such as a private datacenter connected via Direct Connect. | string | `10.0.0.0/16` |
 | tectonic_aws_worker_custom_subnets | (optional) This configures worker availability zones and their corresponding subnet CIDRs directly.<br><br>Example: `{ eu-west-1a = "10.0.64.0/20", eu-west-1b = "10.0.80.0/20" }` | map | `<map>` |
@@ -41,4 +51,5 @@ This document gives an overview of variables used in the AWS platform of the Tec
 | tectonic_aws_worker_root_volume_size | The size of the volume in gigabytes for the root block device of worker nodes. | string | `30` |
 | tectonic_aws_worker_root_volume_type | The type of volume for the root block device of worker nodes. | string | `gp2` |
 | tectonic_dns_name | (optional) DNS prefix used to construct the console and API server endpoints. | string | `` |
+| tectonic_elastic_group_extra_tags | (optional) Extra AWS tags to be applied to Spotinst elasticgroup instances. This is only applicable when using Spotinst.<br><br>Example: `[ { key = "foo", value = "bar" } ]` | list | `<list>` |
 
