@@ -99,6 +99,18 @@ tectonic_aws_master_root_volume_type = "gp2"
 // The target AWS region for the cluster.
 tectonic_aws_region = "eu-west-1"
 
+// Number of instances you'd like Spotinst to run at maximum.
+tectonic_aws_spotinst_capacity_max = "0"
+
+// Number of instance you'd like Spotinst to run at minimum.
+tectonic_aws_spotinst_capacity_min = "0"
+
+// Number of instances you'd like Spotinst to target.
+tectonic_aws_spotinst_capacity_target = "0"
+
+// Enables use of Spotinst for worker pool rather than AWS Autoscaling Group.
+tectonic_aws_spotinst_worker_pool = "false"
+
 // Name of an SSH key located within the AWS region. Example: coreos-user.
 tectonic_aws_ssh_key = ""
 
@@ -239,20 +251,3 @@ tectonic_vanilla_k8s = false
 // The number of worker nodes to be created.
 // This applies only to cloud platforms.
 tectonic_worker_count = "3"
-
-// If set to true, a Spotinst elastic group is setup for every AZ/Subnet that will run worker nodes.
-// Enabling this feature requires setting spotinst provider environment variables so terraform can
-// talk to Spotinst api. See https://www.terraform.io/docs/providers/spotinst/index.html for details.
-tectonic_aws_spotinst_worker_pool = false
-
-// (Optional) When tectonic_aws_spotinst_worker_pool is set to true, defines the target number of
-// instances you'd like spotinst to create.
-//tectonic_aws_spotinst_capacity_target = 1
-
-// (Optional) When tectonic_aws_spotinst_worker_pool is set to true, defines the minimum number of
-// instances you'd like spotinst to create.
-//tectonic_aws_spotinst_capacity_min = 1
-
-// (Optional) When tectonic_aws_spotinst_worker_pool is set to true, defines the maximum number of
-// instances you'd like spotinst to create.
-//tectonic_aws_spotinst_capacity_max = 1
