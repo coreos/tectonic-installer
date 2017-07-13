@@ -239,3 +239,20 @@ tectonic_vanilla_k8s = false
 // The number of worker nodes to be created.
 // This applies only to cloud platforms.
 tectonic_worker_count = "3"
+
+// If set to true, a Spotinst elastic group is setup for every AZ/Subnet that will run worker nodes.
+// Enabling this feature requires setting spotinst provider environment variables so terraform can
+// talk to Spotinst api. See https://www.terraform.io/docs/providers/spotinst/index.html for details.
+tectonic_aws_spotinst_worker_pool = false
+
+// (Optional) When tectonic_aws_spotinst_worker_pool is set to true, defines the target number of
+// instances you'd like spotinst to create.
+//tectonic_aws_spotinst_capacity_target = 1
+
+// (Optional) When tectonic_aws_spotinst_worker_pool is set to true, defines the minimum number of
+// instances you'd like spotinst to create.
+//tectonic_aws_spotinst_capacity_min = 1
+
+// (Optional) When tectonic_aws_spotinst_worker_pool is set to true, defines the maximum number of
+// instances you'd like spotinst to create.
+//tectonic_aws_spotinst_capacity_max = 1
