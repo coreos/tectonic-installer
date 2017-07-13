@@ -23,8 +23,7 @@ module "bootkube" {
   oidc_groups_claim   = "groups"
   oidc_client_id      = "tectonic-kubectl"
 
-  # hack. see https://github.com/hashicorp/terraform/issues/12453
-  etcd_endpoints   = ["${split(",", var.tectonic_route53_dns_enabled ? join(",", module.route53.etc_a_nodes) : join(",", module.designate.etc_a_nodes))}"]
+  etcd_endpoints   = "${openstack_networking_port_v2.etcd.*.all_fixed_ips}"
   etcd_ca_cert     = "${var.tectonic_etcd_ca_cert_path}"
   etcd_client_cert = "${var.tectonic_etcd_client_cert_path}"
   etcd_client_key  = "${var.tectonic_etcd_client_key_path}"

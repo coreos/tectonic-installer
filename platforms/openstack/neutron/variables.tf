@@ -134,19 +134,3 @@ variable "tectonic_openstack_dns_nameservers" {
 The DNS servers assigned to the generated OpenStack subnet resource.
 EOF
 }
-
-variable "tectonic_route53_dns_enabled" {
-  default = false
-
-  description = <<EOF
-Whether to use AWS Route53 as a DNS provider. You can only use one DNS provider.
-EOF
-}
-
-variable "tectonic_designate_dns_enabled" {
-  default = true
-
-  description = <<EOF
-Whether to use OpenStack Designate as a DNS provider. You can only use one DNS provider.
-EOF
-}

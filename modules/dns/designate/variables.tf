@@ -1,8 +1,3 @@
-variable "designate_dns_enabled" {
-  description = "Indicates whether Designate should be used"
-  type        = "string"
-}
-
 variable "etcd_tls_enabled" {
   description = "Indicates whether TLS is used for etcd"
   type        = "string"
