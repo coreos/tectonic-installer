@@ -90,6 +90,7 @@ module "masters" {
   source = "../../modules/google/master-igm"
 
   project_id     = "${var.tectonic_gcp_project_id}"
+  region         = "${var.tectonic_gcp_region}"
   instance_count = "${var.tectonic_master_count}"
   zone_list      = "${var.tectonic_gcp_zones}"
   max_masters    = "${var.tectonic_masters_max}"
@@ -112,6 +113,7 @@ module "masters" {
 module "workers" {
   source = "../../modules/google/worker-igm"
 
+  region         = "${var.tectonic_gcp_region}"
   instance_count = "${var.tectonic_worker_count}"
   zone_list      = "${var.tectonic_gcp_zones}"
   max_workers    = "${var.tectonic_workers_max}"
