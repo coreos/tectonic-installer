@@ -5,6 +5,7 @@ shopt -s expand_aliases
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Allow smoke.sh to work off jenkins.
 WORKSPACE=${WORKSPACE:-"$(cd "$DIR"/../../.. && pwd)"}
+chmod -R 777 "$WORKSPACE"
 BUILD_ID=${BUILD_ID:-1}
 BRANCH_NAME=${BRANCH_NAME:-$(git rev-parse --abbrev-ref HEAD)}
 
