@@ -105,3 +105,8 @@ variable "master_iam_role" {
   default     = ""
   description = "IAM role to use for the instance profiles of master nodes."
 }
+
+variable "vanilla_k8s" {
+  description = "If true, no infrastructure will be created to access tectonic services on the master nodes."
+  default     = false
+}

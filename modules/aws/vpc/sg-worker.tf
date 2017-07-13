@@ -169,6 +169,7 @@ resource "aws_security_group_rule" "worker_ingress_services" {
 }
 
 resource "aws_security_group_rule" "worker_ingress_services_from_console" {
+  count                    = "${var.vanilla_k8s ? 0 : 1}"
   type                     = "ingress"
   security_group_id        = "${aws_security_group.worker.id}"
   source_security_group_id = "${aws_security_group.console.id}"
