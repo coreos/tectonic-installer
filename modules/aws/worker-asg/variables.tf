@@ -30,6 +30,17 @@ variable "subnet_ids" {
   type = "list"
 }
 
+variable "subnet_azs" {
+  type        = "list"
+  description = "Correlated azs for each subnet_id."
+}
+
+variable "subnet_qty" {
+  type        = "string"
+  description = "Quantity of subnets used for calculating spotinst count."
+  default     = 0
+}
+
 variable "sg_ids" {
   type        = "list"
   description = "The security group IDs to be applied."
@@ -72,4 +83,28 @@ variable "worker_iam_role" {
   type        = "string"
   default     = ""
   description = "IAM role to use for the instance profiles of worker nodes."
+}
+
+variable "use_spotinst" {
+  type        = "string"
+  default     = "false"
+  description = "When true, sets up spotinst fleet for workers, rather than using ASGs."
+}
+
+variable "spot_capacity_target" {
+  type        = "string"
+  default     = "0"
+  description = "Number of instances you'd like Spotinst to target."
+}
+
+variable "spot_capacity_min" {
+  type        = "string"
+  default     = "0"
+  description = "Number of instances you'd like Spotinst to run at minimum."
+}
+
+variable "spot_capacity_max" {
+  type        = "string"
+  default     = "0"
+  description = "Number of instances you'd like Spotinst to run at maximum."
 }

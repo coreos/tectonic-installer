@@ -271,3 +271,39 @@ Example:
  * Role Name = tectonic-installer
 EOF
 }
+
+variable "tectonic_aws_spotinst_worker_pool" {
+  type    = "string"
+  default = "false"
+
+  description = <<EOF
+Enables use of Spotinst for worker pool rather than AWS Autoscaling Group.
+EOF
+}
+
+variable "tectonic_aws_spotinst_capacity_target" {
+  type    = "string"
+  default = "0"
+
+  description = <<EOF
+Number of instances you'd like Spotinst to target.
+EOF
+}
+
+variable "tectonic_aws_spotinst_capacity_min" {
+  type    = "string"
+  default = "0"
+
+  description = <<EOF
+Number of instance you'd like Spotinst to run at minimum.
+EOF
+}
+
+variable "tectonic_aws_spotinst_capacity_max" {
+  type    = "string"
+  default = "0"
+
+  description = <<EOF
+Number of instances you'd like Spotinst to run at maximum.
+EOF
+}
