@@ -27,6 +27,10 @@ This document gives an overview of variables used in the AWS platform of the Tec
 | tectonic_aws_master_root_volume_size | The size of the volume in gigabytes for the root block device of master nodes. | string | `30` |
 | tectonic_aws_master_root_volume_type | The type of volume for the root block device of master nodes. | string | `gp2` |
 | tectonic_aws_region | The target AWS region for the cluster. | string | `eu-west-1` |
+| tectonic_aws_spotinst_capacity_max | Number of instances you'd like Spotinst to run at maximum. | string | `0` |
+| tectonic_aws_spotinst_capacity_min | Number of instance you'd like Spotinst to run at minimum. | string | `0` |
+| tectonic_aws_spotinst_capacity_target | Number of instances you'd like Spotinst to target. | string | `0` |
+| tectonic_aws_spotinst_worker_pool | Enables use of Spotinst for worker pool rather than AWS Autoscaling Group. | string | `false` |
 | tectonic_aws_ssh_key | Name of an SSH key located within the AWS region. Example: coreos-user. | string | - |
 | tectonic_aws_vpc_cidr_block | Block of IP addresses used by the VPC. This should not overlap with any other networks, such as a private datacenter connected via Direct Connect. | string | `10.0.0.0/16` |
 | tectonic_aws_worker_custom_subnets | (optional) This configures worker availability zones and their corresponding subnet CIDRs directly.<br><br>Example: `{ eu-west-1a = "10.0.64.0/20", eu-west-1b = "10.0.80.0/20" }` | map | `<map>` |
