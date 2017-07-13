@@ -44,6 +44,7 @@ limitations under the License.
 
 resource "google_compute_instance_template" "tectonic-master-it" {
   name           = "tectonic-master-it"
+  region         = "${var.region}"
   machine_type   = "${var.machine_type}"
   can_ip_forward = false
 
