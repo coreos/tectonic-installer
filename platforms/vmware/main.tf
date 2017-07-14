@@ -98,4 +98,5 @@ module "workers" {
   kubeconfig              = "${module.bootkube.kubeconfig}"
   private_key             = "${var.tectonic_vmware_ssh_private_key_path}"
   image_re                = "${var.tectonic_image_re}"
+  kubelet_cni_bin_dir     = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
 }
