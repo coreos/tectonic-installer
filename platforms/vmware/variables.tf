@@ -15,6 +15,16 @@ variable "tectonic_vmware_server" {
   description = "vCenter Server IP/FQDN"
 }
 
+variable "tectonic_vmware_username" {
+  type        = "string"
+  description = "Username to use to configure Kubernetes - VMware vSphere Cloud provider. https://kubernetes.io/docs/getting-started-guides/vsphere/#configuring-vsphere-cloud-provider"
+}
+
+variable "tectonic_vmware_password" {
+  type        = "string"
+  description = "Password to use to configure Kubernetes - VMware vSphere Cloud provider. https://kubernetes.io/docs/getting-started-guides/vsphere/#configuring-vsphere-cloud-provider "
+}
+
 variable "tectonic_vmware_sslselfsigned" {
   type        = "string"
   description = "Is the vCenter certificate Self-Signed? Example: `tectonic_vmware_sslselfsigned = \"true\"` "

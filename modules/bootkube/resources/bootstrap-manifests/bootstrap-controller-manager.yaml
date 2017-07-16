@@ -26,6 +26,7 @@ spec:
     - name: ssl-host
       mountPath: /etc/ssl/certs
       readOnly: true
+    ${cloud_provider_volumemount}
   hostNetwork: true
   volumes:
   - name: etc-kubernetes
@@ -34,3 +35,4 @@ spec:
   - name: ssl-host
     hostPath:
       path: /usr/share/ca-certificates
+  ${cloud_provider_volume} 

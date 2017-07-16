@@ -25,10 +25,12 @@ This document gives an overview of variables used in the VMware platform of the 
 | tectonic_vmware_master_vcpu | Master node(s) vCPU count | string | `1` |
 | tectonic_vmware_network | Portgroup to attach the cluster nodes | string | - |
 | tectonic_vmware_node_dns | DNS Server to be used by Virtual Machine(s). Multiple DNS servers can be separated by whitespace. Example: `"192.168.1.1 192.168.2.1"` | string | - |
+| tectonic_vmware_password | Password to use to configure Kubernetes - VMware vSphere Cloud provider. https://kubernetes.io/docs/getting-started-guides/vsphere/#configuring-vsphere-cloud-provider | string | - |
 | tectonic_vmware_server | vCenter Server IP/FQDN | string | - |
 | tectonic_vmware_ssh_authorized_key | SSH public key to use as an authorized key. Example: `"ssh-rsa AAAB3N..."` | string | - |
 | tectonic_vmware_ssh_private_key_path | SSH private key file in .pem format corresponding to tectonic_vmware_ssh_authorized_key. If not provided, SSH agent will be used. | string | `` |
 | tectonic_vmware_sslselfsigned | Is the vCenter certificate Self-Signed? Example: `tectonic_vmware_sslselfsigned = "true"` | string | - |
+| tectonic_vmware_username | Username to use to configure Kubernetes - VMware vSphere Cloud provider. https://kubernetes.io/docs/getting-started-guides/vsphere/#configuring-vsphere-cloud-provider | string | - |
 | tectonic_vmware_vm_template | Virtual Machine template of CoreOS Container Linux. | string | - |
 | tectonic_vmware_vm_template_folder | Folder for VM template of CoreOS Container Linux. | string | - |
 | tectonic_vmware_worker_datastore | The storage LUN used by worker nodes. In order to use vSphere Datastore Cluster use the syntax DatastoreClusterName/datastore. | string | `` |

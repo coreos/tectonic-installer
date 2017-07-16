@@ -1,6 +1,7 @@
 module "bootkube" {
-  source         = "../../modules/bootkube"
-  cloud_provider = ""
+  source                = "../../modules/bootkube"
+  cloud_provider        = "vsphere"
+  cloud_provider_config = "${data.template_file.cloud-provider.rendered}"
 
   cluster_name = "${var.tectonic_cluster_name}"
 

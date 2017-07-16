@@ -43,6 +43,20 @@ module "ignition_masters" {
   kubelet_node_taints = "node-role.kubernetes.io/master=:NoSchedule"
 }
 
+data "template_file" "cloud-provider" {
+  template = "${file("${path.module}/resources/cloud-config.ini")}"
+
+  vars {
+    cloud-config-username     = "${var.tectonic_vmware_username}"
+    cloud-config-password     = "${var.tectonic_vmware_password}"
+    cloud-config-server       = "${var.tectonic_vmware_server}"
+    cloud-config-insecureflag = "${var.tectonic_vmware_sslselfsigned}"
+    cloud-config-datacenter   = "${var.tectonic_vmware_datacenter}"
+    cloud-config-datastore    = "${var.tectonic_vmware_datastore}"
+    cloud-config-workingdir   = "${vsphere_folder.tectonic_vsphere_folder.path}"
+  }
+}
+
 module "masters" {
   source           = "../../modules/vmware/node"
   instance_count   = "${var.tectonic_master_count}"
@@ -77,6 +91,7 @@ module "masters" {
   ign_kubelet_service_id     = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id  = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id    = "${module.ignition_masters.max_user_watches_id}"
+  cloud_provider_config   = "${data.template_file.cloud-provider.rendered}"
 }
 
 module "ignition_workers" {
@@ -123,4 +138,5 @@ module "workers" {
   ign_kubelet_service_id     = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id  = "${module.ignition_workers.locksmithd_service_id}"
   ign_max_user_watches_id    = "${module.ignition_workers.max_user_watches_id}"
+  cloud_provider_config   = "${data.template_file.cloud-provider.rendered}"
 }

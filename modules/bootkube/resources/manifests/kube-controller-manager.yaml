@@ -66,6 +66,7 @@ spec:
         - name: ssl-host
           mountPath: /etc/ssl/certs
           readOnly: true
+        ${cloud_provider_volumemount}
       nodeSelector:
         node-role.kubernetes.io/master: ""
       securityContext:
@@ -87,4 +88,5 @@ spec:
       - name: ssl-host
         hostPath:
           path: /usr/share/ca-certificates
+      ${cloud_provider_volume}
       dnsPolicy: Default # Don't use cluster DNS.
