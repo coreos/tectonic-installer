@@ -113,7 +113,7 @@ launch-installer:
 
 .PHONY: launch-matchbox
 launch-matchbox:
-	./scripts/add_matchbox_hosts.sh
+	sudo ./scripts/add_matchbox_hosts.sh
 	mkdir -p $(MATCHBOX_IMAGES_PATH) $(MATCHBOX_ASSETS_PATH)/coreos/$(COREOS_VERSION)
 	/usr/local/bin/matchbox $(MATCHBOX_OPTS) & echo $$! > /tmp/matchbox.pid
 
