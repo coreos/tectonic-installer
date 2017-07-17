@@ -59,6 +59,11 @@ variable "ec2_ami" {
   default = ""
 }
 
+variable "ec2_ami" {
+  type    = "string"
+  default = ""
+}
+
 variable "instance_count" {
   type = "string"
 }
