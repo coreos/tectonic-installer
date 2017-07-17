@@ -179,6 +179,7 @@ module "masters" {
   subnet_ids                           = "${module.vpc.master_subnet_ids}"
   ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
   ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
+  ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
 }
 
 module "ignition_workers" {
@@ -243,6 +244,7 @@ module "workers" {
   worker_iam_role                      = "${var.tectonic_aws_worker_iam_role_name}"
   ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
   ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.systemd_default_env_id : ""}"
+  ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
 }
 
 module "dns" {
