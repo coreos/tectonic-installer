@@ -26,12 +26,11 @@ data "aws_ami" "coreos_ami" {
 }
 
 resource "aws_launch_configuration" "worker_conf" {
-  instance_type   = "${var.ec2_type}"
-  image_id        = "${data.aws_ami.coreos_ami.image_id}"
-  name_prefix     = "${var.cluster_name}-worker-"
-  key_name        = "${var.ssh_key}"
-  security_groups = ["${var.sg_ids}"]
-
+  instance_type        = "${var.ec2_type}"
+  image_id             = "${coalesce(var.ec2_ami, data.aws_ami.coreos_ami.image_id)}"
+  name_prefix          = "${var.cluster_name}-worker-"
+  key_name             = "${var.ssh_key}"
+  security_groups      = ["${var.sg_ids}"]
   iam_instance_profile = "${aws_iam_instance_profile.worker_profile.arn}"
   user_data            = "${data.ignition_config.s3.rendered}"
 

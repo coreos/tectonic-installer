@@ -64,7 +64,7 @@ module "vpc" {
 
 module "etcd" {
   source = "../../modules/aws/etcd"
-
+  
   base_domain                = "${var.tectonic_base_domain}"
   cluster_id                 = "${module.tectonic.cluster_id}"
   cluster_name               = "${var.tectonic_cluster_name}"
@@ -87,7 +87,11 @@ module "etcd" {
   ssh_key                    = "${var.tectonic_aws_ssh_key}"
   subnets                    = "${module.vpc.worker_subnet_ids}"
   etcd_iam_role              = "${var.tectonic_aws_etcd_iam_role_name}"
+<<<<<<< HEAD
   ec2_ami                    = "${var.tectonic_aws_ec2_ami_override}"
+=======
+  ec2_ami                 = "${var.tectonic_aws_ec2_ami_override}"
+>>>>>>> modules/aws: add ec2_ami_override to etcd, master, worker nodes
 }
 
 module "ignition_masters" {
@@ -228,7 +232,11 @@ module "workers" {
   subnet_ids                           = "${module.vpc.worker_subnet_ids}"
   vpc_id                               = "${module.vpc.vpc_id}"
   worker_iam_role                      = "${var.tectonic_aws_worker_iam_role_name}"
+<<<<<<< HEAD
   kubeconfig_content                   = "${module.bootkube.kubeconfig}"
+=======
+  ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
+>>>>>>> modules/aws: add ec2_ami_override to etcd, master, worker nodes
 }
 
 module "dns" {
