@@ -481,7 +481,7 @@ pipeline {
           "IntegrationTest Baremetal Installer Gui": {
             node('worker && ec2') {
               withCredentials(creds) {
-                withDockerContainer(image: params.builder_image, args: '-u root') {
+                withDockerContainer(params.builder_image) {
                   checkout scm
                   unstash 'installer'
                   unstash 'node_modules'
