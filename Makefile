@@ -16,7 +16,12 @@ all: apply
 $(INSTALLER_BIN):
 	$(MAKE) build -C $(TOP_DIR)/installer
 
-installer-env: $(INSTALLER_BIN) terraformrc.example
+
+ifeq ($(PLATFORM),metal)
+ INSTALLER_DEP=$(INSTALLER_BIN)
+endif
+installer-env: $(INSTALLER_DEP) terraformrc.example
+	@echo $(INSTALLER_DEP)
 	sed "s|<PATH_TO_INSTALLER>|$(INSTALLER_BIN)|g" terraformrc.example > .terraformrc
 
 .PHONY: localconfig
