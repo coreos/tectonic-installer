@@ -77,8 +77,8 @@ resource "template_dir" "bootkube" {
     cloud_provider             = "${var.cloud_provider}"
     cloud_provider_config      = "${var.cloud_provider_config}"
     cloud_provider_config_flag = "${var.cloud_provider_config != "" ? "- --cloud-config=/etc/kubernetes/cloud/config" : "# no cloud provider config given"}"
-    cloud_provider_volume      = "${var.cloud_provider == "vsphere" ? "- name: vspheredmi \n        hostPath: \n          path: /sys/class/dmi/id/product_serial" : ""}"
-    cloud_provider_volumemount = "${var.cloud_provider == "vsphere" ? "- mountPath: /sys/class/dmi/id/product_serial \n          name: vspheredmi" : ""}"
+    cloud_provider_volume      = "${var.volume_name == "" ? "" : "- name: ${var.volume_name} \n        hostPath: \n          path: ${var.volume_host_path}" }"
+    cloud_provider_volumemount = "${var.volume_name == "" ? "" : "- mountPath: ${var.volume_mount_path} \n          name: ${var.volume_name}" }"
 
     cluster_cidr        = "${var.cluster_cidr}"
     service_cidr        = "${var.service_cidr}"
@@ -137,8 +137,8 @@ resource "template_dir" "bootkube_bootstrap" {
     cloud_provider             = "${var.cloud_provider}"
     cloud_provider_config      = "${var.cloud_provider_config}"
     cloud_provider_config_flag = "${var.cloud_provider_config != "" ? "- --cloud-config=/etc/kubernetes/cloud/config" : "# no cloud provider config given"}"
-    cloud_provider_volume      = "${var.cloud_provider == "vsphere" ? "- name: vspheredmi \n    hostPath: \n      path: /sys/class/dmi/id/product_serial" : ""}"
-    cloud_provider_volumemount = "${var.cloud_provider == "vsphere" ? "- mountPath: /sys/class/dmi/id/product_serial \n      name: vspheredmi" : ""}"
+    cloud_provider_volume      = "${var.volume_name == "" ? "" : "- name: ${var.volume_name} \n    hostPath: \n      path: ${var.volume_host_path}" }"
+    cloud_provider_volumemount = "${var.volume_name == "" ? "" : "- mountPath: ${var.volume_mount_path} \n      name: ${var.volume_name}" }"
 
     advertise_address = "${var.advertise_address}"
     cluster_cidr      = "${var.cluster_cidr}"

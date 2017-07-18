@@ -2,6 +2,9 @@ module "bootkube" {
   source                = "../../modules/bootkube"
   cloud_provider        = "vsphere"
   cloud_provider_config = "${data.template_file.cloud-provider.rendered}"
+  volume_name           = "vspheredmi"
+  volume_host_path      = "/sys/class/dmi/id/product_serial"
+  volume_mount_path     = "/sys/class/dmi/id/product_serial"
 
   cluster_name = "${var.tectonic_cluster_name}"
 
