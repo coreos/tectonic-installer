@@ -47,13 +47,13 @@ data "template_file" "cloud-provider" {
   template = "${file("${path.module}/resources/cloud-config.ini")}"
 
   vars {
-    cloud-config-username     = "${var.tectonic_vmware_username}"
-    cloud-config-password     = "${var.tectonic_vmware_password}"
-    cloud-config-server       = "${var.tectonic_vmware_server}"
-    cloud-config-insecureflag = "${var.tectonic_vmware_sslselfsigned}"
-    cloud-config-datacenter   = "${var.tectonic_vmware_datacenter}"
-    cloud-config-datastore    = "${var.tectonic_vmware_datastore}"
-    cloud-config-workingdir   = "${vsphere_folder.tectonic_vsphere_folder.path}"
+    cloud_config_username     = "${var.tectonic_vmware_username}"
+    cloud_config_password     = "${var.tectonic_vmware_password}"
+    cloud_config_server       = "${var.tectonic_vmware_server}"
+    cloud_config_insecureflag = "${var.tectonic_vmware_sslselfsigned}"
+    cloud_config_datacenter   = "${var.tectonic_vmware_datacenter}"
+    cloud_config_datastore    = "${var.tectonic_vmware_datastore}"
+    cloud_config_workingdir   = "${vsphere_folder.tectonic_vsphere_folder.path}"
   }
 }
 
