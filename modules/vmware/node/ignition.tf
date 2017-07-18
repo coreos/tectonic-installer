@@ -39,8 +39,12 @@ data "ignition_systemd_unit" "vmtoolsd" {
 
   dropin = [
     {
-      content = "[Service]\nExecStartPost=/bin/chmod 444 /sys/class/dmi/id/product_serial"
-      name    = "10-vmtools-perm.conf"
+      name = "10-vmtools-perm.conf"
+
+      content = <<EOF
+[Service]
+ExecStartPost=/bin/chmod 444 /sys/class/dmi/id/product_serial
+EOF
     },
   ]
 }
