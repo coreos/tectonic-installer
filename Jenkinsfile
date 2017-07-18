@@ -182,9 +182,9 @@ pipeline {
                   timeout(45) {
                     sh """#!/bin/bash -ex
                     . ${WORKSPACE}/tests/smoke/aws/smoke.sh assume-role "$TECTONIC_INSTALLER_ROLE"
-                    ${WORKSPACE}/tests/smoke/aws/smoke.sh plan vars/aws-exp-np.tfvars
-                    ${WORKSPACE}/tests/smoke/aws/smoke.sh create vars/aws-exp-np.tfvars
-                    ${WORKSPACE}/tests/smoke/aws/smoke.sh test vars/aws-exp-np.tfvars
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh plan vars/aws-net-policy.tfvars
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh create vars/aws-net-policy.tfvars
+                    ${WORKSPACE}/tests/smoke/aws/smoke.sh test vars/aws-net-policy.tfvars
                     """
                   }
                   catchError {
@@ -192,7 +192,7 @@ pipeline {
                       sshagent(['aws-smoke-test-ssh-key']) {
                         sh """#!/bin/bash
                         # Running without -ex because we don't care if this fails
-                        . ${WORKSPACE}/tests/smoke/aws/smoke.sh common vars/aws-exp-np.tfvars
+                        . ${WORKSPACE}/tests/smoke/aws/smoke.sh common vars/aws-net-policy.tfvars
                         ${WORKSPACE}/tests/smoke/aws/cluster-foreach.sh ${WORKSPACE}/tests/smoke/forensics.sh
                         """
                       }
@@ -202,7 +202,7 @@ pipeline {
                     timeout(15) {
                       sh """#!/bin/bash -ex
                       . ${WORKSPACE}/tests/smoke/aws/smoke.sh assume-role "$TECTONIC_INSTALLER_ROLE"
-                      ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy vars/aws-exp-np.tfvars
+                      ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy vars/aws-net-policy.tfvars
                       """
                     }
                   }
