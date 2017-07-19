@@ -154,7 +154,8 @@ module "workers" {
 
   vpc_id     = "${module.vpc.vpc_id}"
   subnet_ids = ["${module.vpc.worker_subnet_ids}"]
-  subnet_azs = ["${module.vpc.worker_subnet_azs}"]
+  subnet_azs = ["${module.vpc.worker_external_subnet_azs}"]
+
 
   # This count could be deducted by length(keys(var.tectonic_aws_master_custom_subnets))
   # but there is a restriction on passing computed values as counts. This approach works around that.
