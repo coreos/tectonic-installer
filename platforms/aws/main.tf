@@ -156,7 +156,13 @@ module "workers" {
 
   vpc_id     = "${module.vpc.vpc_id}"
   subnet_ids = ["${module.vpc.worker_subnet_ids}"]
-  sg_ids     = "${concat(var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id))}"
+  subnet_azs = ["${module.vpc.worker_subnet_azs}"]
+
+  # This count could be deducted by length(keys(var.tectonic_aws_master_custom_subnets))
+  # but there is a restriction on passing computed values as counts. This approach works around that.
+  subnet_qty = "${length(keys(var.tectonic_aws_worker_custom_subnets)) > 0 ? "${length(keys(var.tectonic_aws_worker_custom_subnets))}" : "${length(data.aws_availability_zones.azs.names)}"}"
+
+  sg_ids = "${concat(var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id))}"
 
   ssh_key                      = "${var.tectonic_aws_ssh_key}"
   cl_channel                   = "${var.tectonic_cl_channel}"
@@ -164,6 +170,10 @@ module "workers" {
   cluster_id                   = "${module.tectonic.cluster_id}"
   extra_tags                   = "${var.tectonic_aws_extra_tags}"
   autoscaling_group_extra_tags = "${var.tectonic_autoscaling_group_extra_tags}"
+  use_spotinst                 = "${var.tectonic_aws_spotinst_worker_pool}"
+  spot_capacity_target         = "${var.tectonic_aws_spotinst_capacity_target}"
+  spot_capacity_min            = "${var.tectonic_aws_spotinst_capacity_min}"
+  spot_capacity_max            = "${var.tectonic_aws_spotinst_capacity_max}"
 
   root_volume_type = "${var.tectonic_aws_worker_root_volume_type}"
   root_volume_size = "${var.tectonic_aws_worker_root_volume_size}"
