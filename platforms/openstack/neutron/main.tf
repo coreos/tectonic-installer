@@ -89,8 +89,8 @@ module "etcd" {
 
   resolv_conf_content = <<EOF
 search ${var.tectonic_base_domain}
-nameserver 8.8.8.8
-nameserver 8.8.4.4
+nameserver ${var.tectonic_openstack_dns_nameserver_1}
+nameserver ${var.tectonic_openstack_dns_nameserver_2}
 EOF
 
   base_domain           = "${var.tectonic_base_domain}"
@@ -123,8 +123,8 @@ module "master_nodes" {
 
   resolv_conf_content = <<EOF
 search ${var.tectonic_base_domain}
-nameserver 8.8.8.8
-nameserver 8.8.4.4
+nameserver ${var.tectonic_openstack_dns_nameserver_1}
+nameserver ${var.tectonic_openstack_dns_nameserver_2}
 EOF
 
   kubeconfig_content           = "${module.bootkube.kubeconfig}"
@@ -149,8 +149,8 @@ module "worker_nodes" {
 
   resolv_conf_content = <<EOF
 search ${var.tectonic_base_domain}
-nameserver 8.8.8.8
-nameserver 8.8.4.4
+nameserver ${var.tectonic_openstack_dns_nameserver_1}
+nameserver ${var.tectonic_openstack_dns_nameserver_2}
 EOF
 
   kubeconfig_content           = "${module.bootkube.kubeconfig}"

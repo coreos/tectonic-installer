@@ -126,11 +126,20 @@ This CIDR will also be assigned to the created the OpenStack subnet resource.
 EOF
 }
 
-variable "tectonic_openstack_dns_nameservers" {
-  type    = "list"
-  default = []
+variable "tectonic_openstack_dns_nameserver_1" {
+  type    = "string"
+  default = "8.8.8.8"
 
   description = <<EOF
-The DNS servers assigned to the generated OpenStack subnet resource.
+The first nameserver used by the nodes and the generated OpenStack subnet resource.
+EOF
+}
+
+variable "tectonic_openstack_dns_nameserver_2" {
+  type    = "string"
+  default = "8.8.4.4"
+
+  description = <<EOF
+The second nameserver used by the nodes and the generated OpenStack subnet resource.
 EOF
 }
