@@ -19,8 +19,8 @@ data:
       http: 0.0.0.0:5556
     grpc:
       addr: 0.0.0.0:5557
-      tlsCert: /etc/tectonic-identity-grpc-server-secret/tls-cert
-      tlsKey: /etc/tectonic-identity-grpc-server-secret/tls-key
+      tlsCert: /etc/tectonic-identity-grpc-server-secret/server-cert
+      tlsKey: /etc/tectonic-identity-grpc-server-secret/server-key
       tlsClientCA: /etc/tectonic-identity-grpc-server-secret/ca-cert
     frontend:
       theme: 'tectonic'

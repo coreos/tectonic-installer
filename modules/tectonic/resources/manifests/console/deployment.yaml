@@ -82,13 +82,15 @@ spec:
               name: tectonic-config
               key: tectonicVersion
         - name: BRIDGE_CA_FILE
-          value: /etc/tectonic-ca-cert-secret/ca-cert
+          value: /etc/tectonic-ingress-ca-cert-secret/ca-cert
         - name: BRIDGE_LICENSE_FILE
           value: /etc/tectonic/licenses/license
+        - name: BRIDGE_DEX_CLIENT_CA_FILE
+          value: /etc/tectonic-identity-grpc-client-secret/ca-cert
         - name: BRIDGE_DEX_CLIENT_CERT_FILE
-          value: /etc/tectonic-identity-grpc-client-secret/tls-cert
+          value: /etc/tectonic-identity-grpc-client-secret/client-cert
         - name: BRIDGE_DEX_CLIENT_KEY_FILE
-          value: /etc/tectonic-identity-grpc-client-secret/tls-key
+          value: /etc/tectonic-identity-grpc-client-secret/client-key
         - name: BRIDGE_DEX_API_HOST
           valueFrom:
             configMapKeyRef:
@@ -119,8 +121,8 @@ spec:
             memory: 50Mi
         terminationMessagePath: /dev/termination-log
         volumeMounts:
-        - mountPath: /etc/tectonic-ca-cert-secret
-          name: tectonic-ca-cert-secret
+        - mountPath: /etc/tectonic-ingress-ca-cert-secret
+          name: tectonic-ingress-ca-cert-secret
           readOnly: true
         - mountPath: /etc/ssl/certs
           name: ssl-certs-host
@@ -143,9 +145,9 @@ spec:
         runAsUser: 65534
       terminationGracePeriodSeconds: 30
       volumes:
-      - name: tectonic-ca-cert-secret
+      - name: tectonic-ingress-ca-cert-secret
         secret:
-          secretName: tectonic-ca-cert-secret
+          secretName: tectonic-ingress-ca-cert-secret
       - hostPath:
           path: /etc/ssl/certs
         name: ssl-certs-host

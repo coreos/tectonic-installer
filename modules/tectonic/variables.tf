@@ -121,3 +121,15 @@ variable "stats_url" {
   description = "The statistics collection URL to which to report."
   type        = "string"
 }
+
+variable "ingress_ca_cert_pem" {
+  type = "string"
+}
+
+variable "ingress_cert_pem" {
+  type = "string"
+}
+
+variable "ingress_private_key_pem" {
+  type = "string"
+}

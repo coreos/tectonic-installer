@@ -1,4 +1,23 @@
 
+// Your email address to be used for the ACME registration.
+tectonic_acme_email_address = ""
+
+// The ACME provider to be used.
+// 
+// See https://github.com/paybyphone/terraform-provider-acme/blob/3b16adc/plugin/providers/acme/acme_structure.go#L504-L531
+// for a list of supported providers.
+tectonic_acme_provider = ""
+
+// (optional) The acme provider configuration as per https://github.com/paybyphone/terraform-provider-acme#using-dns-challenges.
+// tectonic_acme_provider_config = ""
+
+// The ACME server URL.
+// 
+// Examples:
+// - https://acme-staging.api.letsencrypt.org/directory
+// - https://acme-v01.api.letsencrypt.org/directory
+tectonic_acme_server_url = ""
+
 // The e-mail address used to:
 // 1. login as the admin user to the Tectonic Console.
 // 2. generate DNS zones for some providers.

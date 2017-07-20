@@ -6,6 +6,10 @@ This document gives an overview of variables used in all platforms of the Tecton
 
 | Name | Description | Type | Default |
 |------|-------------|:----:|:-----:|
+| tectonic_acme_email_address | Your email address to be used for the ACME registration. | string | `` |
+| tectonic_acme_provider | The ACME provider to be used.<br><br>See https://github.com/paybyphone/terraform-provider-acme/blob/3b16adc/plugin/providers/acme/acme_structure.go#L504-L531 for a list of supported providers. | string | `` |
+| tectonic_acme_provider_config | (optional) The acme provider configuration as per https://github.com/paybyphone/terraform-provider-acme#using-dns-challenges. | string | `<map>` |
+| tectonic_acme_server_url | The ACME server URL.<br><br>Examples: - https://acme-staging.api.letsencrypt.org/directory - https://acme-v01.api.letsencrypt.org/directory | string | `` |
 | tectonic_admin_email | The e-mail address used to: 1. login as the admin user to the Tectonic Console. 2. generate DNS zones for some providers.<br><br>Note: This field MUST be set manually prior to creating the cluster. | string | - |
 | tectonic_admin_password_hash | The bcrypt hash of admin user password to login to the Tectonic Console. Use the bcrypt-hash tool (https://github.com/coreos/bcrypt-tool/releases/tag/v1.0.0) to generate it.<br><br>Note: This field MUST be set manually prior to creating the cluster. | string | - |
 | tectonic_base_domain | The base DNS domain of the cluster. It must NOT contain a trailing period. Some DNS providers will automatically add this if necessary.<br><br>Example: `openstack.dev.coreos.systems`.<br><br>Note: This field MUST be set manually prior to creating the cluster. This applies only to cloud platforms. | string | - |
