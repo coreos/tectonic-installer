@@ -22,7 +22,7 @@ class Cluster
     localconfig
     prepare_assets
     plan
-    apply
+    # apply
     wait_til_ready
   end
 

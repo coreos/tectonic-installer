@@ -7,10 +7,16 @@ module SmokeTest
   end
 
   def self.run(cluster)
+    build unless compiled?
+
     succeeded = system(
       { 'TEST_KUBECONFIG' => cluster.kubeconfig },
       './../../bin/smoke'
     )
     raise 'SmokeTests failed' unless succeeded
+  end
+
+  def self.compiled?
+    File.file?('../../bin/smoke')
   end
 end
