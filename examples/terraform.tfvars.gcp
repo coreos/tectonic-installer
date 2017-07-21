@@ -1,4 +1,16 @@
 
+// Specifies additional node labels to be added to master nodes. This correlates to the --node-labels 
+// kubelet flag. All labels required by Tectonic will still be present.
+// 
+// Example: `["tier=app", "purpose=data"]`
+tectonic_additional_master_node_labels = ""
+
+// Specifies additional node labels to be added to worker nodes. This translates to the --node-labels 
+// kubelet flag. All labels required by Tectonic will still be present.
+// 
+// Example: `["tier=app", "purpose=data"]`
+tectonic_additional_worker_node_labels = ""
+
 // The e-mail address used to:
 // 1. login as the admin user to the Tectonic Console.
 // 2. generate DNS zones for some providers.

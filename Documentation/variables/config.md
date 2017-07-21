@@ -6,6 +6,8 @@ This document gives an overview of variables used in all platforms of the Tecton
 
 | Name | Description | Type | Default |
 |------|-------------|:----:|:-----:|
+| tectonic_additional_master_node_labels | Specifies additional node labels to be added to master nodes. This correlates to the --node-labels  kubelet flag. All labels required by Tectonic will still be present.<br><br>Example: `["tier=app", "purpose=data"]` | list | `<list>` |
+| tectonic_additional_worker_node_labels | Specifies additional node labels to be added to worker nodes. This translates to the --node-labels  kubelet flag. All labels required by Tectonic will still be present.<br><br>Example: `["tier=app", "purpose=data"]` | list | `<list>` |
 | tectonic_admin_email | The e-mail address used to: 1. login as the admin user to the Tectonic Console. 2. generate DNS zones for some providers.<br><br>Note: This field MUST be in all lower-case e-mail address format and set manually prior to creating the cluster. | string | - |
 | tectonic_admin_password | The admin user password to login to the Tectonic Console.<br><br>Note: This field MUST be set manually prior to creating the cluster. Backslashes and double quotes must also be escaped. | string | - |
 | tectonic_aws_assets_s3_bucket_name | (optional) Unique name under which the Amazon S3 bucket will be created. Bucket name must start with a lower case name and is limited to 63 characters. The Tectonic Installer uses the bucket to store tectonic assets and kubeconfig.<br><br>If name is not provided the installer will construct the name using "tectonic_cluster_name", current AWS region and "tectonic_base_domain" | string | `` |
