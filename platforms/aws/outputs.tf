@@ -9,16 +9,6 @@ output "etcd_endpoints" {
 }
 
 ####################################
-#  REEXPOSE IGNITION-MASTERS OUTPUTS
-#  subdir > modules/aws/ignition
-#  file > outputs.tf
-####################################
-
-output "ignition-masters_ignition" {
-	value = "${module.ignition-masters.ignition}"
-}
-
-####################################
 #  REEXPOSE MASTERS OUTPUTS
 #  subdir > modules/aws/master-asg
 #  file > outputs.tf
@@ -39,6 +29,15 @@ output "masters_api_external_fqdn" {
 output "masters_api_internal_fqdn" {
 	value = "${module.masters.api_internal_fqdn}"
 }
+####################################
+#  REEXPOSE IGNITION-MASTERS OUTPUTS
+#  subdir > modules/aws/ignition
+#  file > outputs.tf
+####################################
+
+output "ignition_masters_ignition" {
+	value = "${module.ignition-masters.ignition}"
+}
 
 ####################################
 #  REEXPOSE IGNITION-WORKERS OUTPUTS
@@ -46,7 +45,7 @@ output "masters_api_internal_fqdn" {
 #  file > outputs.tf
 ####################################
 
-output "ignition-workers_ignition" {
+output "ignition_workers_ignition" {
 	value = "${module.ignition-workers.ignition}"
 }
 
