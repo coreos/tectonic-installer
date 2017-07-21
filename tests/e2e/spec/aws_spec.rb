@@ -6,7 +6,7 @@ RSpec.describe 'aws' do
   before(:all) do
     AWS.check_prerequisites
     @cluster = Cluster.new('mxinden', '../smoke/aws/vars/aws.tfvars')
-    # @cluster.start
+    @cluster.start
   end
 
   it_behaves_like('k8s-cluster')

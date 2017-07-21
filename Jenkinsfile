@@ -97,6 +97,11 @@ pipeline {
               stash name: 'smoke', includes: 'bin/smoke'
             }
           }
+          sh('docker build -t kubectl-ruby -f images/kubectl-ruby/Dockerfile .')
+          withDockerContainer('kubectl-ruby') {
+            checkout scm
+            sh('rubocop --cache false tests/e2e')
+          }
         }
       }
     }
@@ -108,6 +113,25 @@ pipeline {
       }
       steps {
         parallel (
+          "RSpec": {
+            node('worker && ec2') {
+              withCredentials(creds) {
+                checkout scm
+                unstash 'installer'
+                unstash 'smoke'
+                sh('docker build -t kubectl-ruby -f images/kubectl-ruby/Dockerfile .')
+                withDockerContainer('kubectl-ruby') {
+                  checkout scm
+                  unstash 'installer'
+                  sh """#!/bin/bash -ex
+                    cd tests/e2e
+                    bundler install --path vendor/bundle
+                    bundler exec rspec
+                  """
+                }
+              }
+            }
+          },
           "SmokeTest TerraForm: AWS": {
             node('worker && ec2') {
               withCredentials(creds) {
