@@ -16,8 +16,6 @@ Tectonic Installer includes and requires a specific version of Terraform. This i
 
 ### DNS
 
-To begin, a resource group named `tectonic-dns-group` should be created prior to installation, unless the `tectonic_azure_external_dns_zone_id` variable is set.
-
 A few means of providing DNS for your Tectonic installation are supported:
 
 #### Azure-provided DNS
@@ -148,13 +146,13 @@ Edit the parameters with your Azure details, domain name, license, etc. [View al
 Test out the plan before deploying everything:
 
 ```
-$ make plan
+$ terraform plan -var-file=build/${CLUSTER}/terraform.tfvars platforms/azure
 ```
 
 Next, deploy the cluster:
 
 ```
-$ make apply
+$ terraform apply -var-file=build/${CLUSTER}/terraform.tfvars platforms/azure
 ```
 
 This should run for a little bit, and when complete, your Tectonic cluster should be ready.
@@ -202,7 +200,7 @@ The new nodes should automatically show up in the Tectonic Console shortly after
 Deleting your cluster will remove only the infrastructure elements created by Terraform. If you selected an existing resource group for DNS, this is not touched. To delete, run:
 
 ```
-$ make destroy
+$ terraform destroy -var-file=build/${CLUSTER}/terraform.tfvars platforms/azure
 ```
 
 ## Under the hood
@@ -225,8 +223,6 @@ $ make destroy
 * Node VMs are created as an Availability Set (stand-alone instances, deployed across multiple fault domains)
 * Master nodes are fronted by one load balancer for the API one for the Ingress controller.
 * The API LB is configured with SourceIP session stickiness, to ensure that TCP (including SSH) sessions from the same client land reliably on the same master node. This allows for provisioning the assets and starting bootkube reliably via SSH.
-* A `null_resource` terraform provisioner in the tectonic.tf top-level template will copy the assets and run bootkube automatically on one of the masters.
-
 
 ### Worker nodes
 
