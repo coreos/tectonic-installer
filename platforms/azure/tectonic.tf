@@ -5,7 +5,7 @@ module "bootkube" {
   cloud_provider_config = "${jsonencode(data.null_data_source.cloud-provider.inputs)}"
 
   cluster_name = "${var.tectonic_cluster_name}"
-  
+
   kube_apiserver_url = "https://${module.vnet.api_fqdn}:443"
   oidc_issuer_url    = "https://${module.vnet.ingress_fqdn}/identity"
 

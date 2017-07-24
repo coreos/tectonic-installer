@@ -54,7 +54,7 @@ $ ssh-add -L
 
 Reference the absolute path of the **_public_** component of the SSH key in `tectonic_azure_ssh_key`.
 
-Without this, terraform is not able to SSH copy the assets and start bootkube. 
+Without this, terraform is not able to SSH copy the assets and start bootkube.
 Also make sure that the SSH known_hosts file doesn't have old records of the API DNS name (fingerprints will not match).
 
 ## Getting Started
@@ -175,7 +175,7 @@ $ kubectl cluster-info
 
 To scale worker nodes, adjust `tectonic_worker_count` in `terraform.tfvars`.
 
-Use the `plan` command to check your syntax: 
+Use the `plan` command to check your syntax:
 
 ```
 $ terraform plan \
@@ -221,7 +221,7 @@ $ terraform destroy -var-file=build/${CLUSTER}/terraform.tfvars platforms/azure
 
 * Master node VMs are managed by the templates in `modules/azure/master-as`
 * Node VMs are created as an Availability Set (stand-alone instances, deployed across multiple fault domains)
-* Master nodes are fronted by one load balancer for the API one for the Ingress controller.
+* Master nodes are fronted by one load balancer for the API and one for the Ingress controller.
 * The API LB is configured with SourceIP session stickiness, to ensure that TCP (including SSH) sessions from the same client land reliably on the same master node. This allows for provisioning the assets and starting bootkube reliably via SSH.
 
 ### Worker nodes
