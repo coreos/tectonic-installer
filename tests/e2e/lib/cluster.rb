@@ -1,6 +1,7 @@
 require 'kubectl_helpers'
 require 'securerandom'
 require 'jenkins'
+require 'tfvars_file'
 
 # Cluster represents a k8s cluster
 class Cluster
@@ -11,7 +12,8 @@ class Cluster
     @name = ENV['CLUSTER']
     @name = generate_name(prefix) if @name == ''
 
-    @tfvars_file_path = tfvars_file_path
+    @tfvars_file = TFVarsFile.new(tfvars_file_path)
+
     @kubeconfig =
       `echo $(realpath ../../build)/#{@name}/generated/auth/kubeconfig`
       .delete("\n")
@@ -57,7 +59,7 @@ class Cluster
   def prepare_assets
     puts Dir.pwd
     FileUtils.cp(
-      @tfvars_file_path,
+      @tfvars_file.path,
       Dir.pwd + "/../../build/#{@name}/terraform.tfvars"
     )
   end
