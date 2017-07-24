@@ -88,6 +88,7 @@ resource "template_dir" "bootkube" {
     oidc_client_id      = "${var.oidc_client_id}"
     oidc_username_claim = "${var.oidc_username_claim}"
     oidc_groups_claim   = "${var.oidc_groups_claim}"
+    oidc_ca_cert        = "${base64encode(var.oidc_ca_cert)}"
 
     ca_cert            = "${base64encode(var.ca_cert == "" ? join(" ", tls_self_signed_cert.kube-ca.*.cert_pem) : var.ca_cert)}"
     apiserver_key      = "${base64encode(tls_private_key.apiserver.private_key_pem)}"

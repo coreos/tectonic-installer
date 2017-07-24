@@ -1,3 +1,14 @@
+module "letsencrypt" {
+  source = "../../modules/tls/acme"
+
+  base_address    = "${module.masters.ingress_internal_fqdn}"
+  email_address   = "${var.tectonic_acme_email_address}"
+  provider        = "${var.tectonic_acme_provider}"
+  provider_config = "${var.tectonic_acme_provider_config}"
+
+  server_url = "${var.tectonic_acme_server_url}"
+}
+
 module "bootkube" {
   source         = "../../modules/bootkube"
   cloud_provider = "aws"
@@ -24,6 +35,7 @@ module "bootkube" {
   oidc_username_claim = "email"
   oidc_groups_claim   = "groups"
   oidc_client_id      = "tectonic-kubectl"
+  oidc_ca_cert        = "${module.letsencrypt.ca_cert_pem}"
 
   etcd_endpoints   = ["${module.etcd.endpoints}"]
   etcd_ca_cert     = "${var.tectonic_etcd_ca_cert_path}"
@@ -95,6 +107,10 @@ module "tectonic" {
   ca_cert      = "${module.bootkube.ca_cert}"
   ca_key_alg   = "${module.bootkube.ca_key_alg}"
   ca_key       = "${module.bootkube.ca_key}"
+
+  ingress_ca_cert_pem     = "${module.letsencrypt.ca_cert_pem}"
+  ingress_cert_pem        = "${module.letsencrypt.cert_pem}"
+  ingress_private_key_pem = "${module.letsencrypt.private_key_pem}"
 
   console_client_id = "tectonic-console"
   kubectl_client_id = "tectonic-kubectl"

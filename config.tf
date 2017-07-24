@@ -28,7 +28,7 @@ variable "tectonic_container_images" {
     hyperkube                       = "quay.io/coreos/hyperkube:v1.7.1_coreos.0"
     pod_checkpointer                = "quay.io/coreos/pod-checkpointer:980d1b4b4b8374240c240fb0f85e3a8d9c51663c"
     bootkube                        = "quay.io/coreos/bootkube:v0.5.0"
-    console                         = "quay.io/coreos/tectonic-console:v1.7.4"
+    console                         = "quay.io/coreos/tectonic-console:4e16bcc2a2a9149a6065f82dcdf047d8f0f1f85d"
     identity                        = "quay.io/coreos/dex:v2.5.0"
     container_linux_update_operator = "quay.io/coreos/container-linux-update-operator:v0.2.2"
     kube_version_operator           = "quay.io/coreos/kube-version-operator:v1.6.7"
@@ -389,5 +389,47 @@ variable "tectonic_calico_network_policy" {
 [ALPHA] If set to true, calico network policy support will be deployed.
 WARNING: Enabling an alpha feature means that future updates may become unsupported.
 This should only be enabled on clusters that are meant to be short-lived to begin validating the alpha feature.
+EOF
+}
+
+// ACME configuration
+//
+// Note: You must have https://github.com/paybyphone/terraform-provider-acme installed and enabled in your .terraformrc:
+// $ cat .terraformrc
+// providers {
+//     matchbox = "/.../tectonic-installer/installer/bin/linux/installer-TFSPACE-matchbox"
+//     terraform-provider-acme = "/home/foo/go/bin/terraform-provider-acme-TFSPACE-terraform-provider-acme"
+// }
+
+variable "tectonic_acme_email_address" {
+  default     = ""
+  description = "Your email address to be used for the ACME registration."
+}
+
+variable "tectonic_acme_provider" {
+  default = ""
+
+  description = <<EOF
+The ACME provider to be used.
+
+See https://github.com/paybyphone/terraform-provider-acme/blob/3b16adc/plugin/providers/acme/acme_structure.go#L504-L531
+for a list of supported providers.
+EOF
+}
+
+variable "tectonic_acme_provider_config" {
+  default     = {}
+  description = "(optional) The acme provider configuration as per https://github.com/paybyphone/terraform-provider-acme#using-dns-challenges."
+}
+
+variable "tectonic_acme_server_url" {
+  default = ""
+
+  description = <<EOF
+The ACME server URL.
+
+Examples:
+- https://acme-staging.api.letsencrypt.org/directory
+- https://acme-v01.api.letsencrypt.org/directory
 EOF
 }
