@@ -40,14 +40,11 @@ class Cluster
   def check_prerequisites
     license_path = 'TF_VAR_tectonic_license_path'
     pull_secret_path = 'TF_VAR_tectonic_pull_secret_path'
-    unless EnvVar.set?([license_path, pull_secret_path])
-      raise 'TF_VAR_tectonic_pull_secret_path or TF_VAR_tectonic_license_path'\
-            'are not defined as environment variables.'
-    end
 
-    cluster_domain = 'TF_VAR_base_domain'
-    raise 'TF_VAR_base_domain is not defined' unless
-      EnvVar.set?([cluster_domain])
+    return if EnvVar.set?([license_path, pull_secret_path])
+    raise 'TF_VAR_tectonic_pull_secret_path or' \
+         'TF_VAR_tectonic_license_path are not' \
+         'defined as environment variables.'
   end
 
   private

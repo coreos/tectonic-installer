@@ -6,7 +6,7 @@ tectonic_etcd_count = "3"
 
 tectonic_etcd_servers = [""]
 
-tectonic_base_domain = "dev.coreos.systems"
+tectonic_base_domain = "tectonic.dev.coreos.systems"
 
 tectonic_cl_channel = "stable"
 
