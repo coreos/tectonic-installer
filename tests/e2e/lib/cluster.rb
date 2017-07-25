@@ -10,7 +10,7 @@ class Cluster
   def initialize(prefix, tfvars_file_path)
     # Enable local testers to specify a static cluster name
     @name = ENV['CLUSTER']
-    @name = generate_name(prefix) if @name == ''
+    @name = generate_name(prefix) if @name.nil?
 
     @tfvars_file = TFVarsFile.new(tfvars_file_path)
 
@@ -29,7 +29,7 @@ class Cluster
   end
 
   def stop
-    # destroy
+    destroy
   end
 
   def amount_nodes
@@ -50,11 +50,13 @@ class Cluster
   private
 
   def env_variables
-    { 'CLUSTER' => @name, 'TF_VAR_tectonic_cluster_name' => @name }
+    {
+      'CLUSTER' => @name,
+      'TF_VAR_tectonic_cluster_name' => @name
+    }
   end
 
   def prepare_assets
-    puts Dir.pwd
     FileUtils.cp(
       @tfvars_file.path,
       Dir.pwd + "/../../build/#{@name}/terraform.tfvars"
@@ -62,7 +64,6 @@ class Cluster
   end
 
   def localconfig
-    puts env_variables
     succeeded = system(env_variables, 'make -C ../.. localconfig')
     raise 'Run localconfig failed' unless succeeded
   end
