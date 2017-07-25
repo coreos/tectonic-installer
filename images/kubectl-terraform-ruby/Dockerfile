@@ -1,11 +1,17 @@
 FROM debian:stretch
 
+ENV TERRAFORM_VERSION="v0.9.11-coreos.2"
+
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
-    curl ruby make
+    curl ruby make unzip
 
 RUN gem install bundler rake rubocop rspec
 
+# Install kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /bin/kubectl
+
+# Install Terraform
+RUN curl -L https://github.com/coreos/terraform/releases/download/${TERRAFORM_VERSION}/linux_amd64.zip | funzip > /usr/local/bin/terraform && chmod +x /usr/local/bin/terraform

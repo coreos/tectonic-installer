@@ -97,8 +97,8 @@ pipeline {
               stash name: 'smoke', includes: 'bin/smoke'
             }
           }
-          sh('docker build -t kubectl-ruby -f images/kubectl-ruby/Dockerfile .')
-          withDockerContainer('kubectl-ruby') {
+          sh('docker build -t kubectl-terraform-ruby -f images/kubectl-terraform-ruby/Dockerfile .')
+          withDockerContainer('kubectl-terraform-ruby') {
             checkout scm
             sh('rubocop --cache false tests/e2e')
           }
@@ -119,8 +119,8 @@ pipeline {
                 checkout scm
                 unstash 'installer'
                 unstash 'smoke'
-                sh('docker build -t kubectl-ruby -f images/kubectl-ruby/Dockerfile .')
-                withDockerContainer('kubectl-ruby') {
+                sh('docker build -t kubectl-terraform-ruby -f images/kubectl-terraform-ruby/Dockerfile .')
+                withDockerContainer('kubectl-terraform-ruby') {
                   checkout scm
                   unstash 'installer'
                   sh """#!/bin/bash -ex
