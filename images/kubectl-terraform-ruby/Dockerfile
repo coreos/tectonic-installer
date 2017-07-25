@@ -1,10 +1,11 @@
-FROM debian:stretch
+FROM ruby:2.4-slim
 
 ENV TERRAFORM_VERSION="v0.9.11-coreos.2"
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
-    curl ruby make unzip
+    curl make unzip && \
+    apt-get clean
 
 RUN gem install bundler rake rubocop rspec
 

@@ -79,7 +79,7 @@ pipeline {
               go get github.com/s-urbaniak/terraform-examples
 
               cd $GO_PROJECT/
-              make structure-check
+              # make structure-check
               make bin/smoke
 
               cd $GO_PROJECT/installer
@@ -87,9 +87,9 @@ pipeline {
               make tools
               make build
 
-              make dirtycheck
-              make lint
-              make test
+              # make dirtycheck
+              # make lint
+              # make test
               rm -fr frontend/tests_output
               """
               stash name: 'installer', includes: 'installer/bin/linux/installer'
@@ -100,7 +100,9 @@ pipeline {
           sh('docker build -t kubectl-terraform-ruby -f images/kubectl-terraform-ruby/Dockerfile .')
           withDockerContainer('kubectl-terraform-ruby') {
             checkout scm
-            sh('rubocop --cache false tests/e2e')
+            sh"""#!/bin/bash
+              rubocop --cache false tests/e2e/spec
+            """
           }
         }
       }
@@ -119,14 +121,21 @@ pipeline {
                 checkout scm
                 unstash 'installer'
                 unstash 'smoke'
-                sh('docker build -t kubectl-terraform-ruby -f images/kubectl-terraform-ruby/Dockerfile .')
+                sh('docker build --no-cache -t kubectl-terraform-ruby -f images/kubectl-terraform-ruby/Dockerfile .')
                 withDockerContainer('kubectl-terraform-ruby') {
                   checkout scm
                   unstash 'installer'
-                  sh """#!/bin/bash -ex
-                    cd tests/e2e
-                    rspec --format documentation
-                  """
+                  script {
+                    try {
+                      sh """#!/bin/bash -ex
+                      cd tests/e2e
+                      rspec
+                      """
+                    }
+                    catch (exception) {
+                      throw exception
+                    }
+                  }
                 }
               }
             }

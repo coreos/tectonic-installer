@@ -2,6 +2,7 @@ require 'kubectl_helpers'
 require 'securerandom'
 require 'jenkins'
 require 'tfvars_file'
+require 'fileutils'
 
 # Cluster represents a k8s cluster
 class Cluster
