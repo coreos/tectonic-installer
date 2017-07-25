@@ -9,9 +9,11 @@ Generally, the Azure platform templates adhere to the standards defined by the p
 ## Prerequsities
 
 ### Go
-Ensure Go is installed. Instructions can be found [here](https://golang.org/doc/install).
+
+Ensure [Go][install-go] is installed.
 
 ### Terraform
+
 Tectonic Installer includes and requires a specific version of Terraform. This is included in the Tectonic Installer tarball. See the [Tectonic Installer release notes][release-notes] for information about which Terraform versions are compatible.
 
 ### DNS
@@ -19,24 +21,29 @@ Tectonic Installer includes and requires a specific version of Terraform. This i
 A few means of providing DNS for your Tectonic installation are supported:
 
 #### Azure-provided DNS
-This is Azure's default DNS implementation. Details can be found [here](https://docs.microsoft.com/en-us/azure/dns/dns-overview).
+
+This is Azure's default DNS implementation. For more information, see the [Azure DNS overview][azure-dns].
 
 To use Azure-provided DNS, `tectonic_base_domain` must be set to `""`(empty string).
 
 #### DNS delegation and custom zones via Azure DNS
+
 To configure a custom domain and the associated records in an Azure DNS zone (e.g., `${cluster_name}.foo.bar`):
 
 * The custom domain must be specified using `tectonic_base_domain`
-* The domain must be publically discoverable. The Tectonic installer uses the created record to access the cluster and complete configuration. Instructions on setting up domain delegation to Azure DNS can be found [here](https://docs.microsoft.com/en-us/azure/dns/dns-delegate-domain-azure-dns).
+* The domain must be publically discoverable. The Tectonic installer uses the created record to access the cluster and complete configuration. See the Microsoft Azure documentation for instructions on how to [delegate a domain to Azure DNS][domain-delegation].
 * An Azure DNS zone which matches `tectonic_base_domain` must be created prior to running the installer. The full resource ID of the DNS zone must then be referenced in `tectonic_azure_external_dns_zone_id`
 
 ### Tectonic Account
+
 Register for a [Tectonic Account][register], which is free for up to 10 nodes. You must provide the cluster license and pull secret during installation.
 
 ### Azure CLI
-The [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) (command line interface) is required to generate Azure credentials.
+
+The [Azure CLI][azure-cli] is required to generate Azure credentials.
 
 ### ssh-agent
+
 Ensure `ssh-agent` is running:
 ```
 $ eval $(ssh-agent)
@@ -172,7 +179,6 @@ $ kubectl cluster-info
 
 ## Scale the cluster
 
-
 To scale worker nodes, adjust `tectonic_worker_count` in `terraform.tfvars`.
 
 Use the `plan` command to check your syntax:
@@ -227,7 +233,7 @@ $ terraform destroy -var-file=build/${CLUSTER}/terraform.tfvars platforms/azure
 ### Worker nodes
 
 * Worker node VMs are managed by the templates in `modules/azure/worker-as`
-* Node VMs are created as and Availability Set (stand-alone instances, deployed across multiple fault domains)
+* Node VMs are created as an Availability Set (stand-alone instances, deployed across multiple fault domains)
 * Worker nodes are not fronted by an LB and don't have public IP addresses. They can be accessed through SSH from any of the master nodes.
 
 ## Known issues and workarounds
@@ -244,7 +250,10 @@ See the [installer troubleshooting][troubleshooting] document for known problem 
 [copy-docs]: https://www.terraform.io/docs/commands/apply.html
 [troubleshooting]: ../../troubleshooting/installer-terraform.md
 [login]: https://docs.microsoft.com/en-us/cli/azure/get-started-with-azure-cli
-[azure-dns]: https://docs.microsoft.com/en-us/azure/dns/dns-getstarted-portal
+[azure-dns]: https://docs.microsoft.com/en-us/azure/dns/dns-overview
 [vars]: ../../variables/config.md
 [azure-vars]: ../../variables/azure.md
 [release-notes]: https://coreos.com/tectonic/releases/
+[install-go]: https://golang.org/doc/install
+[domain-delegation]: https://docs.microsoft.com/en-us/azure/dns/dns-delegate-domain-azure-dns
+[azure-cli]: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
