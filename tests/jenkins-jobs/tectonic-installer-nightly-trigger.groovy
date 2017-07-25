@@ -1,6 +1,6 @@
 #!/bin/env groovy​
 
-job("tectonic-installer-nightly") {
+job("tectonic-installer-nightly-trigger") {
   logRotator(10, 10)
   description('Tectonic Installer nightly builds against master. Changes here will be reverted automatically.')
 

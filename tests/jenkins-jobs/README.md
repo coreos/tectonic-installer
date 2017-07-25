@@ -16,9 +16,9 @@ This job has 3 input parameters:
 If you don't set the `TERRAFORM_UPSTREAM_URL` it will build the image using the tectonic custom terraform version.
 
 
-## Tectonic Installer Nightly Build
+## Tectonic Installer Nightly Trigger
 
-This file creates a Jenkins job called `tectonic-installer-nightly` to run the tests against the `Tectonic Installer` in the `master` branch.
+This file creates a Jenkins job called `tectonic-installer-nightly-trigger` to run the tests against the `Tectonic Installer` in the `master` branch.
 This job will run everyday around 3AM UTC time.
 
 Parameters:
