@@ -70,10 +70,10 @@ resource "template_dir" "tectonic" {
     ingress_tls_cert = "${base64encode(tls_locally_signed_cert.ingress.cert_pem)}"
     ingress_tls_key  = "${base64encode(tls_private_key.ingress.private_key_pem)}"
 
-    identity_server_tls_cert = "${base64encode(tls_locally_signed_cert.identity-server.cert_pem)}"
+    identity_server_tls_cert = "${base64encode(tls_locally_signed_cert.identity_server.cert_pem)}"
     identity_server_tls_key  = "${base64encode(tls_private_key.identity-server.private_key_pem)}"
-    identity_client_tls_cert = "${base64encode(tls_locally_signed_cert.identity-client.cert_pem)}"
-    identity_client_tls_key  = "${base64encode(tls_private_key.identity-client.private_key_pem)}"
+    identity_client_tls_cert = "${base64encode(tls_locally_signed_cert.identity_client.cert_pem)}"
+    identity_client_tls_key  = "${base64encode(tls_private_key.identity_client.private_key_pem)}"
 
     kubectl_client_id = "${var.kubectl_client_id}"
     kubectl_secret    = "${random_id.kubectl_secret.b64}"
