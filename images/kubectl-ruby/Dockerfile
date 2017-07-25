@@ -2,7 +2,7 @@ FROM debian:stretch
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
-    curl ruby
+    curl ruby make
 
 RUN gem install bundler rake rubocop rspec
 

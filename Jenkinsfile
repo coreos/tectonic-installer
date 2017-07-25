@@ -125,7 +125,7 @@ pipeline {
                   unstash 'installer'
                   sh """#!/bin/bash -ex
                     cd tests/e2e
-                    rspec
+                    rspec --format documentation
                   """
                 }
               }
