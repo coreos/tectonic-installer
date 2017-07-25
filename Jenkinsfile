@@ -65,6 +65,7 @@ pipeline {
       steps {
         node('worker && ec2') {
           withDockerContainer("asomesan/jenkins-rspec:1") {
+            checkout scm
             sh """#!/bin/bash -ex
             rspec tests/rspec
             """
