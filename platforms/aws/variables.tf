@@ -271,3 +271,12 @@ Example:
  * Role Name = tectonic-installer
 EOF
 }
+
+variable "tectonic_aws_external_whitelisted_cidrs" {
+  type    = "list"
+  default = ["0.0.0.0/0"]
+
+  description = <<EOF
+(optional) A list of CIDRs that are allowed access to the Tectonic Console and API.
+EOF
+}

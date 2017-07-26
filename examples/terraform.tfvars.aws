@@ -58,6 +58,9 @@ tectonic_aws_etcd_root_volume_type = "gp2"
 // If set to false, a "private" cluster will be created with an internal ELB only.
 tectonic_aws_external_vpc_public = true
 
+// (optional) A list of CIDRs that are allowed access to the Tectonic Console and API.
+// tectonic_aws_external_whitelisted_cidrs = ""
+
 // (optional) List of subnet IDs within an existing VPC to deploy worker nodes into.
 // Required to use an existing VPC and the list must match the AZ count.
 // 
