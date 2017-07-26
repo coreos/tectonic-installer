@@ -19,3 +19,5 @@ data:
       baseImage: ${replace(tectonic_monitoring_auth_image,image_re,"$1")}
     nodeExporter:
       baseImage: ${replace(node_exporter_image,image_re,"$1")}
+    kubeStateMetrics:
+      baseImage: ${replace(kube_state_metrics_image,image_re,"$1")}
