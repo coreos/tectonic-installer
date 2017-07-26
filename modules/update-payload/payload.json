@@ -1,5 +1,5 @@
 {
-  "version": "1.6.7-tectonic.1",
+  "version": "1.6.7-tectonic.2",
   "deployments": [
     {
       "apiVersion": "extensions/v1beta1",
@@ -139,7 +139,7 @@
                     }
                   }
                 ],
-                "image": "quay.io/coreos/tectonic-channel-operator:0.3.6",
+                "image": "quay.io/coreos/tectonic-channel-operator:0.3.7",
                 "name": "tectonic-channel-operator",
                 "resources": {
                   "limits": {
