@@ -12,6 +12,8 @@ class Cluster
     # Enable local testers to specify a static cluster name
     @name = ENV['CLUSTER']
     @name = generate_name(prefix) if @name.nil?
+    # S3 buckets can only handle lower case names
+    @name = @name.downcase
 
     @tfvars_file = TFVarsFile.new(tfvars_file_path)
 
