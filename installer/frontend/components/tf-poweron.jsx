@@ -268,7 +268,7 @@ TF_PowerOn.canNavigateForward = ({cluster}) => {
   ready = ready || (
     _.get(cluster, 'status.tectonic.console.success') === true
     && _.get(cluster, 'status.tectonic.tectonicSystem.success') === true
-    && _.get(cluster, 'status.status') !== 'running');
+    && _.toLower(_.get(cluster, 'status.status')) !== 'running');
 
   return ready;
 };
