@@ -52,7 +52,7 @@ resource "google_compute_instance_group_manager" "tectonic-worker-igm" {
   zone               = "${var.zone_list[count.index]}"
   instance_template  = "${google_compute_instance_template.tectonic-worker-it.self_link}"
   target_pools       = ["${var.worker_targetpool_self_link}"]
-  base_instance_name = "tectonic-worker-igm"
+  base_instance_name = "wrkr"
 }
 
 resource "google_compute_autoscaler" "tectonic-worker-as" {
