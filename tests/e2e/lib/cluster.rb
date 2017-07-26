@@ -6,7 +6,7 @@ require 'fileutils'
 
 # Cluster represents a k8s cluster
 class Cluster
-  attr_reader :kubeconfig
+  attr_reader :tfvars_file, :kubeconfig, :manifest_path
 
   def initialize(prefix, tfvars_file_path)
     # Enable local testers to specify a static cluster name
@@ -15,9 +15,9 @@ class Cluster
 
     @tfvars_file = TFVarsFile.new(tfvars_file_path)
 
-    @kubeconfig =
-      `echo $(realpath ../../build)/#{@name}/generated/auth/kubeconfig`
-      .delete("\n")
+    @manifest_path = `echo $(realpath ../../build)/#{@name}/generated`
+                     .delete("\n")
+    @kubeconfig = manifest_path + '/auth/kubeconfig'
   end
 
   def start

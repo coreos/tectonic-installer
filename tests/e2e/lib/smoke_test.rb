@@ -10,8 +10,8 @@ module SmokeTest
     build unless compiled?
 
     succeeded = system(
-      { 'TEST_KUBECONFIG' => cluster.kubeconfig },
-      './../../bin/smoke'
+      env_variables(cluster),
+      './../../bin/smoke -test.v -test.parallel=1 --cluster'
     )
     raise 'SmokeTests failed' unless succeeded
   end
@@ -19,4 +19,20 @@ module SmokeTest
   def self.compiled?
     File.file?('../../bin/smoke')
   end
+end
+
+def env_variables(cluster)
+  {
+    'TEST_KUBECONFIG' => cluster.kubeconfig,
+    'NODE_COUNT' => cluster.tfvars_file.node_count.to_s,
+    'MANIFEST_PATH' => cluster.manifest_path,
+    'MANIFEST_EXPERIMENTAL' => bool_to_string(
+      cluster.tfvars_file.experimental?
+    ),
+    'CALICO_NETWORK_POLICY' => bool_to_string(cluster.tfvars_file.calico?)
+  }
+end
+
+def bool_to_string(bool)
+  bool ? 'true' : 'false'
 end
