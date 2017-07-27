@@ -32,6 +32,10 @@ This document gives an overview of variables used in all platforms of the Tecton
 | tectonic_image_re | (internal) Regular expression used to extract repo and tag components | string | `/^([^/]+/[^/]+/[^/]+):(.*)$/` |
 | tectonic_license_path | The path to the tectonic licence file.<br><br>Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`. | string | `` |
 | tectonic_master_count | The number of master nodes to be created. This applies only to cloud platforms. | string | `1` |
+| tectonic_prometheus_k8s_limit_cpu | (optional) Amount of cpu, enforce by cgroups, prometheus may consume. | string | `` |
+| tectonic_prometheus_k8s_limit_mem | (optional) Amount of memory, enforce by cgroups, prometheus may consume. | string | `` |
+| tectonic_prometheus_k8s_request_cpu | (optional) Amount of cpu requested by the scheduler when attempting to deploy prometheus. | string | `` |
+| tectonic_prometheus_k8s_request_mem | (optional) Amount of memory requested by the scheduler when attempting to deploy prometheus. | string | `` |
 | tectonic_pull_secret_path | The path the pull secret file in JSON format.<br><br>Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`. | string | `` |
 | tectonic_service_cidr | This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation. The maximum size of this IP range is /12 | string | `10.3.0.0/16` |
 | tectonic_stats_url | The Tectonic statistics collection URL to which to report. | string | `https://stats-collector.tectonic.com` |

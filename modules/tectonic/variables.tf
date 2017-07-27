@@ -129,3 +129,27 @@ EOF
 
   type = "string"
 }
+
+variable "prometheus_k8s_request_cpu" {
+  description = "Amount of cpu requested by the scheduler when attempting to deploy prometheus."
+  type        = "string"
+  default     = "100m"
+}
+
+variable "prometheus_k8s_request_mem" {
+  description = "Amount of memory requested by the scheduler when attempting to deploy prometheus."
+  type        = "string"
+  default     = "500Mi"
+}
+
+variable "prometheus_k8s_limit_cpu" {
+  description = "Amount of cpu, enforce by cgroups, prometheus may consume."
+  type        = "string"
+  default     = "400m"
+}
+
+variable "prometheus_k8s_limit_mem" {
+  description = "Amount of memory, enforce by cgroups, prometheus may consume."
+  type        = "string"
+  default     = "2000Mi"
+}

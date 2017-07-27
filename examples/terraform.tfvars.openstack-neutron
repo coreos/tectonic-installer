@@ -183,6 +183,18 @@ tectonic_openstack_worker_flavor_id = ""
 // Note: Set either tectonic_openstack_worker_flavor_name or tectonic_openstack_worker_flavor_id.
 tectonic_openstack_worker_flavor_name = ""
 
+// (optional) Amount of cpu, enforce by cgroups, prometheus may consume.
+// tectonic_prometheus_k8s_limit_cpu = ""
+
+// (optional) Amount of memory, enforce by cgroups, prometheus may consume.
+// tectonic_prometheus_k8s_limit_mem = ""
+
+// (optional) Amount of cpu requested by the scheduler when attempting to deploy prometheus.
+// tectonic_prometheus_k8s_request_cpu = ""
+
+// (optional) Amount of memory requested by the scheduler when attempting to deploy prometheus.
+// tectonic_prometheus_k8s_request_mem = ""
+
 // The path the pull secret file in JSON format.
 // 
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.

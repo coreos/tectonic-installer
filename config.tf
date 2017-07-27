@@ -396,3 +396,35 @@ WARNING: Enabling an alpha feature means that future updates may become unsuppor
 This should only be enabled on clusters that are meant to be short-lived to begin validating the alpha feature.
 EOF
 }
+
+variable "tectonic_prometheus_k8s_request_cpu" {
+  default = "100m"
+
+  description = <<EOF
+(optional) Amount of cpu requested by the scheduler when attempting to deploy prometheus.
+EOF
+}
+
+variable "tectonic_prometheus_k8s_request_mem" {
+  default = "500Mi"
+
+  description = <<EOF
+(optional) Amount of memory requested by the scheduler when attempting to deploy prometheus.
+EOF
+}
+
+variable "tectonic_prometheus_k8s_limit_cpu" {
+  default = "400m"
+
+  description = <<EOF
+(optional) Amount of cpu, enforce by cgroups, prometheus may consume.
+EOF
+}
+
+variable "tectonic_prometheus_k8s_limit_mem" {
+  default = "2000Mi"
+
+  description = <<EOF
+(optional) Amount of memory, enforce by cgroups, prometheus may consume.
+EOF
+}

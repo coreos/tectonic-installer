@@ -26,8 +26,8 @@ spec:
       port: web
   resources:
     limits:
-      cpu: 400m
-      memory: 2000Mi
+      cpu: ${prometheus_limit_cpu}
+      memory: ${prometheus_limit_mem}
     requests:
-      cpu: 100m
-      memory: 500Mi
+      cpu: ${prometheus_request_cpu}
+      memory: ${prometheus_request_mem}
