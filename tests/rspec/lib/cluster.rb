@@ -36,7 +36,7 @@ class Cluster
   end
 
   def amount_nodes
-    out = parsed_kubectl(@kubeconfig, 'get nodes')
+    out = KubeCTL.run_and_parse(@kubeconfig, 'get nodes')
     out['items'].length
   end
 
@@ -96,7 +96,7 @@ class Cluster
     retries = 0
 
     begin
-      kubectl(@kubeconfig, 'cluster-info')
+      KubeCTL.run(@kubeconfig, 'cluster-info')
     rescue KubectlCmdFailed
       if retries < 100
         retries += 1
