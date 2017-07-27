@@ -101,7 +101,7 @@ pipeline {
           withDockerContainer('kubectl-terraform-ruby') {
             checkout scm
             sh"""#!/bin/bash -ex
-              rubocop --cache false tests/e2e/spec
+              rubocop --cache false tests/rspec
             """
           }
         }
