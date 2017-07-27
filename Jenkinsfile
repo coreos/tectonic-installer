@@ -121,21 +121,14 @@ pipeline {
                 checkout scm
                 unstash 'installer'
                 unstash 'smoke'
-                sh('docker build --no-cache -t kubectl-terraform-ruby -f images/kubectl-terraform-ruby/Dockerfile .')
+                sh('docker build -t kubectl-terraform-ruby -f images/kubectl-terraform-ruby/Dockerfile .')
                 withDockerContainer('kubectl-terraform-ruby') {
                   checkout scm
                   unstash 'installer'
-                  script {
-                    try {
-                      sh """#!/bin/bash -ex
+                    sh """#!/bin/bash -ex
                       cd tests/e2e
                       rspec
-                      """
-                    }
-                    catch (exception) {
-                      throw exception
-                    }
-                  }
+                    """
                 }
               }
             }
