@@ -126,7 +126,7 @@ pipeline {
                   checkout scm
                   unstash 'installer'
                     sh """#!/bin/bash -ex
-                      cd tests/e2e
+                      cd tests/rspec
                       rspec
                     """
                 }
