@@ -100,7 +100,7 @@ pipeline {
           sh('docker build -t kubectl-terraform-ruby -f images/kubectl-terraform-ruby/Dockerfile .')
           withDockerContainer('kubectl-terraform-ruby') {
             checkout scm
-            sh"""#!/bin/bash
+            sh"""#!/bin/bash -ex
               rubocop --cache false tests/e2e/spec
             """
           }
@@ -115,7 +115,7 @@ pipeline {
       }
       steps {
         parallel (
-          "RSpec": {
+          "SmokeTest AWS RSpec": {
             node('worker && ec2') {
               withCredentials(creds) {
                 checkout scm
