@@ -55,7 +55,7 @@ This is a rough outline of what a contributor's workflow looks like:
     ```shell
     $ make structure-check
     ```
-- Note that a portion of the docs and examples are generated and that the generated files are committed. `make structure-check` checks that what is generated is what should be committed.
+- Note that a portion of the docs and examples are generated and that the generated files are to be committed by you. `make structure-check` checks that what is generated is what you must commit.
 - Submit a pull request to the original repository.
 
 Thanks for your contributions!
