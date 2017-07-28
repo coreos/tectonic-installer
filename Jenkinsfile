@@ -44,6 +44,7 @@ def quay_creds = [
 ]
 
 def default_builder_image = 'quay.io/coreos/tectonic-builder:v1.35'
+def tectonic_smoke_test_env_image = 'quay.io/coreos/tectonic-smoke-test-env:v1.0'
 
 pipeline {
   agent none
@@ -97,8 +98,7 @@ pipeline {
               stash name: 'smoke', includes: 'bin/smoke'
             }
           }
-          sh('docker build -t kubectl-terraform-ruby -f images/kubectl-terraform-ruby/Dockerfile .')
-          withDockerContainer('kubectl-terraform-ruby') {
+          withDockerContainer(tectonic_smoke_test_env_image) {
             checkout scm
             sh"""#!/bin/bash -ex
               rubocop --cache false tests/rspec
@@ -121,8 +121,7 @@ pipeline {
                 checkout scm
                 unstash 'installer'
                 unstash 'smoke'
-                sh('docker build -t kubectl-terraform-ruby -f images/kubectl-terraform-ruby/Dockerfile .')
-                withDockerContainer('kubectl-terraform-ruby') {
+                withDockerContainer(tectonic_smoke_test_env_image) {
                   checkout scm
                   unstash 'installer'
                     sh """#!/bin/bash -ex
