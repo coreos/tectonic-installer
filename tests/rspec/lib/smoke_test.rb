@@ -26,13 +26,7 @@ def env_variables(cluster)
     'SMOKE_KUBECONFIG' => cluster.kubeconfig,
     'SMOKE_NODE_COUNT' => cluster.tfvars_file.node_count.to_s,
     'SMOKE_MANIFEST_PATHS' => cluster.manifest_path,
-    'SMOKE_MANIFEST_EXPERIMENTAL' => bool_to_string(
-      cluster.tfvars_file.experimental?
-    ),
-    'SMOKE_CALICO_NETWORK_POLICY' => bool_to_string(cluster.tfvars_file.calico?)
+    'SMOKE_MANIFEST_EXPERIMENTAL' => cluster.tfvars_file.experimental?.to_s,
+    'SMOKE_CALICO_NETWORK_POLICY' => cluster.tfvars_file.calico?.to_s
   }
-end
-
-def bool_to_string(bool)
-  bool ? 'true' : 'false'
 end
