@@ -82,8 +82,8 @@ module "flannel" {
 
   flannel_image        = "${var.tectonic_container_images["flannel"]}"
   flannel_cni_image    = "${var.tectonic_container_images["flannel_cni"]}"
-  flannel_backend_type = "${var.tectonic_flannel_backend_type}"
-  flannel_backend_port = "${var.tectonic_flannel_backend_port}"
+  flannel_backend_type = "udp"
+  flannel_backend_port = "8285"
   cluster_cidr         = "${var.tectonic_cluster_cidr}"
 
   bootkube_id = "${module.bootkube.id}"
