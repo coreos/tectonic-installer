@@ -80,7 +80,7 @@ pipeline {
               go get github.com/s-urbaniak/terraform-examples
 
               cd $GO_PROJECT/
-              # make structure-check
+              make structure-check
               make bin/smoke
 
               cd $GO_PROJECT/installer
@@ -88,9 +88,9 @@ pipeline {
               make tools
               make build
 
-              # make dirtycheck
-              # make lint
-              # make test
+              make dirtycheck
+              make lint
+              make test
               rm -fr frontend/tests_output
               """
               stash name: 'installer', includes: 'installer/bin/linux/installer'
