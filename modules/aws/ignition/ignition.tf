@@ -2,6 +2,7 @@ data "ignition_config" "main" {
   files = [
     "${data.ignition_file.max-user-watches.id}",
     "${data.ignition_file.s3-puller.id}",
+    "${data.ignition_file.dm_thin_pool.id}",
     "${data.ignition_file.init-assets.id}",
     "${data.ignition_file.detect-master.id}",
   ]
@@ -94,6 +95,16 @@ data "ignition_file" "s3-puller" {
 
   content {
     content = "${data.template_file.s3-puller.rendered}"
+  }
+}
+
+data "ignition_file" "dm_thin_pool" {
+  filesystem = "root"
+  path       = "/etc/modules-load.d/dm_thin_pool.conf"
+  mode       = "555"
+
+  content {
+    content = "${file("${path.module}/resources/dm_thin_pool.conf")}"
   }
 }
 

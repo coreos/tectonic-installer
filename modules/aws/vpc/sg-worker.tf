@@ -28,6 +28,26 @@ resource "aws_security_group_rule" "worker_ingress_icmp" {
   to_port     = 0
 }
 
+resource "aws_security_group_rule" "worker_ingress_gluster_mgt" {
+  type              = "ingress"
+  security_group_id = "${aws_security_group.worker.id}"
+
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  from_port   = 24007
+  to_port     = 24008
+}
+
+resource "aws_security_group_rule" "worker_ingress_gluster_bricks" {
+  type              = "ingress"
+  security_group_id = "${aws_security_group.worker.id}"
+
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  from_port   = 49152
+  to_port     = 49251
+}
+
 resource "aws_security_group_rule" "worker_ingress_ssh" {
   type              = "ingress"
   security_group_id = "${aws_security_group.worker.id}"
