@@ -127,7 +127,8 @@ pipeline {
                   unstash 'installer'
                     sh """#!/bin/bash -ex
                       cd tests/rspec
-                      rspec
+                      bundler install
+                      bundler exec rspec
                     """
                 }
               }
