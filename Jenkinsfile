@@ -133,7 +133,6 @@ pipeline {
               }
             }
           },
-                    /*
           "SmokeTest TerraForm: AWS": {
             node('worker && ec2') {
               withCredentials(creds) {
@@ -410,7 +409,6 @@ pipeline {
               }
             }
           },
-                     */
 /*
  * Test temporarily disabled
  *
@@ -456,7 +454,6 @@ pipeline {
             }
           },
 */
-                    /*
           "SmokeTest: Azure (external network)": {
             node('worker && ec2') {
               withCredentials(creds) {
@@ -648,7 +645,6 @@ pipeline {
               }
             }
           }
-                    */
         )
       }
     }
