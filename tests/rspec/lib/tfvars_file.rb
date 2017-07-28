@@ -3,19 +3,19 @@ require 'json'
 # TFVarsFile represents a Terraform configuration file describing a Tectonic
 # cluster configuration
 class TFVarsFile
-  attr_reader :path, :json
+  attr_reader :path, :data
   def initialize(file_path)
     @path = file_path
     raise "file #{file_path} does not exist" unless file_exists?
-    @json = JSON.parse(File.read(path))
+    @data = JSON.parse(File.read(path))
   end
 
   def experimental?
-    json['tectonic_experimental'] == 'true'
+    data['tectonic_experimental'] == 'true'
   end
 
   def calico?
-    json['tectonic_calico_network_policy'] == 'true'
+    data['tectonic_calico_network_policy'] == 'true'
   end
 
   def node_count
@@ -25,11 +25,11 @@ class TFVarsFile
   private
 
   def master_count
-    json['tectonic_master_count'].to_i
+    data['tectonic_master_count'].to_i
   end
 
   def worker_count
-    json['tectonic_worker_count'].to_i
+    data['tectonic_worker_count'].to_i
   end
 
   def file_exists?
