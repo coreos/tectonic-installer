@@ -180,8 +180,8 @@ module "secgroups" {
   tectonic_experimental = "${var.tectonic_experimental}"
 }
 
-module "flannel-vxlan" {
-  source = "../../../modules/net/flannel-vxlan"
+module "flannel" {
+  source = "../../../modules/net/flannel"
 
   flannel_image        = "${var.tectonic_container_images["flannel"]}"
   flannel_cni_image    = "${var.tectonic_container_images["flannel_cni"]}"

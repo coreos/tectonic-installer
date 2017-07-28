@@ -117,7 +117,7 @@ resource "null_resource" "tectonic" {
   depends_on = [
     "module.bootkube",
     "module.tectonic",
-    "module.flannel-vxlan",
+    "module.flannel",
     "module.calico-network-policy",
     "openstack_compute_instance_v2.master_node",
     "openstack_networking_port_v2.master",
