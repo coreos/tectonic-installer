@@ -14,6 +14,11 @@ variable "base_domain" {
   type        = "string"
 }
 
+variable "admin_email" {
+  description = "The e-mail address used to generate zones"
+  type        = "string"
+}
+
 variable "master_count" {
   description = "The number of masters"
   type        = "string"
