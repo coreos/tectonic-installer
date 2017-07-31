@@ -86,17 +86,16 @@ class Cluster
   end
 
   def wait_til_ready
-    retries = 0
-
-    begin
-      KubeCTL.run(@kubeconfig, 'cluster-info')
-    rescue KubectlCmdFailed
-      if retries < 100
-        retries += 1
+    90.times do
+      begin
+        KubeCTL.run(@kubeconfig, 'cluster-info')
+        return
+      rescue KubectlCmdFailed
         sleep 10
-        retry
       end
     end
+
+    raise 'kubectl cluster-info never returned with successful error code'
   end
 
   MAX_NAME_LENGTH = 28
