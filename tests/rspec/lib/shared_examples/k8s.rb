@@ -16,6 +16,6 @@ RSpec.shared_examples 'withCluster' do |tf_vars_path|
   end
 
   it 'succeeds with the golang test suit' do
-    SmokeTest.run(@cluster)
+    expect { SmokeTest.run(@cluster) }.to_not raise_error
   end
 end
