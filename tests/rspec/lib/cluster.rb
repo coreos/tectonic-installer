@@ -6,6 +6,9 @@ require 'fileutils'
 
 # Cluster represents a k8s cluster
 class Cluster
+  MAX_NAME_LENGTH = 28
+  RANDOM_HASH_LENGTH = 5
+
   attr_reader :tfvars_file, :kubeconfig, :manifest_path
 
   def initialize(prefix, tfvars_file_path)
@@ -97,9 +100,6 @@ class Cluster
 
     raise 'kubectl cluster-info never returned with successful error code'
   end
-
-  MAX_NAME_LENGTH = 28
-  RANDOM_HASH_LENGTH = 5
 
   def generate_name(prefix)
     name = prefix
