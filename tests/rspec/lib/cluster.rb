@@ -78,14 +78,11 @@ class Cluster
   end
 
   def destroy
-    retries = 0
-    succeeded = false
-    while retries < 3 && !succeeded
-      succeeded = system(env_variables, 'make -C ../.. destroy')
-      retries += 1
+    3.times do
+      return if system(env_variables, 'make -C ../.. destroy')
     end
 
-    raise 'Destroying cluster failed' unless succeeded
+    raise 'Destroying cluster failed'
   end
 
   def wait_til_ready
