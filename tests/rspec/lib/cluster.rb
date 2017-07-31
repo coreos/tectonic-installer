@@ -93,7 +93,7 @@ class Cluster
       begin
         KubeCTL.run(@kubeconfig, 'cluster-info')
         return
-      rescue KubectlCmdFailed
+      rescue KubectlCmdError
         sleep 10
       end
     end
