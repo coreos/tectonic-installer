@@ -111,7 +111,7 @@ class Cluster
     end
 
     name = name[0..(MAX_NAME_LENGTH - RANDOM_HASH_LENGTH)]
-    name += SecureRandom.hex[0..RANDOM_HASH_LENGTH - 1]
+    name += SecureRandom.hex[0...RANDOM_HASH_LENGTH]
     name
   end
 end
