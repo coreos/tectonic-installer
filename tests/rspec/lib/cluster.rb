@@ -33,11 +33,6 @@ class Cluster
     destroy
   end
 
-  def amount_nodes
-    out = KubeCTL.run_and_parse(@kubeconfig, 'get nodes')
-    out['items'].length
-  end
-
   def check_prerequisites
     license_path = 'TF_VAR_tectonic_license_path'
     pull_secret_path = 'TF_VAR_tectonic_pull_secret_path'
