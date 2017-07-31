@@ -252,3 +252,10 @@ variable "tectonic_azure_client_secret" {
 
   description = "The client secret to use."
 }
+
+variable "tectonic_azure_extra_tags" {
+  type = "map"
+
+  # TODO: Add description
+  default = {}
+}
