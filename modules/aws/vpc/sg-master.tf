@@ -1,4 +1,5 @@
 resource "aws_security_group" "master" {
+  count  = "${var.external_sg_master == "" ? 1 : 0}"
   vpc_id = "${data.aws_vpc.cluster_vpc.id}"
 
   tags = "${merge(map(
@@ -9,6 +10,7 @@ resource "aws_security_group" "master" {
 }
 
 resource "aws_security_group_rule" "master_egress" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "egress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -19,6 +21,7 @@ resource "aws_security_group_rule" "master_egress" {
 }
 
 resource "aws_security_group_rule" "master_ingress_icmp" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -29,6 +32,7 @@ resource "aws_security_group_rule" "master_ingress_icmp" {
 }
 
 resource "aws_security_group_rule" "master_ingress_ssh" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -39,6 +43,7 @@ resource "aws_security_group_rule" "master_ingress_ssh" {
 }
 
 resource "aws_security_group_rule" "master_ingress_http" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -49,6 +54,7 @@ resource "aws_security_group_rule" "master_ingress_http" {
 }
 
 resource "aws_security_group_rule" "master_ingress_https" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -59,6 +65,7 @@ resource "aws_security_group_rule" "master_ingress_https" {
 }
 
 resource "aws_security_group_rule" "master_ingress_heapster" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -69,6 +76,7 @@ resource "aws_security_group_rule" "master_ingress_heapster" {
 }
 
 resource "aws_security_group_rule" "master_ingress_heapster_from_worker" {
+  count                    = "${var.external_sg_master == "" ? 1 : 0}"
   type                     = "ingress"
   security_group_id        = "${aws_security_group.master.id}"
   source_security_group_id = "${aws_security_group.worker.id}"
@@ -79,6 +87,7 @@ resource "aws_security_group_rule" "master_ingress_heapster_from_worker" {
 }
 
 resource "aws_security_group_rule" "master_ingress_flannel" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -89,6 +98,7 @@ resource "aws_security_group_rule" "master_ingress_flannel" {
 }
 
 resource "aws_security_group_rule" "master_ingress_flannel_from_worker" {
+  count                    = "${var.external_sg_master == "" ? 1 : 0}"
   type                     = "ingress"
   security_group_id        = "${aws_security_group.master.id}"
   source_security_group_id = "${aws_security_group.worker.id}"
@@ -99,6 +109,7 @@ resource "aws_security_group_rule" "master_ingress_flannel_from_worker" {
 }
 
 resource "aws_security_group_rule" "master_ingress_node_exporter" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -109,6 +120,7 @@ resource "aws_security_group_rule" "master_ingress_node_exporter" {
 }
 
 resource "aws_security_group_rule" "master_ingress_node_exporter_from_worker" {
+  count                    = "${var.external_sg_master == "" ? 1 : 0}"
   type                     = "ingress"
   security_group_id        = "${aws_security_group.master.id}"
   source_security_group_id = "${aws_security_group.worker.id}"
@@ -119,6 +131,7 @@ resource "aws_security_group_rule" "master_ingress_node_exporter_from_worker" {
 }
 
 resource "aws_security_group_rule" "master_ingress_kubelet_insecure" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -129,6 +142,7 @@ resource "aws_security_group_rule" "master_ingress_kubelet_insecure" {
 }
 
 resource "aws_security_group_rule" "master_ingress_kubelet_insecure_from_worker" {
+  count                    = "${var.external_sg_master == "" ? 1 : 0}"
   type                     = "ingress"
   security_group_id        = "${aws_security_group.master.id}"
   source_security_group_id = "${aws_security_group.worker.id}"
@@ -139,6 +153,7 @@ resource "aws_security_group_rule" "master_ingress_kubelet_insecure_from_worker"
 }
 
 resource "aws_security_group_rule" "master_ingress_kubelet_secure" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -149,6 +164,7 @@ resource "aws_security_group_rule" "master_ingress_kubelet_secure" {
 }
 
 resource "aws_security_group_rule" "master_ingress_kubelet_secure_from_worker" {
+  count                    = "${var.external_sg_master == "" ? 1 : 0}"
   type                     = "ingress"
   security_group_id        = "${aws_security_group.master.id}"
   source_security_group_id = "${aws_security_group.worker.id}"
@@ -159,6 +175,7 @@ resource "aws_security_group_rule" "master_ingress_kubelet_secure_from_worker" {
 }
 
 resource "aws_security_group_rule" "master_ingress_etcd" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -169,6 +186,7 @@ resource "aws_security_group_rule" "master_ingress_etcd" {
 }
 
 resource "aws_security_group_rule" "master_ingress_bootstrap_etcd" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -179,6 +197,7 @@ resource "aws_security_group_rule" "master_ingress_bootstrap_etcd" {
 }
 
 resource "aws_security_group_rule" "master_ingress_services" {
+  count             = "${var.external_sg_master == "" ? 1 : 0}"
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
@@ -189,6 +208,7 @@ resource "aws_security_group_rule" "master_ingress_services" {
 }
 
 resource "aws_security_group_rule" "master_ingress_services_from_console" {
+  count                    = "${var.external_sg_master == "" ? 1 : 0}"
   type                     = "ingress"
   security_group_id        = "${aws_security_group.master.id}"
   source_security_group_id = "${aws_security_group.console.id}"

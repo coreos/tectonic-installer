@@ -29,7 +29,7 @@ resource "aws_security_group" "etcd" {
     to_port   = 22
     self      = true
 
-    security_groups = ["${aws_security_group.master.id}"]
+    security_groups = ["${var.external_sg_master == "" ? join(" ", aws_security_group.master.*.id) : var.external_sg_master }"]
   }
 
   ingress {
@@ -38,7 +38,7 @@ resource "aws_security_group" "etcd" {
     to_port   = 2379
     self      = true
 
-    security_groups = ["${aws_security_group.master.id}"]
+    security_groups = ["${var.external_sg_master == "" ? join(" ", aws_security_group.master.*.id) : var.external_sg_master }"]
   }
 
   ingress {
@@ -48,3 +48,49 @@ resource "aws_security_group" "etcd" {
     self      = true
   }
 }
+
+# resource "aws_security_group_rule" "etcd_ssh_from_master" {
+#   count                    = "${var.external_sg_master == "" && var.enable_etcd_sg ? 1 : 0}"
+#   type                     = "ingress"
+#   security_group_id        = "${aws_security_group.etcd.id}"
+#   source_security_group_id = "${aws_security_group.master.id}"
+# 
+#   protocol  = "tcp"
+#   from_port = 22
+#   to_port   = 22
+# }
+# 
+# resource "aws_security_group_rule" "etcd_ssh_from_external_master" {
+#   count                    = "${var.external_sg_master != "" && var.enable_etcd_sg ? 1 : 0}"
+#   type                     = "ingress"
+#   security_group_id        = "${aws_security_group.etcd.id}"
+#   source_security_group_id = "${var.external_sg_master}"
+# 
+#   protocol  = "tcp"
+#   from_port = 22
+#   to_port   = 22
+# }
+# 
+# resource "aws_security_group_rule" "etcd_client_from_master" {
+#   count                    = "${var.external_sg_master == "" && var.enable_etcd_sg ? 1 : 0}"
+#   type                     = "ingress"
+#   security_group_id        = "${aws_security_group.etcd.id}"
+#   source_security_group_id = "${aws_security_group.master.id}"
+# 
+#   protocol  = "tcp"
+#   from_port = 2379
+#   to_port   = 2379
+# }
+# 
+# resource "aws_security_group_rule" "etcd_client_from_external_master" {
+#   count                    = "${var.external_sg_master != "" && var.enable_etcd_sg ? 1 : 0}"
+#   type                     = "ingress"
+#   security_group_id        = "${aws_security_group.etcd.id}"
+#   source_security_group_id = "${var.external_sg_master}"
+# 
+#   protocol  = "tcp"
+#   from_port = 2379
+#   to_port   = 2379
+# }
+# 
+
