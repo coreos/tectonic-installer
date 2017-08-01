@@ -6,6 +6,10 @@ data "ignition_config" "worker" {
     "${data.ignition_file.cloud-provider-config.id}",
   ]
 
+  networkd = [
+    "${data.ignition_networkd_unit.eth0.id}",
+  ]
+
   systemd = [
     "${data.ignition_systemd_unit.docker.id}",
     "${data.ignition_systemd_unit.locksmithd.id}",
@@ -115,4 +119,9 @@ data "ignition_user" "core" {
   ssh_authorized_keys = [
     "${file(var.public_ssh_key)}",
   ]
+}
+
+data "ignition_networkd_unit" "eth0" {
+  name    = "10_eth0.link"
+  content = "${file("${path.module}/resources/10_eth0.link")}"
 }

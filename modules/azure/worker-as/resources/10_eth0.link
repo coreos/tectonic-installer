@@ -1,0 +1,7 @@
+[Match]
+OriginalName=eth0
+
+[Link]
+NamePolicy=kernel database onboard slot path
+MACAddressPolicy=persistent
+MTUBytes=2000
