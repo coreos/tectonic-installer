@@ -15,7 +15,7 @@ resource "openstack_networking_subnet_v2" "subnet" {
   cidr       = "${var.tectonic_openstack_subnet_cidr}"
   ip_version = 4
 
-  dns_nameservers = ["${var.tectonic_openstack_dns_nameserver_1}", "${var.tectonic_openstack_dns_nameserver_2}"]
+  dns_nameservers = ["${var.tectonic_openstack_dns_nameservers}"]
 }
 
 resource "openstack_networking_router_interface_v2" "interface" {
