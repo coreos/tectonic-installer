@@ -117,6 +117,15 @@ tectonic_etcd_count = "0"
 // If set to true, experimental Tectonic assets are being deployed.
 tectonic_experimental = false
 
+// (optional) The port of the backend protocol type used for Flannel. The current supported options
+// are '4789' for VXLAN, or '8285' for UDP, and it is suggested that port used
+// matches the protocol set in `tectonic_flannel_backend_type`.
+// tectonic_flannel_backend_port = "4789"
+
+// (optional) The backend protocol type to use for Flannel. The current supported options
+// are 'vxlan' and 'udp'.
+// tectonic_flannel_backend_type = "vxlan"
+
 // The path to the tectonic licence file.
 // 
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.

@@ -19,8 +19,8 @@ data:
     {
       "Network": "${cluster_cidr}",
       "Backend": {
-        "Type": "vxlan",
-        "Port": 4789
+        "Type": "${flannel_backend_type}",
+        "Port": ${flannel_backend_port}
       }
     }
 ---

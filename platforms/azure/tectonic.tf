@@ -77,12 +77,14 @@ module "tectonic" {
   image_re = "${var.tectonic_image_re}"
 }
 
-module "flannel-vxlan" {
-  source = "../../modules/net/flannel-vxlan"
+module "flannel" {
+  source = "../../modules/net/flannel"
 
-  flannel_image     = "${var.tectonic_container_images["flannel"]}"
-  flannel_cni_image = "${var.tectonic_container_images["flannel_cni"]}"
-  cluster_cidr      = "${var.tectonic_cluster_cidr}"
+  flannel_image        = "${var.tectonic_container_images["flannel"]}"
+  flannel_cni_image    = "${var.tectonic_container_images["flannel_cni"]}"
+  flannel_backend_type = "udp"
+  flannel_backend_port = "8285"
+  cluster_cidr         = "${var.tectonic_cluster_cidr}"
 
   bootkube_id = "${module.bootkube.id}"
 }
@@ -100,7 +102,7 @@ module "calico-network-policy" {
 }
 
 resource "null_resource" "tectonic" {
-  depends_on = ["module.vnet", "module.dns", "module.etcd", "module.masters", "module.bootkube", "module.tectonic", "module.flannel-vxlan", "module.calico-network-policy"]
+  depends_on = ["module.vnet", "module.dns", "module.etcd", "module.masters", "module.bootkube", "module.tectonic", "module.flannel", "module.calico-network-policy"]
 
   triggers {
     api-endpoint = "${module.vnet.api_fqdn}"

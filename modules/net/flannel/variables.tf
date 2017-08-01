@@ -12,6 +12,16 @@ variable "flannel_cni_image" {
   type        = "string"
 }
 
+variable "flannel_backend_type" {
+  description = "The backend protocol type to use for Flannel"
+  type        = "string"
+}
+
+variable "flannel_backend_port" {
+  description = "The port of the backend protocol type used for Flannel"
+  type        = "string"
+}
+
 variable "cluster_cidr" {
   description = "A CIDR notation IP range from which to assign pod IPs"
   type        = "string"
