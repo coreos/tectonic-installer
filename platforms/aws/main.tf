@@ -31,6 +31,8 @@ module "vpc" {
   extra_tags               = "${var.tectonic_aws_extra_tags}"
   private_master_endpoints = "${var.tectonic_aws_private_endpoints}"
   public_master_endpoints  = "${var.tectonic_aws_public_endpoints}"
+  external_sg_master       = "${var.tectonic_aws_external_master_sg_id}"
+  external_sg_worker       = "${var.tectonic_aws_external_worker_sg_id}"
 
   # VPC layout settings.
   #
@@ -143,6 +145,7 @@ module "masters" {
   root_volume_iops                  = "${var.tectonic_aws_master_root_volume_iops}"
   root_volume_size                  = "${var.tectonic_aws_master_root_volume_size}"
   root_volume_type                  = "${var.tectonic_aws_master_root_volume_type}"
+  sg_ids                            = ["${split(",", var.tectonic_aws_external_worker_sg_id == "" ? join(",", var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id)) : join(",", var.tectonic_aws_worker_extra_sg_ids, list(var.tectonic_aws_external_worker_sg_id)))}"]
   ssh_key                           = "${var.tectonic_aws_ssh_key}"
   subnet_ids                        = "${module.vpc.master_subnet_ids}"
 }
@@ -165,6 +168,15 @@ module "ignition_workers" {
 module "workers" {
   source = "../../modules/aws/worker-asg"
 
+  instance_count  = "${var.tectonic_worker_count}"
+  ec2_type        = "${var.tectonic_aws_worker_ec2_type}"
+  cluster_name    = "${var.tectonic_cluster_name}"
+  worker_iam_role = "${var.tectonic_aws_worker_iam_role_name}"
+
+  vpc_id                       = "${module.vpc.vpc_id}"
+  subnet_ids                   = ["${module.vpc.worker_subnet_ids}"]
+  sg_ids                       = ["${split(",", var.tectonic_aws_external_worker_sg_id == "" ? join(",", var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id)) : join(",", var.tectonic_aws_worker_extra_sg_ids, list(var.tectonic_aws_external_worker_sg_id)))}"]
+  ssh_key                      = "${var.tectonic_aws_ssh_key}"
   autoscaling_group_extra_tags = "${var.tectonic_autoscaling_group_extra_tags}"
   container_linux_channel      = "${var.tectonic_container_linux_channel}"
   container_linux_version      = "${module.container_linux.version}"

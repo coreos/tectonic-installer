@@ -28,6 +28,12 @@ tectonic_aws_etcd_root_volume_size = "30"
 // The type of volume for the root block device of etcd nodes.
 tectonic_aws_etcd_root_volume_type = "gp2"
 
+// (optional) Security group ID for master nodes. If not set, a security group is created.
+// These groups must have proper ingress/egress rules for installation to be successful.
+//
+// Example: `"sg-51530134"`
+// tectonic_aws_external_master_sg_id = ""
+
 // (optional) List of subnet IDs within an existing VPC to deploy master nodes into.
 // Required to use an existing VPC and the list must match the AZ count.
 // 
@@ -46,6 +52,16 @@ tectonic_aws_etcd_root_volume_type = "gp2"
 // 
 // Example: `vpc-123456`
 // tectonic_aws_external_vpc_id = ""
+
+// If set to true, create public facing ingress resources (ELB, A-records).
+// If set to false, a "private" cluster will be created with an internal ELB only.
+tectonic_aws_external_vpc_public = true
+
+// (optional) Security group ID for worker nodes. If not set, a security group is created.
+// These groups must have proper ingress/egress rules for installation to be successful.
+//
+// Example: `"sg-51530134"`
+// tectonic_aws_external_worker_sg_id = ""
 
 // (optional) List of subnet IDs within an existing VPC to deploy worker nodes into.
 // Required to use an existing VPC and the list must match the AZ count.
@@ -259,9 +275,9 @@ tectonic_etcd_count = "0"
 
 // The path to the tectonic licence file.
 // You can download the Tectonic license file from your Account overview page at [1].
-// 
+//
 // [1] https://account.coreos.com/overview
-// 
+//
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_license_path = ""
 
@@ -282,13 +298,13 @@ tectonic_master_count = "1"
 // This is known to be a "Docker pull secret" as produced by the docker login [1] command.
 // A sample JSON content is shown in [2].
 // You can download the pull secret from your Account overview page at [3].
-// 
+//
 // [1] https://docs.docker.com/engine/reference/commandline/login/
-// 
+//
 // [2] https://coreos.com/os/docs/latest/registry-authentication.html#manual-registry-auth-setup
-// 
+//
 // [3] https://account.coreos.com/overview
-// 
+//
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_pull_secret_path = ""
 
