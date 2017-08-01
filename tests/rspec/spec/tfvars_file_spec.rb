@@ -17,7 +17,7 @@ describe TFVarsFile do
   end
 
   it '#node_count returns correct #' do
-    expect(subject.node_count).to eq(7)
+    expect(subject.node_count).to eq(4)
   end
 
   it '#experimental? returns false if not set' do
