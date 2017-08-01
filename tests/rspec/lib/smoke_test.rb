@@ -19,14 +19,14 @@ module SmokeTest
   def self.compiled?
     File.file?('../../bin/smoke')
   end
-end
 
-def env_variables(cluster)
-  {
-    'SMOKE_KUBECONFIG' => cluster.kubeconfig,
-    'SMOKE_NODE_COUNT' => cluster.tfvars_file.node_count.to_s,
-    'SMOKE_MANIFEST_PATHS' => cluster.manifest_path,
-    'SMOKE_MANIFEST_EXPERIMENTAL' => cluster.tfvars_file.experimental?.to_s,
-    'SMOKE_CALICO_NETWORK_POLICY' => cluster.tfvars_file.calico?.to_s
-  }
+  def self.env_variables(cluster)
+    {
+      'SMOKE_KUBECONFIG' => cluster.kubeconfig,
+      'SMOKE_NODE_COUNT' => cluster.tfvars_file.node_count.to_s,
+      'SMOKE_MANIFEST_PATHS' => cluster.manifest_path,
+      'SMOKE_MANIFEST_EXPERIMENTAL' => cluster.tfvars_file.experimental?.to_s,
+      'SMOKE_CALICO_NETWORK_POLICY' => cluster.tfvars_file.calico?.to_s
+    }
+  end
 end
