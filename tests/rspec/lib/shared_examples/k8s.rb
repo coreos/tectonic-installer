@@ -1,4 +1,6 @@
 require 'smoke_test'
+require 'cluster'
+require 'aws'
 
 RSpec.shared_examples 'withCluster' do |tf_vars_path|
   before(:all) do

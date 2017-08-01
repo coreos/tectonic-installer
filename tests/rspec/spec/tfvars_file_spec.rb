@@ -25,6 +25,6 @@ describe TFVarsFile do
   end
 
   it '#calico? returns false if not set' do
-    expect(subject.experimental?).to eq(false)
+    expect(subject.calico?).to eq(false)
   end
 end
