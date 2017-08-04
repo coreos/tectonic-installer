@@ -127,6 +127,7 @@ $ export ARM_SUBSCRIPTION_ID=abc-123-456
 $ export ARM_CLIENT_ID=generated-app-id
 $ export ARM_CLIENT_SECRET=generated-pass
 $ export ARM_TENANT_ID=generated-tenant
+$ export TF_VAR_tectonic_azure_client_secret="${ARM_CLIENT_SECRET}"
 ```
 
 Now we're ready to specify our cluster configuration.
