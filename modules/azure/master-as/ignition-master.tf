@@ -6,6 +6,10 @@ data "ignition_config" "master" {
     "${data.ignition_file.cloud_provider_config.id}",
   ]
 
+  networkd = [
+    "${data.ignition_networkd_unit.eth0.id}",
+  ]
+
   systemd = [
     "${data.ignition_systemd_unit.docker.id}",
     "${data.ignition_systemd_unit.locksmithd.id}",
@@ -114,4 +118,9 @@ data "ignition_systemd_unit" "tectonic" {
   name    = "tectonic.service"
   enable  = "${var.tectonic_service_disabled == 0 ? true : false}"
   content = "${var.tectonic_service}"
+}
+
+data "ignition_networkd_unit" "eth0" {
+  name    = "10_eth0.link"
+  content = "${file("${path.module}/resources/10_eth0.link")}"
 }
