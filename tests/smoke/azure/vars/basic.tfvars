@@ -1,7 +1,7 @@
 tectonic_azure_etcd_storage_account_type = "Premium_LRS"
 tectonic_azure_etcd_vm_size = "Standard_DS2_v2"
 tectonic_azure_master_storage_account_type = "Premium_LRS"
-tectonic_azure_master_vm_size = "Standard_DS3_v2"
+tectonic_azure_master_vm_size = "Standard_DS2_v2"
 tectonic_azure_worker_storage_account_type = "Premium_LRS"
 tectonic_azure_worker_vm_size = "Standard_DS2_v2"
 tectonic_base_domain = ""
