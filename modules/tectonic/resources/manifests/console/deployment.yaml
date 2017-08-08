@@ -22,9 +22,19 @@ spec:
       creationTimestamp: null
       labels:
         k8s-app: tectonic-console
+        pod-anti-affinity: tectonic-console-${tectonic_version}
         component: ui
       name: tectonic-console
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                pod-anti-affinity: tectonic-console-${tectonic_version}
+            namespaces:
+              - tectonic-system
+            topologyKey: kubernetes.io/hostname
       containers:
       - command:
         - /opt/bridge/bin/bridge
