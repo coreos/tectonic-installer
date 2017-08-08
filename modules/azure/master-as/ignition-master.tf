@@ -2,6 +2,7 @@ data "ignition_config" "master" {
   files = [
     "${data.ignition_file.kubeconfig.id}",
     "${data.ignition_file.kubelet_env.id}",
+    "${data.ignition_file.azure_udev_rules.id}",
     "${data.ignition_file.max_user_watches.id}",
     "${data.ignition_file.cloud_provider_config.id}",
   ]
@@ -70,6 +71,16 @@ data "ignition_file" "kubeconfig" {
 
   content {
     content = "${var.kubeconfig_content}"
+  }
+}
+
+data "ignition_file" "azure_udev_rules" {
+  filesystem = "root"
+  path       = "/etc/udev/rules.d/66-azure-storage.rules"
+  mode       = 0644
+
+  content {
+    content = "${file("${path.module}/resources/66-azure-storage.rules")}"
   }
 }
 
