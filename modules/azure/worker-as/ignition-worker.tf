@@ -2,7 +2,7 @@ data "ignition_config" "worker" {
   files = [
     "${data.ignition_file.kubeconfig.id}",
     "${data.ignition_file.kubelet-env.id}",
-    "${data.ignition_file.azure_udev_rules.id}",
+    "${module.azure_udev-rules.udev-rules_id}",
     "${data.ignition_file.max-user-watches.id}",
     "${data.ignition_file.cloud-provider-config.id}",
   ]
@@ -131,4 +131,8 @@ data "ignition_user" "core" {
 
 module "net_ignition" {
   source = "../../net/ignition"
+}
+
+module "azure_udev-rules" {
+  source = "../udev-rules"
 }
