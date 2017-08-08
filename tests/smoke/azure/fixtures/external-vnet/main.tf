@@ -1,5 +1,5 @@
 variable "tectonic_azure_location" {
-  default = "northeurope"
+  default = "eastus"
 }
 
 variable "tectonic_azure_vnet_cidr_block" {
