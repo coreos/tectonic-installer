@@ -724,8 +724,6 @@ resource "azurerm_network_security_rule" "worker_ingress_https" {
   network_security_group_name = "${azurerm_network_security_group.integ_external_sg_worker.name}"
 }
 
-
-
 output "tectonic_azure_external_resource_group" {
   value = "${azurerm_resource_group.integ_external_net.id}"
 }
