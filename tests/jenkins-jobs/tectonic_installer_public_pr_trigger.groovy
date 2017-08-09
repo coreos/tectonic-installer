@@ -47,22 +47,15 @@ job("triggers/tectonic-installer-pr-trigger") {
     }
   }
 
-  steps {
-    triggerBuilder {
+  publishers {
+    hudson.plugins.parameterizedtrigger.buildTrigger {
       configs {
-        blockableBuildTriggerConfig {
+        buildTriggerConfig {
           projects("tectonic-installer/PR-\${ghprbPullId}")
-          block {
-            buildStepFailureThreshold("FAILURE")
-            unstableThreshold("UNSTABLE")
-            failureThreshold("FAILURE")
-          }
+          condition("SUCCESS")
         }
       }
     }
-  }
-
-  publishers {
     wsCleanup()
     slackNotifier {
       authTokenCredentialId('tectonic-slack-token')
