@@ -49,11 +49,7 @@ job("triggers/tectonic-installer-pr-trigger") {
 
   steps {
     downstreamParameterized {
-      trigger('tectonic-installer/PR-\${ghprbPullId}') {
-        parameters {
-          currentBuild()
-        }
-      }
+      trigger('tectonic-installer/PR-\${ghprbPullId}')
     }
   }
 
