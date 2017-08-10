@@ -47,11 +47,6 @@ def default_builder_image = 'quay.io/coreos/tectonic-builder:v1.36'
 def tectonic_smoke_test_env_image = 'quay.io/coreos/tectonic-smoke-test-env:v3.0'
 
 
-def handleCheckout = {
-  checkout changelog: true, poll: false, scm: [$class: 'GitSCM', branches: scm.branches, doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'PreBuildMerge', options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'MergeCommand.Strategy' , mergeTarget: 'master']], [$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cpanato/tectonic-installer.git']]]
-}
-
-
 pipeline {
   agent none
   options {
@@ -126,7 +121,7 @@ pipeline {
           "SmokeTest AWS RSpec": {
             node('worker && ec2') {
               withCredentials(creds) {
-                handleCheckout()
+                checkout changelog: true, poll: false, scm: [$class: 'GitSCM', branches: scm.branches, doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'PreBuildMerge', options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'MergeCommand.Strategy' , mergeTarget: 'master']], [$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cpanato/tectonic-installer.git']]]
                 sh "git branch -vv"
 
               }
