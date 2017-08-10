@@ -48,15 +48,10 @@ job("triggers/tectonic-installer-pr-trigger") {
   }
 
   steps {
-    triggerBuilder {
-      configs {
-        blockableBuildTriggerConfig {
-          projects("tectonic-installer/PR-\${ghprbPullId}")
-          block {
-            buildStepFailureThreshold("FAILURE")
-            unstableThreshold("UNSTABLE")
-            failureThreshold("FAILURE")
-          }
+    downstreamParameterized {
+      trigger('tectonic-installer/PR-\${ghprbPullId}') {
+        parameters {
+          currentBuild()
         }
       }
     }
