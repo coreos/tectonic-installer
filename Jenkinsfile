@@ -72,7 +72,7 @@ pipeline {
         node('worker && ec2') {
           withDockerContainer(params.builder_image) {
             ansiColor('xterm') {
-              checkout changelog: true, poll: false, scm: [$class: 'GitSCM', branches: scm.branches, doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'PreBuildMerge', options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'MergeCommand.Strategy' , mergeTarget: 'master']], [$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cpanato/tectonic-installer.git']]]
+              checkout changelog: true, poll: false, scm: [$class: 'GitSCM', branches: [[name: "${sha1}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'PreBuildMerge', options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'MergeCommand.Strategy' , mergeTarget: 'master']], [$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cpanato/tectonic-installer.git']]]
                 sh "git branch -vv"
             }
           }
@@ -97,7 +97,7 @@ pipeline {
           "SmokeTest AWS RSpec": {
             node('worker && ec2') {
               withCredentials(creds) {
-                checkout changelog: true, poll: false, scm: [$class: 'GitSCM', branches: scm.branches, doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'PreBuildMerge', options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'MergeCommand.Strategy' , mergeTarget: 'master']], [$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cpanato/tectonic-installer.git']]]
+                checkout changelog: true, poll: false, scm: [$class: 'GitSCM', branches: branches: [[name: "${sha1}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'PreBuildMerge', options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'MergeCommand.Strategy' , mergeTarget: 'master']], [$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cpanato/tectonic-installer.git']]]
                 sh "git branch -vv"
 
               }
