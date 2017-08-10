@@ -72,32 +72,8 @@ pipeline {
         node('worker && ec2') {
           withDockerContainer(params.builder_image) {
             ansiColor('xterm') {
-              checkout scm
-              sh """#!/bin/bash -ex
-              mkdir -p \$(dirname $GO_PROJECT) && ln -sf $WORKSPACE $GO_PROJECT
-
-              # TODO: Remove me.
-              go get github.com/segmentio/terraform-docs
-              go get github.com/s-urbaniak/terraform-examples
-              go get github.com/bronze1man/yaml2json
-
-              cd $GO_PROJECT/
-              make structure-check
-              make bin/smoke
-
-              cd $GO_PROJECT/installer
-              make clean
-              make tools
-              make build
-
-              make dirtycheck
-              make lint
-              make test
-              rm -fr frontend/tests_output
-              """
-              stash name: 'installer', includes: 'installer/bin/linux/installer'
-              stash name: 'node_modules', includes: 'installer/frontend/node_modules/**'
-              stash name: 'smoke', includes: 'bin/smoke'
+              checkout changelog: true, poll: false, scm: [$class: 'GitSCM', branches: ${ghprbSourceBranch}, doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'PreBuildMerge', options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'MergeCommand.Strategy' , mergeTarget: 'master']], [$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cpanato/tectonic-installer.git']]]
+                sh "git branch -vv"
             }
           }
           withDockerContainer(tectonic_smoke_test_env_image) {
@@ -121,7 +97,7 @@ pipeline {
           "SmokeTest AWS RSpec": {
             node('worker && ec2') {
               withCredentials(creds) {
-                checkout changelog: true, poll: false, scm: [$class: 'GitSCM', branches: scm.branches, doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'PreBuildMerge', options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'MergeCommand.Strategy' , mergeTarget: 'master']], [$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cpanato/tectonic-installer.git']]]
+                checkout changelog: true, poll: false, scm: [$class: 'GitSCM', branches: ${ghprbSourceBranch}, doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'PreBuildMerge', options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'MergeCommand.Strategy' , mergeTarget: 'master']], [$class: 'CleanCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/cpanato/tectonic-installer.git']]]
                 sh "git branch -vv"
 
               }
