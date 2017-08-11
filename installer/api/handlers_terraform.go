@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os/exec"
 	"path/filepath"
+	"regexp"
 	"time"
 
 	"github.com/dghubble/sessions"
@@ -58,12 +60,23 @@ func terraformApplyHandler(w http.ResponseWriter, req *http.Request, ctx *Contex
 		return newInternalServerError("could not write TerraForm templates: %s", err)
 	}
 
-	// Execute TerraForm get and wait for it to finish.
-	_, getDone, err := ex.Execute("get", "-no-color", tfMainDir)
+	// Choose to run 'get' or 'init' based on Terraform version.
+	verRx := regexp.MustCompile("^Terraform v0\\.[0-9]\\.[0-9]+")
+	out, err := exec.Command("terraform", "version").Output()
 	if err != nil {
-		return newInternalServerError("Failed to run TerraForm (get): %s", err)
+		return newInternalServerError("Failed to determine Terraform version: %s", err)
 	}
-	<-getDone
+	var prepCommand = "init"
+	if verRx.Match(out) {
+		prepCommand = "get"
+	}
+
+	// Execute TerraForm get or init and wait for it to finish.
+	_, prepDone, err := ex.Execute(prepCommand, "-no-color", tfMainDir)
+	if err != nil {
+		return newInternalServerError("Failed to run TerraForm (%s): %s", prepCommand, err)
+	}
+	<-prepDone
 
 	// Store both the path to the Executor and the ID of the execution so that
 	// the status can be read later on.
