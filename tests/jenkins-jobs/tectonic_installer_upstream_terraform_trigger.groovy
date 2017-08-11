@@ -20,10 +20,18 @@ job("triggers/upstream-terraform-trigger") {
   }
 
   steps {
-    downstreamParameterized {
-      trigger('tectonic-installer/master') {
-        parameters {
-          currentBuild()
+    triggerBuilder {
+      configs {
+        blockableBuildTriggerConfig {
+          projects("tectonic-installer/master")
+          block {
+            buildStepFailureThreshold("FAILURE")
+            unstableThreshold("UNSTABLE")
+            failureThreshold("FAILURE")
+          }
+          configs {
+            currentBuildParameters()
+          }
         }
       }
     }
