@@ -2,7 +2,7 @@
 
 folder("triggers")
 
-job("triggers/tectonic-installer-pr-trigger") {
+job("triggers/tectonic-installer-pr-trigger-no-smoke") {
   description('Tectonic Installer PR Trigger. Changes here will be reverted automatically.')
 
   concurrentBuild()
@@ -40,8 +40,8 @@ job("triggers/tectonic-installer-pr-trigger") {
       msgFailure("")
       commitStatusContext("Jenkins-Tectonic-Installer")
       buildDescTemplate("#\$pullId: \$abbrTitle")
-      blackListLabels("do-not-test")
-      whiteListLabels("do-smoke-test")
+      blackListLabels("do-not-test\ndo-smoke-test")
+      whiteListLabels("")
       includedRegions("")
       excludedRegions("")
     }
@@ -49,7 +49,11 @@ job("triggers/tectonic-installer-pr-trigger") {
 
   steps {
     downstreamParameterized {
-      trigger('tectonic-installer/PR-\${ghprbPullId}')
+      trigger('tectonic-installer/PR-\${ghprbPullId}') {
+        parameters {
+          booleanParam('run_smoke_tests', false)
+        }
+      }
     }
   }
 
