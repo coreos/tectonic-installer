@@ -38,6 +38,10 @@ class Cluster
   end
 
   def stop
+    if ENV.key?('TECTONIC_TESTS_DONT_CLEAN_UP')
+      print 'Cleanup inhibiting flag set. Stopping here.'
+      return
+    end
     destroy
     clean if Jenkins.environment?
   end
