@@ -32,3 +32,12 @@ This file creates a Jenkins job called `tectonic-installer-pr-trigger` under `tr
 Parameters:
 
 * No input parameters are required.
+
+## Tectonic Release
+
+This file (`releases/tectonic_release_job.groovy`) creates a Jenkins job called `tectonic-release` under `releases` folder to run the release process for tectonic-installer.
+
+Parameters:
+
+* `releaseTag`: The release Tag number.
+* `preRelease`: Pre Release Tag number.
