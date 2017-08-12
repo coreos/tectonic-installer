@@ -45,6 +45,7 @@ module "tectonic" {
 
   cluster_name = "${var.tectonic_cluster_name}"
 
+  # TODO: Allow private or public LB implementation
   base_address       = "${module.vnet.ingress_fqdn}"
   kube_apiserver_url = "https://${module.vnet.api_fqdn}:443"
 
@@ -90,11 +91,14 @@ module "flannel-vxlan" {
 module "calico-network-policy" {
   source = "../../modules/net/calico-network-policy"
 
+  # UPSTREAM:
+  #kube_apiserver_url = "https://${module.vnet.api_external_fqdn}:443"
   kube_apiserver_url = "https://${module.vnet.api_fqdn}:443"
-  calico_image       = "${var.tectonic_container_images["calico"]}"
-  calico_cni_image   = "${var.tectonic_container_images["calico_cni"]}"
-  cluster_cidr       = "${var.tectonic_cluster_cidr}"
-  enabled            = "${var.tectonic_calico_network_policy}"
+
+  calico_image     = "${var.tectonic_container_images["calico"]}"
+  calico_cni_image = "${var.tectonic_container_images["calico_cni"]}"
+  cluster_cidr     = "${var.tectonic_cluster_cidr}"
+  enabled          = "${var.tectonic_calico_network_policy}"
 
   bootkube_id = "${module.bootkube.id}"
 }
@@ -102,12 +106,14 @@ module "calico-network-policy" {
 resource "null_resource" "tectonic" {
   depends_on = ["module.vnet", "module.dns", "module.etcd", "module.masters", "module.bootkube", "module.tectonic", "module.flannel-vxlan", "module.calico-network-policy"]
 
+  # TODO: Allow private or public LB implementation
   triggers {
-    api-endpoint = "${module.vnet.api_fqdn}"
+    api-endpoint = "${module.vnet.master_private_ip_addresses[0]}"
   }
 
+  # TODO: Allow private or public LB implementation
   connection {
-    host  = "${module.vnet.api_fqdn}"
+    host  = "${module.vnet.master_private_ip_addresses[0]}"
     user  = "core"
     agent = true
   }
@@ -119,8 +125,8 @@ resource "null_resource" "tectonic" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo mkdir -p /opt",
       "sudo rm -rf /opt/tectonic",
+      "sudo mkdir -p /opt",
       "sudo mv /home/core/tectonic /opt/",
       "sudo systemctl start ${var.tectonic_vanilla_k8s ? "bootkube.service" : "tectonic.service"}",
     ]

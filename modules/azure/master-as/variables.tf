@@ -119,3 +119,35 @@ variable "cl_channel" {
 variable "extra_tags" {
   type = "map"
 }
+
+variable "subnet_id" {
+  type = "string"
+}
+
+variable "master_ip_addresses" {
+  type = "list"
+}
+
+variable "api_private_ip" {
+  type = "string"
+}
+
+variable "console_private_ip" {
+  type = "string"
+}
+
+variable "console_proxy_private_ip" {
+  type = "string"
+}
+
+variable "api_backend_pool" {
+  type = "string"
+}
+
+variable "console_backend_pool" {
+  type = "string"
+}
+
+variable "console_proxy_backend_pool" {
+  type = "string"
+}

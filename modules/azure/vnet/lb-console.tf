@@ -1,15 +1,15 @@
-resource "azurerm_public_ip" "console_ip" {
-  name                         = "${var.cluster_name}_console_ip"
-  location                     = "${var.location}"
-  resource_group_name          = "${var.resource_group_name}"
-  public_ip_address_allocation = "static"
-  domain_name_label            = "${var.cluster_name}"
-
-  tags = "${merge(map(
-    "Name", "${var.cluster_name}",
-    "tectonicClusterID", "${var.cluster_id}"),
-    var.extra_tags)}"
-}
+#resource "azurerm_public_ip" "console_ip" {
+#  name                         = "${var.cluster_name}_console_ip"
+#  location                     = "${var.location}"
+#  resource_group_name          = "${var.resource_group_name}"
+#  public_ip_address_allocation = "static"
+#  domain_name_label            = "${var.cluster_name}"
+#
+#  tags = "${merge(map(
+#    "Name", "${var.cluster_name}",
+#    "tectonicClusterID", "${var.cluster_id}"),
+#    var.extra_tags)}"
+#}
 
 resource "azurerm_lb_rule" "console_lb_https" {
   name                    = "${var.cluster_name}-console-lb-rule-443-32000"

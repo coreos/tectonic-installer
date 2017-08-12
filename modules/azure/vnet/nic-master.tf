@@ -1,6 +1,6 @@
 resource "azurerm_network_interface" "tectonic_master" {
   count               = "${var.master_count}"
-  name                = "${var.cluster_name}-master-${count.index}"
+  name                = "${format("%s-%s-%03d", var.cluster_name, "master", count.index + 1)}"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
 
