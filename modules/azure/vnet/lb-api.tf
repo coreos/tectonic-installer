@@ -1,15 +1,16 @@
-#resource "azurerm_public_ip" "api_ip" {
-#  name                         = "${var.cluster_name}_api_ip"
-#  location                     = "${var.location}"
-#  resource_group_name          = "${var.resource_group_name}"
-#  public_ip_address_allocation = "static"
-#  domain_name_label            = "${var.cluster_name}-api"
-#
-#  tags = "${merge(map(
-#    "Name", "${var.cluster_name}-api",
-#    "tectonicClusterID", "${var.cluster_id}"),
-#    var.extra_tags)}"
-#}
+resource "azurerm_public_ip" "api_ip" {
+  count = "${var.network_implementation == "public" ? 1 : 0}"
+  name                         = "${var.cluster_name}_api_ip"
+  location                     = "${var.location}"
+  resource_group_name          = "${var.resource_group_name}"
+  public_ip_address_allocation = "static"
+  domain_name_label            = "${var.cluster_name}-api"
+
+  tags = "${merge(map(
+    "Name", "${var.cluster_name}-api",
+    "tectonicClusterID", "${var.cluster_id}"),
+    var.extra_tags)}"
+}
 
 resource "azurerm_lb_rule" "api_lb" {
   name                    = "api-lb-rule-443-443"

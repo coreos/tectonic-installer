@@ -4,7 +4,7 @@ variable "tectonic_azure_config_version" {
 It has no impact on generated assets but declares the version contract of the configuration.
 EOF
 
-  default = "1.1"
+  default = "1.2"
 }
 
 variable "tectonic_azure_ssh_network_internal" {
@@ -262,4 +262,13 @@ variable "tectonic_azure_extra_tags" {
 EOF
 
   default = {}
+}
+
+# TODO: Add description
+variable "tectonic_azure_network_implementation" {
+  type = "string"
+
+  description = ""
+
+  default = "public"
 }

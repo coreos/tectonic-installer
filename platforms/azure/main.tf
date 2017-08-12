@@ -31,6 +31,7 @@ module "vnet" {
   etcd_cidr            = "${module.vnet.etcd_cidr}"
   master_cidr          = "${module.vnet.master_cidr}"
   worker_cidr          = "${module.vnet.worker_cidr}"
+  network_implementation       = "${var.tectonic_azure_network_implementation}"
   ssh_network_internal = "${var.tectonic_azure_ssh_network_internal}"
   ssh_network_external = "${var.tectonic_azure_ssh_network_external}"
 
@@ -108,6 +109,7 @@ module "masters" {
   cluster_id                   = "${module.tectonic.cluster_id}"
   cluster_name                 = "${var.tectonic_cluster_name}"
   public_ssh_key               = "${var.tectonic_azure_ssh_key}"
+  network_implementation       = "${var.tectonic_azure_network_implementation}"
   virtual_network              = "${module.vnet.vnet_id}"
   subnet_id                    = "${module.vnet.master_subnet}"
   network_interface_ids        = "${module.vnet.master_network_interface_ids}"
@@ -178,19 +180,19 @@ module "dns" {
   api_ip_addresses     = "${module.vnet.api_ip_addresses}"
   console_ip_addresses = "${module.vnet.console_ip_addresses}"
 
-  api_private_ip           = "${module.vnet.api_private_ip}"
-  console_private_ip       = "${module.vnet.console_private_ip}"
-  console_proxy_private_ip = "${module.vnet.console_proxy_private_ip}"
+  #api_private_ip           = "${module.vnet.api_private_ip}"
+  #console_private_ip       = "${module.vnet.console_private_ip}"
+  #console_proxy_private_ip = "${module.vnet.console_proxy_private_ip}"
 
-  etcd_node_names = "${module.etcd.node_names}"
+  #etcd_node_names = "${module.etcd.node_names}"
 
   # TODO: Remove hardcoded etcd values. This is a workaround for DNS + TLS.
-  etcd_node_1_name = "${module.etcd.etcd_node_1_name}"
-  etcd_node_2_name = "${module.etcd.etcd_node_2_name}"
-  etcd_node_3_name = "${module.etcd.etcd_node_3_name}"
-  etcd_node_1_ip   = "${module.vnet.etcd_node_1_ip}"
-  etcd_node_2_ip   = "${module.vnet.etcd_node_2_ip}"
-  etcd_node_3_ip   = "${module.vnet.etcd_node_3_ip}"
+  #etcd_node_1_name = "${module.etcd.etcd_node_1_name}"
+  #etcd_node_2_name = "${module.etcd.etcd_node_2_name}"
+  #etcd_node_3_name = "${module.etcd.etcd_node_3_name}"
+  #etcd_node_1_ip   = "${module.vnet.etcd_node_1_ip}"
+  #etcd_node_2_ip   = "${module.vnet.etcd_node_2_ip}"
+  #etcd_node_3_ip   = "${module.vnet.etcd_node_3_ip}"
 
   base_domain  = "${var.tectonic_base_domain}"
   cluster_id   = "${module.tectonic.cluster_id}"

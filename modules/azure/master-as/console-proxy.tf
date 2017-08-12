@@ -27,6 +27,7 @@ variable proxy_storage_profile_image_reference {
 }
 
 resource "azurerm_storage_account" "proxy" {
+  count = "${var.network_implementation == "private" ? 1 : 0}"
   name                = "${replace("${var.cluster_name}", "-", "")}${var.storage_id}p"
   resource_group_name = "${var.resource_group_name}"
   location            = "${var.location}"
@@ -41,6 +42,7 @@ resource "azurerm_storage_account" "proxy" {
 }
 
 resource "azurerm_storage_container" "proxy" {
+  count = "${var.network_implementation == "private" ? 1 : 0}"
   name                  = "${var.cluster_name}-proxy-vhd"
   resource_group_name   = "${var.resource_group_name}"
   storage_account_name  = "${azurerm_storage_account.proxy.name}"
@@ -48,6 +50,7 @@ resource "azurerm_storage_container" "proxy" {
 }
 
 data "template_file" "scripts_proxy_bootstrap" {
+  count = "${var.network_implementation == "private" ? 1 : 0}"
   template = <<EOF
 #!/bin/bash
 
@@ -119,11 +122,13 @@ EOF
 }
 
 resource "local_file" "scripts_proxy_bootstrap" {
+  count = "${var.network_implementation == "private" ? 1 : 0}"
   content  = "${data.template_file.scripts_proxy_bootstrap.rendered}"
   filename = "${path.cwd}/generated/proxy/console-proxy-bootstrap.sh"
 }
 
 resource "null_resource" "scripts_proxy_bootstrap" {
+  count = "${var.network_implementation == "private" ? 1 : 0}"
   depends_on = ["azurerm_storage_account.proxy", "local_file.scripts_proxy_bootstrap"]
 
   triggers {
@@ -136,6 +141,7 @@ resource "null_resource" "scripts_proxy_bootstrap" {
 }
 
 resource "azurerm_virtual_machine_scale_set" "console-proxy" {
+  count = "${var.network_implementation == "private" ? 1 : 0}"
   name                = "${var.cluster_name}-console-proxy"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
