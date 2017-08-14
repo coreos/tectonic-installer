@@ -36,7 +36,7 @@ variable "tectonic_container_images" {
     console                         = "quay.io/coreos/tectonic-console:v1.8.6"
     error_server                    = "quay.io/coreos/tectonic-error-server:1.0"
     etcd                            = "quay.io/coreos/etcd:v3.1.8"
-    etcd_operator                   = "quay.io/coreos/etcd-operator:v0.4.2"
+    etcd_operator                   = "quay.io/coreos/etcd-operator:v0.5.0"
     flannel                         = "quay.io/coreos/flannel:v0.8.0-amd64"
     flannel_cni                     = "quay.io/coreos/flannel-cni:0.1.0"
     heapster                        = "gcr.io/google_containers/heapster:v1.4.0"
