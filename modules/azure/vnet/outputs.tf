@@ -123,3 +123,7 @@ output "console_backend_pool" {
 output "console_proxy_backend_pool" {
   value = "${azurerm_lb_backend_address_pool.console-proxy-lb.id}"
 }
+
+output "tectonic_lb_id" {
+  value = "${var.network_implementation == "public" ? join("", azurerm_lb.tectonic_lb.id) : join("", azurerm_lb.tectonic_lb_internal.id)}"
+}

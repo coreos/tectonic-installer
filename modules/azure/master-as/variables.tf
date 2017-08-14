@@ -125,8 +125,7 @@ variable "extra_tags" {
 }
 
 variable "network_implementation" {
-  type    = "string"
-  default = ""
+  type = "string"
 }
 
 variable "subnet_id" {

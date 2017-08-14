@@ -39,6 +39,7 @@ module "vnet" {
   external_nsg_api_id       = "${var.tectonic_azure_external_nsg_api_id}"
   external_nsg_master_id    = "${var.tectonic_azure_external_nsg_master_id}"
   external_nsg_worker_id    = "${var.tectonic_azure_external_nsg_worker_id}"
+  tectonic_lb_id            = "${module.vnet.tectonic_lb_id}"
 
   extra_tags = "${var.tectonic_azure_extra_tags}"
 }

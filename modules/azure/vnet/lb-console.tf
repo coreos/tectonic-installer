@@ -15,7 +15,7 @@ resource "azurerm_public_ip" "console_ip" {
 resource "azurerm_lb_rule" "console_lb_https" {
   name                    = "${var.cluster_name}-console-lb-rule-443-32000"
   resource_group_name     = "${var.resource_group_name}"
-  loadbalancer_id         = "${azurerm_lb.tectonic_lb.id}"
+  loadbalancer_id         = "${var.tectonic_lb_id}"
   backend_address_pool_id = "${azurerm_lb_backend_address_pool.api-lb.id}"
   probe_id                = "${azurerm_lb_probe.console_lb.id}"
 
@@ -28,7 +28,7 @@ resource "azurerm_lb_rule" "console_lb_https" {
 resource "azurerm_lb_rule" "console_lb_identity" {
   name                    = "${var.cluster_name}-console-lb-rule-80-32001"
   resource_group_name     = "${var.resource_group_name}"
-  loadbalancer_id         = "${azurerm_lb.tectonic_lb.id}"
+  loadbalancer_id         = "${var.tectonic_lb_id}"
   backend_address_pool_id = "${azurerm_lb_backend_address_pool.api-lb.id}"
   probe_id                = "${azurerm_lb_probe.console_lb.id}"
 
@@ -40,7 +40,7 @@ resource "azurerm_lb_rule" "console_lb_identity" {
 
 resource "azurerm_lb_probe" "console_lb" {
   name                = "${var.cluster_name}-console-lb-probe-443-up"
-  loadbalancer_id     = "${azurerm_lb.tectonic_lb.id}"
+  loadbalancer_id     = "${var.tectonic_lb_id}"
   resource_group_name = "${var.resource_group_name}"
   protocol            = "tcp"
   port                = 32000
