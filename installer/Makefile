@@ -111,6 +111,11 @@ bin/go-bindata:
 launch-installer:
 	./bin/$(OS)/installer $(INSTALLER_OPTS) & echo $$! > /tmp/installer.pid
 
+.PHONY: stop-installer
+stop-installer:
+	@echo Stopping installer
+	cat /tmp/installer.pid | xargs kill -9
+
 .PHONY: launch-matchbox
 launch-matchbox:
 	./scripts/add_matchbox_hosts.sh
