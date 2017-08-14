@@ -105,11 +105,28 @@ output "console_proxy_private_ip" {
 }
 
 output "ingress_fqdn" {
-  value = "${var.base_domain == "" ? azurerm_public_ip.console_ip.fqdn : "${var.cluster_name}.${var.base_domain}"}"
+  value = "${var.network_implementation == "public" ?
+    var.base_domain == "" ?
+      join("", azurerm_public_ip.console_ip.fqdn) : join("", "${var.cluster_name}.${var.base_domain}") :
+    join("", "${var.cluster_name}.${var.base_domain}")
+  }"
 }
 
 output "api_fqdn" {
-  value = "${var.base_domain == "" ? azurerm_public_ip.api_ip.fqdn : "${var.cluster_name}-api.${var.base_domain}"}"
+  value = "${var.network_implementation == "public" ?
+    var.base_domain == "" ?
+      join("", azurerm_public_ip.api_ip.fqdn) : join("", "${var.cluster_name}-api.${var.base_domain}") :
+    join("", "${var.cluster_name}-api.${var.base_domain}")
+  }"
+}
+
+output "ssh_endpoint" {
+  value = "${var.network_implementation == "public" ?
+    var.base_domain == "" ?
+      join("", azurerm_public_ip.api_ip.fqdn) : join("", "${var.cluster_name}-api.${var.base_domain}") :
+    var.base_domain == "" ?
+      join("", azurerm_lb.tectonic_lb.frontend_ip_configuration.0.private_ip_address) : join("", "${var.cluster_name}-api.${var.base_domain}")
+  }"
 }
 
 output "api_backend_pool" {

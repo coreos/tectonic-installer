@@ -113,7 +113,7 @@ resource "null_resource" "tectonic" {
 
   # TODO: Allow private or public LB implementation
   connection {
-    host  = "${module.vnet.api_fqdn}"
+    host  = "${module.vnet.ssh_endpoint}"
     user  = "core"
     agent = true
   }
