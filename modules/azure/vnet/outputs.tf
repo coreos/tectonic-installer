@@ -27,9 +27,9 @@ output "worker_cidr" {
   value = "${azurerm_subnet.worker_subnet.address_prefix}"
 }
 
-output "etcd_nsg_name" {
-  value = "${var.external_nsg_etcd_id == "" ? join(" ", azurerm_network_security_group.etcd.*.name) : replace(var.external_nsg_etcd_id, "${var.const_id_to_group_name_regex}", "$2")}"
-}
+#output "etcd_nsg_name" {
+#  value = "${var.external_nsg_etcd_id == "" ? join(" ", azurerm_network_security_group.etcd.*.name) : replace(var.external_nsg_etcd_id, "${var.const_id_to_group_name_regex}", "$2")}"
+#}
 
 # TODO: Allow user to provide their own network
 output "worker_nsg_name" {
