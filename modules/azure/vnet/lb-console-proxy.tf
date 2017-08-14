@@ -2,7 +2,7 @@
 ## Related to: https://github.com/Microsoft/azure-docs/blob/master/articles/load-balancer/load-balancer-internal-overview.md#limitations
 
 resource "azurerm_lb" "proxy_lb" {
-  count = "${var.network_implementation == "private" ? 1 : 0}"
+  count               = "${var.network_implementation == "private" ? 1 : 0}"
   name                = "${var.cluster_name}-console-proxy-lb"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
@@ -15,14 +15,14 @@ resource "azurerm_lb" "proxy_lb" {
 }
 
 resource "azurerm_lb_backend_address_pool" "console-proxy-lb" {
-  count = "${var.network_implementation == "private" ? 1 : 0}"
+  count               = "${var.network_implementation == "private" ? 1 : 0}"
   resource_group_name = "${var.resource_group_name}"
   loadbalancer_id     = "${azurerm_lb.proxy_lb.id}"
   name                = "console-proxy-lb-pool"
 }
 
 resource "azurerm_lb_rule" "console-proxy-lb-https" {
-  count = "${var.network_implementation == "private" ? 1 : 0}"
+  count                   = "${var.network_implementation == "private" ? 1 : 0}"
   name                    = "console-proxy-lb-rule-443-443"
   resource_group_name     = "${var.resource_group_name}"
   loadbalancer_id         = "${azurerm_lb.proxy_lb.id}"
@@ -36,7 +36,7 @@ resource "azurerm_lb_rule" "console-proxy-lb-https" {
 }
 
 resource "azurerm_lb_probe" "console-proxy-lb-https" {
-  count = "${var.network_implementation == "private" ? 1 : 0}"
+  count               = "${var.network_implementation == "private" ? 1 : 0}"
   name                = "console-proxy-lb-probe-443-up"
   loadbalancer_id     = "${azurerm_lb.proxy_lb.id}"
   resource_group_name = "${var.resource_group_name}"
@@ -45,7 +45,7 @@ resource "azurerm_lb_probe" "console-proxy-lb-https" {
 }
 
 resource "azurerm_lb_rule" "console-proxy-lb-http" {
-  count = "${var.network_implementation == "private" ? 1 : 0}"
+  count                   = "${var.network_implementation == "private" ? 1 : 0}"
   name                    = "console-proxy-lb-rule-80-80"
   resource_group_name     = "${var.resource_group_name}"
   loadbalancer_id         = "${azurerm_lb.proxy_lb.id}"
@@ -59,7 +59,7 @@ resource "azurerm_lb_rule" "console-proxy-lb-http" {
 }
 
 resource "azurerm_lb_probe" "console-proxy-lb-http" {
-  count = "${var.network_implementation == "private" ? 1 : 0}"
+  count               = "${var.network_implementation == "private" ? 1 : 0}"
   name                = "console-proxy-lb-probe-80-up"
   loadbalancer_id     = "${azurerm_lb.proxy_lb.id}"
   resource_group_name = "${var.resource_group_name}"

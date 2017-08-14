@@ -108,12 +108,12 @@ resource "null_resource" "tectonic" {
 
   # TODO: Allow private or public LB implementation
   triggers {
-    api-endpoint = "${module.vnet.master_private_ip_addresses[0]}"
+    api-endpoint = "${module.vnet.api_fqdn}"
   }
 
   # TODO: Allow private or public LB implementation
   connection {
-    host  = "${module.vnet.master_private_ip_addresses[0]}"
+    host  = "${module.vnet.api_fqdn}"
     user  = "core"
     agent = true
   }

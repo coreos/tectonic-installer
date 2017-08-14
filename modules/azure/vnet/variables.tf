@@ -88,7 +88,7 @@ variable "worker_cidr" {
 }
 
 variable "network_implementation" {
-  type = "string"
+  type    = "string"
   default = ""
 }
 

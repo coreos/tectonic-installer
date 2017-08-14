@@ -125,7 +125,7 @@ variable "extra_tags" {
 }
 
 variable "network_implementation" {
-  type = "string"
+  type    = "string"
   default = ""
 }
 

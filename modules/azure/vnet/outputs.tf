@@ -105,11 +105,11 @@ output "console_proxy_private_ip" {
 }
 
 output "ingress_fqdn" {
-  value = "${var.cluster_name}.${var.base_domain}" #"${var.base_domain == "" ? azurerm_public_ip.tectonic_console_ip.fqdn : "${var.cluster_name}.${var.base_domain}"}"
+  value = "${var.base_domain == "" ? azurerm_public_ip.console_ip.fqdn : "${var.cluster_name}.${var.base_domain}"}"
 }
 
 output "api_fqdn" {
-  value = "${var.cluster_name}-api.${var.base_domain}" #"${azurerm_public_ip.tectonic_api_ip.fqdn}"
+  value = "${var.base_domain == "" ? azurerm_public_ip.api_ip.fqdn : "${var.cluster_name}-api.${var.base_domain}"}"
 }
 
 output "api_backend_pool" {

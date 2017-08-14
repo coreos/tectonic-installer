@@ -1,5 +1,5 @@
 resource "azurerm_public_ip" "api_ip" {
-  count = "${var.network_implementation == "public" ? 1 : 0}"
+  count                        = "${var.network_implementation == "public" ? 1 : 0}"
   name                         = "${var.cluster_name}_api_ip"
   location                     = "${var.location}"
   resource_group_name          = "${var.resource_group_name}"
