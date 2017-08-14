@@ -32,7 +32,7 @@ variable "tectonic_container_images" {
     identity                        = "quay.io/coreos/dex:v2.5.0"
     container_linux_update_operator = "quay.io/coreos/container-linux-update-operator:v0.2.2"
     kube_version_operator           = "quay.io/coreos/kube-version-operator:v1.7.1-kvo.6"
-    tectonic_channel_operator       = "quay.io/coreos/tectonic-channel-operator:0.4.1"
+    tectonic_channel_operator       = "quay.io/coreos/tectonic-channel-operator:0.4.2"
     node_agent                      = "quay.io/coreos/node-agent:c021a4959943b63c463410a038efe344939d5455"
     prometheus_operator             = "quay.io/coreos/prometheus-operator:v0.11.0"
     tectonic_monitoring_auth        = "quay.io/coreos/tectonic-monitoring-auth:v0.0.1"
@@ -76,7 +76,7 @@ variable "tectonic_versions" {
     alertmanager    = "v0.7.1"
     monitoring      = "1.4.1"
     kubernetes      = "1.7.1+tectonic.1"
-    tectonic        = "1.7.1-tectonic.1"
+    tectonic        = "1.7.1-tectonic.2"
     tectonic-etcd   = "0.0.1"
   }
 }
