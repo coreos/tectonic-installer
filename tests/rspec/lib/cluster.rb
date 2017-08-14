@@ -34,6 +34,7 @@ class Cluster
 
   def stop
     destroy
+    clean
   end
 
   def check_prerequisites
@@ -86,6 +87,11 @@ class Cluster
     end
 
     raise 'Destroying cluster failed'
+  end
+
+  def clean
+    succeeded = system(env_variables, 'make -C ../.. destroy')
+    raise 'could not clean build directory' unless succeeded
   end
 
   def wait_til_ready
