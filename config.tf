@@ -16,7 +16,7 @@ variable "tectonic_container_images" {
   type        = "map"
 
   default = {
-    hyperkube                       = "quay.io/coreos/hyperkube:v1.6.7_coreos.0"
+    hyperkube                       = "quay.io/coreos/hyperkube:v1.6.8_coreos.0"
     pod_checkpointer                = "quay.io/coreos/pod-checkpointer:4e7a7dab10bc4d895b66c21656291c6e0b017248"
     bootkube                        = "quay.io/coreos/bootkube:v0.5.0"
     console                         = "quay.io/coreos/tectonic-console:v1.7.4"
@@ -63,8 +63,8 @@ variable "tectonic_versions" {
     prometheus    = "v1.7.1"
     alertmanager  = "v0.7.1"
     monitoring    = "1.3.0"
-    kubernetes    = "1.6.7+tectonic.1"
-    tectonic      = "1.6.7-tectonic.2"
+    kubernetes    = "1.6.8+tectonic.1"
+    tectonic      = "1.6.8-tectonic.1"
     tectonic-etcd = "0.0.1"
   }
 }
