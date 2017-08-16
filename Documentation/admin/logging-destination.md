@@ -127,8 +127,123 @@ Installing the x-pack plugin on your Elasticsearch nodes enables authentication 
 
 ### AWS Elasticsearch
 
-AWS Elasticsearch isn't officially supported at this time. AWS Elasticsearch functions differently from standard Elasticsearch making the standard Fluentd Elasticsearch plugin not work with it by default. If you are interested in using or contributing support for AWS Elasticsearch, please file an issue on [Github](https://github.com/coreos-inc/tectonic-installer/issues). Alternatively, you could look at one of the many AWS Signing proxies, which may work for your purposes, and allow you to use the default Elasticsearch configuration, pointed at the signing proxy.
+AWS Elasticsearch Service to quickly and easily run logging aggregation infrastructure with minimal overhead. Let's walk through the steps we're going to take to do this is to setup our Elasticsearch Service on AWS.
 
+- Log on to the AWS console and click Elasticsearch service.
+- Click "Create a new domain".
+- Configure your instance type, disk, and permissions. We'll be using IAM based credentials for security. If you're not familiar with IAM users, you can read more about it [here](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html). Here's an example config that I made specifically for this purpose. 
+
+If you do not wish to use credentials in your configuration via the `access_key_id` and `secret_access_key` options you should use IAM policies.
+
+The first step is to assign an IAM instance role `ROLE` to your EC2 instances. Name it appropriately. The role should contain no policy: we're using the possession of the role as the authenticating factor and placing the policy against the ES cluster.
+
+You should then configure a policy for the ES cluster policy thus, with appropriate substitutions for the capitalized terms:
+
+```
+{
+  "Version": "2017-08-14",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::ACCOUNT:role/ROLE"
+      },
+      "Action": "es:*",
+      "Resource": "arn:aws:es:us-east-1:ACCOUNT:domain/ES_DOMAIN/*"
+    },
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "es:*",
+      "Resource": "arn:aws:es:us-east-1:ACCOUNT:domain/ES_DOMAIN/*",
+      "Condition": {
+        "IpAddress": {
+          "aws:SourceIp": "XXX.XX.XXX.XX/32"
+        }
+      }
+    }
+  ]
+}
+
+```
+This will allow your fluentd hosts (by virtue of the possession of the role) and any traffic coming from the specified IP addresses (you querying Kibana) to access the various endpoints. Whilst not ideally secure (both the fluentd and Kibana boxes should ideally be restricted to the verbs they require) it should allow you to get up and ingesting logs without anything getting in your way, before you tighten down the policy.
+
+Additionally, you can use an STS assumed role as the authenticating factor and instruct the plugin to assume this role. This is useful for cross-account access and when assigning a standard role is not possible. The endpoint configuration looks like:
+
+```
+ <endpoint>
+    url https://CLUSTER_ENDPOINT_URL
+    region eu-east-1
+    assume_role_arn arn:aws:sts::ACCOUNT:assumed-role/ROLE
+    assume_role_session_name SESSION_ID # Defaults to fluentd if omitted
+  </endpoint>
+  
+  ```
+
+The policy attached to your AWS Elasticsearch cluster then becomes something like:
+
+```
+{
+  "Version": "2017-08-15",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:sts::ACCOUNT:assumed-role/ROLE/SESSION_ID"
+      },
+      "Action": "es:*",
+      "Resource": "arn:aws:es:eu-east-1:ACCOUNT:domain/ES_DOMAIN/*"
+    }
+  ]
+}
+
+```
+
+You'll need to ensure that the environment in which the fluentd plugin runs has the capability to assume this role, by attaching a policy something like this to the instance profile:
+
+```
+{
+    "Version": "2017-08-15",
+    "Statement": {
+        "Effect": "Allow",
+        "Action": "sts:AssumeRole",
+        "Resource": "arn:aws:iam::ACCOUNT:role/ROLE"
+    }
+}
+
+```
+
+Next, we're going to configure Fluentd to gather the logs that we're interested in looking at and deliver them to our brand new ElasticSearch machine. All of this is configured through the [td-agent configuration file](https://docs.treasuredata.com/articles/td-agent). We're going to add the below configuration in the Kubernetes repository for the [fluentd plugin](https://github.com/kubernetes/kubernetes/blob/7e1b9dfd0fc75311ff6339f19b514e8caaebeafd/cluster/addons/fluentd-elasticsearch/fluentd-es-image/td-agent.conf).
+
+```
+<match **>
+  type aws-elasticsearch-service
+  type_name "access_log"
+  log_level info
+  logstash_format true
+  include_tag_key true
+  flush_interval 60s
+
+  buffer_type memory
+  buffer_chunk_limit 256m
+  buffer_queue_limit 128
+
+  <endpoint>
+    url https://${AWS_ES_ENDPOINT}
+    region ${AWS_ES_REGION}
+    access_key_id ${AWS_ACCESS_KEY_ID}
+    secret_access_key ${AWS_SECRET_ACCESS_KEY}
+  </endpoint>
+</match>
+
+```
+
+We're specifying 2 things here:
+
+- We want to use a [memory buffer](http://docs.fluentd.org/articles/buffer-plugin-overview) for fluentd.
+- We want to use aws-elasticsearch-service along with the proper IAM credentials, url, and region that fluentd needs in order to be able to reach our ElasticSearch machine.
 
 [fluentd-ds]: ../files/logging/fluentd-ds.yaml
 [fluentd-config]: ../files/logging/fluentd-configmap.yaml
