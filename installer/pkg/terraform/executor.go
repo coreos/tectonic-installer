@@ -89,23 +89,14 @@ func NewExecutor(executionPath string) (*Executor, error) {
 	// if not existing.
 	os.MkdirAll(filepath.Join(ex.executionPath, logsFolderName), 0770)
 
-	// Create a Executor CLI configuration file, that contains the list of
-	// vendored providers/provisioners.
-	config, err := BuildPluginsConfig()
-	if err != nil {
-		return nil, err
-	}
-
 	ex.configPath = filepath.Join(ex.WorkingDirectory(), configFileName)
-	if err = ioutil.WriteFile(ex.configPath, []byte(config), 0660); err != nil {
-		return nil, err
-	}
 
 	// Find the TerraForm binary.
-	ex.binaryPath, err = tfBinaryPath()
+	out, err := tfBinaryPath()
 	if err != nil {
 		return nil, err
 	}
+	ex.binaryPath = out
 
 	return ex, nil
 }
