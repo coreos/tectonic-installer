@@ -87,6 +87,10 @@ variable "worker_cidr" {
   default = ""
 }
 
+variable "network_implementation" {
+  type = "string"
+}
+
 variable "ssh_network_internal" {
   type    = "string"
   default = ""
@@ -107,4 +111,8 @@ variable "worker_count" {
 
 variable "extra_tags" {
   type = "map"
+}
+
+variable "tectonic_lb_id" {
+  type = "string"
 }

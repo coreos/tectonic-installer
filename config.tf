@@ -71,7 +71,7 @@ variable "tectonic_versions" {
 
   default = {
     alertmanager    = "v0.7.1"
-    container_linux = "1353.8.0"
+    container_linux = "1409.8.0"
     etcd            = "3.1.8"
     kubernetes      = "1.7.1+tectonic.1"
     monitoring      = "1.4.1"

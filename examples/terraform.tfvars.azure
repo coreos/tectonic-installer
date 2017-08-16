@@ -112,6 +112,9 @@ tectonic_azure_location = ""
 // (optional) Instance size for the master node(s). Example: Standard_DS2_v2.
 // tectonic_azure_master_vm_size = "Standard_DS2_v2"
 
+// 
+tectonic_azure_network_implementation = "public"
+
 // (required) Path to an SSH public key file to be provisioned as the SSH key for the 'core' user.
 tectonic_azure_ssh_key = ""
 

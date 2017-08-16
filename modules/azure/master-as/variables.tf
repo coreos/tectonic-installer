@@ -31,6 +31,10 @@ variable "base_domain" {
   type = "string"
 }
 
+variable "nameserver" {
+  type = "string"
+}
+
 // The name of the cluster.
 variable "cluster_name" {
   type = "string"
@@ -118,4 +122,20 @@ variable "cl_channel" {
 
 variable "extra_tags" {
   type = "map"
+}
+
+variable "network_implementation" {
+  type = "string"
+}
+
+variable "subnet_id" {
+  type = "string"
+}
+
+variable "console_private_ip" {
+  type = "string"
+}
+
+variable "console_proxy_backend_pool" {
+  type = "string"
 }
