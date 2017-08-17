@@ -1,24 +1,34 @@
 CLUSTER ?= demo
 PLATFORM ?= aws
 TMPDIR ?= /tmp
+GOOS=$(shell go env GOOS)
+GOARCH=$(shell go env GOARCH)
 TOP_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 BUILD_DIR = $(TOP_DIR)/build/$(CLUSTER)
-INSTALLER_BIN = $(TOP_DIR)/installer/bin/$(shell uname | tr '[:upper:]' '[:lower:]')/installer
+PLUGIN_DIR = $(BUILD_DIR)/terraform.d/plugins/$(GOOS)_$(GOARCH)
+INSTALLER_PATH = $(TOP_DIR)/installer/bin/$(shell uname | tr '[:upper:]' '[:lower:]')
+INSTALLER_BIN = $(INSTALLER_PATH)/installer
 TF_DOCS := $(shell which terraform-docs 2> /dev/null)
 TF_EXAMPLES := $(shell which terraform-examples 2> /dev/null)
-TF_RC := $(TOP_DIR)/.terraformrc
-TF_CMD = TERRAFORM_CONFIG=$(TF_RC) terraform
+TF_CMD = terraform
+
+PROVIDER_MATCHBOX_VER = v0.2.2
 
 $(info Using build directory [${BUILD_DIR}])
 
 .PHONY: all
-all: apply
+all: $(INSTALLER_BIN) custom-providers
+
+custom-providers:
+	curl -L -o $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VER)-$(GOOS)-$(GOARCH).tar.gz \
+	  https://github.com/coreos/terraform-provider-matchbox/releases/download/$(PROVIDER_MATCHBOX_VER)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VER)-$(GOOS)-$(GOARCH).tar.gz
+	cd $(TMPDIR) && tar xvf terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VER)-$(GOOS)-$(GOARCH).tar.gz
+	mkdir -p $(INSTALLER_PATH)
+	cp $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VER)-$(GOOS)-$(GOARCH)/terraform-provider-matchbox $(INSTALLER_PATH)/
+	rm -rf $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VER)-$(GOOS)-$(GOARCH)*
 
 $(INSTALLER_BIN):
 	$(MAKE) build -C $(TOP_DIR)/installer
-
-installer-env: $(INSTALLER_BIN) terraformrc.example
-	sed "s|<PATH_TO_INSTALLER>|$(INSTALLER_BIN)|g" terraformrc.example > $(TF_RC)
 
 .PHONY: localconfig
 localconfig:
@@ -26,25 +36,25 @@ localconfig:
 	cp examples/*$(subst /,-,$(PLATFORM)) $(BUILD_DIR)/terraform.tfvars
 
 .PHONY: terraform-init
-terraform-init: installer-env
+terraform-init:
 ifneq ($(shell $(TF_CMD) version | grep -E "Terraform v0\.1[0-9]\.[0-9]+"), )
+	[ -d $(PLUGIN_DIR) ] || \
+	mkdir -p $(PLUGIN_DIR) && ln -s $(INSTALLER_PATH)/terraform-provider-* $(PLUGIN_DIR)/
 	cd $(BUILD_DIR) && $(TF_CMD) init $(TF_INIT_OPTIONS) $(TOP_DIR)/platforms/$(PLATFORM)
+else
+	cd $(BUILD_DIR) && $(TF_CMD) get $(TF_GET_OPTIONS) $(TOP_DIR)/platforms/$(PLATFORM)
 endif
 
-.PHONY: terraform-get
-terraform-get: terraform-init
-	cd $(BUILD_DIR) && $(TF_CMD) get $(TF_GET_OPTIONS) $(TOP_DIR)/platforms/$(PLATFORM)
-
 .PHONY: plan
-plan: installer-env terraform-get
+plan: terraform-init
 	cd $(BUILD_DIR) && $(TF_CMD) plan $(TF_PLAN_OPTIONS) $(TOP_DIR)/platforms/$(PLATFORM)
 
 .PHONY: apply
-apply: installer-env terraform-get
+apply: terraform-init
 	cd $(BUILD_DIR) && $(TF_CMD) apply $(TF_APPLY_OPTIONS) $(TOP_DIR)/platforms/$(PLATFORM)
 
 .PHONY: destroy
-destroy: installer-env terraform-get
+destroy: terraform-init
 	cd $(BUILD_DIR) && $(TF_CMD) destroy $(TF_DESTROY_OPTIONS) -force $(TOP_DIR)/platforms/$(PLATFORM)
 
 .PHONY: payload
