@@ -67,11 +67,6 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
-      selector:
-        matchLabels:
-          k8s-app: kube-controller-manager
-          pod-anti-affinity: kube-controller-manager-${kubernetes_version}
-          tier: control-plane
       tolerations:
       - key: "CriticalAddonsOnly"
         operator: "Exists"

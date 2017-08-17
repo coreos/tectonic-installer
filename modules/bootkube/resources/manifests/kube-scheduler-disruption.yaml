@@ -7,5 +7,6 @@ spec:
   minAvailable: 1
   selector:
     matchLabels:
-      tier: control-plane
       k8s-app: kube-scheduler
+      pod-anti-affinity: kube-scheduler-${kubernetes_version}
+      tier: control-plane
