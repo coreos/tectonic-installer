@@ -23,6 +23,22 @@ spec:
         k8s-app: tectonic-identity
         component: identity
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: component
+                  operator: In
+                  values:
+                  - identity
+                - key: k8s-app
+                  operator: In
+                  values:
+                  - tectonic-identity
+              topologyKey: kubernetes.io/hostname
       volumes:
       - name: config
         configMap:

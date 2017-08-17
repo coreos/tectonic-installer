@@ -8,7 +8,7 @@ metadata:
     component: ingress-controller
     type: nginx
 spec:
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -16,6 +16,22 @@ spec:
         component: ingress-controller
         type: nginx
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: component
+                  operator: In
+                  values:
+                  - ingress-controller
+                - key: k8s-app
+                  operator: In
+                  values:
+                  - tectonic-lb
+              topologyKey: kubernetes.io/hostname
       containers:
         - name: nginx-ingress-lb
           image: ${ingress_controller_image}

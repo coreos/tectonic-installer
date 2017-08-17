@@ -4,12 +4,24 @@ metadata:
   name: default-http-backend
   namespace: tectonic-system
 spec:
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
         k8s-app: default-http-backend
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: k8s-app
+                  operator: In
+                  values:
+                  - default-http-backend
+              topologyKey: kubernetes.io/hostname
       terminationGracePeriodSeconds: 60
       containers:
       - name: default-http-backend
