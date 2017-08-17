@@ -16,8 +16,8 @@ data:
     ingress:
       baseAddress: ${console_base_address}
     auth:
-      baseImage: ${replace(tectonic_monitoring_auth_image,var.image_re,"$1")}
+      baseImage: ${replace(tectonic_monitoring_auth_image,image_re,"$1")}
     nodeExporter:
-      baseImage: ${replace(node_exporter_image,var.image_re,"$1")}
+      baseImage: ${replace(node_exporter_image,image_re,"$1")}
     kubeStateMetrics:
-      baseImage: ${replace(kube_state_metrics_image,var.image_re,"$1")}
+      baseImage: ${replace(kube_state_metrics_image,image_re,"$1")}

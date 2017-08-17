@@ -51,7 +51,7 @@ resource "matchbox_group" "controller" {
     etcd_tls_enabled = "${var.tectonic_etcd_tls_enabled}"
 
     # extra data
-    etcd_image_url    = "${element(split(":", var.tectonic_container_images["etcd"]), 0)}"
+    etcd_image_url    = "${replace(var.tectonic_container_images["etcd"],var.tectonic_image_re,"$1")}"
     etcd_image_tag    = "v${var.tectonic_versions["etcd"]}"
     kubelet_image_url = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
     kubelet_image_tag = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
