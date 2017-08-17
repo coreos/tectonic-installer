@@ -83,7 +83,7 @@
                   "--cache-images=true",
                   "--version-mapping=/upgrade-spec.json"
                 ],
-                "image": "quay.io/coreos/kube-version-operator:v1.6.7",
+                "image": "quay.io/coreos/kube-version-operator:v1.6.8-kvo.2",
                 "name": "kube-version-operator"
               }
             ],
@@ -305,7 +305,7 @@
   "desiredVersions": [
     {
       "name": "kubernetes",
-      "version": "1.6.7+tectonic.1"
+      "version": "1.6.8+tectonic.1"
     },
     {
       "name": "tectonic-etcd",
