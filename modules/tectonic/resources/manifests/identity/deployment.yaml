@@ -21,8 +21,18 @@ spec:
       name: tectonic-identity
       labels:
         k8s-app: tectonic-identity
+        pod-anti-affinity: tectonic-identity-${tectonic_version}
         component: identity
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                pod-anti-affinity: tectonic-identity-${tectonic_version}
+            namespaces:
+              - tectonic-system
+            topologyKey: kubernetes.io/hostname
       volumes:
       - name: config
         configMap:
