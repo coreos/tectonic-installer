@@ -86,7 +86,6 @@ module "ignition_masters" {
 
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
-  kubelet_cni_bin_dir       = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   kubeconfig_s3_location    = "${aws_s3_bucket_object.kubeconfig.bucket}/${aws_s3_bucket_object.kubeconfig.key}"
   assets_s3_location        = "${aws_s3_bucket_object.tectonic_assets.bucket}/${aws_s3_bucket_object.tectonic_assets.key}"
@@ -135,7 +134,6 @@ module "ignition_workers" {
 
   kubelet_node_label     = "node-role.kubernetes.io/node"
   kubelet_node_taints    = ""
-  kubelet_cni_bin_dir    = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   kube_dns_service_ip    = "${module.bootkube.kube_dns_service_ip}"
   kubeconfig_s3_location = "${aws_s3_bucket_object.kubeconfig.bucket}/${aws_s3_bucket_object.kubeconfig.key}"
   assets_s3_location     = ""
