@@ -24,14 +24,12 @@ if [[ ${AWS_ACCESS_KEY_ID} == "" || ${AWS_SECRET_ACCESS_KEY} == "" || ${COREUPDA
     print_usage
 fi
 
-which jq > /dev/null
-if [[ $? != 0 ]]; then
+if ! which jq > /dev/null; then
     echo "Require jq"
     exit 1
 fi
 
-which updateservicectl > /dev/null
-if [[ $? == 0 ]]; then
+if which updateservicectl > /dev/null; then
     export UPDATESERVICECTL
     UPDATESERVICECTL=$(which updateservicectl)
 fi
@@ -63,8 +61,9 @@ if [[ ${VERSION} == "" ]]; then
 fi
 
 DESTINATION=${DESTINATION:-"${VERSION}.json"}
-BUCKET=${BUCKET:-"tectonic-update-payload"}
-PAYLOAD_URL="https://s3-us-west-2.amazonaws.com/${BUCKET}/${DESTINATION}"
+BUCKET=${BUCKET:-"tectonic-update-payload-prod"}
+S3_PREFIX=${S3_PREFIX:-"https://s3-us-west-1.amazonaws.com"}
+PAYLOAD_URL="${S3_PREFIX}/${BUCKET}/${DESTINATION}"
 
 echo "Uploading payload to \"${PAYLOAD_URL}\", version: \"${VERSION}\""
 
@@ -77,6 +76,17 @@ APPID=${APPID:-"6bc7b986-4654-4a0f-94b3-84ce6feb1db4"}
 echo "Payload successfully uploaded"
 
 echo "Creating package ${VERSION} on Core Update server ${SERVER} for ${APPID}"
+
+set +e
+
+# Overwrite the current package.
+# shellcheck disable=SC2086,SC2154
+${UPDATESERVICECTL} --server ${SERVER} \
+                    --key ${COREUPDATE_KEY} \
+                    --user ${COREUPDATE_USR} \
+                    package delete \
+                    --app-id ${APPID} \
+                    --version ${VERSION} >/dev/null 2>&1
 
 # shellcheck disable=SC2086,SC2154
 ${UPDATESERVICECTL} --server ${SERVER} \
