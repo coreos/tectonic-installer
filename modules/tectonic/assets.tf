@@ -40,6 +40,10 @@ resource "template_dir" "tectonic" {
     tectonic_version               = "${var.versions["tectonic"]}"
     etcd_version                   = "${var.versions["etcd"]}"
     tectonic_etcd_operator_version = "${var.versions["tectonic-etcd"]}"
+    prometheus_request_cpu         = "${var.prometheus_k8s_request_cpu}"
+    prometheus_request_mem         = "${var.prometheus_k8s_request_mem}"
+    prometheus_limit_cpu           = "${var.prometheus_k8s_limit_cpu}"
+    prometheus_limit_mem           = "${var.prometheus_k8s_limit_mem}"
 
     etcd_cluster_size = "${var.master_count > 2 ? 3 : 1}"
 

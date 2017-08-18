@@ -103,6 +103,11 @@ module "tectonic" {
   master_count      = "${var.tectonic_master_count}"
   stats_url         = "${var.tectonic_stats_url}"
 
+  prometheus_k8s_request_cpu = "${var.tectonic_prometheus_k8s_request_cpu}"
+  prometheus_k8s_request_mem = "${var.tectonic_prometheus_k8s_request_mem}"
+  prometheus_k8s_limit_cpu   = "${var.tectonic_prometheus_k8s_limit_cpu}"
+  prometheus_k8s_limit_mem   = "${var.tectonic_prometheus_k8s_limit_mem}"
+
   image_re = "${var.tectonic_image_re}"
 }
 
