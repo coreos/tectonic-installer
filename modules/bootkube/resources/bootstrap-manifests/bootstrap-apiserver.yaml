@@ -12,7 +12,7 @@ spec:
     - /var/lock/api-server.lock
     - /hyperkube
     - apiserver
-    - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota
+    - --admission-control=${apiserver_admission_control}
     - --allow-privileged=true
     - --authorization-mode=RBAC
     - --bind-address=0.0.0.0

@@ -95,6 +95,8 @@ resource "template_dir" "bootkube" {
     serviceaccount_pub = "${base64encode(tls_private_key.service_account.public_key_pem)}"
     serviceaccount_key = "${base64encode(tls_private_key.service_account.private_key_pem)}"
 
+    apiserver_admission_control = "${var.apiserver_admission_control}"
+
     etcd_ca_flag   = "${data.template_file.etcd_ca_cert_pem.rendered != "" ? "- --etcd-cafile=/etc/kubernetes/secrets/etcd-client-ca.crt" : "# no etcd-client-ca.crt given" }"
     etcd_cert_flag = "${data.template_file.etcd_client_crt.rendered != "" ? "- --etcd-certfile=/etc/kubernetes/secrets/etcd-client.crt" : "# no etcd-client.crt given" }"
     etcd_key_flag  = "${data.template_file.etcd_client_key.rendered != "" ? "- --etcd-keyfile=/etc/kubernetes/secrets/etcd-client.key" : "# no etcd-client.key given" }"
@@ -131,6 +133,8 @@ resource "template_dir" "bootkube_bootstrap" {
     etcd_ca_flag   = "${data.template_file.etcd_ca_cert_pem.rendered != "" ? "- --etcd-cafile=/etc/kubernetes/secrets/etcd-client-ca.crt" : "# no etcd-client-ca.crt given" }"
     etcd_cert_flag = "${data.template_file.etcd_client_crt.rendered != "" ? "- --etcd-certfile=/etc/kubernetes/secrets/etcd-client.crt" : "# no etcd-client.crt given" }"
     etcd_key_flag  = "${data.template_file.etcd_client_key.rendered != "" ? "- --etcd-keyfile=/etc/kubernetes/secrets/etcd-client.key" : "# no etcd-client.key given" }"
+
+    apiserver_admission_control = "${var.apiserver_admission_control}"
 
     cloud_provider             = "${var.cloud_provider}"
     cloud_provider_config      = "${var.cloud_provider_config}"

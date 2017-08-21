@@ -41,6 +41,8 @@ module "bootkube" {
     "${var.tectonic_cluster_name}-etcd-6.${var.tectonic_base_domain}",
   ]
 
+  apiserver_admission_control = "${var.tectonic_apiserver_admission_control}"
+
   experimental_enabled = "${var.tectonic_experimental}"
 
   master_count = "${var.tectonic_master_count}"
