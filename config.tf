@@ -72,7 +72,7 @@ variable "tectonic_versions" {
   default = {
     alertmanager  = "v0.7.1"
     etcd          = "3.1.8"
-    kubernetes    = "1.7.1+tectonic.1"
+    kubernetes    = "1.7.3+tectonic.1"
     monitoring    = "1.4.1"
     prometheus    = "v1.7.1"
     tectonic      = "1.7.3-tectonic.1"
