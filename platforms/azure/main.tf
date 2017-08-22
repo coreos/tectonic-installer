@@ -1,3 +1,7 @@
+module "ignition" {
+  source = "../../modules/ignition"
+}
+
 provider "azurerm" {
   environment   = "${var.tectonic_azure_cloud_environment}"
   client_secret = "${var.tectonic_azure_client_secret}"
@@ -125,6 +129,8 @@ module "masters" {
   cl_channel                   = "${var.tectonic_cl_channel}"
 
   extra_tags = "${var.tectonic_azure_extra_tags}"
+
+  ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
 }
 
 module "workers" {
@@ -154,6 +160,8 @@ module "workers" {
   cl_channel                   = "${var.tectonic_cl_channel}"
 
   extra_tags = "${var.tectonic_azure_extra_tags}"
+
+  ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
 }
 
 module "dns" {

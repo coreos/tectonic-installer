@@ -1,3 +1,7 @@
+module "ignition" {
+  source = "../../modules/ignition"
+}
+
 module "etcd" {
   source         = "../../modules/vmware/etcd"
   instance_count = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count }"
@@ -65,6 +69,8 @@ module "masters" {
   kubeconfig              = "${module.bootkube.kubeconfig}"
   private_key             = "${var.tectonic_vmware_ssh_private_key_path}"
   image_re                = "${var.tectonic_image_re}"
+
+  ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
 }
 
 module "workers" {
@@ -99,4 +105,6 @@ module "workers" {
   kubeconfig              = "${module.bootkube.kubeconfig}"
   private_key             = "${var.tectonic_vmware_ssh_private_key_path}"
   image_re                = "${var.tectonic_image_re}"
+
+  ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
 }

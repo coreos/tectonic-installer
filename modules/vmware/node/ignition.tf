@@ -6,7 +6,7 @@ data "ignition_config" "node" {
   ]
 
   files = [
-    "${data.ignition_file.max-user-watches.id}",
+    "${var.ign_max_user_watches_id}",
     "${data.ignition_file.node_hostname.*.id[count.index]}",
     "${data.ignition_file.kubelet-env.id}",
   ]
@@ -78,16 +78,6 @@ data "ignition_systemd_unit" "kubelet-env" {
   name    = "kubelet-env.service"
   enable  = true
   content = "${data.template_file.kubelet-env.rendered}"
-}
-
-data "ignition_file" "max-user-watches" {
-  filesystem = "root"
-  path       = "/etc/sysctl.d/max-user-watches.conf"
-  mode       = 0644
-
-  content {
-    content = "fs.inotify.max_user_watches=16184"
-  }
 }
 
 data "ignition_systemd_unit" "bootkube" {

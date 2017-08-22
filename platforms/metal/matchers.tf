@@ -1,3 +1,7 @@
+module "ignition" {
+  source = "../../modules/ignition"
+}
+
 // Install CoreOS to disk
 resource "matchbox_group" "coreos_install" {
   count   = "${length(var.tectonic_metal_controller_names) + length(var.tectonic_metal_worker_names)}"
@@ -54,6 +58,8 @@ resource "matchbox_group" "controller" {
     etcd_image_tag    = "v${var.tectonic_versions["etcd"]}"
     kubelet_image_url = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
     kubelet_image_tag = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
+
+    ign_max_user_watches_json = "${jsonencode(module.ignition.max_user_watches_rendered)}"
   }
 }
 
@@ -77,5 +83,7 @@ resource "matchbox_group" "worker" {
     kubelet_image_url  = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
     kubelet_image_tag  = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
     kube_version_image = "${var.tectonic_container_images["kube_version"]}"
+
+    ign_max_user_watches_json = "${jsonencode(module.ignition.max_user_watches_rendered)}"
   }
 }

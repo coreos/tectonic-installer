@@ -1,3 +1,7 @@
+module "ignition" {
+  source = "../../modules/ignition"
+}
+
 provider "aws" {
   region = "${var.tectonic_aws_region}"
 }
@@ -96,6 +100,8 @@ module "ignition_masters" {
   tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
   cluster_name              = "${var.tectonic_cluster_name}"
   image_re                  = "${var.tectonic_image_re}"
+
+  ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
 }
 
 module "masters" {
@@ -144,6 +150,8 @@ module "ignition_workers" {
   tectonic_service       = ""
   cluster_name           = ""
   image_re               = "${var.tectonic_image_re}"
+
+  ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
 }
 
 module "workers" {

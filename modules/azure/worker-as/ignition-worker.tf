@@ -3,7 +3,7 @@ data "ignition_config" "worker" {
     "${data.ignition_file.kubeconfig.id}",
     "${data.ignition_file.kubelet-env.id}",
     "${module.azure_udev-rules.udev-rules_id}",
-    "${data.ignition_file.max-user-watches.id}",
+    "${var.ign_max_user_watches_id}",
     "${data.ignition_file.cloud-provider-config.id}",
   ]
 
@@ -83,16 +83,6 @@ data "ignition_file" "kubelet-env" {
 KUBELET_IMAGE_URL="${var.kube_image_url}"
 KUBELET_IMAGE_TAG="${var.kube_image_tag}"
 EOF
-  }
-}
-
-data "ignition_file" "max-user-watches" {
-  filesystem = "root"
-  path       = "/etc/sysctl.d/max-user-watches.conf"
-  mode       = 0644
-
-  content {
-    content = "fs.inotify.max_user_watches=16184"
   }
 }
 
