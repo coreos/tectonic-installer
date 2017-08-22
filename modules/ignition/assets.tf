@@ -11,3 +11,19 @@ data "ignition_file" "max_user_watches" {
     content = "${data.template_file.max_user_watches.rendered}"
   }
 }
+
+data "template_file" "docker_dropin" {
+  template = "${file("${path.module}/resources/dropins/10-dockeropts.conf")}"
+}
+
+data "ignition_systemd_unit" "docker_dropin" {
+  name   = "docker.service"
+  enable = true
+
+  dropin = [
+    {
+      name    = "10-dockeropts.conf"
+      content = "${data.template_file.docker_dropin.rendered}"
+    },
+  ]
+}

@@ -131,6 +131,7 @@ module "masters" {
   extra_tags = "${var.tectonic_azure_extra_tags}"
 
   ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
+  ign_docker_dropin_id    = "${module.ignition.docker_dropin_id}"
 }
 
 module "workers" {
@@ -162,6 +163,7 @@ module "workers" {
   extra_tags = "${var.tectonic_azure_extra_tags}"
 
   ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
+  ign_docker_dropin_id    = "${module.ignition.docker_dropin_id}"
 }
 
 module "dns" {

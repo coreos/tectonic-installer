@@ -102,6 +102,7 @@ module "ignition_masters" {
   image_re                  = "${var.tectonic_image_re}"
 
   ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
+  ign_docker_dropin_id    = "${module.ignition.docker_dropin_id}"
 }
 
 module "masters" {
@@ -152,6 +153,7 @@ module "ignition_workers" {
   image_re               = "${var.tectonic_image_re}"
 
   ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
+  ign_docker_dropin_id    = "${module.ignition.docker_dropin_id}"
 }
 
 module "workers" {

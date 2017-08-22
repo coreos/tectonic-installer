@@ -60,6 +60,7 @@ resource "matchbox_group" "controller" {
     kubelet_image_tag = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
 
     ign_max_user_watches_json = "${jsonencode(module.ignition.max_user_watches_rendered)}"
+    ign_docker_dropin_json    = "${jsonencode(module.ignition.docker_dropin_rendered)}"
   }
 }
 
@@ -85,5 +86,6 @@ resource "matchbox_group" "worker" {
     kube_version_image = "${var.tectonic_container_images["kube_version"]}"
 
     ign_max_user_watches_json = "${jsonencode(module.ignition.max_user_watches_rendered)}"
+    ign_docker_dropin_json    = "${jsonencode(module.ignition.docker_dropin_rendered)}"
   }
 }

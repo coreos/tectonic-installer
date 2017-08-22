@@ -7,25 +7,13 @@ data "ignition_config" "main" {
   ]
 
   systemd = [
-    "${data.ignition_systemd_unit.docker.id}",
+    "${var.ign_docker_dropin_id}",
     "${data.ignition_systemd_unit.locksmithd.id}",
     "${data.ignition_systemd_unit.kubelet.id}",
     "${data.ignition_systemd_unit.kubelet_env.id}",
     "${data.ignition_systemd_unit.init_assets.id}",
     "${data.ignition_systemd_unit.bootkube.id}",
     "${data.ignition_systemd_unit.tectonic.id}",
-  ]
-}
-
-data "ignition_systemd_unit" "docker" {
-  name   = "docker.service"
-  enable = true
-
-  dropin = [
-    {
-      name    = "10-dockeropts.conf"
-      content = "[Service]\nEnvironment=\"DOCKER_OPTS=--log-opt max-size=50m --log-opt max-file=3\"\n"
-    },
   ]
 }
 

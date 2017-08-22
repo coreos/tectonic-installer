@@ -12,7 +12,7 @@ data "ignition_config" "node" {
   ]
 
   systemd = [
-    "${data.ignition_systemd_unit.docker.id}",
+    "${var.ign_docker_dropin_id}",
     "${data.ignition_systemd_unit.locksmithd.id}",
     "${data.ignition_systemd_unit.kubelet.id}",
     "${data.ignition_systemd_unit.kubelet-env.id}",
@@ -28,18 +28,6 @@ data "ignition_config" "node" {
 data "ignition_user" "core" {
   name                = "core"
   ssh_authorized_keys = ["${var.core_public_keys}"]
-}
-
-data "ignition_systemd_unit" "docker" {
-  name   = "docker.service"
-  enable = true
-
-  dropin = [
-    {
-      name    = "10-dockeropts.conf"
-      content = "[Service]\nEnvironment=\"DOCKER_OPTS=--log-opt max-size=50m --log-opt max-file=3\"\n"
-    },
-  ]
 }
 
 data "ignition_systemd_unit" "locksmithd" {

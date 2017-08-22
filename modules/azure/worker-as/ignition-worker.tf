@@ -8,7 +8,7 @@ data "ignition_config" "worker" {
   ]
 
   systemd = [
-    "${data.ignition_systemd_unit.docker.id}",
+    "${var.ign_docker_dropin_id}",
     "${data.ignition_systemd_unit.locksmithd.id}",
     "${data.ignition_systemd_unit.kubelet-worker.id}",
     "${module.net_ignition.tx-off_id}",
@@ -16,18 +16,6 @@ data "ignition_config" "worker" {
 
   users = [
     "${data.ignition_user.core.id}",
-  ]
-}
-
-data "ignition_systemd_unit" "docker" {
-  name   = "docker.service"
-  enable = true
-
-  dropin = [
-    {
-      name    = "10-dockeropts.conf"
-      content = "[Service]\nEnvironment=\"DOCKER_OPTS=--log-opt max-size=50m --log-opt max-file=3\"\n"
-    },
   ]
 }
 

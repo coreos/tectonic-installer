@@ -146,6 +146,7 @@ EOF
   tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
 
   ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
+  ign_docker_dropin_id    = "${module.ignition.docker_dropin_id}"
 }
 
 module "worker_nodes" {
@@ -172,6 +173,7 @@ EOF
   tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
 
   ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
+  ign_docker_dropin_id    = "${module.ignition.docker_dropin_id}"
 }
 
 module "secrets" {
