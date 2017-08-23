@@ -1,4 +1,5 @@
 require 'cluster'
+require 'aws_region'
 
 # AWSCluster represents a k8s cluster on AWS cloud provider
 class AWSCluster < Cluster
