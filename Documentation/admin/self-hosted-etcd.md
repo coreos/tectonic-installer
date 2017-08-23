@@ -59,8 +59,8 @@ Under *Operators*, click *etcd Clusters*, and select the desired etcd. Click *YA
 An example manifest for a self-hosted etcd is given below:
 
 ```yaml
-apiVersion: etcd.coreos.com/v1beta1
-kind: Cluster
+apiVersion: etcd.database.coreos.com/v1beta2
+kind: EtcdCluster
 metadata:
   name: example-etcd-cluster-with-backup
   namespace: default
