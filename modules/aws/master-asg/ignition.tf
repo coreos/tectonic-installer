@@ -1,7 +1,7 @@
 data "ignition_config" "main" {
   files = [
     "${var.ign_max_user_watches_id}",
-    "${data.ignition_file.s3_puller.id}",
+    "${var.ign_s3_puller_id}",
     "${data.ignition_file.init_assets.id}",
     "${data.ignition_file.detect_master.id}",
   ]
@@ -9,8 +9,8 @@ data "ignition_config" "main" {
   systemd = [
     "${var.ign_docker_dropin_id}",
     "${data.ignition_systemd_unit.locksmithd.id}",
-    "${data.ignition_systemd_unit.kubelet.id}",
-    "${data.ignition_systemd_unit.kubelet_env.id}",
+    "${var.ign_kubelet_service_id}",
+    "${var.ign_s3_kubelet_env_service_id}",
     "${data.ignition_systemd_unit.init_assets.id}",
     "${data.ignition_systemd_unit.bootkube.id}",
     "${data.ignition_systemd_unit.tectonic.id}",
@@ -20,59 +20,6 @@ data "ignition_config" "main" {
 data "ignition_systemd_unit" "locksmithd" {
   name = "locksmithd.service"
   mask = true
-}
-
-data "template_file" "kubelet" {
-  template = "${file("${path.module}/resources/services/kubelet.service")}"
-
-  vars {
-    cluster_dns_ip         = "${var.kube_dns_service_ip}"
-    node_label             = "${var.kubelet_node_label}"
-    node_taints_param      = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
-    cni_bin_dir_flag       = "${var.kubelet_cni_bin_dir != "" ? "--cni-bin-dir=${var.kubelet_cni_bin_dir}" : ""}"
-    kubeconfig_s3_location = "${var.kubeconfig_s3_location}"
-  }
-}
-
-data "ignition_systemd_unit" "kubelet" {
-  name    = "kubelet.service"
-  enable  = true
-  content = "${data.template_file.kubelet.rendered}"
-}
-
-data "template_file" "kubelet_env" {
-  template = "${file("${path.module}/resources/services/kubelet-env.service")}"
-
-  vars {
-    kube_version_image_url = "${replace(var.container_images["kube_version"],var.image_re,"$1")}"
-    kube_version_image_tag = "${replace(var.container_images["kube_version"],var.image_re,"$2")}"
-    kubelet_image_url      = "${replace(var.container_images["hyperkube"],var.image_re,"$1")}"
-    kubeconfig_s3_location = "${var.kubeconfig_s3_location}"
-  }
-}
-
-data "ignition_systemd_unit" "kubelet_env" {
-  name    = "kubelet-env.service"
-  enable  = true
-  content = "${data.template_file.kubelet_env.rendered}"
-}
-
-data "template_file" "s3_puller" {
-  template = "${file("${path.module}/resources/s3-puller.sh")}"
-
-  vars {
-    awscli_image = "${var.container_images["awscli"]}"
-  }
-}
-
-data "ignition_file" "s3_puller" {
-  filesystem = "root"
-  path       = "/opt/s3-puller.sh"
-  mode       = 0755
-
-  content {
-    content = "${data.template_file.s3_puller.rendered}"
-  }
 }
 
 data "ignition_file" "detect_master" {

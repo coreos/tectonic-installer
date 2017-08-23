@@ -13,3 +13,27 @@ output "docker_dropin_id" {
 output "docker_dropin_rendered" {
   value = "${data.template_file.docker_dropin.rendered}"
 }
+
+output "kubelet_service_id" {
+  value = "${data.ignition_systemd_unit.kubelet.id}"
+}
+
+output "kubelet_service_rendered" {
+  value = "${data.template_file.kubelet.rendered}"
+}
+
+output "kubelet_env_service_id" {
+  value = "${data.ignition_systemd_unit.kubelet_env.id}"
+}
+
+output "kubelet_env_service_rendered" {
+  value = "${data.template_file.kubelet_env.rendered}"
+}
+
+output "s3_puller_id" {
+  value = "${data.ignition_file.s3_puller.id}"
+}
+
+output "s3_puller_rendered" {
+  value = "${data.template_file.s3_puller.rendered}"
+}

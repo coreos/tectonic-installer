@@ -1,7 +1,3 @@
-module "ignition" {
-  source = "../../modules/ignition"
-}
-
 module "etcd" {
   source         = "../../modules/vmware/etcd"
   instance_count = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count }"
@@ -36,6 +32,17 @@ module "etcd" {
   vmware_folder           = "${vsphere_folder.tectonic_vsphere_folder.path}"
 }
 
+module "ignition_masters" {
+  source = "../../modules/ignition"
+
+  container_images    = "${var.tectonic_container_images}"
+  image_re            = "${var.tectonic_image_re}"
+  kube_dns_service_ip = "${module.bootkube.kube_dns_service_ip}"
+  kubelet_cni_bin_dir = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
+  kubelet_node_label  = "node-role.kubernetes.io/master"
+  kubelet_node_taints = "node-role.kubernetes.io/master=:NoSchedule"
+}
+
 module "masters" {
   source           = "../../modules/vmware/node"
   instance_count   = "${var.tectonic_master_count}"
@@ -46,10 +53,6 @@ module "masters" {
   ip_address       = "${var.tectonic_vmware_master_ip}"
   gateway          = "${var.tectonic_vmware_master_gateway}"
 
-  kubelet_node_label        = "node-role.kubernetes.io/master"
-  kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
-  kubelet_cni_bin_dir       = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
-  kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   container_images          = "${var.tectonic_container_images}"
   bootkube_service          = "${module.bootkube.systemd_service}"
   tectonic_service          = "${module.tectonic.systemd_service}"
@@ -70,8 +73,20 @@ module "masters" {
   private_key             = "${var.tectonic_vmware_ssh_private_key_path}"
   image_re                = "${var.tectonic_image_re}"
 
-  ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
-  ign_docker_dropin_id    = "${module.ignition.docker_dropin_id}"
+  ign_docker_dropin_id    = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_service_id  = "${module.ignition_masters.kubelet_service_id}"
+  ign_max_user_watches_id = "${module.ignition_masters.max_user_watches_id}"
+}
+
+module "ignition_workers" {
+  source = "../../modules/ignition"
+
+  container_images    = "${var.tectonic_container_images}"
+  image_re            = "${var.tectonic_image_re}"
+  kube_dns_service_ip = "${module.bootkube.kube_dns_service_ip}"
+  kubelet_cni_bin_dir = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
+  kubelet_node_label  = "node-role.kubernetes.io/node"
+  kubelet_node_taints = ""
 }
 
 module "workers" {
@@ -84,15 +99,11 @@ module "workers" {
   ip_address       = "${var.tectonic_vmware_worker_ip}"
   gateway          = "${var.tectonic_vmware_worker_gateway}"
 
-  kubelet_node_label  = "node-role.kubernetes.io/node"
-  kubelet_node_taints = ""
-  kubelet_cni_bin_dir = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
-  kube_dns_service_ip = "${module.bootkube.kube_dns_service_ip}"
-  container_images    = "${var.tectonic_container_images}"
-  bootkube_service    = ""
-  tectonic_service    = ""
-  kube_image_url      = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
-  kube_image_tag      = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
+  container_images = "${var.tectonic_container_images}"
+  bootkube_service = ""
+  tectonic_service = ""
+  kube_image_url   = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
+  kube_image_tag   = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
 
   vmware_datacenter       = "${var.tectonic_vmware_datacenter}"
   vmware_cluster          = "${var.tectonic_vmware_cluster}"
@@ -107,6 +118,7 @@ module "workers" {
   private_key             = "${var.tectonic_vmware_ssh_private_key_path}"
   image_re                = "${var.tectonic_image_re}"
 
-  ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
-  ign_docker_dropin_id    = "${module.ignition.docker_dropin_id}"
+  ign_docker_dropin_id    = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_service_id  = "${module.ignition_masters.kubelet_service_id}"
+  ign_max_user_watches_id = "${module.ignition_masters.max_user_watches_id}"
 }

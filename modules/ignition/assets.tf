@@ -27,3 +27,58 @@ data "ignition_systemd_unit" "docker_dropin" {
     },
   ]
 }
+
+data "template_file" "kubelet" {
+  template = "${file("${path.module}/resources/services/kubelet.service")}"
+
+  vars {
+    cloud_provider        = "${var.cloud_provider != "" ? "--cloud-provider=${var.cloud_provider}" : ""}"
+    cloud_provider_config = "${var.cloud_provider_config != "" ? "--cloud-config=/etc/kubernetes/cloud/config" : ""}"
+    cluster_dns_ip        = "${var.kube_dns_service_ip}"
+    cni_bin_dir_flag      = "${var.kubelet_cni_bin_dir != "" ? "--cni-bin-dir=${var.kubelet_cni_bin_dir}" : ""}"
+    kubeconfig_fetch_cmd  = "${var.kubeconfig_fetch_cmd != "" ? "ExecStartPre=${var.kubeconfig_fetch_cmd}" : ""}"
+    node_label            = "${var.kubelet_node_label}"
+    node_taints_param     = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
+  }
+}
+
+data "ignition_systemd_unit" "kubelet" {
+  name    = "kubelet.service"
+  enable  = true
+  content = "${data.template_file.kubelet.rendered}"
+}
+
+data "template_file" "kubelet_env" {
+  template = "${file("${path.module}/resources/services/kubelet-env.service")}"
+
+  vars {
+    kube_version_image_url = "${replace(var.container_images["kube_version"],var.image_re,"$1")}"
+    kube_version_image_tag = "${replace(var.container_images["kube_version"],var.image_re,"$2")}"
+    kubelet_image_url      = "${replace(var.container_images["hyperkube"],var.image_re,"$1")}"
+    kubeconfig_fetch_cmd   = "${var.kubeconfig_fetch_cmd != "" ? "ExecStartPre=${var.kubeconfig_fetch_cmd}" : ""}"
+  }
+}
+
+data "ignition_systemd_unit" "kubelet_env" {
+  name    = "kubelet-env.service"
+  enable  = true
+  content = "${data.template_file.kubelet_env.rendered}"
+}
+
+data "template_file" "s3_puller" {
+  template = "${file("${path.module}/resources/bin/s3-puller.sh")}"
+
+  vars {
+    awscli_image = "${var.container_images["awscli"]}"
+  }
+}
+
+data "ignition_file" "s3_puller" {
+  filesystem = "root"
+  path       = "/opt/s3-puller.sh"
+  mode       = 0755
+
+  content {
+    content = "${data.template_file.s3_puller.rendered}"
+  }
+}

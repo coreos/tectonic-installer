@@ -14,7 +14,7 @@ data "ignition_config" "node" {
   systemd = [
     "${var.ign_docker_dropin_id}",
     "${data.ignition_systemd_unit.locksmithd.id}",
-    "${data.ignition_systemd_unit.kubelet.id}",
+    "${var.ign_kubelet_service_id}",
     "${data.ignition_systemd_unit.kubelet-env.id}",
     "${data.ignition_systemd_unit.bootkube.id}",
     "${data.ignition_systemd_unit.tectonic.id}",
@@ -33,23 +33,6 @@ data "ignition_user" "core" {
 data "ignition_systemd_unit" "locksmithd" {
   name = "locksmithd.service"
   mask = true
-}
-
-data "template_file" "kubelet" {
-  template = "${file("${path.module}/resources/services/kubelet.service")}"
-
-  vars {
-    cluster_dns_ip    = "${var.kube_dns_service_ip}"
-    node_label        = "${var.kubelet_node_label}"
-    node_taints_param = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
-    cni_bin_dir_flag  = "${var.kubelet_cni_bin_dir != "" ? "--cni-bin-dir=${var.kubelet_cni_bin_dir}" : ""}"
-  }
-}
-
-data "ignition_systemd_unit" "kubelet" {
-  name    = "kubelet.service"
-  enable  = true
-  content = "${data.template_file.kubelet.rendered}"
 }
 
 data "template_file" "kubelet-env" {

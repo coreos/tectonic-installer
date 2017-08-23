@@ -1,7 +1,3 @@
-module "ignition" {
-  source = "../../modules/ignition"
-}
-
 provider "azurerm" {
   environment   = "${var.tectonic_azure_cloud_environment}"
   client_secret = "${var.tectonic_azure_client_secret}"
@@ -97,73 +93,85 @@ data "null_data_source" "cloud_provider" {
   }
 }
 
+module "ignition_masters" {
+  source = "../../modules/ignition"
+
+  cloud_provider        = "azure"
+  cloud_provider_config = "${jsonencode(data.null_data_source.cloud_provider.inputs)}"
+  container_images      = "${var.tectonic_container_images}"
+  image_re              = "${var.tectonic_image_re}"
+  kube_dns_service_ip   = "${module.bootkube.kube_dns_service_ip}"
+  kubelet_cni_bin_dir   = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
+  kubelet_node_label    = "node-role.kubernetes.io/master"
+  kubelet_node_taints   = "node-role.kubernetes.io/master=:NoSchedule"
+}
+
 module "masters" {
   source = "../../modules/azure/master-as"
 
-  location            = "${var.tectonic_azure_location}"
-  resource_group_name = "${module.resource_group.name}"
-  vm_size             = "${var.tectonic_azure_master_vm_size}"
-  storage_type        = "${var.tectonic_azure_master_storage_type}"
-  storage_id          = "${module.resource_group.storage_id}"
+  bootkube_service          = "${module.bootkube.systemd_service}"
+  cl_channel                = "${var.tectonic_cl_channel}"
+  cloud_provider_config     = "${jsonencode(data.null_data_source.cloud_provider.inputs)}"
+  cluster_id                = "${module.tectonic.cluster_id}"
+  cluster_name              = "${var.tectonic_cluster_name}"
+  extra_tags                = "${var.tectonic_azure_extra_tags}"
+  kube_image_tag            = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
+  kube_image_url            = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
+  kubeconfig_content        = "${module.bootkube.kubeconfig}"
+  location                  = "${var.tectonic_azure_location}"
+  master_count              = "${var.tectonic_master_count}"
+  network_interface_ids     = "${module.vnet.master_network_interface_ids}"
+  public_ssh_key            = "${var.tectonic_azure_ssh_key}"
+  resource_group_name       = "${module.resource_group.name}"
+  storage_id                = "${module.resource_group.storage_id}"
+  storage_type              = "${var.tectonic_azure_master_storage_type}"
+  tectonic_service          = "${module.tectonic.systemd_service}"
+  tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
+  vm_size                   = "${var.tectonic_azure_master_vm_size}"
 
-  master_count                 = "${var.tectonic_master_count}"
-  base_domain                  = "${var.tectonic_base_domain}"
-  cluster_name                 = "${var.tectonic_cluster_name}"
-  cluster_id                   = "${module.tectonic.cluster_id}"
-  public_ssh_key               = "${var.tectonic_azure_ssh_key}"
-  virtual_network              = "${module.vnet.vnet_id}"
-  network_interface_ids        = "${module.vnet.master_network_interface_ids}"
-  kube_image_url               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
-  kube_image_tag               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
-  kubeconfig_content           = "${module.bootkube.kubeconfig}"
-  tectonic_kube_dns_service_ip = "${module.bootkube.kube_dns_service_ip}"
-  cloud_provider               = "azure"
-  cloud_provider_config        = "${jsonencode(data.null_data_source.cloud_provider.inputs)}"
-  kubelet_node_label           = "node-role.kubernetes.io/master"
-  kubelet_node_taints          = "node-role.kubernetes.io/master=:NoSchedule"
-  kubelet_cni_bin_dir          = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
-  bootkube_service             = "${module.bootkube.systemd_service}"
-  tectonic_service             = "${module.tectonic.systemd_service}"
-  tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
-  versions                     = "${var.tectonic_versions}"
-  cl_channel                   = "${var.tectonic_cl_channel}"
+  ign_docker_dropin_id    = "${module.ignition_masters.docker_dropin_id}"
+  ign_max_user_watches_id = "${module.ignition_masters.max_user_watches_id}"
+  ign_docker_dropin_id    = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_service_id  = "${module.ignition_masters.kubelet_service_id}"
+}
 
-  extra_tags = "${var.tectonic_azure_extra_tags}"
+module "ignition_workers" {
+  source = "../../modules/ignition"
 
-  ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
-  ign_docker_dropin_id    = "${module.ignition.docker_dropin_id}"
+  cloud_provider        = "azure"
+  cloud_provider_config = "${jsonencode(data.null_data_source.cloud_provider.inputs)}"
+  container_images      = "${var.tectonic_container_images}"
+  image_re              = "${var.tectonic_image_re}"
+  kube_dns_service_ip   = "${module.bootkube.kube_dns_service_ip}"
+  kubelet_cni_bin_dir   = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
+  kubelet_node_label    = "node-role.kubernetes.io/node"
+  kubelet_node_taints   = ""
 }
 
 module "workers" {
   source = "../../modules/azure/worker-as"
 
-  location            = "${var.tectonic_azure_location}"
-  resource_group_name = "${module.resource_group.name}"
-  vm_size             = "${var.tectonic_azure_worker_vm_size}"
-  storage_type        = "${var.tectonic_azure_worker_storage_type}"
-  storage_id          = "${module.resource_group.storage_id}"
-
-  worker_count                 = "${var.tectonic_worker_count}"
-  cluster_name                 = "${var.tectonic_cluster_name}"
-  cluster_id                   = "${module.tectonic.cluster_id}"
-  public_ssh_key               = "${var.tectonic_azure_ssh_key}"
-  virtual_network              = "${module.vnet.vnet_id}"
-  network_interface_ids        = "${module.vnet.worker_network_interface_ids}"
-  kube_image_url               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
-  kube_image_tag               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
-  kubeconfig_content           = "${module.bootkube.kubeconfig}"
-  tectonic_kube_dns_service_ip = "${module.bootkube.kube_dns_service_ip}"
-  cloud_provider               = "azure"
-  cloud_provider_config        = "${jsonencode(data.null_data_source.cloud_provider.inputs)}"
-  kubelet_node_label           = "node-role.kubernetes.io/node"
-  kubelet_cni_bin_dir          = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
-  versions                     = "${var.tectonic_versions}"
   cl_channel                   = "${var.tectonic_cl_channel}"
+  cloud_provider_config        = "${jsonencode(data.null_data_source.cloud_provider.inputs)}"
+  cluster_id                   = "${module.tectonic.cluster_id}"
+  cluster_name                 = "${var.tectonic_cluster_name}"
+  extra_tags                   = "${var.tectonic_azure_extra_tags}"
+  kube_image_tag               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
+  kube_image_url               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
+  kubeconfig_content           = "${module.bootkube.kubeconfig}"
+  location                     = "${var.tectonic_azure_location}"
+  network_interface_ids        = "${module.vnet.worker_network_interface_ids}"
+  public_ssh_key               = "${var.tectonic_azure_ssh_key}"
+  resource_group_name          = "${module.resource_group.name}"
+  storage_id                   = "${module.resource_group.storage_id}"
+  storage_type                 = "${var.tectonic_azure_worker_storage_type}"
+  tectonic_kube_dns_service_ip = "${module.bootkube.kube_dns_service_ip}"
+  vm_size                      = "${var.tectonic_azure_worker_vm_size}"
+  worker_count                 = "${var.tectonic_worker_count}"
 
-  extra_tags = "${var.tectonic_azure_extra_tags}"
-
-  ign_max_user_watches_id = "${module.ignition.max_user_watches_id}"
-  ign_docker_dropin_id    = "${module.ignition.docker_dropin_id}"
+  ign_docker_dropin_id    = "${module.ignition_workers.docker_dropin_id}"
+  ign_max_user_watches_id = "${module.ignition_workers.max_user_watches_id}"
+  ign_kubelet_service_id  = "${module.ignition_workers.kubelet_service_id}"
 }
 
 module "dns" {
