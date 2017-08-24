@@ -11,3 +11,7 @@ variable "ign_docker_dropin_id" {
 variable "ign_kubelet_service_id" {
   type = "string"
 }
+
+variable "ign_locksmithd_service_id" {
+  type = "string"
+}

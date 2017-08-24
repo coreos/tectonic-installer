@@ -37,3 +37,7 @@ output "s3_puller_id" {
 output "s3_puller_rendered" {
   value = "${data.template_file.s3_puller.rendered}"
 }
+
+output "locksmithd_service_id" {
+  value = "${data.ignition_systemd_unit.locksmithd.id}"
+}

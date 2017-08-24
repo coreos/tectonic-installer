@@ -9,7 +9,7 @@ data "ignition_config" "worker" {
 
   systemd = [
     "${var.ign_docker_dropin_id}",
-    "${data.ignition_systemd_unit.locksmithd.id}",
+    "${var.ign_locksmithd_service_id}",
     "${var.ign_kubelet_service_id}",
     "${module.net_ignition.tx-off_id}",
   ]
@@ -17,11 +17,6 @@ data "ignition_config" "worker" {
   users = [
     "${data.ignition_user.core.id}",
   ]
-}
-
-data "ignition_systemd_unit" "locksmithd" {
-  name = "locksmithd.service"
-  mask = true
 }
 
 data "ignition_file" "kubeconfig" {

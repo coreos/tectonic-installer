@@ -15,7 +15,7 @@ data "ignition_config" "node" {
 
   systemd = [
     "${var.ign_docker_dropin_id}",
-    "${data.ignition_systemd_unit.locksmithd.id}",
+    "${var.ign_locksmithd_service_id}",
     "${var.ign_kubelet_service_id}",
     "${data.ignition_systemd_unit.bootkube.id}",
     "${data.ignition_systemd_unit.tectonic.id}",
@@ -48,11 +48,6 @@ data "ignition_file" "hostname" {
   content {
     content = "${var.cluster_name}-${var.hostname_infix}-${count.index}"
   }
-}
-
-data "ignition_systemd_unit" "locksmithd" {
-  name = "locksmithd.service"
-  mask = true
 }
 
 data "ignition_file" "kubeconfig" {

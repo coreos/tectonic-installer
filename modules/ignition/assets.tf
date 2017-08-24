@@ -82,3 +82,8 @@ data "ignition_file" "s3_puller" {
     content = "${data.template_file.s3_puller.rendered}"
   }
 }
+
+data "ignition_systemd_unit" "locksmithd" {
+  name = "locksmithd.service"
+  mask = true
+}

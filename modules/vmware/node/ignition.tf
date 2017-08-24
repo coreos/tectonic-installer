@@ -13,7 +13,7 @@ data "ignition_config" "node" {
 
   systemd = [
     "${var.ign_docker_dropin_id}",
-    "${data.ignition_systemd_unit.locksmithd.id}",
+    "${var.ign_locksmithd_service_id}",
     "${var.ign_kubelet_service_id}",
     "${data.ignition_systemd_unit.kubelet-env.id}",
     "${data.ignition_systemd_unit.bootkube.id}",
@@ -28,11 +28,6 @@ data "ignition_config" "node" {
 data "ignition_user" "core" {
   name                = "core"
   ssh_authorized_keys = ["${var.core_public_keys}"]
-}
-
-data "ignition_systemd_unit" "locksmithd" {
-  name = "locksmithd.service"
-  mask = true
 }
 
 data "template_file" "kubelet-env" {

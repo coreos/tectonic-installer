@@ -9,7 +9,7 @@ data "ignition_config" "master" {
 
   systemd = [
     "${var.ign_docker_dropin_id}",
-    "${data.ignition_systemd_unit.locksmithd.id}",
+    "${var.ign_locksmithd_service_id}",
     "${var.ign_kubelet_service_id}",
     "${data.ignition_systemd_unit.tectonic.id}",
     "${data.ignition_systemd_unit.bootkube.id}",
@@ -27,11 +27,6 @@ data "ignition_user" "core" {
   ssh_authorized_keys = [
     "${file(var.public_ssh_key)}",
   ]
-}
-
-data "ignition_systemd_unit" "locksmithd" {
-  name = "locksmithd.service"
-  mask = true
 }
 
 data "ignition_file" "kubeconfig" {

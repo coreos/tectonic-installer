@@ -127,9 +127,10 @@ module "masters" {
 
   ign_docker_dropin_id          = "${module.ignition_masters.docker_dropin_id}"
   ign_kubelet_service_id        = "${module.ignition_masters.kubelet_service_id}"
+  ign_locksmithd_service_id     = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id       = "${module.ignition_masters.max_user_watches_id}"
-  ign_s3_puller_id              = "${module.ignition_masters.s3_puller_id}"
   ign_s3_kubelet_env_service_id = "${module.ignition_masters.kubelet_env_service_id}"
+  ign_s3_puller_id              = "${module.ignition_masters.s3_puller_id}"
 }
 
 module "ignition_workers" {
@@ -164,9 +165,10 @@ module "workers" {
   vpc_id                       = "${module.vpc.vpc_id}"
   worker_iam_role              = "${var.tectonic_aws_worker_iam_role_name}"
 
-  ign_max_user_watches_id       = "${module.ignition_workers.max_user_watches_id}"
   ign_docker_dropin_id          = "${module.ignition_workers.docker_dropin_id}"
   ign_kubelet_service_id        = "${module.ignition_workers.kubelet_service_id}"
-  ign_s3_puller_id              = "${module.ignition_workers.s3_puller_id}"
+  ign_locksmithd_service_id     = "${module.ignition_masters.locksmithd_service_id}"
+  ign_max_user_watches_id       = "${module.ignition_workers.max_user_watches_id}"
   ign_s3_kubelet_env_service_id = "${module.ignition_workers.kubelet_env_service_id}"
+  ign_s3_puller_id              = "${module.ignition_workers.s3_puller_id}"
 }
