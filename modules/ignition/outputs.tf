@@ -27,7 +27,7 @@ output "kubelet_env_service_id" {
 }
 
 output "kubelet_env_service_rendered" {
-  value = "${data.template_file.kubelet_env.rendered}"
+  value = "${data.template_file.kubelet_env_service.rendered}"
 }
 
 output "s3_puller_id" {
@@ -40,4 +40,12 @@ output "s3_puller_rendered" {
 
 output "locksmithd_service_id" {
   value = "${data.ignition_systemd_unit.locksmithd.id}"
+}
+
+output "kubelet_env_id" {
+  value = "${data.ignition_file.kubelet_env.id}"
+}
+
+output "kubelet_env_rendered" {
+  value = "${data.template_file.kubelet_env.rendered}"
 }

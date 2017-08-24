@@ -141,13 +141,12 @@ EOF
   core_public_keys          = ["${module.secrets.core_public_key_openssh}"]
   hostname_infix            = "master"
   instance_count            = "${var.tectonic_master_count}"
-  kube_image_tag            = "${data.null_data_source.local.outputs.kube_image_tag}"
-  kube_image_url            = "${data.null_data_source.local.outputs.kube_image_url}"
   kubeconfig_content        = "${module.bootkube.kubeconfig}"
   tectonic_service          = "${module.tectonic.systemd_service}"
   tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
 
   ign_docker_dropin_id      = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_env_id        = "${module.ignition_masters.kubelet_env_id}"
   ign_kubelet_service_id    = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id   = "${module.ignition_masters.max_user_watches_id}"
@@ -177,13 +176,12 @@ EOF
   core_public_keys          = ["${module.secrets.core_public_key_openssh}"]
   hostname_infix            = "worker"
   instance_count            = "${var.tectonic_worker_count}"
-  kube_image_tag            = "${data.null_data_source.local.outputs.kube_image_tag}"
-  kube_image_url            = "${data.null_data_source.local.outputs.kube_image_url}"
   kubeconfig_content        = "${module.bootkube.kubeconfig}"
   tectonic_service          = ""
   tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
 
   ign_docker_dropin_id      = "${module.ignition_workers.docker_dropin_id}"
+  ign_kubelet_env_id        = "${module.ignition_masters.kubelet_env_id}"
   ign_kubelet_service_id    = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id = "${module.ignition_workers.locksmithd_service_id}"
   ign_max_user_watches_id   = "${module.ignition_workers.max_user_watches_id}"

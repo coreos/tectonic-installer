@@ -1,7 +1,7 @@
 data "ignition_config" "worker" {
   files = [
     "${data.ignition_file.kubeconfig.id}",
-    "${data.ignition_file.kubelet-env.id}",
+    "${var.ign_kubelet_env_id}",
     "${module.azure_udev-rules.udev-rules_id}",
     "${var.ign_max_user_watches_id}",
     "${data.ignition_file.cloud-provider-config.id}",
@@ -36,19 +36,6 @@ data "ignition_file" "azure_udev_rules" {
 
   content {
     content = "${file("${path.module}/resources/66-azure-storage.rules")}"
-  }
-}
-
-data "ignition_file" "kubelet-env" {
-  filesystem = "root"
-  path       = "/etc/kubernetes/kubelet.env"
-  mode       = 0644
-
-  content {
-    content = <<EOF
-KUBELET_IMAGE_URL="${var.kube_image_url}"
-KUBELET_IMAGE_TAG="${var.kube_image_tag}"
-EOF
   }
 }
 

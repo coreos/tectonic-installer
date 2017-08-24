@@ -115,8 +115,6 @@ module "masters" {
   cluster_id                = "${module.tectonic.cluster_id}"
   cluster_name              = "${var.tectonic_cluster_name}"
   extra_tags                = "${var.tectonic_azure_extra_tags}"
-  kube_image_tag            = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
-  kube_image_url            = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
   kubeconfig_content        = "${module.bootkube.kubeconfig}"
   location                  = "${var.tectonic_azure_location}"
   master_count              = "${var.tectonic_master_count}"
@@ -131,6 +129,7 @@ module "masters" {
 
   ign_docker_dropin_id      = "${module.ignition_masters.docker_dropin_id}"
   ign_docker_dropin_id      = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_env_id        = "${module.ignition_masters.kubelet_env_id}"
   ign_kubelet_service_id    = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id   = "${module.ignition_masters.max_user_watches_id}"
@@ -157,8 +156,6 @@ module "workers" {
   cluster_id                   = "${module.tectonic.cluster_id}"
   cluster_name                 = "${var.tectonic_cluster_name}"
   extra_tags                   = "${var.tectonic_azure_extra_tags}"
-  kube_image_tag               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
-  kube_image_url               = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
   kubeconfig_content           = "${module.bootkube.kubeconfig}"
   location                     = "${var.tectonic_azure_location}"
   network_interface_ids        = "${module.vnet.worker_network_interface_ids}"
@@ -171,6 +168,7 @@ module "workers" {
   worker_count                 = "${var.tectonic_worker_count}"
 
   ign_docker_dropin_id      = "${module.ignition_workers.docker_dropin_id}"
+  ign_kubelet_env_id        = "${module.ignition_workers.kubelet_env_id}"
   ign_kubelet_service_id    = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id   = "${module.ignition_workers.max_user_watches_id}"

@@ -92,9 +92,7 @@ storage:
       filesystem: root
       mode: 0644
       contents:
-        inline: |
-          KUBELET_IMAGE_URL={{.kubelet_image_url}}
-          KUBELET_IMAGE_TAG={{.kubelet_image_tag}}
+        inline: {{.ign_kubelet_env_json}}
     - path: /etc/hostname
       filesystem: root
       mode: 0644

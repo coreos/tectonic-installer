@@ -24,11 +24,7 @@ variable "extra_tags" {
   type = "map"
 }
 
-variable "kube_image_tag" {
-  type = "string"
-}
-
-variable "kube_image_url" {
+variable "ign_kubelet_env_id" {
   type = "string"
 }
 

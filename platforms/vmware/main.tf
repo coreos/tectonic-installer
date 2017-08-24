@@ -57,8 +57,6 @@ module "masters" {
   bootkube_service          = "${module.bootkube.systemd_service}"
   tectonic_service          = "${module.tectonic.systemd_service}"
   tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
-  kube_image_url            = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
-  kube_image_tag            = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
 
   vmware_datacenter       = "${var.tectonic_vmware_datacenter}"
   vmware_cluster          = "${var.tectonic_vmware_cluster}"
@@ -74,6 +72,7 @@ module "masters" {
   image_re                = "${var.tectonic_image_re}"
 
   ign_docker_dropin_id      = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_env_id        = "${module.ignition_masters.kubelet_env_id}"
   ign_kubelet_service_id    = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id   = "${module.ignition_masters.max_user_watches_id}"
@@ -103,8 +102,6 @@ module "workers" {
   container_images = "${var.tectonic_container_images}"
   bootkube_service = ""
   tectonic_service = ""
-  kube_image_url   = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
-  kube_image_tag   = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
 
   vmware_datacenter       = "${var.tectonic_vmware_datacenter}"
   vmware_cluster          = "${var.tectonic_vmware_cluster}"
@@ -120,6 +117,7 @@ module "workers" {
   image_re                = "${var.tectonic_image_re}"
 
   ign_docker_dropin_id      = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_env_id        = "${module.ignition_masters.kubelet_env_id}"
   ign_kubelet_service_id    = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id   = "${module.ignition_masters.max_user_watches_id}"

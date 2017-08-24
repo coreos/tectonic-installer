@@ -8,7 +8,7 @@ data "ignition_config" "node" {
   files = [
     "${var.ign_max_user_watches_id}",
     "${data.ignition_file.node_hostname.*.id[count.index]}",
-    "${data.ignition_file.kubelet-env.id}",
+    "${var.ign_kubelet_env_id}",
   ]
 
   systemd = [
@@ -81,18 +81,5 @@ data "ignition_file" "node_hostname" {
 
   content {
     content = "${var.hostname["${count.index}"]}"
-  }
-}
-
-data "ignition_file" "kubelet-env" {
-  filesystem = "root"
-  path       = "/etc/kubernetes/kubelet.env"
-  mode       = 0644
-
-  content {
-    content = <<EOF
-KUBELET_IMAGE_URL="${var.kube_image_url}"
-KUBELET_IMAGE_TAG="${var.kube_image_tag}"
-EOF
   }
 }

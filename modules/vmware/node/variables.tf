@@ -12,6 +12,10 @@ variable "container_images" {
   type        = "map"
 }
 
+variable "ign_kubelet_env_id" {
+  type = "string"
+}
+
 variable "image_re" {
   description = "(internal) Regular expression used to extract repo and tag components from image strings"
   type        = "string"
@@ -20,14 +24,6 @@ variable "image_re" {
 variable "instance_count" {
   type        = "string"
   description = "Number of nodes to be created."
-}
-
-variable "kube_image_tag" {
-  type = "string"
-}
-
-variable "kube_image_url" {
-  type = "string"
 }
 
 variable "kubeconfig" {

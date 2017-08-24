@@ -7,7 +7,7 @@ data "ignition_config" "node" {
 
   files = [
     "${data.ignition_file.kubeconfig.id}",
-    "${data.ignition_file.kubelet-env.id}",
+    "${var.ign_kubelet_env_id}",
     "${var.ign_max_user_watches_id}",
     "${data.ignition_file.resolv_conf.id}",
     "${data.ignition_file.hostname.*.id[count.index]}",
@@ -57,19 +57,6 @@ data "ignition_file" "kubeconfig" {
 
   content {
     content = "${var.kubeconfig_content}"
-  }
-}
-
-data "ignition_file" "kubelet-env" {
-  filesystem = "root"
-  path       = "/etc/kubernetes/kubelet.env"
-  mode       = 0644
-
-  content {
-    content = <<EOF
-KUBELET_IMAGE_URL=${var.kube_image_url}
-KUBELET_IMAGE_TAG="${var.kube_image_tag}"
-EOF
   }
 }
 
