@@ -57,3 +57,11 @@ output "tx_off_service_id" {
 output "tx_off_service_rendered" {
   value = "${data.template_file.tx_off.rendered}"
 }
+
+output "azure_udev_rules_id" {
+  value = "${data.ignition_file.azure_udev_rules.id}"
+}
+
+output "azure_udev_rules_rendered" {
+  value = "${data.template_file.azure_udev_rules.rendered}"
+}

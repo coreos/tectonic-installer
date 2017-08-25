@@ -116,3 +116,17 @@ data "ignition_systemd_unit" "tx_off" {
   enable  = true
   content = "${data.template_file.tx_off.rendered}"
 }
+
+data "template_file" "azure_udev_rules" {
+  template = "${file("${path.module}/resources/udev/66-azure-storage.rules")}"
+}
+
+data "ignition_file" "azure_udev_rules" {
+  filesystem = "root"
+  path       = "/etc/udev/rules.d/66-azure-storage.rules"
+  mode       = 0644
+
+  content {
+    content = "${data.template_file.azure_udev_rules.rendered}"
+  }
+}

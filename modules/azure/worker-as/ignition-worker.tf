@@ -2,7 +2,7 @@ data "ignition_config" "worker" {
   files = [
     "${data.ignition_file.kubeconfig.id}",
     "${var.ign_kubelet_env_id}",
-    "${module.azure_udev-rules.udev-rules_id}",
+    "${var.ign_azure_udev_rules_id}",
     "${var.ign_max_user_watches_id}",
     "${data.ignition_file.cloud-provider-config.id}",
   ]
@@ -70,8 +70,4 @@ data "ignition_user" "core" {
   ssh_authorized_keys = [
     "${file(var.public_ssh_key)}",
   ]
-}
-
-module "azure_udev-rules" {
-  source = "../udev-rules"
 }
