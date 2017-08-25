@@ -13,7 +13,7 @@ data "ignition_config" "master" {
     "${var.ign_kubelet_service_id}",
     "${data.ignition_systemd_unit.tectonic.id}",
     "${data.ignition_systemd_unit.bootkube.id}",
-    "${module.net_ignition.tx-off_id}",
+    "${var.ign_tx_off_service_id}",
   ]
 
   users = [
@@ -58,10 +58,6 @@ data "ignition_systemd_unit" "tectonic" {
   name    = "tectonic.service"
   enable  = "${var.tectonic_service_disabled == 0 ? true : false}"
   content = "${var.tectonic_service}"
-}
-
-module "net_ignition" {
-  source = "../../net/ignition"
 }
 
 module "azure_udev-rules" {

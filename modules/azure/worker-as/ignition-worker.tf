@@ -11,7 +11,7 @@ data "ignition_config" "worker" {
     "${var.ign_docker_dropin_id}",
     "${var.ign_locksmithd_service_id}",
     "${var.ign_kubelet_service_id}",
-    "${module.net_ignition.tx-off_id}",
+    "${var.ign_tx_off_service_id}",
   ]
 
   users = [
@@ -70,10 +70,6 @@ data "ignition_user" "core" {
   ssh_authorized_keys = [
     "${file(var.public_ssh_key)}",
   ]
-}
-
-module "net_ignition" {
-  source = "../../net/ignition"
 }
 
 module "azure_udev-rules" {

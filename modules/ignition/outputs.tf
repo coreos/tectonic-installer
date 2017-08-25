@@ -49,3 +49,11 @@ output "kubelet_env_id" {
 output "kubelet_env_rendered" {
   value = "${data.template_file.kubelet_env.rendered}"
 }
+
+output "tx_off_service_id" {
+  value = "${data.ignition_systemd_unit.tx_off.id}"
+}
+
+output "tx_off_service_rendered" {
+  value = "${data.template_file.tx_off.rendered}"
+}

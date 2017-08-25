@@ -133,6 +133,7 @@ module "masters" {
   ign_kubelet_service_id    = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id   = "${module.ignition_masters.max_user_watches_id}"
+  ign_tx_off_service_id     = "${module.ignition_masters.tx_off_service_id}"
 }
 
 module "ignition_workers" {
@@ -172,6 +173,7 @@ module "workers" {
   ign_kubelet_service_id    = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id   = "${module.ignition_workers.max_user_watches_id}"
+  ign_tx_off_service_id     = "${module.ignition_workers.tx_off_service_id}"
 }
 
 module "dns" {

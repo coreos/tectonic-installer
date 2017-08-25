@@ -106,3 +106,13 @@ data "ignition_file" "kubelet_env" {
     content = "${data.template_file.kubelet_env.rendered}"
   }
 }
+
+data "template_file" "tx_off" {
+  template = "${file("${path.module}/resources/services/tx-off.service")}"
+}
+
+data "ignition_systemd_unit" "tx_off" {
+  name    = "tx-off.service"
+  enable  = true
+  content = "${data.template_file.tx_off.rendered}"
+}
