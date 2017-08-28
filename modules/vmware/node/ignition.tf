@@ -15,7 +15,7 @@ data "ignition_config" "node" {
     "${var.ign_docker_dropin_id}",
     "${var.ign_locksmithd_service_id}",
     "${var.ign_kubelet_service_id}",
-    "${data.ignition_systemd_unit.kubelet-env.id}",
+    "${var.ign_kubelet_env_service_id}",
     "${data.ignition_systemd_unit.bootkube.id}",
     "${data.ignition_systemd_unit.tectonic.id}",
   ]
@@ -28,22 +28,6 @@ data "ignition_config" "node" {
 data "ignition_user" "core" {
   name                = "core"
   ssh_authorized_keys = ["${var.core_public_keys}"]
-}
-
-data "template_file" "kubelet-env" {
-  template = "${file("${path.module}/resources/services/kubelet-env.service")}"
-
-  vars {
-    kube_version_image_url = "${replace(var.container_images["kube_version"],var.image_re,"$1")}"
-    kube_version_image_tag = "${replace(var.container_images["kube_version"],var.image_re,"$2")}"
-    kubelet_image_url      = "${replace(var.container_images["hyperkube"],var.image_re,"$1")}"
-  }
-}
-
-data "ignition_systemd_unit" "kubelet-env" {
-  name    = "kubelet-env.service"
-  enable  = true
-  content = "${data.template_file.kubelet-env.rendered}"
 }
 
 data "ignition_systemd_unit" "bootkube" {

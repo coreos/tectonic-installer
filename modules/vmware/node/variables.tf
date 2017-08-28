@@ -116,3 +116,8 @@ variable "vmware_datacenter" {
   type        = "string"
   description = "vSphere Datacenter to create VMs in"
 }
+
+variable "ign_kubelet_env_service_id" {
+  type        = "string"
+  description = "The kubelet env service to use"
+}

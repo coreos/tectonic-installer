@@ -71,11 +71,12 @@ module "masters" {
   private_key             = "${var.tectonic_vmware_ssh_private_key_path}"
   image_re                = "${var.tectonic_image_re}"
 
-  ign_docker_dropin_id      = "${module.ignition_masters.docker_dropin_id}"
-  ign_kubelet_env_id        = "${module.ignition_masters.kubelet_env_id}"
-  ign_kubelet_service_id    = "${module.ignition_masters.kubelet_service_id}"
-  ign_locksmithd_service_id = "${module.ignition_masters.locksmithd_service_id}"
-  ign_max_user_watches_id   = "${module.ignition_masters.max_user_watches_id}"
+  ign_docker_dropin_id       = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_env_id         = "${module.ignition_masters.kubelet_env_id}"
+  ign_kubelet_env_service_id = "${module.ignition_masters.kubelet_env_service_id}"
+  ign_kubelet_service_id     = "${module.ignition_masters.kubelet_service_id}"
+  ign_locksmithd_service_id  = "${module.ignition_masters.locksmithd_service_id}"
+  ign_max_user_watches_id    = "${module.ignition_masters.max_user_watches_id}"
 }
 
 module "ignition_workers" {
@@ -116,9 +117,10 @@ module "workers" {
   private_key             = "${var.tectonic_vmware_ssh_private_key_path}"
   image_re                = "${var.tectonic_image_re}"
 
-  ign_docker_dropin_id      = "${module.ignition_workers.docker_dropin_id}"
-  ign_kubelet_env_id        = "${module.ignition_workers.kubelet_env_id}"
-  ign_kubelet_service_id    = "${module.ignition_workers.kubelet_service_id}"
-  ign_locksmithd_service_id = "${module.ignition_workers.locksmithd_service_id}"
-  ign_max_user_watches_id   = "${module.ignition_workers.max_user_watches_id}"
+  ign_docker_dropin_id       = "${module.ignition_workers.docker_dropin_id}"
+  ign_kubelet_env_id         = "${module.ignition_workers.kubelet_env_id}"
+  ign_kubelet_env_service_id = "${module.ignition_workers.kubelet_env_service_id}"
+  ign_kubelet_service_id     = "${module.ignition_workers.kubelet_service_id}"
+  ign_locksmithd_service_id  = "${module.ignition_workers.locksmithd_service_id}"
+  ign_max_user_watches_id    = "${module.ignition_workers.max_user_watches_id}"
 }
