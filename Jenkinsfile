@@ -130,14 +130,16 @@ pipeline {
           "SmokeTest AWS RSpec": {
             node('worker && ec2') {
               withCredentials(creds) {
-                checkout scm
-                unstash 'installer'
-                unstash 'smoke'
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  sh """#!/bin/bash -ex
-                    cd tests/rspec
-                    bundler exec rspec spec/aws_spec.rb
-                  """
+                  ansiColor('xterm') {
+                    checkout scm
+                    unstash 'installer'
+                    unstash 'smoke'
+                    sh """#!/bin/bash -ex
+                      cd tests/rspec
+                      bundler exec rspec spec/aws_spec.rb
+                    """
+                  }
                 }
               }
             }
@@ -145,17 +147,19 @@ pipeline {
           "SmokeTest AWS VPC RSpec": {
             node('worker && ec2') {
               withCredentials(creds) {
-                checkout scm
-                unstash 'installer'
-                unstash 'smoke'
                 withDockerContainer(
                     image: tectonic_smoke_test_env_image,
                     args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'
                 ) {
-                  sh """#!/bin/bash -ex
-                    cd tests/rspec
-                    bundler exec rspec spec/aws_vpc_internal_spec.rb
-                  """
+                  ansiColor('xterm') {
+                    checkout scm
+                    unstash 'installer'
+                    unstash 'smoke'
+                    sh """#!/bin/bash -ex
+                      cd tests/rspec
+                      bundler exec rspec spec/aws_vpc_internal_spec.rb
+                    """
+                  }
                 }
               }
             }
