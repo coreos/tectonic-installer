@@ -26,6 +26,9 @@ systemd:
 {{ end }}
     - name: docker.service
       enable: true
+      dropins:
+        - name: 10-dockeropts.conf
+          contents: {{.ign_docker_dropin_json}}
     - name: locksmithd.service
       mask: true
     - name: kubelet.path
