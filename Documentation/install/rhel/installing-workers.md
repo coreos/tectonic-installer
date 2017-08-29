@@ -164,8 +164,8 @@ Once complete, use Tectonic Console to view the new worker nodes, and confirm th
 [tectonic-installer]: https://github.com/coreos/tectonic-installer
 [flannel-repo]: https://github.com/coreos/flannel
 [k8s-networking]: https://coreos.com/kubernetes/docs/latest/kubernetes-networking.html
-[container-linux]: https://coreos.com/os/docs/latest
-[aws-install]: https://coreos.com/tectonic/docs/latest/tutorials/installing-tectonic.html
-[bare-install]: https://github.com/coreos/tectonic-installer/blob/master/Documentation/install/bare-metal/metal-terraform.md
+[container-linux]: https://coreos.com/os/docs/latest/
+[aws-install]: ../../tutorials/installing-tectonic.html
+[bare-install]: ../bare-metal/metal-terraform.md
 <!-- vim: ts=2 sw=2 tw=80 expandtab:
 -->
