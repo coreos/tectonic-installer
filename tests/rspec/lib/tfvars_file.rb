@@ -2,6 +2,8 @@
 
 require 'json'
 
+PLATFORMS = %w[aws azure metal vmware].freeze
+
 # TFVarsFile represents a Terraform configuration file describing a Tectonic
 # cluster configuration
 class TFVarsFile
@@ -27,6 +29,20 @@ class TFVarsFile
   # TODO: Randomize region on AWS
   def region
     data['tectonic_aws_region']
+  end
+
+  def prefix
+    prefix = File.basename(path).split('.').first
+    raise 'could not extract prefix from tfvars file name' if prefix == ''
+    prefix
+  end
+
+  def platform
+    PLATFORMS.each do |platform|
+      return platform if data.keys.any? do |key|
+        key.start_with?("tectonic_#{platform}")
+      end
+    end
   end
 
   private
