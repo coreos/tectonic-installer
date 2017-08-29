@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 
 # TFVarsFile represents a Terraform configuration file describing a Tectonic
