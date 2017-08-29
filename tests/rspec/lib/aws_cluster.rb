@@ -18,13 +18,13 @@ class AWSCluster < Cluster
   def check_prerequisites
     raise 'AWS credentials not defined' unless credentials_defined?
     raise 'TF_VAR_tectonic_aws_ssh_key is not defined' unless ssh_key_defined?
-    raise 'TF_VAR_tectonic_aws_ssh_key not defined' unless region_defined?
+    raise 'TF_VAR_tectonic_aws_region is not defined' unless region_defined?
 
     super
   end
 
   def region_defined?
-    EnvVar.set?(%w[TF_VAR_tectonic_aws_ssh_key])
+    EnvVar.set?(%w[TF_VAR_tectonic_aws_region])
   end
 
   def credentials_defined?
