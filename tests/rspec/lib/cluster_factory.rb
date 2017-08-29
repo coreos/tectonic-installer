@@ -7,7 +7,7 @@ require 'azure_cluster'
 #
 module ClusterFactory
   def self.from_tf_vars(tf_vars_file)
-    cluster_class = "#{tf_vars_file.platform.capitalize}Cluster"
+    cluster_class = "#{tf_vars_file.platform.downcase.capitalize}Cluster"
     Object.const_get(cluster_class).new(tf_vars_file)
   end
 end
