@@ -91,7 +91,7 @@ module "masters" {
   ign_kubelet_service_id     = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id  = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id    = "${module.ignition_masters.max_user_watches_id}"
-  cloud_provider_config   = "${data.template_file.cloud-provider.rendered}"
+  cloud_provider_config      = "${data.template_file.cloud-provider.rendered}"
 }
 
 module "ignition_workers" {
@@ -138,5 +138,5 @@ module "workers" {
   ign_kubelet_service_id     = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id  = "${module.ignition_workers.locksmithd_service_id}"
   ign_max_user_watches_id    = "${module.ignition_workers.max_user_watches_id}"
-  cloud_provider_config   = "${data.template_file.cloud-provider.rendered}"
+  cloud_provider_config      = "${data.template_file.cloud-provider.rendered}"
 }
