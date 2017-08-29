@@ -88,10 +88,6 @@ variable "cl_channel" {
   type = "string"
 }
 
-variable "kubelet_cni_bin_dir" {
-  type = "string"
-}
-
 variable "extra_tags" {
   type = "map"
 }
