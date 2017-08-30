@@ -131,14 +131,16 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  ansiColor('xterm') {
-                    checkout scm
-                    unstash 'installer'
-                    unstash 'smoke'
-                    sh """#!/bin/bash -ex
-                      cd tests/rspec
-                      bundler exec rspec spec/aws_spec.rb
-                    """
+                  sshagent(['aws-smoke-test-ssh-key']) {
+                    ansiColor('xterm') {
+                      checkout scm
+                      unstash 'installer'
+                      unstash 'smoke'
+                      sh """#!/bin/bash -ex
+                        cd tests/rspec
+                        bundler exec rspec spec/aws_spec.rb
+                      """
+                    }
                   }
                 }
               }
@@ -151,14 +153,16 @@ pipeline {
                     image: tectonic_smoke_test_env_image,
                     args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'
                 ) {
-                  ansiColor('xterm') {
-                    checkout scm
-                    unstash 'installer'
-                    unstash 'smoke'
-                    sh """#!/bin/bash -ex
-                      cd tests/rspec
-                      bundler exec rspec spec/aws_vpc_internal_spec.rb
-                    """
+                  sshagent(['aws-smoke-test-ssh-key']) {
+                    ansiColor('xterm') {
+                      checkout scm
+                      unstash 'installer'
+                      unstash 'smoke'
+                      sh """#!/bin/bash -ex
+                        cd tests/rspec
+                        bundler exec rspec spec/aws_vpc_internal_spec.rb
+                      """
+                    }
                   }
                 }
               }
