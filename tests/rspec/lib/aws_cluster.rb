@@ -48,9 +48,4 @@ class AwsCluster < Cluster
     Grafiti.new(@build_path, ENV['TF_VAR_tectonic_aws_region']).clean
     super
   end
-
-  def recover_from_failed_destroy
-    Grafiti.new(@build_path, ENV['TF_VAR_tectonic_aws_region']).clean
-    super
-  end
 end
