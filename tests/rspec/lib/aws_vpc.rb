@@ -88,7 +88,7 @@ class AWSVPC
       end
     end
 
-    raise 'could not destroy vpc with Terraform' unless succeeded
+    raise 'could not destroy vpc with Terraform'
   end
 
   def wait_for_vpn_access_server
