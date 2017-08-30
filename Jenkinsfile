@@ -140,6 +140,7 @@ pipeline {
                         cd tests/rspec
                         bundler exec rspec spec/aws_spec.rb
                       """
+                      deleteDir()
                     }
                   }
                 }
@@ -162,53 +163,8 @@ pipeline {
                         cd tests/rspec
                         bundler exec rspec spec/aws_vpc_internal_spec.rb
                       """
+                      deleteDir()
                     }
-                  }
-                }
-              }
-            }
-          },
-          "SmokeTest Terraform: AWS": {
-            node('worker && ec2') {
-              withCredentials(creds) {
-                withDockerContainer(args: '-v /etc/passwd:/etc/passwd:ro', image: params.builder_image) {
-                  ansiColor('xterm') {
-                    checkout scm
-                    unstash 'installer'
-                    unstash 'smoke'
-                    script {
-                      try {
-                        timeout(45) {
-                          sh """#!/bin/bash -ex
-                          . ${WORKSPACE}/tests/smoke/aws/smoke.sh assume-role "$TECTONIC_INSTALLER_ROLE"
-                          ${WORKSPACE}/tests/smoke/aws/smoke.sh plan vars/aws-tls.tfvars
-                          ${WORKSPACE}/tests/smoke/aws/smoke.sh create vars/aws-tls.tfvars | tee ${WORKSPACE}/terraform.log
-                          ${WORKSPACE}/tests/smoke/aws/smoke.sh test vars/aws-tls.tfvars
-                          ${WORKSPACE}/tests/smoke/aws/smoke.sh destroy vars/aws-tls.tfvars
-                          """
-                        }
-                      } catch (err) {
-                        timeout (5) {
-                          sshagent(['aws-smoke-test-ssh-key']) {
-                            sh """#!/bin/bash
-                            # Running without -ex because we don't care if this fails
-                            . ${WORKSPACE}/tests/smoke/aws/smoke.sh common vars/aws-tls.tfvars
-                            ${WORKSPACE}/tests/smoke/aws/cluster-foreach.sh ${WORKSPACE}/tests/smoke/forensics.sh
-                            """
-                          }
-                        }
-                        timeout(5) {
-                          sh """#!/bin/bash -x
-                          . ${WORKSPACE}/tests/smoke/aws/smoke.sh assume-role "$GRAFITI_DELETER_ROLE"
-                          ${WORKSPACE}/tests/smoke/aws/smoke.sh grafiti-clean vars/aws-tls.tfvars
-                          """
-                        }
-
-                        // Stage should fail
-                        throw err
-                      }
-                    }
-                    deleteDir()
                   }
                 }
               }
