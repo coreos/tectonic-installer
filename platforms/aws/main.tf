@@ -127,6 +127,7 @@ module "masters" {
   tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
 
   ign_docker_dropin_id          = "${module.ignition_masters.docker_dropin_id}"
+  ign_installer_kubelet_env_id  = "${module.ignition_masters.installer_kubelet_env_id}"
   ign_kubelet_service_id        = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id     = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id       = "${module.ignition_masters.max_user_watches_id}"
@@ -167,6 +168,7 @@ module "workers" {
   worker_iam_role              = "${var.tectonic_aws_worker_iam_role_name}"
 
   ign_docker_dropin_id          = "${module.ignition_workers.docker_dropin_id}"
+  ign_installer_kubelet_env_id  = "${module.ignition_workers.installer_kubelet_env_id}"
   ign_kubelet_service_id        = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id     = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id       = "${module.ignition_workers.max_user_watches_id}"

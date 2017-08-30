@@ -42,8 +42,13 @@ output "locksmithd_service_id" {
   value = "${data.ignition_systemd_unit.locksmithd.id}"
 }
 
+# TODO(lucab): remove this in favor of torcx boostrapper (OST-23)
 output "kubelet_env_id" {
   value = "${data.ignition_file.kubelet_env.id}"
+}
+
+output "installer_kubelet_env_id" {
+  value = "${data.ignition_file.installer_kubelet_env.id}"
 }
 
 output "kubelet_env_rendered" {

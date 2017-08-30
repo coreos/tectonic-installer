@@ -102,6 +102,7 @@ resource "matchbox_group" "worker" {
     kube_version_image = "${var.tectonic_container_images["kube_version"]}"
 
     ign_docker_dropin_json       = "${jsonencode(module.ignition_workers.docker_dropin_rendered)}"
+    ign_kubelet_env_json         = "${jsonencode(module.ignition_workers.kubelet_env_rendered)}"
     ign_kubelet_env_service_json = "${jsonencode(module.ignition_workers.kubelet_env_service_rendered)}"
     ign_kubelet_service_json     = "${jsonencode(module.ignition_workers.kubelet_service_rendered)}"
     ign_max_user_watches_json    = "${jsonencode(module.ignition_workers.max_user_watches_rendered)}"

@@ -97,9 +97,20 @@ data "template_file" "kubelet_env" {
   }
 }
 
+# TODO(lucab): remove this in favor of torcx boostrapper (OST-23)
 data "ignition_file" "kubelet_env" {
   filesystem = "root"
   path       = "/etc/kubernetes/kubelet.env"
+  mode       = 0644
+
+  content {
+    content = "${data.template_file.kubelet_env.rendered}"
+  }
+}
+
+data "ignition_file" "installer_kubelet_env" {
+  filesystem = "root"
+  path       = "/etc/kubernetes/installer/kubelet.env"
   mode       = 0644
 
   content {

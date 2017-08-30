@@ -107,6 +107,11 @@ storage:
       mode: 0644
       contents:
         inline: {{.ign_max_user_watches_json}}
+    - path: /etc/kubernetes/installer/kubelet.env
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: {{.ign_kubelet_env_json}}
 passwd:
   users:
     - name: core
