@@ -56,19 +56,6 @@ wait_for_crd() {
   set -e
 }
 
-wait_for_tpr() {
-  set +e
-  i=0
-
-  echo "Waiting for TPR $2"
-  until $KUBECTL -n "$1" get thirdpartyresources "$2"; do
-    i=$((i+1))
-    echo "TPR $2 not available yet, retrying in 5 seconds ($i)"
-    sleep 5
-  done
-  set -e
-}
-
 wait_for_pods() {
   set +e
   echo "Waiting for pods in namespace $1"
@@ -175,9 +162,9 @@ kubectl create -f monitoring/prometheus-operator-service-account.yaml
 kubectl create -f monitoring/prometheus-operator-svc.yaml
 kubectl create -f monitoring/prometheus-operator.yaml
 
-wait_for_tpr tectonic-system prometheus.monitoring.coreos.com
-wait_for_tpr tectonic-system alertmanager.monitoring.coreos.com
-wait_for_tpr tectonic-system service-monitor.monitoring.coreos.com
+wait_for_crd tectonic-system prometheuses.monitoring.coreos.com
+wait_for_crd tectonic-system alertmanagers.monitoring.coreos.com
+wait_for_crd tectonic-system servicemonitors.monitoring.coreos.com
 
 kubectl create -f monitoring/alertmanager-config.yaml
 kubectl create -f monitoring/alertmanager-service.yaml

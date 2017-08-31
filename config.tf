@@ -54,7 +54,7 @@ variable "tectonic_container_images" {
     pod_checkpointer             = "quay.io/coreos/pod-checkpointer:3517908b1a1837e78cfd041a0e51e61c7835d85f"
     prometheus                   = "quay.io/prometheus/prometheus:v1.7.1"
     prometheus_config_reload     = "quay.io/coreos/prometheus-config-reloader:v0.0.2"
-    prometheus_operator          = "quay.io/coreos/prometheus-operator:v0.11.1"
+    prometheus_operator          = "quay.io/coreos/prometheus-operator:v0.12.0"
     stats_emitter                = "quay.io/coreos/tectonic-stats:6e882361357fe4b773adbf279cddf48cb50164c1"
     stats_extender               = "quay.io/coreos/tectonic-stats-extender:487b3da4e175da96dabfb44fba65cdb8b823db2e"
     tectonic_channel_operator    = "quay.io/coreos/tectonic-channel-operator:0.5.3"
