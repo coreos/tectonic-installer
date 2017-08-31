@@ -9,6 +9,7 @@ data "ignition_config" "node" {
     "${var.ign_max_user_watches_id}",
     "${data.ignition_file.node_hostname.*.id[count.index]}",
     "${var.ign_kubelet_env_id}",
+    "${var.ign_kube_ca_id}",
   ]
 
   systemd = [
@@ -18,6 +19,8 @@ data "ignition_config" "node" {
     "${var.ign_kubelet_env_service_id}",
     "${data.ignition_systemd_unit.bootkube.id}",
     "${data.ignition_systemd_unit.tectonic.id}",
+    "${data.ignition_systemd_unit.vmtoolsd_member.id}",
+    "${var.ign_update_ca_certificates_dropin_id}",
   ]
 
   networkd = [

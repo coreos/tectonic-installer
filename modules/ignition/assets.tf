@@ -12,6 +12,18 @@ data "ignition_file" "max_user_watches" {
   }
 }
 
+data "ignition_file" "kube_ca" {
+  filesystem = "root"
+  path       = "/etc/ssl/certs/kube_ca.pem"
+  mode       = 0400
+  uid        = 0
+  gid        = 0
+
+  content {
+    content = "${var.kube_ca_crt_pem}"
+  }
+}
+
 data "template_file" "docker_dropin" {
   template = "${file("${path.module}/resources/dropins/10-dockeropts.conf")}"
 }
@@ -24,6 +36,22 @@ data "ignition_systemd_unit" "docker_dropin" {
     {
       name    = "10-dockeropts.conf"
       content = "${data.template_file.docker_dropin.rendered}"
+    },
+  ]
+}
+
+data "template_file" "update_ca_certificates_dropin" {
+  template = "${file("${path.module}/resources/dropins/10-dockeropts.conf")}"
+}
+
+data "ignition_systemd_unit" "update_ca_certificates_dropin" {
+  name   = "update-ca-certificates.service"
+  enable = true
+
+  dropin = [
+    {
+      name    = "10-always-update-ca-certificates.conf"
+      content = "${data.template_file.update_ca_certificates_dropin.rendered}"
     },
   ]
 }

@@ -2,6 +2,7 @@ data "ignition_config" "main" {
   files = [
     "${var.ign_max_user_watches_id}",
     "${var.ign_s3_puller_id}",
+    "${var.ign_kube_ca_id}",
   ]
 
   systemd = [
@@ -9,5 +10,6 @@ data "ignition_config" "main" {
     "${var.ign_locksmithd_service_id}",
     "${var.ign_kubelet_service_id}",
     "${var.ign_s3_kubelet_env_service_id}",
+    "${var.ign_update_ca_certificates_dropin_id}",
   ]
 }

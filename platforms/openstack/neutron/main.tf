@@ -126,6 +126,7 @@ module "ignition_masters" {
   kubelet_cni_bin_dir = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   kubelet_node_label  = "node-role.kubernetes.io/master"
   kubelet_node_taints = "node-role.kubernetes.io/master=:NoSchedule"
+  kube_ca_crt_pem     = "${module.bootkube.ca_cert}"
 }
 
 module "master_nodes" {
@@ -145,11 +146,13 @@ EOF
   tectonic_service          = "${module.tectonic.systemd_service}"
   tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
 
-  ign_docker_dropin_id      = "${module.ignition_masters.docker_dropin_id}"
-  ign_kubelet_env_id        = "${module.ignition_masters.kubelet_env_id}"
-  ign_kubelet_service_id    = "${module.ignition_masters.kubelet_service_id}"
-  ign_locksmithd_service_id = "${module.ignition_masters.locksmithd_service_id}"
-  ign_max_user_watches_id   = "${module.ignition_masters.max_user_watches_id}"
+  ign_docker_dropin_id                 = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_env_id                   = "${module.ignition_masters.kubelet_env_id}"
+  ign_kubelet_service_id               = "${module.ignition_masters.kubelet_service_id}"
+  ign_kube_ca_id                       = "${module.ignition_masters.kube_ca_id}"
+  ign_update_ca_certificates_dropin_id = "${module.ignition_masters.update_ca_certificates_dropin_id}"
+  ign_locksmithd_service_id            = "${module.ignition_masters.locksmithd_service_id}"
+  ign_max_user_watches_id              = "${module.ignition_masters.max_user_watches_id}"
 }
 
 module "ignition_workers" {
@@ -161,6 +164,7 @@ module "ignition_workers" {
   kubelet_cni_bin_dir = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   kubelet_node_label  = "node-role.kubernetes.io/node"
   kubelet_node_taints = ""
+  kube_ca_crt_pem     = "${module.bootkube.ca_cert}"
 }
 
 module "worker_nodes" {
@@ -180,11 +184,13 @@ EOF
   tectonic_service          = ""
   tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
 
-  ign_docker_dropin_id      = "${module.ignition_workers.docker_dropin_id}"
-  ign_kubelet_env_id        = "${module.ignition_masters.kubelet_env_id}"
-  ign_kubelet_service_id    = "${module.ignition_workers.kubelet_service_id}"
-  ign_locksmithd_service_id = "${module.ignition_workers.locksmithd_service_id}"
-  ign_max_user_watches_id   = "${module.ignition_workers.max_user_watches_id}"
+  ign_docker_dropin_id                 = "${module.ignition_workers.docker_dropin_id}"
+  ign_kubelet_env_id                   = "${module.ignition_workers.kubelet_env_id}"
+  ign_kubelet_service_id               = "${module.ignition_workers.kubelet_service_id}"
+  ign_kube_ca_id                       = "${module.ignition_workers.kube_ca_id}"
+  ign_update_ca_certificates_dropin_id = "${module.ignition_workers.update_ca_certificates_dropin_id}"
+  ign_locksmithd_service_id            = "${module.ignition_workers.locksmithd_service_id}"
+  ign_max_user_watches_id              = "${module.ignition_workers.max_user_watches_id}"
 }
 
 module "secrets" {
