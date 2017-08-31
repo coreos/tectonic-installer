@@ -95,7 +95,7 @@ class Cluster
   def recover_from_failed_destroy() end
 
   def clean
-    succeeded = system(env_variables, 'make -C ../.. destroy')
+    succeeded = system(env_variables, 'make -C ../.. clean')
     raise 'could not clean build directory' unless succeeded
   end
 
