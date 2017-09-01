@@ -333,6 +333,36 @@ This field is mandatory if `tectonic_ca_cert` is set.
 EOF
 }
 
+variable "tectonic_ingress_ca_cert_pem" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) The content of the PEM-encoded CA certificate that was used to sign the Tectonic Console's server certificate.
+If left blank, a CA certificate will be automatically generated.
+EOF
+}
+
+variable "tectonic_ingress_cert_pem" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) The content of the PEM-encoded certificate for the Tectonic Console that was signed by `tectonic_ingress_ca_cert_pem`.
+This field is mandatory if `tectonic_ingress_ca_cert_pem` is set.
+EOF
+}
+
+variable "tectonic_ingress_key_pem" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) The content of the PEM-encoded certificate key for the Tectonic Console certificate.
+This field is mandatory if `tectonic_ingress_ca_cert_pem` is set.
+EOF
+}
+
 variable "tectonic_vanilla_k8s" {
   default = false
 

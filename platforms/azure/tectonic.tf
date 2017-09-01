@@ -1,3 +1,16 @@
+module "ingress_certs" {
+  source = "../../modules/tls/ingress"
+
+  base_address = "${module.vnet.ingress_fqdn}"
+  ca_cert_pem  = "${module.bootkube.ca_cert}"
+  ca_key_pem   = "${module.bootkube.ca_key}"
+  ca_key_alg   = "${module.bootkube.ca_key_alg}"
+
+  ingress_ca_cert_pem = "${var.tectonic_ingress_ca_cert_pem}"
+  ingress_cert_pem    = "${var.tectonic_ingress_cert_pem}"
+  ingress_key_pem     = "${var.tectonic_ingress_key_pem}"
+}
+
 module "bootkube" {
   source = "../../modules/bootkube"
 
@@ -66,6 +79,10 @@ module "tectonic" {
   ca_cert      = "${module.bootkube.ca_cert}"
   ca_key_alg   = "${module.bootkube.ca_key_alg}"
   ca_key       = "${module.bootkube.ca_key}"
+
+  ingress_ca_cert_pem = "${module.ingress_certs.ca_cert_pem}"
+  ingress_cert_pem    = "${module.ingress_certs.cert_pem}"
+  ingress_key_pem     = "${module.ingress_certs.key_pem}"
 
   console_client_id = "tectonic-console"
   kubectl_client_id = "tectonic-kubectl"
