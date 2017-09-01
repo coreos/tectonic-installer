@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { configActionTypes } from '../actions';
 import { validate } from '../validate';
-import { CA_TYPE, CA_CERTIFICATE, CA_PRIVATE_KEY } from '../cluster-config';
+import { CA_TYPE, CA_CERTIFICATE, CA_PRIVATE_KEY, INGRESS_CERTIFICATE, INGRESS_PRIVATE_KEY, INGRESS_CA_CERTIFICATE } from '../cluster-config';
 import { WithClusterConfig, CertArea, PrivateKeyArea } from './ui';
 
 export const CertificateAuthority = connect(
@@ -87,6 +87,55 @@ export const CertificateAuthority = connect(
               }
             </div>
           </div>
+          <div className="wiz-radio-group">
+            <div className="radio wiz-radio-group__radio">
+              <label>
+                <input
+                  type="radio"
+                  name="certificateAuthority"
+                  defaultChecked={caType === 'ca-signed'}
+                  onChange={() => setCAType('ca-signed')} />
+                I'll provide a CA-signed certificate, certificate key, and CA certificate.
+              </label>
+              <p className="text-muted wiz-help-text">Your certificate will be used by the Tectonic Console.</p>
+            </div>
+            <div className="wiz-radio-group__body">
+              {
+                caType === 'ca-signed' && <div>
+                  <div className="row form-group">
+                    <div className="col-xs-12">
+                      <WithClusterConfig field={INGRESS_CERTIFICATE}>
+                        <CertArea
+                          id={INGRESS_CERTIFICATE}
+                          autoFocus="true"
+                          uploadButtonLabel="Upload Certificate" />
+                      </WithClusterConfig>
+                    </div>
+                  </div>
+
+                  <div className="row form-group">
+                    <div className="col-xs-12">
+                      <WithClusterConfig field={INGRESS_PRIVATE_KEY}>
+                        <PrivateKeyArea
+                          id={INGRESS_PRIVATE_KEY}
+                          uploadButtonLabel="Upload Certificate Private Key" />
+                      </WithClusterConfig>
+                    </div>
+                  </div>
+
+                  <div className="row form-group">
+                    <div className="col-xs-12">
+                      <WithClusterConfig field={INGRESS_CA_CERTIFICATE}>
+                        <CertArea
+                          id={INGRESS_CA_CERTIFICATE}
+                          uploadButtonLabel="Upload CA Certificate" />
+                      </WithClusterConfig>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -97,6 +146,13 @@ CertificateAuthority.canNavigateForward = ({clusterConfig}) => {
     return true;
   }
 
-  return (!validate.certificate(clusterConfig[CA_CERTIFICATE]) &&
-          !validate.privateKey(clusterConfig[CA_PRIVATE_KEY]));
+
+  if (clusterConfig[CA_TYPE] === 'owned') {
+    return (!validate.certificate(clusterConfig[CA_CERTIFICATE]) &&
+            !validate.privateKey(clusterConfig[CA_PRIVATE_KEY]));
+  }
+
+  return (!validate.certificate(clusterConfig[INGRESS_CERTIFICATE]) &&
+          !validate.certificate(clusterConfig[INGRESS_CA_CERTIFICATE]) &&
+          !validate.privateKey(clusterConfig[INGRESS_PRIVATE_KEY]));
 };

@@ -40,6 +40,9 @@ export const BM_WORKERS = 'workers';
 
 export const CA_CERTIFICATE = 'caCertificate';
 export const CA_PRIVATE_KEY = 'caPrivateKey';
+export const INGRESS_CA_CERTIFICATE = 'ingressCACertificate';
+export const INGRESS_CERTIFICATE = 'ingressCertificate';
+export const INGRESS_PRIVATE_KEY = 'ingressPrivateKey';
 export const CA_TYPE = 'caType';
 export const CLUSTER_NAME = 'clusterName';
 export const CLUSTER_SUBDOMAIN = 'clusterSubdomain';
@@ -177,6 +180,9 @@ export const DEFAULT_CLUSTER_CONFIG = {
   [BM_TECTONIC_DOMAIN]: '',
   [CA_CERTIFICATE]: '',
   [CA_PRIVATE_KEY]: '',
+  [INGRESS_CA_CERTIFICATE]: '',
+  [INGRESS_CERTIFICATE]: '',
+  [INGRESS_PRIVATE_KEY]: '',
   [CA_TYPE]: 'self-signed',
   [CLUSTER_NAME]: '',
   [CONTROLLER_DOMAIN]: '',
@@ -293,7 +299,12 @@ export const toAWS_TF = (cc, FORMS, opts = {}) => {
     ret.variables.tectonic_ca_cert = cc[CA_CERTIFICATE];
     ret.variables.tectonic_ca_key = cc[CA_PRIVATE_KEY];
     ret.variables.tectonic_ca_key_alg = keyToAlg(cc[CA_PRIVATE_KEY]);
+  } else if (cc[CA_TYPE] === 'ca-signed') {
+    ret.variables.tectonic_ingress_ca_cert_pem = cc[INGRESS_CA_CERTIFICATE];
+    ret.variables.tectonic_ingress_cert_pem = cc[INGRESS_CERTIFICATE];
+    ret.variables.tectonic_ingress_key_pem = cc[INGRESS_PRIVATE_KEY];
   }
+
   return ret;
 };
 
@@ -345,6 +356,10 @@ export const toBaremetal_TF = (cc, FORMS, opts = {}) => {
     ret.variables.tectonic_ca_cert = cc[CA_CERTIFICATE];
     ret.variables.tectonic_ca_key = cc[CA_PRIVATE_KEY];
     ret.variables.tectonic_ca_key_alg = keyToAlg(cc[CA_PRIVATE_KEY]);
+  } else if (cc[CA_TYPE] === 'ca-signed') {
+    ret.variables.tectonic_ingress_ca_cert_pem = cc[INGRESS_CA_CERTIFICATE];
+    ret.variables.tectonic_ingress_cert_pem = cc[INGRESS_CERTIFICATE];
+    ret.variables.tectonic_ingress_key_pem = cc[INGRESS_PRIVATE_KEY];
   }
 
   return ret;
