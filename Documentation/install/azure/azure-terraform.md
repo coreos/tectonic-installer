@@ -131,6 +131,7 @@ $ export ARM_CLIENT_ID=generated-app-id
 $ export ARM_CLIENT_SECRET=generated-pass
 # tenant field in az ad output
 $ export ARM_TENANT_ID=generated-tenant
+$ export TF_VAR_tectonic_azure_client_secret="${ARM_CLIENT_SECRET}"
 ```
 
 With the environment set, it's time to specify the deployment details for the cluster.
