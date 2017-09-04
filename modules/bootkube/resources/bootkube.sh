@@ -8,7 +8,22 @@ mkdir -p /etc/kubernetes/manifests/
 
 # Move optional experimental manifests into bootkube friendly locations
 [ -d /opt/tectonic/experimental ] && mv /opt/tectonic/experimental/* /opt/tectonic/manifests/ && rm -r /opt/tectonic/experimental
-[ -d /opt/tectonic/bootstrap-experimental ] && mv /opt/tectonic/bootstrap-experimental/* /opt/tectonic/bootstrap-manifests/ && rm -r /opt/tectonic/bootstrap-experimental
+
+# Move bootstrap experimental manifests (e.g. self-hosted etcd cluster) into
+# bootkube friendly locations. Enable/disable specific manifests based on options.
+if [ -d /opt/tectonic/bootstrap-experimental ]; then
+  mv /opt/tectonic/bootstrap-experimental/* /opt/tectonic/bootstrap-manifests/
+  # shellcheck disable=SC2154
+  if [ -x "${enable_etcd_backup}" ] || [ "${enable_etcd_backup}" != "true" ]; then
+    # backups are disabled, delete backup spec
+    mv /opt/tectonic/bootstrap-manifests/etcd-cluster-pv-backup.json /opt/tectonic/bootstrap-manifests/migrate-etcd-cluster.json
+  else
+    # backups are enabled, delete default spec
+    mv /opt/tectonic/bootstrap-manifests/etcd-cluster.json /opt/tectonic/bootstrap-manifests/migrate-etcd-cluster.json
+  fi
+  rm -r /opt/tectonic/bootstrap-experimental
+fi
+
 # Move network related manifests into bootkube friendly locations
 [ -d /opt/tectonic/net-manifests ] && mv /opt/tectonic/net-manifests/* /opt/tectonic/manifests/ && rm -r /opt/tectonic/net-manifests
 

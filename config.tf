@@ -469,6 +469,30 @@ variable "tectonic_networking" {
 EOF
 }
 
+variable "tectonic_enable_etcd_backup" {
+  type = "string"
+
+  description = <<EOF
+(optional) [ALPHA] Indicates whether self-hosted etcd clusters should be backup up to a persistent volume.
+
+If enabled, a StorageClass must be specified using the tectonic_etcd_backup_storage_class variable.
+EOF
+
+  default = "false"
+}
+
+variable "tectonic_etcd_backup_size" {
+  type        = "string"
+  description = "(optional) The size of the PersistentVolume used for handling etcd backups"
+  default     = "512"
+}
+
+variable "tectonic_etcd_backup_storage_class" {
+  type        = "string"
+  default     = ""
+  description = "(optional) The name of an existing Kubernetes StorageClass that will be used for handling etcd backups"
+}
+
 variable "tectonic_bootstrap_upgrade_cl" {
   type        = "string"
   default     = "true"

@@ -41,6 +41,8 @@ resource "template_dir" "etcd_experimental" {
   vars {
     etcd_version              = "${var.versions["etcd"]}"
     bootstrap_etcd_service_ip = "${cidrhost(var.service_cidr, 20)}"
+    etcd_backup_size          = "${var.etcd_backup_size}"
+    etcd_backup_storage_class = "${var.etcd_backup_storage_class}"
   }
 }
 
@@ -176,7 +178,8 @@ data "template_file" "bootkube_sh" {
   template = "${file("${path.module}/resources/bootkube.sh")}"
 
   vars {
-    bootkube_image = "${var.container_images["bootkube"]}"
+    bootkube_image     = "${var.container_images["bootkube"]}"
+    enable_etcd_backup = "${var.enable_etcd_backup}"
   }
 }
 

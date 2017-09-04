@@ -154,6 +154,23 @@ variable "cloud_config_path" {
   type        = "string"
 }
 
+variable "enable_etcd_backup" {
+  type        = "string"
+  description = "Indicates whether self-hosted etcd clusters should be backup up"
+  default     = "false"
+}
+
+variable "etcd_backup_size" {
+  type        = "string"
+  description = "The size of the PersistentVolume used for handling etcd backups"
+  default     = "512"
+}
+
+variable "etcd_backup_storage_class" {
+  type        = "string"
+  description = "The name of the Kubernetes StorageClass that will be used for handling etcd backups"
+}
+
 variable "service_cidr" {
   description = "A CIDR notation IP range from which to assign service cluster IPs"
   type        = "string"

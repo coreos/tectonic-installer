@@ -87,6 +87,10 @@ module "bootkube" {
   master_count = "${length(var.tectonic_metal_controller_names)}"
 
   cloud_config_path = ""
+
+  enable_etcd_backup        = "${var.tectonic_enable_etcd_backup}"
+  etcd_backup_size          = "${var.tectonic_etcd_backup_size}"
+  etcd_backup_storage_class = "${var.tectonic_etcd_backup_storage_class}"
 }
 
 module "tectonic" {
