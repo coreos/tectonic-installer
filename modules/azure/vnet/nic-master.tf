@@ -8,6 +8,6 @@ resource "azurerm_network_interface" "tectonic_master" {
     private_ip_address_allocation           = "dynamic"
     name                                    = "${var.cluster_name}-MasterIPConfiguration"
     subnet_id                               = "${var.external_master_subnet_id == "" ? join("",azurerm_subnet.master_subnet.*.id) : var.external_master_subnet_id}"
-    load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.api-lb.id}"]
+    load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.api_lb.id}"]
   }
 }

@@ -5,8 +5,9 @@ resource "azurerm_network_interface" "tectonic_worker" {
   resource_group_name = "${var.resource_group_name}"
 
   ip_configuration {
-    private_ip_address_allocation = "dynamic"
-    name                          = "${var.cluster_name}-WorkerIPConfiguration"
-    subnet_id                     = "${var.external_worker_subnet_id == "" ? join("",azurerm_subnet.worker_subnet.*.id) : var.external_worker_subnet_id}"
+    private_ip_address_allocation           = "dynamic"
+    name                                    = "${var.cluster_name}-WorkerIPConfiguration"
+    subnet_id                               = "${var.external_worker_subnet_id == "" ? join("",azurerm_subnet.worker_subnet.*.id) : var.external_worker_subnet_id}"
+    load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.ingress_lb.id}"]
   }
 }

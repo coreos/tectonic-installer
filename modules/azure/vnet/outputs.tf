@@ -65,11 +65,11 @@ output "api_ip_addresses" {
 }
 
 output "console_ip_addresses" {
-  value = ["${azurerm_public_ip.console_ip.ip_address}"]
+  value = ["${azurerm_public_ip.ingress_ip.ip_address}"]
 }
 
 output "ingress_fqdn" {
-  value = "${var.base_domain == "" ? azurerm_public_ip.console_ip.fqdn : "${var.cluster_name}.${var.base_domain}"}"
+  value = "${var.base_domain == "" ? azurerm_public_ip.ingress_ip.fqdn : "${var.cluster_name}.${var.base_domain}"}"
 }
 
 output "api_fqdn" {
