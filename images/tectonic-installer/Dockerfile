@@ -16,5 +16,4 @@ ADD config.tf $PROJECT_DIR/
 ADD installer/bin/linux/installer $PROJECT_DIR/installer/bin/linux/
 ADD platforms $PROJECT_DIR/platforms
 ADD modules $PROJECT_DIR/modules
-ADD terraformrc.example $PROJECT_DIR/
 
