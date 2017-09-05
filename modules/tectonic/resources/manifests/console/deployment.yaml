@@ -172,8 +172,4 @@ spec:
         secret:
           secretName: tectonic-identity-grpc-client-secret
       nodeSelector:
-        node-role.kubernetes.io/master: ""
-      tolerations:
-      - key: "node-role.kubernetes.io/master"
-        operator: "Exists"
-        effect: "NoSchedule"
+        node-role.kubernetes.io/node: ""

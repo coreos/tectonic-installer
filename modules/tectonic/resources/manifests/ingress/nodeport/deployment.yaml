@@ -65,10 +65,6 @@ spec:
               scheme: HTTP
       dnsPolicy: ClusterFirst
       nodeSelector:
-        node-role.kubernetes.io/master: ""
+        node-role.kubernetes.io/node: ""
       restartPolicy: Always
       terminationGracePeriodSeconds: 60
-      tolerations:
-      - key: "node-role.kubernetes.io/master"
-        operator: "Exists"
-        effect: "NoSchedule"

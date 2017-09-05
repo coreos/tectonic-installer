@@ -44,9 +44,5 @@ spec:
       imagePullSecrets:
       - name: coreos-pull-secret
       nodeSelector:
-        node-role.kubernetes.io/master: ""
+        node-role.kubernetes.io/node: ""
       terminationGracePeriodSeconds: 60
-      tolerations:
-      - key: "node-role.kubernetes.io/master"
-        operator: "Exists"
-        effect: "NoSchedule"

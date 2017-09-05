@@ -66,14 +66,10 @@ spec:
       imagePullSecrets:
       - name: coreos-pull-secret
       nodeSelector:
-        node-role.kubernetes.io/master: ""
+        node-role.kubernetes.io/node: ""
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
-      tolerations:
-      - key: "node-role.kubernetes.io/master"
-        operator: "Exists"
-        effect: "NoSchedule"
       volumes:
       - name: config
         configMap:
