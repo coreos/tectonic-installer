@@ -128,7 +128,7 @@ examples:
 			platforms/vmware/variables.tf)
 
 .PHONY: clean
-clean: destroy
+clean:
 	rm -rf $(BUILD_DIR)
 	$(MAKE) clean -C $(TOP_DIR)/installer
 	rm -f $(TF_RC)
