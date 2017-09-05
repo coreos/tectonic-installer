@@ -22,7 +22,6 @@ import (
 )
 
 const (
-	configFileName = ".terraformrc"
 	stateFileName  = "terraform.tfstate"
 	tfVarsFileName = "terraform.tfvars"
 	logsFolderName = "logs"
@@ -75,7 +74,6 @@ const (
 // expose the live state to a file (or else).
 type Executor struct {
 	executionPath string
-	configPath    string
 	binaryPath    string
 	envVariables  map[string]string
 }
@@ -88,8 +86,6 @@ func NewExecutor(executionPath string) (*Executor, error) {
 	// Create the folder in which the executor, and its logs will be stored,
 	// if not existing.
 	os.MkdirAll(filepath.Join(ex.executionPath, logsFolderName), 0770)
-
-	ex.configPath = filepath.Join(ex.WorkingDirectory(), configFileName)
 
 	// Find the TerraForm binary.
 	out, err := tfBinaryPath()
@@ -142,6 +138,7 @@ func (ex *Executor) AddEnvironmentVariables(envVars map[string]string) {
 	for k, v := range envVars {
 		ex.envVariables[k] = v
 	}
+	ex.envVariables["HOME"] = os.Getenv("HOME")
 }
 
 // AddCredentials is a convenience function that converts the given Credentials
@@ -178,7 +175,6 @@ func (ex *Executor) Execute(args ...string) (int, chan struct{}, error) {
 	// working directory (so the files such as terraform.tfstate are stored at
 	// the right place), extra environment variables and outputs.
 	cmd := exec.Command(ex.binaryPath, args...)
-	cmd.Env = append(cmd.Env, fmt.Sprintf("TERRAFORM_CONFIG=%s", ex.configPath))
 	// ssh changes its behavior based on these. pass them through so ssh-agent & stuff works
 	cmd.Env = append(cmd.Env, fmt.Sprintf("DISPLAY=%s", os.Getenv("DISPLAY")))
 	cmd.Env = append(cmd.Env, fmt.Sprintf("PATH=%s", os.Getenv("PATH")))

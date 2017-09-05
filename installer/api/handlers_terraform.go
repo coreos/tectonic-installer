@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os/exec"
+	"os"
+	"path"
 	"path/filepath"
-	"regexp"
 	"time"
 
 	"github.com/dghubble/sessions"
@@ -60,16 +60,16 @@ func terraformApplyHandler(w http.ResponseWriter, req *http.Request, ctx *Contex
 		return newInternalServerError("could not write Terraform templates: %s", err)
 	}
 
-	// Choose to run 'get' or 'init' based on Terraform version.
-	sub10Rx := regexp.MustCompile("^Terraform v0\\.[0-9]\\.[0-9]+")
-	out, err := exec.Command("terraform", "version").Output()
-	if err != nil {
-		return newInternalServerError("Failed to determine Terraform version: %s", err)
-	}
+	// // Choose to run 'get' or 'init' based on Terraform version.
+	// sub10Rx := regexp.MustCompile("^Terraform v0\\.[0-9]\\.[0-9]+")
+	// out, err := exec.Command("terraform", "version").Output()
+	// if err != nil {
+	// 	return newInternalServerError("Failed to determine Terraform version: %s", err)
+	// }
 	prepCommand := "init"
-	if sub10Rx.Match(out) {
-		prepCommand = "get"
-	}
+	// if sub10Rx.Match(out) {
+	// 	prepCommand = "get"
+	// }
 
 	// Execute Terraform get or init and wait for it to finish.
 	_, prepDone, err := ex.Execute(prepCommand, "-no-color", tfMainDir)
@@ -175,12 +175,27 @@ func newExecutorFromApplyHandlerInput(input *TerraformApplyHandlerInput) (*terra
 	}
 	exPath := filepath.Join(binaryPath, "clusters", clusterName+time.Now().Format("_2006-01-02_15-04-05"))
 
+	// Publish custom providers to execution environment
+	clusterPluginDir := filepath.Join(exPath, "terraform.d/plugins")
+	err = os.MkdirAll(clusterPluginDir, os.ModeDir|0755)
+	if err != nil {
+		return nil, newInternalServerError("Could not create custom provider plugins location: %s", err)
+	}
+	customPlugins := []string{}
+	customPlugins, err = filepath.Glob(path.Join(binaryPath, "terraform-provider-*"))
+	if err != nil {
+		return nil, newInternalServerError("Could not locate custom provider plugins: %s", err)
+	}
+	for _, pluginBinPath := range customPlugins {
+		pluginBin := filepath.Base(pluginBinPath)
+		os.Symlink(pluginBinPath, filepath.Join(clusterPluginDir, pluginBin))
+	}
+
 	// Create a new Executor.
 	ex, err := terraform.NewExecutor(exPath)
 	if err != nil {
 		return nil, newInternalServerError("Could not create Terraform executor: %s", err)
 	}
-
 	// Write the License and Pull Secret to disk, and wire these files in the
 	// variables.
 	if input.License == "" {
