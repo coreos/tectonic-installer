@@ -81,6 +81,8 @@ class Cluster
   def apply
     3.times do
       return if system(env_variables, 'make -C ../.. apply')
+    end
+    raise 'Applying cluster failed'
   end
 
   def destroy
