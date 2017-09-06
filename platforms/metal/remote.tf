@@ -2,10 +2,11 @@ resource "null_resource" "etcd_secrets" {
   count = "${var.tectonic_etcd_tls_enabled ? length(var.tectonic_metal_controller_domains) : 0}"
 
   connection {
-    type    = "ssh"
-    host    = "${element(var.tectonic_metal_controller_domains, count.index)}"
-    user    = "core"
-    timeout = "60m"
+    type        = "ssh"
+    host        = "${element(var.tectonic_metal_controller_domains, count.index)}"
+    user        = "core"
+    timeout     = "60m"
+    private_key = "${file(var.tectonic_ssh_private_key_path != "" ? pathexpand(var.tectonic_ssh_private_key_path) : "/dev/null")}"
   }
 
   provisioner "file" {
@@ -52,10 +53,11 @@ resource "null_resource" "kubeconfig" {
   depends_on = ["null_resource.etcd_secrets"]
 
   connection {
-    type    = "ssh"
-    host    = "${element(concat(var.tectonic_metal_controller_domains, var.tectonic_metal_worker_domains), count.index)}"
-    user    = "core"
-    timeout = "60m"
+    type        = "ssh"
+    host        = "${element(concat(var.tectonic_metal_controller_domains, var.tectonic_metal_worker_domains), count.index)}"
+    user        = "core"
+    timeout     = "60m"
+    private_key = "${file(var.tectonic_ssh_private_key_path != "" ? pathexpand(var.tectonic_ssh_private_key_path) : "/dev/null")}"
   }
 
   provisioner "file" {
@@ -78,10 +80,11 @@ resource "null_resource" "bootstrap" {
   depends_on = ["null_resource.kubeconfig"]
 
   connection {
-    type    = "ssh"
-    host    = "${element(var.tectonic_metal_controller_domains, 0)}"
-    user    = "core"
-    timeout = "60m"
+    type        = "ssh"
+    host        = "${element(var.tectonic_metal_controller_domains, 0)}"
+    user        = "core"
+    timeout     = "60m"
+    private_key = "${file(var.tectonic_ssh_private_key_path != "" ? pathexpand(var.tectonic_ssh_private_key_path) : "/dev/null")}"
   }
 
   provisioner "file" {

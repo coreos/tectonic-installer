@@ -185,3 +185,9 @@ SSH public key to use as an authorized key.
 Example: `ssh-rsa AAAB3N...`
 EOF
 }
+
+variable "tectonic_ssh_private_key_path" {
+  type        = "string"
+  description = "SSH private key file corresponding to tectonic_ssh_authorized_key. If not provided, SSH agent will be used."
+  default     = ""
+}
