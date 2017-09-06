@@ -28,5 +28,5 @@ export TERRAFORM_SOURCES=(
   "${REPOSITORY_ROOT}/examples"
 )
 
-export PROVIDER_MATCHBOX_VER=v0.2.2
-export PROVIDER_MATCHBOX_BASE_URL="https://github.com/coreos/terraform-provider-matchbox/releases/download/${PROVIDER_MATCHBOX_VER}/"
+export PROVIDER_MATCHBOX_VERSION=v0.2.2
+export PROVIDER_MATCHBOX_BASE_URL="https://github.com/coreos/terraform-provider-matchbox/releases/download/${PROVIDER_MATCHBOX_VERSION}/"

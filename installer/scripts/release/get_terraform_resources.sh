@@ -11,10 +11,10 @@ set -x
 #for os in "linux" "darwin" "windows"; do
 for os in "linux" "darwin"; do
     mkdir -p "${INSTALLER_RELEASE_DIR}/${os}/"
-    curl -L "${PROVIDER_MATCHBOX_BASE_URL}/terraform-provider-matchbox-${PROVIDER_MATCHBOX_VER}-${os}-amd64.tar.gz" -o "${TERRAFORM_BIN_TMP_DIR}/terraform-provider-matchbox-${PROVIDER_MATCHBOX_VER}-${os}-amd64.tar.gz"
+    curl -L "${PROVIDER_MATCHBOX_BASE_URL}/terraform-provider-matchbox-${PROVIDER_MATCHBOX_VERSION}-${os}-amd64.tar.gz" -o "${TERRAFORM_BIN_TMP_DIR}/terraform-provider-matchbox-${PROVIDER_MATCHBOX_VERSION}-${os}-amd64.tar.gz"
     pushd "${TERRAFORM_BIN_TMP_DIR}"
-    tar xvf "terraform-provider-matchbox-${PROVIDER_MATCHBOX_VER}-${os}-amd64.tar.gz"
-    cp "./terraform-provider-matchbox-${PROVIDER_MATCHBOX_VER}-${os}-amd64/terraform-provider-matchbox" "${INSTALLER_RELEASE_DIR}/${os}/"
+    tar xvf "terraform-provider-matchbox-${PROVIDER_MATCHBOX_VERSION}-${os}-amd64.tar.gz"
+    cp "./terraform-provider-matchbox-${PROVIDER_MATCHBOX_VERSION}-${os}-amd64/terraform-provider-matchbox" "${INSTALLER_RELEASE_DIR}/${os}/"
     popd
     curl -L "${TERRAFORM_BIN_BASE_URL}_${os}_amd64.zip" -o "${TERRAFORM_BIN_TMP_DIR}/terraform_${os}.zip"
     unzip -o "${TERRAFORM_BIN_TMP_DIR}/terraform_${os}.zip" -d "${INSTALLER_RELEASE_DIR}/${os}/"

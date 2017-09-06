@@ -12,7 +12,7 @@ TF_DOCS := $(shell which terraform-docs 2> /dev/null)
 TF_EXAMPLES := $(shell which terraform-examples 2> /dev/null)
 TF_CMD = terraform
 
-PROVIDER_MATCHBOX_VER = v0.2.2
+PROVIDER_MATCHBOX_VERSION = v0.2.2
 
 $(info Using build directory [${BUILD_DIR}])
 
@@ -20,12 +20,12 @@ $(info Using build directory [${BUILD_DIR}])
 all: $(INSTALLER_BIN) custom-providers
 
 custom-providers:
-	curl -L -o $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VER)-$(GOOS)-$(GOARCH).tar.gz \
-	  https://github.com/coreos/terraform-provider-matchbox/releases/download/$(PROVIDER_MATCHBOX_VER)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VER)-$(GOOS)-$(GOARCH).tar.gz
-	cd $(TMPDIR) && tar xvf terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VER)-$(GOOS)-$(GOARCH).tar.gz
+	curl -L -o $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VERSION)-$(GOOS)-$(GOARCH).tar.gz \
+	  https://github.com/coreos/terraform-provider-matchbox/releases/download/$(PROVIDER_MATCHBOX_VERSION)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VERSION)-$(GOOS)-$(GOARCH).tar.gz
+	cd $(TMPDIR) && tar xvf terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VERSION)-$(GOOS)-$(GOARCH).tar.gz
 	mkdir -p $(INSTALLER_PATH)
-	cp $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VER)-$(GOOS)-$(GOARCH)/terraform-provider-matchbox $(INSTALLER_PATH)/
-	rm -rf $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VER)-$(GOOS)-$(GOARCH)*
+	cp $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VERSION)-$(GOOS)-$(GOARCH)/terraform-provider-matchbox $(INSTALLER_PATH)/
+	rm -rf $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VERSION)-$(GOOS)-$(GOARCH)*
 
 $(INSTALLER_BIN):
 	$(MAKE) build -C $(TOP_DIR)/installer
