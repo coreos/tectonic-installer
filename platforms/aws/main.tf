@@ -5,6 +5,13 @@ provider "aws" {
 
 data "aws_availability_zones" "azs" {}
 
+module "container_linux" {
+  source = "../../modules/container_linux"
+
+  channel = "${var.tectonic_container_linux_channel}"
+  version = "${var.tectonic_container_linux_version}"
+}
+
 module "vpc" {
   source = "../../modules/aws/vpc"
 
@@ -59,9 +66,10 @@ module "etcd" {
   ec2_type       = "${var.tectonic_aws_etcd_ec2_type}"
   sg_ids         = "${concat(var.tectonic_aws_etcd_extra_sg_ids, list(module.vpc.etcd_sg_id))}"
 
-  ssh_key         = "${var.tectonic_aws_ssh_key}"
-  cl_channel      = "${var.tectonic_cl_channel}"
-  container_image = "${var.tectonic_container_images["etcd"]}"
+  ssh_key                 = "${var.tectonic_aws_ssh_key}"
+  container_linux_channel = "${var.tectonic_container_linux_channel}"
+  container_linux_version = "${module.container_linux.version}"
+  container_image         = "${var.tectonic_container_images["etcd"]}"
 
   subnets = "${module.vpc.worker_subnet_ids}"
 
@@ -105,7 +113,8 @@ module "masters" {
   assets_s3_location           = "${aws_s3_bucket_object.tectonic_assets.bucket}/${aws_s3_bucket_object.tectonic_assets.key}"
   autoscaling_group_extra_tags = "${var.tectonic_autoscaling_group_extra_tags}"
   base_domain                  = "${var.tectonic_base_domain}"
-  cl_channel                   = "${var.tectonic_cl_channel}"
+  container_linux_channel      = "${var.tectonic_container_linux_channel}"
+  container_linux_version      = "${module.container_linux.version}"
   cluster_id                   = "${module.tectonic.cluster_id}"
   cluster_name                 = "${var.tectonic_cluster_name}"
   console_sg_ids               = ["${module.vpc.console_sg_id}"]
@@ -159,7 +168,8 @@ module "workers" {
   source = "../../modules/aws/worker-asg"
 
   autoscaling_group_extra_tags = "${var.tectonic_autoscaling_group_extra_tags}"
-  cl_channel                   = "${var.tectonic_cl_channel}"
+  container_linux_channel      = "${var.tectonic_container_linux_channel}"
+  container_linux_version      = "${module.container_linux.version}"
   cluster_id                   = "${module.tectonic.cluster_id}"
   cluster_name                 = "${var.tectonic_cluster_name}"
   ec2_type                     = "${var.tectonic_aws_worker_ec2_type}"

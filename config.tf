@@ -291,7 +291,7 @@ Note: This field MUST be set manually prior to creating the cluster unless `tect
 EOF
 }
 
-variable "tectonic_cl_channel" {
+variable "tectonic_container_linux_channel" {
   type    = "string"
   default = "stable"
 
@@ -299,6 +299,17 @@ variable "tectonic_cl_channel" {
 (optional) The Container Linux update channel.
 
 Examples: `stable`, `beta`, `alpha`
+EOF
+}
+
+variable "tectonic_container_linux_version" {
+  type    = "string"
+  default = "latest"
+
+  description = <<EOF
+The Container Linux version to use. Set to `latest` to select the latest available version for the selected update channel.
+
+Examples: `latest`, `1465.6.0`
 EOF
 }
 
