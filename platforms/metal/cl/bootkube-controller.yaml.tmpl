@@ -47,7 +47,18 @@ systemd:
     - name: kubelet.service
       enable: true
       contents: {{.ign_kubelet_service_json}}
+    - name: bootkube.path
+      enable: true
+      contents: |
+        [Unit]
+        Description=Trigger for bootkube.service
+        [Path]
+        PathExists=/opt/tectonic/bootkube.sh
+        Unit=bootkube.service
+        [Install]
+        WantedBy=multi-user.target
     - name: bootkube.service
+      enable: false
       contents: |
         [Unit]
         Description=Bootstrap a Kubernetes cluster
@@ -65,7 +76,18 @@ systemd:
         [Install]
         WantedBy=multi-user.target
 {{ if eq .exclude_tectonic "0" }}
+    - name: tectonic.path
+      enable: true
+      contents: |
+        [Unit]
+        Description=Trigger for tectonic.service
+        [Path]
+        PathExists=/opt/tectonic/tectonic-rkt.sh
+        Unit=tectonic.service
+        [Install]
+        WantedBy=multi-user.target
     - name: tectonic.service
+      enable: false
       contents: |
         [Unit]
         Description=Bootstrap a Tectonic cluster
