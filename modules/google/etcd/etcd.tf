@@ -15,10 +15,11 @@ limitations under the License.
 */
 
 resource "google_compute_instance" "etcd-node" {
-  name           = "${var.cluster_name}-etcd"
+  name           = "${var.cluster_name}-etcd-${count.index}"
+  count          = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
   machine_type   = "${var.machine_type}"
   can_ip_forward = false
-  zone           = "${element(var.zone_list,0)}" # pick first zone
+  zone           = "${element(var.zone_list, count.index)}"
 
   disk {
     image = "coreos-${var.cl_channel}"
@@ -34,10 +35,10 @@ resource "google_compute_instance" "etcd-node" {
     }
   }
 
-  tags = ["tectonic-masters"]
+  tags = ["tectonic-etcd"]
 
   metadata = {
-    user-data = "${data.ignition_config.etcd.rendered}"
+    user-data = "${data.ignition_config.etcd.*.rendered[count.index]}"
   }
 
   service_account {

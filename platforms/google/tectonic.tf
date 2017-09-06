@@ -17,6 +17,7 @@ limitations under the License.
 module "bootkube" {
   source         = "../../modules/bootkube"
   cloud_provider = "gce"
+  cluster_name   = "${var.tectonic_cluster_name}"
 
   kube_apiserver_url = "https://${module.network.kube_apiserver_fqdn}:443"
   oidc_issuer_url    = "https://${module.network.kube_ingress_fqdn}/identity"
@@ -64,6 +65,8 @@ module "tectonic" {
   source   = "../../modules/tectonic"
   platform = "google"
 
+  cluster_name = "${var.tectonic_cluster_name}"
+
   base_address       = "${module.network.kube_ingress_fqdn}"
   kube_apiserver_url = "https://${module.network.kube_apiserver_fqdn}:443"
 
@@ -92,6 +95,18 @@ module "tectonic" {
   experimental      = "${var.tectonic_experimental}"
   master_count      = "${var.tectonic_master_count}"
   stats_url         = "${var.tectonic_stats_url}"
+
+  image_re = "${var.tectonic_image_re}"
+}
+
+module "flannel-vxlan" {
+  source = "../../modules/net/flannel-vxlan"
+
+  flannel_image     = "${var.tectonic_container_images["flannel"]}"
+  flannel_cni_image = "${var.tectonic_container_images["flannel_cni"]}"
+  cluster_cidr      = "${var.tectonic_cluster_cidr}"
+
+  bootkube_id = "${module.bootkube.id}"
 }
 
 data "archive_file" "assets" {
@@ -108,7 +123,7 @@ data "archive_file" "assets" {
   # Additionally, data sources do not support managing any lifecycle whatsoever,
   # and therefore, the archive is never deleted. To avoid cluttering the module
   # folder, we write it in the TerraForm managed hidden folder `.terraform`.
-  output_path = "${path.cwd}/.terraform/generated_${sha1("${module.tectonic.id} ${module.bootkube.id}")}.zip"
+  output_path = "./.terraform/generated_${sha1("${module.tectonic.id} ${module.bootkube.id} ${module.flannel-vxlan.id}")}.zip"
 }
 
 # vim: ts=2:sw=2:sts=2:et

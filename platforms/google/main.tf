@@ -68,8 +68,8 @@ module "network" {
 }
 
 module "etcd" {
-  source = "../../modules/google/etcd"
-
+  source            = "../../modules/google/etcd"
+  instance_count    = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(var.tectonic_gcp_zones) == 5 ? 5 : 3}"
   zone_list         = "${var.tectonic_gcp_zones}"
   machine_type      = "${var.tectonic_gcp_etcd_gce_type}"
   managed_zone_name = "${var.google_managedzone_name}"
@@ -84,6 +84,16 @@ module "etcd" {
 
   master_subnetwork_name = "${module.network.master_subnetwork_name}"
   dns_enabled            = "${!var.tectonic_experimental && length(compact(var.tectonic_etcd_servers)) == 0}"
+  external_endpoints     = ["${compact(var.tectonic_etcd_servers)}"]
+
+  tls_enabled        = "${var.tectonic_etcd_tls_enabled}"
+  tls_ca_crt_pem     = "${module.bootkube.etcd_ca_crt_pem}"
+  tls_server_crt_pem = "${module.bootkube.etcd_server_crt_pem}"
+  tls_server_key_pem = "${module.bootkube.etcd_server_key_pem}"
+  tls_client_crt_pem = "${module.bootkube.etcd_client_crt_pem}"
+  tls_client_key_pem = "${module.bootkube.etcd_client_key_pem}"
+  tls_peer_crt_pem   = "${module.bootkube.etcd_peer_crt_pem}"
+  tls_peer_key_pem   = "${module.bootkube.etcd_peer_key_pem}"
 }
 
 module "masters" {

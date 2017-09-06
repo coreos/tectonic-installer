@@ -85,22 +85,5 @@ resource "google_compute_instance_group_manager" "tectonic-master-igm" {
   base_instance_name = "mstr"
 }
 
-resource "google_compute_autoscaler" "tectonic-master-as" {
-  #count  = "${length(var.zone_list)}"
-  name   = "tectonic-master-as"
-  zone   = "${element(var.zone_list, 0)}"                                                          # 0 -> count.index
-  target = "${google_compute_instance_group_manager.tectonic-master-igm.*.self_link[count.index]}"
-
-  autoscaling_policy = {
-    max_replicas    = "${var.max_masters}"
-    min_replicas    = "${var.instance_count}"
-    cooldown_period = 60
-
-    cpu_utilization {
-      target = 0.25
-    }
-  }
-}
-
 # vim: ts=2:sw=2:sts=2:et:ai
 

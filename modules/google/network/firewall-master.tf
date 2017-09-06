@@ -78,7 +78,7 @@ resource "google_compute_firewall" "master-ingress-etcd" {
   }
 
   source_tags = ["tectonic-masters"]
-  target_tags = ["tectonic-masters"]
+  target_tags = ["tectonic-masters", "tectonic-etcd"]
 }
 
 resource "google_compute_firewall" "master-ingress-services" {

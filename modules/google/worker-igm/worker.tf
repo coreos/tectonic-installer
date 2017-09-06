@@ -55,22 +55,5 @@ resource "google_compute_instance_group_manager" "tectonic-worker-igm" {
   base_instance_name = "wrkr"
 }
 
-resource "google_compute_autoscaler" "tectonic-worker-as" {
-  count  = "${length(var.zone_list)}"
-  name   = "tectonic-worker-as"
-  zone   = "${google_compute_instance_group_manager.tectonic-worker-igm.*.zone[count.index]}"
-  target = "${google_compute_instance_group_manager.tectonic-worker-igm.*.self_link[count.index]}"
-
-  autoscaling_policy = {
-    max_replicas    = "${var.max_workers}"
-    min_replicas    = "${var.instance_count}"
-    cooldown_period = 60
-
-    cpu_utilization {
-      target = 0.25
-    }
-  }
-}
-
 # vim: ts=2:sw=2:sts=2:et:ai
 
