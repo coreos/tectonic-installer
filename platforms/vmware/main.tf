@@ -41,6 +41,8 @@ module "ignition_masters" {
   kubelet_cni_bin_dir = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   kubelet_node_label  = "node-role.kubernetes.io/master"
   kubelet_node_taints = "node-role.kubernetes.io/master=:NoSchedule"
+  cloud_provider        = "vsphere"
+  cloud_provider_config = "${data.template_file.cloud-provider.rendered}"
 }
 
 data "template_file" "cloud-provider" {
@@ -51,8 +53,7 @@ data "template_file" "cloud-provider" {
     cloud_config_password     = "${var.tectonic_vmware_password}"
     cloud_config_server       = "${var.tectonic_vmware_server}"
     cloud_config_insecureflag = "${var.tectonic_vmware_sslselfsigned}"
-    cloud_config_datacenter   = "${var.tectonic_vmware_datacenter}"
-    cloud_config_datastore    = "${var.tectonic_vmware_datastore}"
+    cloud_config_datacenter   = "${var.tectonic_vmware_datacenter}"    
     cloud_config_workingdir   = "${vsphere_folder.tectonic_vsphere_folder.path}"
   }
 }
@@ -103,6 +104,8 @@ module "ignition_workers" {
   kubelet_cni_bin_dir = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   kubelet_node_label  = "node-role.kubernetes.io/node"
   kubelet_node_taints = ""
+  cloud_provider        = "vsphere"
+  cloud_provider_config = "${data.template_file.cloud-provider.rendered}"
 }
 
 module "workers" {
