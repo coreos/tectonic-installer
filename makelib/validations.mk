@@ -14,4 +14,4 @@ generated-formatting:
 
 .PHONY: rubocop-tests
 rubocop-tests:
-	cd tests/rspec && rubocop
+	cd tests/rspec && bundle && bundle exec rubocop
