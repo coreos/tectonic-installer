@@ -21,6 +21,7 @@ resource "vsphere_virtual_machine" "node" {
   custom_configuration_parameters {
     guestinfo.coreos.config.data.encoding = "base64"
     guestinfo.coreos.config.data          = "${base64encode(data.ignition_config.node.*.rendered[count.index])}"
+    disk.enableUUID                       = "1"
   }
 
   connection {

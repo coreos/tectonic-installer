@@ -41,6 +41,21 @@ module "ignition_masters" {
   kubelet_cni_bin_dir = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   kubelet_node_label  = "node-role.kubernetes.io/master"
   kubelet_node_taints = "node-role.kubernetes.io/master=:NoSchedule"
+  cloud_provider        = "vsphere"
+  cloud_provider_config = "${data.template_file.cloud-provider.rendered}"
+}
+
+data "template_file" "cloud-provider" {
+  template = "${file("${path.module}/resources/cloud-config.ini")}"
+
+  vars {
+    cloud_config_username     = "${var.tectonic_vmware_username}"
+    cloud_config_password     = "${var.tectonic_vmware_password}"
+    cloud_config_server       = "${var.tectonic_vmware_server}"
+    cloud_config_insecureflag = "${var.tectonic_vmware_sslselfsigned}"
+    cloud_config_datacenter   = "${var.tectonic_vmware_datacenter}"    
+    cloud_config_workingdir   = "${vsphere_folder.tectonic_vsphere_folder.path}"
+  }
 }
 
 module "masters" {
@@ -77,6 +92,7 @@ module "masters" {
   ign_kubelet_service_id     = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id  = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id    = "${module.ignition_masters.max_user_watches_id}"
+  cloud_provider_config      = "${data.template_file.cloud-provider.rendered}"
 }
 
 module "ignition_workers" {
@@ -88,6 +104,8 @@ module "ignition_workers" {
   kubelet_cni_bin_dir = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   kubelet_node_label  = "node-role.kubernetes.io/node"
   kubelet_node_taints = ""
+  cloud_provider        = "vsphere"
+  cloud_provider_config = "${data.template_file.cloud-provider.rendered}"
 }
 
 module "workers" {
@@ -123,4 +141,5 @@ module "workers" {
   ign_kubelet_service_id     = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id  = "${module.ignition_workers.locksmithd_service_id}"
   ign_max_user_watches_id    = "${module.ignition_workers.max_user_watches_id}"
+  cloud_provider_config      = "${data.template_file.cloud-provider.rendered}"
 }

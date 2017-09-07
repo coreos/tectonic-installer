@@ -48,6 +48,7 @@ spec:
     - mountPath: /var/lock
       name: var-lock
       readOnly: false
+    ${cloud_provider_volumemount}
   hostNetwork: true
   volumes:
   - name: secrets
@@ -62,6 +63,7 @@ spec:
   - name: var-lock
     hostPath:
       path: /var/lock
+  ${cloud_provider_volume}
   updateStrategy:
     rollingUpdate:
     maxUnavailable: 1

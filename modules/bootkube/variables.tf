@@ -129,3 +129,21 @@ variable "pod_eviction_timeout" {
   type        = "string"
   default     = "5m"
 }
+
+variable "volume_name" {
+  description = "Volume name to mount on API Server and Controller Manager pods."
+  type        = "string"
+  default     = ""
+}
+
+variable "volume_mount_path" {
+  description = "Pod Volume path to mount in API Server and Controller Manager pods."
+  type        = "string"
+  default     = ""
+}
+
+variable "volume_host_path" {
+  description = "Host pad to mount on API Server and Controller Manager pods."
+  type        = "string"
+  default     = ""
+}

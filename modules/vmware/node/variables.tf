@@ -121,3 +121,8 @@ variable "ign_kubelet_env_service_id" {
   type        = "string"
   description = "The kubelet env service to use"
 }
+
+variable "cloud_provider_config" {
+  description = "Content of cloud provider config"
+  type        = "string"
+}
