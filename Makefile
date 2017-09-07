@@ -1,8 +1,8 @@
 CLUSTER ?= demo
 PLATFORM ?= aws
 TMPDIR ?= /tmp
-GOOS=$(shell go env GOOS)
-GOARCH=$(shell go env GOARCH)
+GOOS=$(shell uname -s | tr '[:upper:]' '[:lower:]')
+GOARCH=amd64
 TOP_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 BUILD_DIR = $(TOP_DIR)/build/$(CLUSTER)
 PLUGIN_DIR = $(BUILD_DIR)/terraform.d/plugins/$(GOOS)_$(GOARCH)
