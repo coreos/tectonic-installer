@@ -12,20 +12,12 @@ TF_DOCS := $(shell which terraform-docs 2> /dev/null)
 TF_EXAMPLES := $(shell which terraform-examples 2> /dev/null)
 TF_CMD = terraform
 
-PROVIDER_MATCHBOX_VERSION = v0.2.2
+include ./makelib/*.mk
 
 $(info Using build directory [${BUILD_DIR}])
 
 .PHONY: all
 all: $(INSTALLER_BIN) custom-providers
-
-custom-providers:
-	curl -L -o $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VERSION)-$(GOOS)-$(GOARCH).tar.gz \
-	  https://github.com/coreos/terraform-provider-matchbox/releases/download/$(PROVIDER_MATCHBOX_VERSION)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VERSION)-$(GOOS)-$(GOARCH).tar.gz
-	cd $(TMPDIR) && tar xvf terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VERSION)-$(GOOS)-$(GOARCH).tar.gz
-	mkdir -p $(INSTALLER_PATH)
-	cp $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VERSION)-$(GOOS)-$(GOARCH)/terraform-provider-matchbox $(INSTALLER_PATH)/
-	rm -rf $(TMPDIR)/terraform-provider-matchbox-$(PROVIDER_MATCHBOX_VERSION)-$(GOOS)-$(GOARCH)*
 
 $(INSTALLER_BIN):
 	$(MAKE) build -C $(TOP_DIR)/installer
@@ -35,11 +27,13 @@ localconfig:
 	mkdir -p $(BUILD_DIR)
 	cp examples/*$(subst /,-,$(PLATFORM)) $(BUILD_DIR)/terraform.tfvars
 
+$(PLUGIN_DIR):
+	mkdir -p $(PLUGIN_DIR)
+	ln -s $(INSTALLER_PATH)/terraform-provider-* $(PLUGIN_DIR)
+
 .PHONY: terraform-init
-terraform-init:
+terraform-init: custom-providers $(PLUGIN_DIR)
 ifneq ($(shell $(TF_CMD) version | grep -E "Terraform v0\.1[0-9]\.[0-9]+"), )
-	[ -d $(PLUGIN_DIR) ] || \
-	mkdir -p $(PLUGIN_DIR) && ln -s $(INSTALLER_PATH)/terraform-provider-* $(PLUGIN_DIR)/
 	cd $(BUILD_DIR) && $(TF_CMD) init $(TF_INIT_OPTIONS) $(TOP_DIR)/platforms/$(PLATFORM)
 else
 	cd $(BUILD_DIR) && $(TF_CMD) get $(TF_GET_OPTIONS) $(TOP_DIR)/platforms/$(PLATFORM)
