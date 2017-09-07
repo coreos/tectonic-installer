@@ -1,6 +1,6 @@
 FROM golang:1.8.3-stretch
 
-ENV TERRAFORM_VERSION="0.10.3"
+ENV TERRAFORM_VERSION="0.10.4"
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y -q \
