@@ -34,10 +34,6 @@ variable "zone_list" {
   type = "list"
 }
 
-variable "max_workers" {
-  type = "string"
-}
-
 variable "machine_type" {
   type = "string"
 }

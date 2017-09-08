@@ -43,10 +43,6 @@ output "kube_apiserver_fqdn" {
   value = "${join(".", compact(split(".", google_dns_record_set.api-external.name)))}"
 }
 
-output "kube_apiserver_internal_fqdn" {
-  value = "${google_compute_forwarding_rule.tectonic-api-internal-fwd-rule.ip_address}"
-}
-
 output "kube_ingress_fqdn" {
   # Remove trailing dot from the name
   value = "${join(".", compact(split(".", google_dns_record_set.ingress-external.name)))}"

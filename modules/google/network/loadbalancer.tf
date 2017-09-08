@@ -1,32 +1,3 @@
-resource "google_compute_health_check" "tectonic-master-backend-svc-healthcheck" {
-  name = "tectonic-master-backend-svc-healthcheck"
-
-  tcp_health_check {
-    port = "443"
-  }
-}
-
-resource "google_compute_region_backend_service" "tectonic-master-backend-svc" {
-  name     = "tectonic-master-backend-svc"
-  protocol = "TCP"
-  region   = "${var.gcp_region}"
-
-  backend {
-    group = "${var.master_instance_group}"
-  }
-
-  health_checks = ["${google_compute_health_check.tectonic-master-backend-svc-healthcheck.self_link}"]
-}
-
-resource "google_compute_forwarding_rule" "tectonic-api-internal-fwd-rule" {
-  load_balancing_scheme = "INTERNAL"
-  name                  = "tectonic-api-internal-fwd-rule"
-  region                = "${var.gcp_region}"
-  subnetwork            = "${google_compute_subnetwork.tectonic-master-subnet.self_link}"
-  backend_service       = "${google_compute_region_backend_service.tectonic-master-backend-svc.self_link}"
-  ports                 = ["443"]
-}
-
 resource "google_compute_target_pool" "tectonic-master-targetpool" {
   name = "tectonic-master-targetpool"
 }

@@ -39,7 +39,7 @@ variable "base_domain" {
 }
 
 variable "master_instance_group" {
-  type = "string"
+  type = "list"
 }
 
 # vim: ts=2:sw=2:sts=2:et:ai
