@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"time"
@@ -62,7 +61,7 @@ func terraformApplyHandler(w http.ResponseWriter, req *http.Request, ctx *Contex
 
 	// Choose to run 'get' or 'init' based on Terraform version.
 	sub10Rx := regexp.MustCompile("^Terraform v0\\.[0-9]\\.[0-9]+")
-	out, err := exec.Command("terraform", "version").Output()
+	out, err := ex.ExecuteSync("version")
 	if err != nil {
 		return newInternalServerError("Failed to determine Terraform version: %s", err)
 	}
