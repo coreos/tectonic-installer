@@ -109,6 +109,18 @@ module "flannel-vxlan" {
   bootkube_id = "${module.bootkube.id}"
 }
 
+module "calico-network-policy" {
+  source = "../../modules/net/calico-network-policy"
+
+  kube_apiserver_url = "https://${module.network.kube_apiserver_fqdn}:443"
+  calico_image       = "${var.tectonic_container_images["calico"]}"
+  calico_cni_image   = "${var.tectonic_container_images["calico_cni"]}"
+  cluster_cidr       = "${var.tectonic_cluster_cidr}"
+  enabled            = "${var.tectonic_calico_network_policy}"
+
+  bootkube_id = "${module.bootkube.id}"
+}
+
 data "archive_file" "assets" {
   type       = "zip"
   source_dir = "${path.cwd}/generated/"
@@ -123,7 +135,7 @@ data "archive_file" "assets" {
   # Additionally, data sources do not support managing any lifecycle whatsoever,
   # and therefore, the archive is never deleted. To avoid cluttering the module
   # folder, we write it in the TerraForm managed hidden folder `.terraform`.
-  output_path = "./.terraform/generated_${sha1("${module.tectonic.id} ${module.bootkube.id} ${module.flannel-vxlan.id}")}.zip"
+  output_path = "./.terraform/generated_${sha1("${module.tectonic.id} ${module.bootkube.id} ${module.flannel-vxlan.id} ${module.calico-network-policy.id}")}.zip"
 }
 
 # vim: ts=2:sw=2:sts=2:et
