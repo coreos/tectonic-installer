@@ -19,7 +19,6 @@ resource "null_resource" "bootstrapper" {
       "sudo mkdir -p /opt",
       "sudo rm -rf /opt/tectonic",
       "sudo mv /home/core/tectonic /opt/",
-      "sudo systemctl start ${var.vanilla_k8s ? "bootkube.service" : "tectonic.service"}",
     ]
   }
 }

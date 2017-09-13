@@ -8,6 +8,5 @@ module "bootstrapper" {
   source = "../../modules/bootstrap-ssh"
 
   # depends_on         = ["module.vnet", "module.dns", "module.etcd", "module.masters", "module.bootkube", "module.tectonic", "module.flannel-vxlan", "module.calico-network-policy"]
-  vanilla_k8s        = "${var.tectonic_vanilla_k8s}"
   bootstrapping_host = "${local.bootstrapping_host}"
 }
