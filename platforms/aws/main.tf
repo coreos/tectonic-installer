@@ -188,9 +188,9 @@ module "workers" {
   root_volume_iops             = "${var.tectonic_aws_worker_root_volume_iops}"
   root_volume_size             = "${var.tectonic_aws_worker_root_volume_size}"
   root_volume_type             = "${var.tectonic_aws_worker_root_volume_type}"
-  sg_ids                       = "${concat(var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id))}"
+  sg_ids                       = ["${concat(var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id))}"]
   ssh_key                      = "${var.tectonic_aws_ssh_key}"
-  subnet_ids                   = "${module.vpc.worker_subnet_ids}"
+  subnet_ids                   = ["${module.vpc.worker_subnet_ids}"]
   vpc_id                       = "${module.vpc.vpc_id}"
   worker_iam_role              = "${var.tectonic_aws_worker_iam_role_name}"
   load_balancers               = "${var.tectonic_aws_worker_load_balancers}"
