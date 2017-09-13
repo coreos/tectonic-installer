@@ -34,6 +34,8 @@ resource "template_dir" "tectonic" {
     prometheus_base_image               = "${var.container_base_images["prometheus"]}"
     alertmanager_base_image             = "${var.container_base_images["alertmanager"]}"
     node_exporter_base_image            = "${var.container_base_images["node_exporter"]}"
+    grafana_base_image                  = "${var.container_base_images["grafana"]}"
+    grafana_watcher_base_image          = "${var.container_base_images["grafana_watcher"]}"
 
     kubernetes_version             = "${var.versions["kubernetes"]}"
     monitoring_version             = "${var.versions["monitoring"]}"
@@ -64,8 +66,9 @@ resource "template_dir" "tectonic" {
 
     tectonic_monitoring_auth_cookie_secret = "${base64encode(random_id.tectonic_monitoring_auth_cookie_secret.b64)}"
 
-    alertmanager_callback     = "https://${var.base_address}/alertmanager/auth/callback"
-    prometheus_callback       = "https://${var.base_address}/prometheus/auth/callback"
+    alertmanager_callback = "https://${var.base_address}/alertmanager/auth/callback"
+    prometheus_callback   = "https://${var.base_address}/prometheus/auth/callback"
+    grafana_callback      = "https://${var.base_address}/grafana/auth/callback"
 
     ingress_kind     = "${var.ingress_kind}"
     ingress_ca_cert  = "${base64encode(var.ingress_ca_cert_pem)}"
