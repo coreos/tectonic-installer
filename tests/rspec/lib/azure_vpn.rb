@@ -22,8 +22,8 @@ class AzureVpn
 
   extend AzureSupport
 
-  def initialize(tf_vars_file_path)
-    raise 'Invalid tfvars file' if tf_vars_file_path.empty?
+  def initialize(tf_vars_file)
+    raise 'Invalid tfvars file' if tf_vars_file.nil?
 
     @ovpn_login = {
       username: "v#{SecureRandom.hex(8)}", password: SecureRandom.urlsafe_base64
@@ -36,7 +36,7 @@ class AzureVpn
       'TF_VAR_tectonic_azure_location' => AzureSupport.random_location_unless_defined
     }
     Dir.glob(AZURE_VPN_TEMPLATES) { |tf| FileUtils.cp(tf, build_dir) }
-    FileUtils.cp(tf_vars_file_path, "#{build_dir}/terraform.tfvars")
+    FileUtils.cp(tf_vars_file.path, "#{build_dir}/terraform.tfvars")
     File.write(File.join(build_dir, 'vpn_credentials'),
                "#{ovpn_login[:username]}\n#{ovpn_login[:password]}\n")
   end

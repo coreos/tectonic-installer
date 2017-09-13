@@ -10,7 +10,9 @@ RSpec.describe 'azure-private-external' do
     # Save environment, to restore it once the test it done
     # (since we alter it further down)
     @curent_env = ENV.clone
-    @vpn_vnet = AzureVpn.new(TEST_CLUSTER_CONFIG_FILE)
+    @varfile = TFVarsFile.new(TEST_CLUSTER_CONFIG_FILE)
+    ENV['CLUSTER'] ||= NameGenerator.generate(@varfile.prefix)
+    @vpn_vnet = AzureVpn.new(@varfile)
     @vpn_vnet.start
     # Pick up the VNET and resource group created for the VPN
     # and pass it to the installer as external resources

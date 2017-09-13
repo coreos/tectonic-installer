@@ -16,7 +16,7 @@ class Cluster
 
     # Enable local testers to specify a static cluster name
     # S3 buckets can only handle lower case names
-    @name = NameGenerator.generate(tfvars_file.prefix)
+    @name = ENV['CLUSTER'] || NameGenerator.generate(tfvars_file.prefix)
 
     @build_path = File.join(File.realpath('../../'), "build/#{@name}")
     @manifest_path = File.join(@build_path, 'generated')
