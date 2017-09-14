@@ -175,12 +175,13 @@ tests/smoke: bin/smoke smoke-test-env-docker-image
 	-e ARM_TENANT_ID \
 	-e TF_VAR_tectonic_aws_region \
 	-e TF_VAR_tectonic_aws_ssh_key \
+	-e TF_VAR_tectonic_azure_location \
 	-e TF_VAR_tectonic_license_path \
 	-e TF_VAR_tectonic_pull_secret_path \
 	-e TF_VAR_base_domain \
 	-e TF_VAR_tectonic_admin_email \
 	-e TF_VAR_tectonic_admin_password_hash \
-	-e TECTONIC_TESTS_DONT_CLEANUP \
+	-e TECTONIC_TESTS_DONT_CLEAN_UP \
 	--cap-add NET_ADMIN \
 	--device /dev/net/tun \
 	quay.io/coreos/tectonic-smoke-test-env \
