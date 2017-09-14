@@ -108,6 +108,9 @@ resource "template_dir" "bootkube" {
     master_count              = "${var.master_count}"
     node_monitor_grace_period = "${var.node_monitor_grace_period}"
     pod_eviction_timeout      = "${var.pod_eviction_timeout}"
+
+    cloud_provider_profile = "${var.cloud_provider != "" ? "${var.cloud_provider}" : "metal"}"
+    cloud_config_path      = "${var.cloud_config_path}"
   }
 }
 
@@ -177,6 +180,23 @@ resource "local_file" "bootkube_sh" {
 # bootkube.service (available as output variable)
 data "template_file" "bootkube_service" {
   template = "${file("${path.module}/resources/bootkube.service")}"
+}
+
+data "ignition_systemd_unit" "bootkube_service" {
+  name    = "bootkube.service"
+  enable  = false
+  content = "${data.template_file.bootkube_service.rendered}"
+}
+
+# bootkube.path (available as output variable)
+data "template_file" "bootkube_path_unit" {
+  template = "${file("${path.module}/resources/bootkube.path")}"
+}
+
+data "ignition_systemd_unit" "bootkube_path_unit" {
+  name    = "bootkube.path"
+  enable  = true
+  content = "${data.template_file.bootkube_path_unit.rendered}"
 }
 
 # etcd assets

@@ -104,7 +104,6 @@ module "masters" {
   assets_s3_location           = "${aws_s3_bucket_object.tectonic_assets.bucket}/${aws_s3_bucket_object.tectonic_assets.key}"
   autoscaling_group_extra_tags = "${var.tectonic_autoscaling_group_extra_tags}"
   base_domain                  = "${var.tectonic_base_domain}"
-  bootkube_service             = "${module.bootkube.systemd_service}"
   cl_channel                   = "${var.tectonic_cl_channel}"
   cluster_id                   = "${module.tectonic.cluster_id}"
   cluster_name                 = "${var.tectonic_cluster_name}"
@@ -125,16 +124,18 @@ module "masters" {
   root_volume_size             = "${var.tectonic_aws_master_root_volume_size}"
   root_volume_type             = "${var.tectonic_aws_master_root_volume_type}"
   ssh_key                      = "${var.tectonic_aws_ssh_key}"
-  subnet_ids                   = ["${module.vpc.master_subnet_ids}"]
-  tectonic_service             = "${module.tectonic.systemd_service}"
-  tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
+  subnet_ids                   = "${module.vpc.master_subnet_ids}"
 
+  ign_bootkube_path_unit_id     = "${module.bootkube.systemd_path_unit_id}"
+  ign_bootkube_service_id       = "${module.bootkube.systemd_service_id}"
   ign_docker_dropin_id          = "${module.ignition_masters.docker_dropin_id}"
   ign_kubelet_service_id        = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id     = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id       = "${module.ignition_masters.max_user_watches_id}"
   ign_s3_kubelet_env_service_id = "${module.ignition_masters.kubelet_env_service_id}"
   ign_s3_puller_id              = "${module.ignition_masters.s3_puller_id}"
+  ign_tectonic_path_unit_id     = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
+  ign_tectonic_service_id       = "${module.tectonic.systemd_service_id}"
 }
 
 module "ignition_workers" {
@@ -177,6 +178,7 @@ module "workers" {
   subnet_ids                   = ["${module.vpc.worker_subnet_ids}"]
   vpc_id                       = "${module.vpc.vpc_id}"
   worker_iam_role              = "${var.tectonic_aws_worker_iam_role_name}"
+  load_balancers               = ["${var.tectonic_aws_worker_load_balancers}"]
 
   ign_docker_dropin_id          = "${module.ignition_workers.docker_dropin_id}"
   ign_kubelet_service_id        = "${module.ignition_workers.kubelet_service_id}"

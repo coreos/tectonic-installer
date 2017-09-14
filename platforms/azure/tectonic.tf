@@ -37,6 +37,8 @@ module "bootkube" {
   experimental_enabled = "${var.tectonic_experimental}"
 
   master_count = "${var.tectonic_master_count}"
+
+  cloud_config_path = "/etc/kubernetes/cloud"
 }
 
 module "tectonic" {
@@ -122,7 +124,6 @@ resource "null_resource" "tectonic" {
       "sudo mkdir -p /opt",
       "sudo rm -rf /opt/tectonic",
       "sudo mv /home/core/tectonic /opt/",
-      "sudo systemctl start ${var.tectonic_vanilla_k8s ? "bootkube.service" : "tectonic.service"}",
     ]
   }
 }
