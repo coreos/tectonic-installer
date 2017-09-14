@@ -326,14 +326,12 @@ pipeline {
                 withDockerContainer(tectonic_smoke_test_env_image) {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       sh """#!/bin/bash -ex
                         cd tests/rspec
                         bundle exec rspec spec/azure_private_external_spec.rb
                       """
-                      deleteDir()
+                      cleanWs notFailBuild: true
                     }
                   }
                 }
