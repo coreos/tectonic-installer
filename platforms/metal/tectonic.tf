@@ -40,6 +40,8 @@ module "bootkube" {
   etcd_tls_enabled    = "${var.tectonic_etcd_tls_enabled}"
   etcd_cert_dns_names = "${var.tectonic_metal_controller_domains}"
 
+  apiserver_admission_control = "${var.tectonic_apiserver_admission_control}"
+
   experimental_enabled = "${var.tectonic_experimental}"
 
   master_count = "${length(var.tectonic_metal_controller_names)}"

@@ -41,6 +41,8 @@ module "bootkube" {
 
   etcd_tls_enabled = "${var.tectonic_etcd_tls_enabled}"
 
+  apiserver_admission_control = "${var.tectonic_apiserver_admission_control}"
+
   experimental_enabled = "${var.tectonic_experimental}"
 
   master_count = "${var.tectonic_master_count}"

@@ -12,6 +12,9 @@ tectonic_admin_email = ""
 // Note: This field MUST be set manually prior to creating the cluster.
 tectonic_admin_password_hash = ""
 
+// A list of admission controllers to enable on the apiserver. For more details: https://kubernetes.io/docs/admin/admission-controllers/
+tectonic_apiserver_admission_control = "NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds,PodSecurityPolicy"
+
 // The base DNS domain of the cluster. It must NOT contain a trailing period. Some
 // DNS providers will automatically add this if necessary.
 // 

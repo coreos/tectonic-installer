@@ -17,6 +17,12 @@ variable "kube_apiserver_url" {
   type        = "string"
 }
 
+variable "apiserver_admission_control" {
+  description = "Admission Controllers that are enabled for the kube apiserver."
+  type        = "string"
+  default     = "NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota,PodSecurityPolicy"
+}
+
 variable "etcd_tls_enabled" {
   default = false
 }

@@ -109,6 +109,13 @@ variable "tectonic_versions" {
   }
 }
 
+variable "tectonic_apiserver_admission_control" {
+  type    = "string"
+  default = "NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds,PodSecurityPolicy"
+
+  description = "A list of admission controllers to enable on the apiserver. For more details: https://kubernetes.io/docs/admin/admission-controllers/"
+}
+
 variable "tectonic_service_cidr" {
   type    = "string"
   default = "10.3.0.0/16"
