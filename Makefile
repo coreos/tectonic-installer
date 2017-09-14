@@ -15,7 +15,7 @@ TEST_COMMAND = /bin/bash -c "bundler exec rspec spec/${TEST}"
 
 include ./makelib/*.mk
 
-$(info Using build directory "[${BUILD_DIR}])
+$(info Using build directory [${BUILD_DIR}])
 
 .PHONY: all
 all: $(INSTALLER_BIN) custom-providers

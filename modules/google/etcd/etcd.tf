@@ -45,6 +45,3 @@ resource "google_compute_instance" "etcd-node" {
     scopes = ["cloud-platform"]
   }
 }
-
-# vim: ts=2:sw=2:sts=2:et:ai
-

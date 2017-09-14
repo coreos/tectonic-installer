@@ -50,7 +50,7 @@ spec:
         - --leader-elect=true
         - --node-monitor-grace-period=${node_monitor_grace_period}
         - --pod-eviction-timeout=${pod_eviction_timeout}
-#        - --cloud-provider=${cloud_provider}
+        - --cloud-provider=${cloud_provider}
         ${cloud_provider_config_flag}
         livenessProbe:
           httpGet:

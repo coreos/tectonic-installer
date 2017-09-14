@@ -14,34 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#resource "google_service_account" "tectonic-master-sa" {
-#  account_id   = "tectonic-master-sa"
-#  display_name = "tectonic-master-sa"
-#}
-#
-#resource "google_project_iam_policy" "project-policy" {
-#  project      = "${var.project_id}"
-#  policy_data  = "${data.google_iam_policy.tectonic-master-policy.policy_data}"
-#}
-#
-#data "google_iam_policy" "tectonic-master-policy" {
-#  binding {
-#    role = "roles/storage.objectReader"
-#
-#    members = [
-#      "serviceAccount:${google_service_account.tectonic-master-sa.email}",
-#    ]
-#  }
-#
-#  binding {
-#    role = "roles/compute.instanceAdmin"
-#
-#    members = [
-#      "serviceAccount:${google_service_account.tectonic-master-sa.email}",
-#    ]
-#  }
-#}
-
 resource "google_compute_instance_template" "tectonic-master-it" {
   name           = "tectonic-master-it"
   region         = "${var.region}"
@@ -70,8 +42,6 @@ resource "google_compute_instance_template" "tectonic-master-it" {
   }
 
   service_account {
-    #    email  = "${google_service_account.tectonic-master-sa.email}"
-    #    scopes = ["compute", "storage-ro"]
     scopes = ["cloud-platform"]
   }
 }

@@ -63,7 +63,7 @@ module "identity_certs" {
 
 module "bootkube" {
   source         = "../../modules/bootkube"
-  cloud_provider = "gce"
+  cloud_provider = ""
   cluster_name   = "${var.tectonic_cluster_name}"
 
   kube_apiserver_url = "https://${module.network.kube_apiserver_fqdn}:443"
@@ -83,7 +83,7 @@ module "bootkube" {
   oidc_groups_claim   = "groups"
   oidc_client_id      = "tectonic-kubectl"
 
-  etcd_endpoints   = ["${module.etcd.etcd_ip}"]
+  etcd_endpoints      = ["${module.etcd.etcd_ip}"]
   oidc_username_claim = "email"
   oidc_groups_claim   = "groups"
   oidc_client_id      = "tectonic-kubectl"
@@ -103,8 +103,8 @@ module "bootkube" {
   kubelet_key_pem      = "${module.kube_certs.kubelet_key_pem}"
 
   experimental_enabled = "${var.tectonic_experimental}"
-  master_count = "${var.tectonic_master_count}"
-  cloud_config_path = ""
+  master_count         = "${var.tectonic_master_count}"
+  cloud_config_path    = ""
 }
 
 module "tectonic" {
@@ -187,5 +187,3 @@ data "archive_file" "assets" {
   # folder, we write it in the TerraForm managed hidden folder `.terraform`.
   output_path = "./.terraform/generated_${sha1("${module.etcd_certs.id} ${module.tectonic.id} ${module.bootkube.id} ${module.flannel-vxlan.id} ${module.calico-network-policy.id}")}.zip"
 }
-
-

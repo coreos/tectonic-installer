@@ -18,7 +18,7 @@ provider "google" {
   project     = "${var.tectonic_gcp_project_id}"
   region      = "${var.tectonic_gcp_region}"
   credentials = "${var.tectonic_gcp_credentials}"
-  version = "0.1.3"
+  version     = "0.1.3"
 }
 
 module "network" {
@@ -97,7 +97,6 @@ module "etcd" {
   tls_peer_key_pem   = "${module.etcd_certs.etcd_peer_key_pem}"
 }
 
-
 module "masters" {
   source = "../../modules/google/master-igm"
 
@@ -130,8 +129,8 @@ module "masters" {
   ign_gcs_puller_id              = "${module.ignition_masters.gcs_puller_id}"
   ign_tectonic_path_unit_id      = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
   ign_tectonic_service_id        = "${module.tectonic.systemd_service_id}"
-  image_re                     = "${var.tectonic_image_re}"
-  container_images             = "${var.tectonic_container_images}"
+  image_re                       = "${var.tectonic_image_re}"
+  container_images               = "${var.tectonic_container_images}"
 }
 
 module "workers" {
@@ -174,7 +173,6 @@ module "ignition_masters" {
   kubelet_node_taints  = "node-role.kubernetes.io/master=:NoSchedule"
 }
 
-
 module "ignition_workers" {
   source = "../../modules/ignition"
 
@@ -186,5 +184,3 @@ module "ignition_workers" {
   kubelet_node_label   = "node-role.kubernetes.io/node"
   kubelet_node_taints  = ""
 }
-
-
