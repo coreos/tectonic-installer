@@ -260,6 +260,18 @@ tectonic_etcd_count = "0"
 // If set to true, experimental Tectonic assets are being deployed.
 tectonic_experimental = false
 
+// (optional) The content of the PEM-encoded CA certificate that was used to sign the Tectonic Console's server certificate.
+// If left blank, a CA certificate will be automatically generated.
+// tectonic_ingress_ca_cert_pem = ""
+
+// (optional) The content of the PEM-encoded certificate for the Tectonic Console that was signed by `tectonic_ingress_ca_cert_pem`.
+// This field is mandatory if `tectonic_ingress_ca_cert_pem` is set.
+// tectonic_ingress_cert_pem = ""
+
+// (optional) The content of the PEM-encoded certificate key for the Tectonic Console certificate.
+// This field is mandatory if `tectonic_ingress_ca_cert_pem` is set.
+// tectonic_ingress_key_pem = ""
+
 // The path to the tectonic licence file.
 // You can download the Tectonic license file from your Account overview page at [1].
 // 
