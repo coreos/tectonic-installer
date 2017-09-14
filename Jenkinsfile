@@ -50,7 +50,7 @@ def quay_creds = [
 
 def default_builder_image = 'quay.io/coreos/tectonic-builder:v1.39'
 def tectonic_smoke_test_env_image = 'quay.io/coreos/tectonic-smoke-test-env:v5.0'
- 
+
 pipeline {
   agent none
   options {
@@ -104,17 +104,17 @@ pipeline {
               make test
               rm -fr frontend/tests_output
               """
-              stash name: 'installer', includes: 'installer/bin/linux/installer'
-              stash name: 'node_modules', includes: 'installer/frontend/node_modules/**'
-              stash name: 'smoke', includes: 'bin/smoke'
+              stash name: 'repository'
+              cleanWs notFailBuild: true
             }
           }
           withDockerContainer(tectonic_smoke_test_env_image) {
-            checkout scm
+            unstash 'repository'
             sh"""#!/bin/bash -ex
               cd tests/rspec
               bundler exec rubocop --cache false spec lib
             """
+            cleanWs notFailBuild: true
           }
         }
       }
@@ -139,14 +139,12 @@ pipeline {
                 withDockerContainer(tectonic_smoke_test_env_image) {
                   sshagent(['aws-smoke-test-ssh-key']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       sh """#!/bin/bash -ex
                         cd tests/rspec
                         bundler exec rspec spec/aws_spec.rb
                       """
-                      deleteDir()
+                      cleanWs notFailBuild: true
                     }
                   }
                 }
@@ -162,14 +160,12 @@ pipeline {
                 ) {
                   sshagent(['aws-smoke-test-ssh-key']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       sh """#!/bin/bash -ex
                         cd tests/rspec
                         bundler exec rspec spec/aws_vpc_internal_spec.rb
                       """
-                      deleteDir()
+                      cleanWs notFailBuild: true
                     }
                   }
                 }
@@ -182,14 +178,12 @@ pipeline {
                 withDockerContainer(tectonic_smoke_test_env_image) {
                   sshagent(['aws-smoke-test-ssh-key']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       sh """#!/bin/bash -ex
                         cd tests/rspec
                         bundler exec rspec spec/aws_network_policy_spec.rb
                       """
-                      deleteDir()
+                      cleanWs notFailBuild: true
                     }
                   }
                 }
@@ -202,14 +196,12 @@ pipeline {
                 withDockerContainer(tectonic_smoke_test_env_image) {
                   sshagent(['aws-smoke-test-ssh-key']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       sh """#!/bin/bash -ex
                         cd tests/rspec
                         bundler exec rspec spec/aws_exp_spec.rb
                       """
-                      deleteDir()
+                      cleanWs notFailBuild: true
                     }
                   }
                 }
@@ -222,14 +214,12 @@ pipeline {
                 withDockerContainer(tectonic_smoke_test_env_image) {
                   sshagent(['aws-smoke-test-ssh-key']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       sh """#!/bin/bash -ex
                         cd tests/rspec
                         bundler exec rspec spec/aws_ca_spec.rb
                       """
-                      deleteDir()
+                      cleanWs notFailBuild: true
                     }
                   }
                 }
@@ -242,9 +232,7 @@ pipeline {
                 withDockerContainer(params.builder_image) {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       script {
                         try {
                           timeout(45) {
@@ -276,7 +264,7 @@ pipeline {
                               }
                             }
                           }
-                          deleteDir()
+                          cleanWs notFailBuild: true
                         }
                       }
                     }
@@ -291,9 +279,7 @@ pipeline {
                 withDockerContainer(params.builder_image) {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       script {
                         try {
                           timeout(45) {
@@ -325,7 +311,7 @@ pipeline {
                               }
                             }
                           }
-                          deleteDir()
+                          cleanWs notFailBuild: true
                         }
                       }
                     }
@@ -363,9 +349,7 @@ pipeline {
                 withDockerContainer(params.builder_image) {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       script {
                         try {
                           timeout(45) {
@@ -397,7 +381,7 @@ pipeline {
                               }
                             }
                           }
-                          deleteDir()
+                          cleanWs notFailBuild: true
                         }
                       }
                     }
@@ -413,9 +397,7 @@ pipeline {
                 withDockerContainer(params.builder_image) {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       script {
                         try {
                           timeout(45) {
@@ -444,7 +426,7 @@ pipeline {
                               }
                             }
                           }
-                          deleteDir()
+                          cleanWs notFailBuild: true
                         }
                       }
                     }
@@ -459,9 +441,7 @@ pipeline {
                 withDockerContainer(params.builder_image) {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       script {
                         try {
                           timeout(45) {
@@ -490,7 +470,7 @@ pipeline {
                               }
                             }
                           }
-                          deleteDir()
+                          cleanWs notFailBuild: true
                         }
                       }
                     }
@@ -505,9 +485,7 @@ pipeline {
                 withDockerContainer(params.builder_image) {
                   sshagent(['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
-                      checkout scm
-                      unstash 'installer'
-                      unstash 'smoke'
+                      unstash 'repository'
                       script {
                         try {
                           timeout(45) {
@@ -539,7 +517,7 @@ pipeline {
                               }
                             }
                           }
-                          deleteDir()
+                          cleanWs notFailBuild: true
                         }
                       }
                     }
@@ -551,16 +529,14 @@ pipeline {
           "SmokeTest: Bare Metal": {
             node('worker && bare-metal') {
               ansiColor('xterm') {
-                checkout scm
-                unstash 'installer'
-                unstash 'smoke'
+                unstash 'repository'
                 withCredentials(creds) {
                   timeout(35) {
                     sh """#!/bin/bash -ex
                     ${WORKSPACE}/tests/smoke/bare-metal/smoke.sh vars/metal.tfvars
                     """
                   }
-                  deleteDir()
+                  cleanWs notFailBuild: true
                 }
               }
             }
@@ -570,15 +546,13 @@ pipeline {
               withCredentials(creds) {
                 withDockerContainer(params.builder_image) {
                   ansiColor('xterm') {
-                    checkout scm
-                    unstash 'installer'
-                    unstash 'node_modules'
+                    unstash 'repository'
                     sh """#!/bin/bash -ex
                     cd installer
                     make launch-aws-installer-guitests
                     make gui-aws-tests-cleanup
                     """
-                    deleteDir()
+                    cleanWs notFailBuild: true
                   }
                 }
               }
@@ -589,9 +563,7 @@ pipeline {
               withCredentials(creds) {
                 withDockerContainer(image: params.builder_image, args: '-u root') {
                   ansiColor('xterm') {
-                    checkout scm
-                    unstash 'installer'
-                    unstash 'node_modules'
+                    unstash 'repository'
                     script {
                       try {
                         sh """#!/bin/bash -ex
@@ -608,7 +580,7 @@ pipeline {
                         make gui-baremetal-tests-cleanup
                         make clean
                         """
-                        deleteDir()
+                        cleanWs notFailBuild: true
                       }
                     }
                   }
@@ -628,15 +600,14 @@ pipeline {
         node('worker && ec2') {
           withCredentials(quay_creds) {
             ansiColor('xterm') {
-              checkout scm
-              unstash 'installer'
+              unstash 'repository'
               sh """
                 docker build -t quay.io/coreos/tectonic-installer:master -f images/tectonic-installer/Dockerfile .
                 docker login -u="$QUAY_ROBOT_USERNAME" -p="$QUAY_ROBOT_SECRET" quay.io
                 docker push quay.io/coreos/tectonic-installer:master
                 docker logout quay.io
               """
-              deleteDir()
+              cleanWs notFailBuild: true
             }
           }
         }
@@ -646,7 +617,7 @@ pipeline {
 }
 
 def notifySlack() {
-    def link  = "<${env.RUN_DISPLAY_URL}|#${env.BUILD_NUMBER}>"
+    def link = "<${env.BUILD_URL}>"
     def msg = "Tectonic Installer failed to destroy azure resources (${link})"
     slackSend(
         channel: '#tectonic-installer-ci',
