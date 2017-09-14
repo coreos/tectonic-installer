@@ -10,7 +10,9 @@ RSpec.describe 'aws-vpc' do
   before(:all) do
     export_random_region_if_not_defined
     AWSIAM.assume_role if Jenkins.environment?
-    @vpc = AWSVPC.new('test-vpc')
+    vpc_name = 'test-local-vpc'
+    vpc_name = "#{ENV['BRANCH_NAME']}-#{ENV['BUILD_ID']}-vpc" if Jenkins.environment?
+    @vpc = AWSVPC.new(vpc_name)
     @vpc.create
   end
 
