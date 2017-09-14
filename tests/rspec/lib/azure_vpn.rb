@@ -5,6 +5,7 @@ require 'securerandom'
 require 'net/http'
 require 'uri'
 require 'openssl'
+require 'time'
 require 'azure_support'
 
 AZURE_VPN_TEMPLATES = '../smoke/azure/fixtures/private-cluster/*.tf'
@@ -78,7 +79,7 @@ class AzureVpn
     loop do
       puts 'Waiting for VPN to connect...'
       break if system("ping -c 1 #{gwip}")
-      raise 'waiting for vpn connection timed out' if Time.now - from > 30.seconds
+      raise 'waiting for vpn connection timed out' if Time.now - from > 30
     end
   end
 
