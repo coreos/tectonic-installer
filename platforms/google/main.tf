@@ -88,14 +88,15 @@ module "etcd" {
   external_endpoints     = ["${compact(var.tectonic_etcd_servers)}"]
 
   tls_enabled        = "${var.tectonic_etcd_tls_enabled}"
-  tls_ca_crt_pem     = "${module.bootkube.etcd_ca_crt_pem}"
-  tls_server_crt_pem = "${module.bootkube.etcd_server_crt_pem}"
-  tls_server_key_pem = "${module.bootkube.etcd_server_key_pem}"
-  tls_client_crt_pem = "${module.bootkube.etcd_client_crt_pem}"
-  tls_client_key_pem = "${module.bootkube.etcd_client_key_pem}"
-  tls_peer_crt_pem   = "${module.bootkube.etcd_peer_crt_pem}"
-  tls_peer_key_pem   = "${module.bootkube.etcd_peer_key_pem}"
+  tls_ca_crt_pem     = "${module.etcd_certs.etcd_ca_crt_pem}"
+  tls_server_crt_pem = "${module.etcd_certs.etcd_server_crt_pem}"
+  tls_server_key_pem = "${module.etcd_certs.etcd_server_key_pem}"
+  tls_client_crt_pem = "${module.etcd_certs.etcd_client_crt_pem}"
+  tls_client_key_pem = "${module.etcd_certs.etcd_client_key_pem}"
+  tls_peer_crt_pem   = "${module.etcd_certs.etcd_peer_crt_pem}"
+  tls_peer_key_pem   = "${module.etcd_certs.etcd_peer_key_pem}"
 }
+
 
 module "masters" {
   source = "../../modules/google/master-igm"
