@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 output "instance_group" {
-  value = "${google_compute_instance_group_manager.tectonic-master-igm.*.instance_group}"
+  value = ["${google_compute_instance_group_manager.tectonic-master-igm.*.instance_group}"]
 }
 
 # vim: ts=2:sw=2:sts=2:et:ai

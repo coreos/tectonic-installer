@@ -15,7 +15,7 @@ TEST_COMMAND = /bin/bash -c "bundler exec rspec spec/${TEST}"
 
 include ./makelib/*.mk
 
-$(info Using build directory [${BUILD_DIR}])
+$(info Using build directory "[${BUILD_DIR}])
 
 .PHONY: all
 all: $(INSTALLER_BIN) custom-providers
@@ -118,6 +118,10 @@ examples:
 			config.tf, \
 			platforms/vmware/variables.tf)
 
+	$(call terraform-examples, \
+			examples/terraform.tfvars.gcp, \
+			config.tf, \
+			platforms/gcp/variables.tf)
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
@@ -174,6 +178,10 @@ tests/smoke: bin/smoke smoke-test-env-docker-image
 	-e ARM_ENVIRONMENT \
 	-e ARM_SUBSCRIPTION_ID \
 	-e ARM_TENANT_ID \
+	-e GOOGLE_APPLICATION_CREDENTIALS \
+	-e GOOGLE_CREDENTIALS \
+	-e GOOGLE_CLOUD_KEYFILE_JSON \
+	-e GCLOUD_KEYFILE_JSON \
 	-e TF_VAR_tectonic_aws_region \
 	-e TF_VAR_tectonic_aws_ssh_key \
 	-e TF_VAR_tectonic_azure_location \
