@@ -69,8 +69,8 @@ resource "template_dir" "tectonic" {
     prometheus_callback       = "https://${var.base_address}/prometheus/auth/callback"
 
     ingress_kind     = "${var.ingress_kind}"
-    ingress_tls_cert = "${base64encode(tls_locally_signed_cert.ingress.cert_pem)}"
-    ingress_tls_key  = "${base64encode(tls_private_key.ingress.private_key_pem)}"
+    ingress_tls_cert = "${base64encode(var.existing_certs["ingress_cert_path"] == "/dev/null" ? join(" ", tls_locally_signed_cert.ingress.*.cert_pem) : file(var.existing_certs["ingress_cert_path"]))}"
+    ingress_tls_key  = "${base64encode(var.existing_certs["ingress_cert_path"] == "/dev/null" ? join(" ", tls_private_key.ingress.*.private_key_pem) : file(var.existing_certs["ingress_key_path"]))}"
 
     identity_server_tls_cert = "${base64encode(tls_locally_signed_cert.identity_server.cert_pem)}"
     identity_server_tls_key  = "${base64encode(tls_private_key.identity_server.private_key_pem)}"

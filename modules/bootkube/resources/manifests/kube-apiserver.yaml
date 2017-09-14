@@ -44,10 +44,10 @@ spec:
         - --tls-ca-file=/etc/kubernetes/secrets/ca.crt
         - --tls-cert-file=/etc/kubernetes/secrets/apiserver.crt
         - --tls-private-key-file=/etc/kubernetes/secrets/apiserver.key
-        - --kubelet-client-certificate=/etc/kubernetes/secrets/apiserver.crt
-        - --kubelet-client-key=/etc/kubernetes/secrets/apiserver.key
+        - --kubelet-client-certificate=/etc/kubernetes/secrets/kubelet.crt
+        - --kubelet-client-key=/etc/kubernetes/secrets/kubelet.key
         - --service-account-key-file=/etc/kubernetes/secrets/service-account.pub
-        - --client-ca-file=/etc/kubernetes/secrets/ca.crt
+        - --client-ca-file=/etc/kubernetes/secrets/client-ca.crt
         - --authorization-mode=RBAC
         - --anonymous-auth=${anonymous_auth}
         - --oidc-issuer-url=${oidc_issuer_url}

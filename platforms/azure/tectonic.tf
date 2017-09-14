@@ -10,6 +10,7 @@ module "bootkube" {
   oidc_issuer_url    = "https://${module.vnet.ingress_fqdn}/identity"
 
   # Platform-independent variables wiring, do not modify.
+  existing_certs   = "${var.tectonic_existing_certs}"
   container_images = "${var.tectonic_container_images}"
   versions         = "${var.tectonic_versions}"
 
@@ -51,6 +52,7 @@ module "tectonic" {
   kube_apiserver_url = "https://${module.vnet.api_fqdn}:443"
 
   # Platform-independent variables wiring, do not modify.
+  existing_certs   = "${var.tectonic_existing_certs}"
   container_images = "${var.tectonic_container_images}"
   versions         = "${var.tectonic_versions}"
 
@@ -64,10 +66,11 @@ module "tectonic" {
   update_app_id  = "${var.tectonic_update_app_id}"
   update_server  = "${var.tectonic_update_server}"
 
-  ca_generated = "${module.bootkube.ca_cert == "" ? false : true}"
-  ca_cert      = "${module.bootkube.ca_cert}"
-  ca_key_alg   = "${module.bootkube.ca_key_alg}"
-  ca_key       = "${module.bootkube.ca_key}"
+  ca_generated  = "${module.bootkube.ca_cert == "" ? false : true}"
+  ca_cert       = "${module.bootkube.ca_cert}"
+  local_ca_cert = "${module.bootkube.local_ca_cert}"
+  ca_key_alg    = "${module.bootkube.ca_key_alg}"
+  ca_key        = "${module.bootkube.ca_key}"
 
   console_client_id = "tectonic-console"
   kubectl_client_id = "tectonic-kubectl"
@@ -121,8 +124,8 @@ resource "null_resource" "tectonic" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo mkdir -p /opt",
       "sudo rm -rf /opt/tectonic",
+      "sudo mkdir -p /opt",
       "sudo mv /home/core/tectonic /opt/",
     ]
   }

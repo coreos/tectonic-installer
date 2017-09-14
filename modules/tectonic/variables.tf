@@ -7,6 +7,11 @@ variable "container_images" {
   type        = "map"
 }
 
+variable "existing_certs" {
+  description = "existing certs"
+  type        = "map"
+}
+
 variable "versions" {
   description = "Versions of the components to use. Leave blank for defaults."
   type        = "map"
@@ -40,7 +45,12 @@ variable "ca_generated" {
 }
 
 variable "ca_cert" {
-  description = "Contents of a PEM-encoded CA certificate, used to generate Tectonic Console's server certificate. Leave blank to generate a new CA."
+  description = "Bundle of CA Certificates. If a ca.crt is provided we will include that and the locally generated CA"
+  type        = "string"
+}
+
+variable "local_ca_cert" {
+  description = "If a ca.key is provided, this will be the provided ca.crt. Otherwise it will be the locally generate ca.crt"
   type        = "string"
 }
 
