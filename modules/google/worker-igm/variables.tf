@@ -14,10 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-variable "user_data" {
-  type = "string"
-}
-
 variable "cl_channel" {
   type = "string"
 }
@@ -71,5 +67,12 @@ variable "disk_size" {
   description = "The size of the volume in gigabytes for the root block device."
 }
 
-# vim: ts=2:sw=2:sts=2:et:ai
+variable "ign_gcs_puller_id" {
+  type = "string"
+}
+
+variable "ign_gcs_kubelet_env_service_id" {
+  type = "string"
+}
+
 

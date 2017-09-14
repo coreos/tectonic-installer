@@ -66,7 +66,7 @@ resource "google_compute_instance_template" "tectonic-master-it" {
   tags = ["tectonic-masters"]
 
   metadata = {
-    user-data = "${var.user_data}"
+    user-data = "${data.ignition_config.main.rendered}"
   }
 
   service_account {
@@ -78,6 +78,7 @@ resource "google_compute_instance_template" "tectonic-master-it" {
 
 resource "google_compute_instance_group_manager" "tectonic-master-igm" {
   count              = "${var.instance_count}"
+  target_size        = 1
   name               = "tectonic-master-igm-${count.index}"
   zone               = "${element(var.zone_list, count.index)}"
   instance_template  = "${google_compute_instance_template.tectonic-master-it.self_link}"

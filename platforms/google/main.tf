@@ -18,6 +18,7 @@ provider "google" {
   project     = "${var.tectonic_gcp_project_id}"
   region      = "${var.tectonic_gcp_region}"
   credentials = "${var.tectonic_gcp_credentials}"
+  version = "0.1.3"
 }
 
 module "network" {
@@ -99,13 +100,13 @@ module "etcd" {
 module "masters" {
   source = "../../modules/google/master-igm"
 
-  project_id     = "${var.tectonic_gcp_project_id}"
-  region         = "${var.tectonic_gcp_region}"
-  instance_count = "${var.tectonic_master_count}"
-  zone_list      = "${var.tectonic_gcp_zones}"
-  machine_type   = "${var.tectonic_gcp_master_gce_type}"
-  cluster_name   = "${var.tectonic_cluster_name}"
-  user_data      = "${module.ignition-masters.ignition}"
+  project_id          = "${var.tectonic_gcp_project_id}"
+  region              = "${var.tectonic_gcp_region}"
+  instance_count      = "${var.tectonic_master_count}"
+  zone_list           = "${var.tectonic_gcp_zones}"
+  machine_type        = "${var.tectonic_gcp_master_gce_type}"
+  cluster_name        = "${var.tectonic_cluster_name}"
+  assets_gcs_location = "${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.tectonic-assets.name}"
 
   master_subnetwork_name      = "${module.network.master_subnetwork_name}"
   master_targetpool_self_link = "${module.network.master_targetpool_self_link}"
@@ -117,6 +118,19 @@ module "masters" {
 
   disk_type = "${var.tectonic_gcp_master_disktype}"
   disk_size = "${var.tectonic_gcp_master_disk_size}"
+
+  ign_bootkube_path_unit_id      = "${module.bootkube.systemd_path_unit_id}"
+  ign_bootkube_service_id        = "${module.bootkube.systemd_service_id}"
+  ign_docker_dropin_id           = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_service_id         = "${module.ignition_masters.kubelet_service_id}"
+  ign_locksmithd_service_id      = "${module.ignition_masters.locksmithd_service_id}"
+  ign_max_user_watches_id        = "${module.ignition_masters.max_user_watches_id}"
+  ign_gcs_kubelet_env_service_id = "${module.ignition_masters.kubelet_env_service_id}"
+  ign_gcs_puller_id              = "${module.ignition_masters.gcs_puller_id}"
+  ign_tectonic_path_unit_id      = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
+  ign_tectonic_service_id        = "${module.tectonic.systemd_service_id}"
+  image_re                     = "${var.tectonic_image_re}"
+  container_images             = "${var.tectonic_container_images}"
 }
 
 module "workers" {
@@ -127,7 +141,6 @@ module "workers" {
   zone_list      = "${var.tectonic_gcp_zones}"
   machine_type   = "${var.tectonic_gcp_worker_gce_type}"
   cluster_name   = "${var.tectonic_cluster_name}"
-  user_data      = "${module.ignition-workers.ignition}"
 
   worker_subnetwork_name      = "${module.network.worker_subnetwork_name}"
   worker_targetpool_self_link = "${module.network.worker_targetpool_self_link}"
@@ -139,38 +152,38 @@ module "workers" {
 
   disk_type = "${var.tectonic_gcp_worker_disktype}"
   disk_size = "${var.tectonic_gcp_worker_disk_size}"
+
+  ign_docker_dropin_id           = "${module.ignition_workers.docker_dropin_id}"
+  ign_kubelet_service_id         = "${module.ignition_workers.kubelet_service_id}"
+  ign_locksmithd_service_id      = "${module.ignition_masters.locksmithd_service_id}"
+  ign_max_user_watches_id        = "${module.ignition_workers.max_user_watches_id}"
+  ign_gcs_kubelet_env_service_id = "${module.ignition_workers.kubelet_env_service_id}"
+  ign_gcs_puller_id              = "${module.ignition_workers.gcs_puller_id}"
 }
 
-module "ignition-masters" {
-  source = "../../modules/google/ignition"
+module "ignition_masters" {
+  source = "../../modules/ignition"
 
-  kubelet_node_label        = "node-role.kubernetes.io/master"
-  kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
-  kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
-  etcd_endpoints            = ["${module.etcd.etcd_ip}"]
-  kubeconfig_gcs_location   = "${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.kubeconfig.name}"
-  assets_gcs_location       = "${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.tectonic-assets.name}"
-  container_images          = "${var.tectonic_container_images}"
-  bootkube_service          = "${module.bootkube.systemd_service}"
-  tectonic_service          = "${module.tectonic.systemd_service}"
-  tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
-  locksmithd_disabled       = "${var.tectonic_experimental}"
+  container_images     = "${var.tectonic_container_images}"
+  image_re             = "${var.tectonic_image_re}"
+  kube_dns_service_ip  = "${module.bootkube.kube_dns_service_ip}"
+  kubeconfig_fetch_cmd = "/opt/gcs-puller.sh ${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.kubeconfig.name} /etc/kubernetes/kubeconfig"
+  kubelet_cni_bin_dir  = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
+  kubelet_node_label   = "node-role.kubernetes.io/master"
+  kubelet_node_taints  = "node-role.kubernetes.io/master=:NoSchedule"
 }
 
-module "ignition-workers" {
-  source = "../../modules/google/ignition"
 
-  kubelet_node_label      = "node-role.kubernetes.io/node"
-  kubelet_node_taints     = ""
-  kube_dns_service_ip     = "${module.bootkube.kube_dns_service_ip}"
-  etcd_endpoints          = ["${module.etcd.etcd_ip}"]
-  kubeconfig_gcs_location = "${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.kubeconfig.name}"
-  assets_gcs_location     = ""
-  container_images        = "${var.tectonic_container_images}"
-  bootkube_service        = ""
-  tectonic_service        = ""
-  locksmithd_disabled     = "${var.tectonic_experimental}"
+module "ignition_workers" {
+  source = "../../modules/ignition"
+
+  container_images     = "${var.tectonic_container_images}"
+  image_re             = "${var.tectonic_image_re}"
+  kube_dns_service_ip  = "${module.bootkube.kube_dns_service_ip}"
+  kubeconfig_fetch_cmd = "/opt/gcs-puller.sh ${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.kubeconfig.name} /etc/kubernetes/kubeconfig"
+  kubelet_cni_bin_dir  = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
+  kubelet_node_label   = "node-role.kubernetes.io/node"
+  kubelet_node_taints  = ""
 }
 
-# vim: ts=2:sw=2:sts=2:et:ai
 

@@ -38,7 +38,7 @@ resource "google_compute_instance_template" "tectonic-worker-it" {
   tags = ["tectonic-workers"]
 
   metadata = {
-    user-data = "${var.user_data}"
+    user-data = "${data.ignition_config.main.rendered}"
   }
 
   service_account {
@@ -48,6 +48,7 @@ resource "google_compute_instance_template" "tectonic-worker-it" {
 
 resource "google_compute_instance_group_manager" "tectonic-worker-igm" {
   count              = "${var.instance_count}"
+  target_size        = 1
   name               = "tectonic-worker-igm-${count.index}"
   zone               = "${element(var.zone_list, count.index)}"
   instance_template  = "${google_compute_instance_template.tectonic-worker-it.self_link}"

@@ -14,10 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-variable "user_data" {
-  type = "string"
-}
-
 variable "project_id" {
   type = "string"
 }
@@ -75,5 +71,43 @@ variable "disk_size" {
   description = "The size of the volume in gigabytes for the root block device."
 }
 
-# vim: ts=2:sw=2:sts=2:et:ai
+variable "ign_bootkube_service_id" {
+  type        = "string"
+  description = "The ID of the bootkube systemd service unit"
+}
 
+variable "ign_bootkube_path_unit_id" {
+  type = "string"
+}
+
+variable "ign_tectonic_service_id" {
+  type        = "string"
+  description = "The ID of the tectonic installer systemd service unit"
+}
+
+variable "ign_tectonic_path_unit_id" {
+  type = "string"
+}
+
+variable "ign_gcs_kubelet_env_service_id" {
+  type = "string"
+}
+
+variable "ign_gcs_puller_id" {
+  type = "string"
+}
+
+variable "assets_gcs_location" {
+  type        = "string"
+  description = "Location on gcs of the Bootkube/Tectonic assets to use (bucket/key)"
+}
+
+variable "container_images" {
+  description = "Container images to use"
+  type        = "map"
+}
+
+variable "image_re" {
+  description = "(internal) Regular expression used to extract repo and tag components from image strings"
+  type        = "string"
+}
