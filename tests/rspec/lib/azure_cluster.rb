@@ -23,7 +23,7 @@ class AzureCluster < Cluster
     from = Time.now
     Net::SSH.start(ssh_ip, 'core') do |ssh|
       loop do
-        puts "Waiting for bootstrapping to complete..."
+        puts 'Waiting for bootstrapping to complete...'
         raise 'timeout waiting for bootstrapping' if Time.now - from > 1200 # 20 mins timeout
         bootkube_done = ssh.exec!(SSH_CMD_BOOTKUBE_DONE).exitstatus.zero?
         tectonic_done = ssh.exec!(SSH_CMD_TECTONIC_DONE).exitstatus.zero?
@@ -31,7 +31,7 @@ class AzureCluster < Cluster
         sleep(5)
       end
     end
-    puts "HOORAY! The cluster is up"
+    puts 'HOORAY! The cluster is up'
   end
 
   def master_ip_address
