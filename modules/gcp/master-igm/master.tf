@@ -55,5 +55,3 @@ resource "google_compute_instance_group_manager" "tectonic-master-igm" {
   target_pools       = ["${var.master_targetpool_self_link}"]
   base_instance_name = "mstr"
 }
-
-

@@ -10,11 +10,11 @@ data "ignition_config" "main" {
     var.ign_locksmithd_service_id,
     var.ign_kubelet_service_id,
     var.ign_gcs_kubelet_env_service_id,
-    data.ignition_systemd_unit.init_assets.id,
+    var.ign_init_assets_service_id,
     var.ign_bootkube_service_id,
     var.ign_tectonic_service_id,
     var.ign_bootkube_path_unit_id,
-    var.ign_tectonic_path_unit_id,
+    var.ign_tectonic_path_unit_id
    ))}"]
 }
 
@@ -37,10 +37,4 @@ data "ignition_file" "init_assets" {
   content {
     content = "${data.template_file.init_assets.rendered}"
   }
-}
-
-data "ignition_systemd_unit" "init_assets" {
-  name    = "init-assets.service"
-  enable  = "${var.assets_gcs_location != "" ? true : false}"
-  content = "${file("${path.module}/resources/services/init-assets.service")}"
 }

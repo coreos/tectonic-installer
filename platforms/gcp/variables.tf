@@ -155,6 +155,3 @@ variable "tectonic_gcp_etcd_disk_size" {
   default     = "30"
   description = "The size of the disk in gigabytes for the root block device of etcd nodes."
 }
-
-# vim: ts=2:sw=2:sts=2:et
-

@@ -41,4 +41,3 @@ output "worker_subnetwork_name" {
 output "tectonic_network_name" {
   value = "${google_compute_network.tectonic-network.name}"
 }
-

@@ -41,5 +41,3 @@ variable "base_domain" {
 variable "master_instance_group" {
   type = "list"
 }
-
-

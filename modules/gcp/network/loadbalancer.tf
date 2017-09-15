@@ -40,4 +40,3 @@ resource "google_compute_forwarding_rule" "tectonic-ingress-external-https-fwd-r
   target                = "${google_compute_target_pool.tectonic-worker-targetpool.self_link}"
   port_range            = "443"
 }
-

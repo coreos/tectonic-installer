@@ -122,6 +122,7 @@ module "masters" {
   ign_bootkube_service_id        = "${module.bootkube.systemd_service_id}"
   ign_docker_dropin_id           = "${module.ignition_masters.docker_dropin_id}"
   ign_kubelet_service_id         = "${module.ignition_masters.kubelet_service_id}"
+  ign_init_assets_service_id     = "${module.ignition_masters.init_assets_service_id}"
   ign_locksmithd_service_id      = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id        = "${module.ignition_masters.max_user_watches_id}"
   ign_gcs_kubelet_env_service_id = "${module.ignition_masters.kubelet_env_service_id}"
@@ -170,6 +171,7 @@ module "ignition_masters" {
   kubelet_cni_bin_dir  = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   kubelet_node_label   = "node-role.kubernetes.io/master"
   kubelet_node_taints  = "node-role.kubernetes.io/master=:NoSchedule"
+  assets_location      = "${google_storage_bucket.tectonic.name}/${google_storage_bucket_object.tectonic-assets.name}"
 }
 
 module "ignition_workers" {
@@ -193,7 +195,7 @@ module "dns" {
   external_endpoints  = ["${compact(var.tectonic_etcd_servers)}"]
   etcd_instance_count = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(var.tectonic_gcp_zones) == 5 ? 5 : 3}"
   managed_zone_name   = "${var.google_managedzone_name}"
-  etcd_ip_addresses      = "${module.etcd.etcd_ip_addresses}"
+  etcd_ip_addresses   = "${module.etcd.etcd_ip_addresses}"
   base_domain         = "${var.tectonic_base_domain}"
   tectonic_masters_ip = "${module.network.master_ip}"
   tectonic_ingress_ip = "${module.network.ingress_ip}"

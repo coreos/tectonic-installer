@@ -37,6 +37,3 @@ resource "google_storage_bucket_object" "kubeconfig" {
   bucket  = "${google_storage_bucket.tectonic.name}"
   content = "${module.bootkube.kubeconfig}"
 }
-
-# vim: ts=2:sw=2:sts=2:et
-

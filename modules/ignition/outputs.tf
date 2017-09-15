@@ -30,6 +30,10 @@ output "k8s_node_bootstrap_service_rendered" {
   value = "${data.template_file.k8s_node_bootstrap.rendered}"
 }
 
+output "init_assets_service_id" {
+  value = "${data.ignition_systemd_unit.init_assets.id}"
+}
+
 output "s3_puller_id" {
   value = "${data.ignition_file.s3_puller.id}"
 }

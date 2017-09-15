@@ -55,4 +55,3 @@ resource "google_compute_instance_group_manager" "tectonic-worker-igm" {
   target_pools       = ["${var.worker_targetpool_self_link}"]
   base_instance_name = "wrkr"
 }
-
