@@ -92,6 +92,10 @@ docs:
 			'This document gives an overview of variables used in the VMware platform of the Tectonic SDK.', \
 			platforms/vmware/variables.tf)
 
+	$(call terraform-docs, Documentation/variables/gcp.md, \
+			'This document gives an overview of variables used in the Google Cloud platform of the Tectonic SDK.', \
+			platforms/gcp/variables.tf)
+
 .PHONY: examples
 examples:
 	$(call terraform-examples, examples/terraform.tfvars.aws, \
