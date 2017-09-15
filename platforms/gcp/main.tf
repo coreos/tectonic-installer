@@ -84,7 +84,6 @@ module "etcd" {
   disk_size = "${var.tectonic_gcp_etcd_disk_size}"
 
   master_subnetwork_name = "${module.network.master_subnetwork_name}"
-  dns_enabled            = "${!var.tectonic_experimental && length(compact(var.tectonic_etcd_servers)) == 0}"
   external_endpoints     = ["${compact(var.tectonic_etcd_servers)}"]
 
   tls_enabled        = "${var.tectonic_etcd_tls_enabled}"
@@ -183,4 +182,19 @@ module "ignition_workers" {
   kubelet_cni_bin_dir  = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
   kubelet_node_label   = "node-role.kubernetes.io/node"
   kubelet_node_taints  = ""
+}
+
+module "dns" {
+  source = "../../modules/dns/gcp"
+
+  cluster_name        = "${var.tectonic_cluster_name}"
+  etcd_dns_enabled    = "${!var.tectonic_experimental && length(compact(var.tectonic_etcd_servers)) == 0}"
+  tls_enabled         = "${var.tectonic_etcd_tls_enabled}"
+  external_endpoints  = ["${compact(var.tectonic_etcd_servers)}"]
+  etcd_instance_count = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(var.tectonic_gcp_zones) == 5 ? 5 : 3}"
+  managed_zone_name   = "${var.google_managedzone_name}"
+  etcd_ip_addresses      = "${module.etcd.etcd_ip_addresses}"
+  base_domain         = "${var.tectonic_base_domain}"
+  tectonic_masters_ip = "${module.network.master_ip}"
+  tectonic_ingress_ip = "${module.network.ingress_ip}"
 }

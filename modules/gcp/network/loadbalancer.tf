@@ -19,14 +19,6 @@ resource "google_compute_forwarding_rule" "tectonic-api-external-fwd-rule" {
   port_range            = "443"
 }
 
-resource "google_dns_record_set" "api-external" {
-  name         = "${var.cluster_name}.api.${var.base_domain}."
-  type         = "A"
-  ttl          = 300
-  managed_zone = "${var.managed_zone_name}"
-  rrdatas      = ["${google_compute_address.tectonic-masters-ip.address}"]
-}
-
 resource "google_compute_address" "tectonic-ingress-ip" {
   name = "tectonic-ingress-ip"
 }
@@ -49,10 +41,3 @@ resource "google_compute_forwarding_rule" "tectonic-ingress-external-https-fwd-r
   port_range            = "443"
 }
 
-resource "google_dns_record_set" "ingress-external" {
-  name         = "${var.cluster_name}.${var.base_domain}."
-  type         = "A"
-  ttl          = 300
-  managed_zone = "${var.managed_zone_name}"
-  rrdatas      = ["${google_compute_address.tectonic-ingress-ip.address}"]
-}

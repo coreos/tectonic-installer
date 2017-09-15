@@ -22,10 +22,6 @@ variable "instance_count" {
   type = "string"
 }
 
-variable "dns_enabled" {
-  type = "string"
-}
-
 variable "container_image" {
   type = "string"
 }

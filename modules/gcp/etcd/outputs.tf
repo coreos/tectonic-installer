@@ -14,6 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-output "etcd_ip" {
-  value = ["${split(",", length(var.external_endpoints) == 0 ? join(",", google_dns_record_set.etc_a_node.*.name) : join(",", var.external_endpoints))}"]
+output "etcd_ip_addresses" {
+  value = ["${google_compute_instance.etcd-node.*.network_interface.0.address}"]
 }

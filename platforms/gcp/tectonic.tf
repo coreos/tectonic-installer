@@ -20,7 +20,7 @@ module "kube_certs" {
   ca_cert_pem        = "${var.tectonic_ca_cert}"
   ca_key_alg         = "${var.tectonic_ca_key_alg}"
   ca_key_pem         = "${var.tectonic_ca_key}"
-  kube_apiserver_url = "https://${module.network.kube_apiserver_fqdn}:443"
+  kube_apiserver_url = "https://${module.dns.kube_apiserver_fqdn}:443"
   service_cidr       = "${var.tectonic_service_cidr}"
 }
 
@@ -47,7 +47,7 @@ module "etcd_certs" {
 module "ingress_certs" {
   source = "../../modules/tls/ingress/self-signed"
 
-  base_address = "${module.network.kube_ingress_fqdn}"
+  base_address = "${module.dns.kube_ingress_fqdn}"
   ca_cert_pem  = "${module.kube_certs.ca_cert_pem}"
   ca_key_alg   = "${module.kube_certs.ca_key_alg}"
   ca_key_pem   = "${module.kube_certs.ca_key_pem}"
@@ -66,8 +66,8 @@ module "bootkube" {
   cloud_provider = ""
   cluster_name   = "${var.tectonic_cluster_name}"
 
-  kube_apiserver_url = "https://${module.network.kube_apiserver_fqdn}:443"
-  oidc_issuer_url    = "https://${module.network.kube_ingress_fqdn}/identity"
+  kube_apiserver_url = "https://${module.dns.kube_apiserver_fqdn}:443"
+  oidc_issuer_url    = "https://${module.dns.kube_ingress_fqdn}/identity"
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
@@ -83,7 +83,7 @@ module "bootkube" {
   oidc_groups_claim   = "groups"
   oidc_client_id      = "tectonic-kubectl"
 
-  etcd_endpoints      = ["${module.etcd.etcd_ip}"]
+  etcd_endpoints      = ["${module.dns.etcd_ip_fqdn_list}"]
   oidc_username_claim = "email"
   oidc_groups_claim   = "groups"
   oidc_client_id      = "tectonic-kubectl"
@@ -113,8 +113,8 @@ module "tectonic" {
 
   cluster_name = "${var.tectonic_cluster_name}"
 
-  base_address       = "${module.network.kube_ingress_fqdn}"
-  kube_apiserver_url = "https://${module.network.kube_apiserver_fqdn}:443"
+  base_address       = "${module.dns.kube_ingress_fqdn}"
+  kube_apiserver_url = "https://${module.dns.kube_apiserver_fqdn}:443"
 
   # Platform-independent variables wiring, do not modify.
   container_images      = "${var.tectonic_container_images}"
@@ -164,7 +164,7 @@ module "flannel-vxlan" {
 module "calico-network-policy" {
   source = "../../modules/net/calico-network-policy"
 
-  kube_apiserver_url = "https://${module.network.kube_apiserver_fqdn}:443"
+  kube_apiserver_url = "https://${module.dns.kube_apiserver_fqdn}:443"
   calico_image       = "${var.tectonic_container_images["calico"]}"
   calico_cni_image   = "${var.tectonic_container_images["calico_cni"]}"
   cluster_cidr       = "${var.tectonic_cluster_cidr}"

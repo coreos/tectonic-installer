@@ -18,6 +18,10 @@ output "master_ip" {
   value = "${google_compute_address.tectonic-masters-ip.address}"
 }
 
+output "ingress_ip" {
+  value = "${google_compute_address.tectonic-ingress-ip.address}"
+}
+
 output "master_targetpool_self_link" {
   value = "${google_compute_target_pool.tectonic-master-targetpool.self_link}"
 }
@@ -36,15 +40,5 @@ output "worker_subnetwork_name" {
 
 output "tectonic_network_name" {
   value = "${google_compute_network.tectonic-network.name}"
-}
-
-output "kube_apiserver_fqdn" {
-  # Remove trailing dot from the name
-  value = "${join(".", compact(split(".", google_dns_record_set.api-external.name)))}"
-}
-
-output "kube_ingress_fqdn" {
-  # Remove trailing dot from the name
-  value = "${join(".", compact(split(".", google_dns_record_set.ingress-external.name)))}"
 }
 
