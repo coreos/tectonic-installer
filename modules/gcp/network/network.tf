@@ -34,6 +34,3 @@ resource "google_compute_subnetwork" "tectonic-worker-subnet" {
   network       = "${google_compute_network.tectonic-network.self_link}"
   region        = "${var.gcp_region}"
 }
-
-# vim: ts=2:sw=2:sts=2:et:ai
-

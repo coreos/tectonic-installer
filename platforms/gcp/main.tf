@@ -22,7 +22,7 @@ provider "google" {
 }
 
 module "network" {
-  source = "../../modules/google/network"
+  source = "../../modules/gcp/network"
 
   gcp_region           = "${var.tectonic_gcp_region}"
   master_ip_cidr_range = "${var.tectonic_gcp_network_masters_cidr_range}"
@@ -69,7 +69,7 @@ module "network" {
 }
 
 module "etcd" {
-  source            = "../../modules/google/etcd"
+  source            = "../../modules/gcp/etcd"
   instance_count    = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(var.tectonic_gcp_zones) == 5 ? 5 : 3}"
   zone_list         = "${var.tectonic_gcp_zones}"
   machine_type      = "${var.tectonic_gcp_etcd_gce_type}"
@@ -98,7 +98,7 @@ module "etcd" {
 }
 
 module "masters" {
-  source = "../../modules/google/master-igm"
+  source = "../../modules/gcp/master-igm"
 
   project_id          = "${var.tectonic_gcp_project_id}"
   region              = "${var.tectonic_gcp_region}"
@@ -134,7 +134,7 @@ module "masters" {
 }
 
 module "workers" {
-  source = "../../modules/google/worker-igm"
+  source = "../../modules/gcp/worker-igm"
 
   region         = "${var.tectonic_gcp_region}"
   instance_count = "${var.tectonic_worker_count}"

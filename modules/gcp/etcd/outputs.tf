@@ -17,6 +17,3 @@ limitations under the License.
 output "etcd_ip" {
   value = ["${split(",", length(var.external_endpoints) == 0 ? join(",", google_dns_record_set.etc_a_node.*.name) : join(",", var.external_endpoints))}"]
 }
-
-# vim: ts=2:sw=2:sts=2:et:ai
-

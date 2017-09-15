@@ -41,5 +41,4 @@ resource "google_dns_record_set" "etc_a_node" {
   rrdatas      = ["${google_compute_instance.etcd-node.*.network_interface.0.address[count.index]}"]
 }
 
-# vim: ts=2:sw=2:sts=2:et:ai
 

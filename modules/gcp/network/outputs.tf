@@ -48,5 +48,3 @@ output "kube_ingress_fqdn" {
   value = "${join(".", compact(split(".", google_dns_record_set.ingress-external.name)))}"
 }
 
-# vim: ts=2:sw=2:sts=2:et:ai
-

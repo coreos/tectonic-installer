@@ -100,5 +100,3 @@ variable "tls_peer_crt_pem" {
   default = ""
 }
 
-# vim: ts=2:sw=2:sts=2:et:ai
-
