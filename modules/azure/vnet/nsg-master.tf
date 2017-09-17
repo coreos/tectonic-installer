@@ -191,33 +191,37 @@ resource "azurerm_network_security_rule" "master_ingress_node_exporter_from_work
 }
 
 # TODO: Review NSG
-resource "azurerm_network_security_rule" "master_ingress_services" {
+resource "azurerm_network_security_rule" "master_ingress_k8s_nodeport_from_alb" {
   count                       = "${var.external_nsg_master_id == "" ? 1 : 0}"
-  name                        = "${var.cluster_name}-master-in-tcp-30000-32767-vnet1"
+  name                        = "${var.cluster_name}-master-in-any-30000-32767-alb"
   priority                    = 530
   direction                   = "Inbound"
   access                      = "Allow"
-  protocol                    = "TCP"
+  protocol                    = "*"
   source_port_range           = "*"
   destination_port_range      = "30000-32767"
-  source_address_prefix       = "VirtualNetwork"
-  destination_address_prefix  = "*"
+
+  # TODO: Reference subnet
+  source_address_prefix       = "AzureLoadBalancer"
+  destination_address_prefix  = "${var.vnet_cidr_block}"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
 }
 
 # TODO: Review NSG
-resource "azurerm_network_security_rule" "master_ingress_services_from_console" {
+resource "azurerm_network_security_rule" "master_ingress_k8s_nodeport" {
   count                       = "${var.external_nsg_master_id == "" ? 1 : 0}"
-  name                        = "${var.cluster_name}-master-in-tcp-30000-32767-vnet2"
+  name                        = "${var.cluster_name}-master-in-any-30000-32767"
   priority                    = 535
   direction                   = "Inbound"
   access                      = "Allow"
-  protocol                    = "TCP"
+  protocol                    = "*"
   source_port_range           = "*"
   destination_port_range      = "30000-32767"
+
+  # TODO: Reference subnet
   source_address_prefix       = "*"
-  destination_address_prefix  = "*"
+  destination_address_prefix  = "${var.vnet_cidr_block}"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.master.name}"
 }
