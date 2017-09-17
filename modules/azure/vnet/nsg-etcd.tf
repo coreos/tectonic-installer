@@ -28,7 +28,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh" {
   priority               = 400
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "22"
 
@@ -45,7 +45,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_admin" {
   priority               = 405
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "22"
 
@@ -62,7 +62,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_from_master" {
   priority               = 415
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "22"
 
@@ -79,7 +79,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_self" {
   priority               = 420
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "2379"
 
@@ -96,7 +96,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_master" {
   priority               = 425
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "2379"
 
@@ -113,7 +113,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_peer" {
   priority               = 435
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "2380"
 

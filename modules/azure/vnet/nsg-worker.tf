@@ -28,7 +28,7 @@ resource "azurerm_network_security_rule" "worker_ingress_ssh" {
   priority               = 600
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "22"
 
@@ -45,7 +45,7 @@ resource "azurerm_network_security_rule" "worker_ingress_ssh_admin" {
   priority               = 605
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "22"
 
@@ -63,7 +63,7 @@ resource "azurerm_network_security_rule" "worker_ingress_services" {
   priority                    = 610
   direction                   = "Inbound"
   access                      = "Allow"
-  protocol                    = "tcp"
+  protocol                    = "TCP"
   source_port_range           = "*"
   destination_port_range      = "30000-32767"
   source_address_prefix       = "${var.vnet_cidr_block}"
@@ -78,7 +78,7 @@ resource "azurerm_network_security_rule" "worker_ingress_services_from_console" 
   priority                    = 615
   direction                   = "Inbound"
   access                      = "Allow"
-  protocol                    = "tcp"
+  protocol                    = "TCP"
   source_port_range           = "*"
   destination_port_range      = "30000-32767"
   source_address_prefix       = "VirtualNetwork"
@@ -93,7 +93,7 @@ resource "azurerm_network_security_rule" "worker_ingress_flannel_from_worker" {
   priority               = 620
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "udp"
+  protocol               = "UDP"
   source_port_range      = "*"
   destination_port_range = "4789"
 
@@ -110,7 +110,7 @@ resource "azurerm_network_security_rule" "worker_ingress_flannel_from_master" {
   priority               = 625
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "udp"
+  protocol               = "UDP"
   source_port_range      = "*"
   destination_port_range = "4789"
 
@@ -127,7 +127,7 @@ resource "azurerm_network_security_rule" "worker_ingress_kubelet_secure" {
   priority               = 640
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "10255"
 
@@ -146,7 +146,7 @@ resource "azurerm_network_security_rule" "worker_ingress_node_exporter_from_work
   priority               = 650
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "9100"
 
@@ -163,7 +163,7 @@ resource "azurerm_network_security_rule" "worker_ingress_node_exporter_from_mast
   priority               = 655
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "9100"
 
@@ -180,7 +180,7 @@ resource "azurerm_network_security_rule" "worker_ingress_heapster_from_master" {
   priority               = 665
   direction              = "Inbound"
   access                 = "Allow"
-  protocol               = "tcp"
+  protocol               = "TCP"
   source_port_range      = "*"
   destination_port_range = "4194"
 
