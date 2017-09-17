@@ -7,7 +7,7 @@ resource "azurerm_network_security_group" "worker" {
 
 resource "azurerm_network_security_rule" "worker_egress" {
   count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                        = "${var.cluster_name}-worker_egress"
+  name                        = "${var.cluster_name}-worker-out"
   priority                    = 2010
   direction                   = "Outbound"
   access                      = "Allow"
@@ -22,7 +22,7 @@ resource "azurerm_network_security_rule" "worker_egress" {
 
 resource "azurerm_network_security_rule" "worker_ingress_ssh" {
   count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                        = "${var.cluster_name}-worker_ingress_ssh"
+  name                        = "${var.cluster_name}-worker-in-ssh-internal"
   priority                    = 600
   direction                   = "Inbound"
   access                      = "Allow"
@@ -35,10 +35,9 @@ resource "azurerm_network_security_rule" "worker_ingress_ssh" {
   network_security_group_name = "${azurerm_network_security_group.worker.name}"
 }
 
-# TODO: Add external SSH rule
 resource "azurerm_network_security_rule" "worker_ingress_ssh_admin" {
   count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                        = "${var.cluster_name}-worker_ingress_ssh_admin"
+  name                        = "${var.cluster_name}-worker-in-ssh-external"
   priority                    = 605
   direction                   = "Inbound"
   access                      = "Allow"
@@ -51,17 +50,16 @@ resource "azurerm_network_security_rule" "worker_ingress_ssh_admin" {
   network_security_group_name = "${azurerm_network_security_group.worker.name}"
 }
 
+# TODO: Determine if we need two rules for this
 resource "azurerm_network_security_rule" "worker_ingress_services" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_services"
-  priority               = 610
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "tcp"
-  source_port_range      = "*"
-  destination_port_range = "30000-32767"
-
-  # TODO: Need to allow traffic from self
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-tcp-30000-32767-vnet1"
+  priority                    = 610
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "30000-32767"
   source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
@@ -69,16 +67,14 @@ resource "azurerm_network_security_rule" "worker_ingress_services" {
 }
 
 resource "azurerm_network_security_rule" "worker_ingress_services_from_console" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_services_from_console"
-  priority               = 615
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "tcp"
-  source_port_range      = "*"
-  destination_port_range = "30000-32767"
-
-  # TODO: Need to allow traffic from console
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-tcp-30000-32767-vnet2"
+  priority                    = 615
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "30000-32767"
   source_address_prefix       = "VirtualNetwork"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
@@ -86,16 +82,14 @@ resource "azurerm_network_security_rule" "worker_ingress_services_from_console" 
 }
 
 resource "azurerm_network_security_rule" "worker_ingress_flannel" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_flannel"
-  priority               = 620
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "udp"
-  source_port_range      = "*"
-  destination_port_range = "4789"
-
-  # TODO: Need to allow traffic from self
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-udp-4789-vnet"
+  priority                    = 620
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "udp"
+  source_port_range           = "*"
+  destination_port_range      = "4789"
   source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
@@ -103,16 +97,14 @@ resource "azurerm_network_security_rule" "worker_ingress_flannel" {
 }
 
 resource "azurerm_network_security_rule" "worker_ingress_flannel_from_master" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_flannel_from_master"
-  priority               = 625
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "udp"
-  source_port_range      = "*"
-  destination_port_range = "4789"
-
-  # TODO: Need to allow traffic from master
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-udp-4789-master"
+  priority                    = 625
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "udp"
+  source_port_range           = "*"
+  destination_port_range      = "4789"
   source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
@@ -120,16 +112,14 @@ resource "azurerm_network_security_rule" "worker_ingress_flannel_from_master" {
 }
 
 resource "azurerm_network_security_rule" "worker_ingress_kubelet_insecure" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_kubelet_insecure"
-  priority               = 630
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "tcp"
-  source_port_range      = "*"
-  destination_port_range = "10250"
-
-  # TODO: Need to allow traffic from self
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-tcp-10250-vnet"
+  priority                    = 630
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "10250"
   source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
@@ -137,16 +127,14 @@ resource "azurerm_network_security_rule" "worker_ingress_kubelet_insecure" {
 }
 
 resource "azurerm_network_security_rule" "worker_ingress_kubelet_insecure_from_master" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_kubelet_insecure_from_master"
-  priority               = 635
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "tcp"
-  source_port_range      = "*"
-  destination_port_range = "10250"
-
-  # TODO: Need to allow traffic from master
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-tcp-10250-master"
+  priority                    = 635
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "10250"
   source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
@@ -154,16 +142,14 @@ resource "azurerm_network_security_rule" "worker_ingress_kubelet_insecure_from_m
 }
 
 resource "azurerm_network_security_rule" "worker_ingress_kubelet_secure" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_kubelet_secure"
-  priority               = 640
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "tcp"
-  source_port_range      = "*"
-  destination_port_range = "10255"
-
-  # TODO: Need to allow traffic from self
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-tcp-10255-vnet"
+  priority                    = 640
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "10255"
   source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
@@ -171,16 +157,14 @@ resource "azurerm_network_security_rule" "worker_ingress_kubelet_secure" {
 }
 
 resource "azurerm_network_security_rule" "worker_ingress_kubelet_secure_from_master" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_kubelet_secure_from_master"
-  priority               = 645
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "tcp"
-  source_port_range      = "*"
-  destination_port_range = "10255"
-
-  # TODO: Need to allow traffic from master
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-tcp-10255-master"
+  priority                    = 645
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "10255"
   source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
@@ -188,16 +172,14 @@ resource "azurerm_network_security_rule" "worker_ingress_kubelet_secure_from_mas
 }
 
 resource "azurerm_network_security_rule" "worker_ingress_node_exporter" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_node_exporter"
-  priority               = 650
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "tcp"
-  source_port_range      = "*"
-  destination_port_range = "9100"
-
-  # TODO: Need to allow traffic from self
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-tcp-9100-vnet"
+  priority                    = 650
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "9100"
   source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
@@ -205,16 +187,14 @@ resource "azurerm_network_security_rule" "worker_ingress_node_exporter" {
 }
 
 resource "azurerm_network_security_rule" "worker_ingress_node_exporter_from_master" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_node_exporter_from_master"
-  priority               = 655
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "tcp"
-  source_port_range      = "*"
-  destination_port_range = "9100"
-
-  # TODO: Need to allow traffic from master
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-tcp-9100-master"
+  priority                    = 655
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "9100"
   source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
@@ -222,16 +202,14 @@ resource "azurerm_network_security_rule" "worker_ingress_node_exporter_from_mast
 }
 
 resource "azurerm_network_security_rule" "worker_ingress_heapster" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_heapster"
-  priority               = 660
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "tcp"
-  source_port_range      = "*"
-  destination_port_range = "4194"
-
-  # TODO: Need to allow traffic from self
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-tcp-4194-vnet"
+  priority                    = 660
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "4194"
   source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
@@ -239,28 +217,23 @@ resource "azurerm_network_security_rule" "worker_ingress_heapster" {
 }
 
 resource "azurerm_network_security_rule" "worker_ingress_heapster_from_master" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker_ingress_heapster_from_master"
-  priority               = 665
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "tcp"
-  source_port_range      = "*"
-  destination_port_range = "4194"
-
-  # TODO: Need to allow traffic from master
+  count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
+  name                        = "${var.cluster_name}-worker-in-tcp-4194-master"
+  priority                    = 665
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "tcp"
+  source_port_range           = "*"
+  destination_port_range      = "4194"
   source_address_prefix       = "${var.vnet_cidr_block}"
   destination_address_prefix  = "*"
   resource_group_name         = "${var.resource_group_name}"
   network_security_group_name = "${azurerm_network_security_group.worker.name}"
 }
 
-# TODO: Add rules for self-hosted etcd (etcd-operator)
-
-# TODO: Review NSG
 resource "azurerm_network_security_rule" "worker_ingress_http" {
   count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                        = "${var.cluster_name}-worker_ingress_http"
+  name                        = "${var.cluster_name}-worker-in-http"
   priority                    = 670
   direction                   = "Inbound"
   access                      = "Allow"
@@ -273,10 +246,9 @@ resource "azurerm_network_security_rule" "worker_ingress_http" {
   network_security_group_name = "${azurerm_network_security_group.worker.name}"
 }
 
-# TODO: Review NSG
 resource "azurerm_network_security_rule" "worker_ingress_https" {
   count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                        = "${var.cluster_name}-worker_ingress_https"
+  name                        = "${var.cluster_name}-worker-in-https"
   priority                    = 675
   direction                   = "Inbound"
   access                      = "Allow"
