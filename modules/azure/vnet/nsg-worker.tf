@@ -8,6 +8,7 @@ resource "azurerm_network_security_group" "worker" {
 resource "azurerm_network_security_rule" "worker_egress" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-out"
+  description            = "${var.cluster_name} worker - Outbound"
   priority               = 2010
   direction              = "Outbound"
   access                 = "Allow"
@@ -25,6 +26,7 @@ resource "azurerm_network_security_rule" "worker_egress" {
 resource "azurerm_network_security_rule" "worker_ingress_ssh" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-ssh"
+  description            = "${var.cluster_name} worker - SSH"
   priority               = 600
   direction              = "Inbound"
   access                 = "Allow"
@@ -42,6 +44,7 @@ resource "azurerm_network_security_rule" "worker_ingress_ssh" {
 resource "azurerm_network_security_rule" "worker_ingress_ssh_admin" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-ssh-external"
+  description            = "${var.cluster_name} worker - SSH external"
   priority               = 605
   direction              = "Inbound"
   access                 = "Allow"
@@ -60,6 +63,7 @@ resource "azurerm_network_security_rule" "worker_ingress_ssh_admin" {
 resource "azurerm_network_security_rule" "worker_ingress_k8s_nodeport" {
   count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                        = "${var.cluster_name}-worker-in-any-30000-32767"
+  description                 = "${var.cluster_name} worker - Kubernetes NodePort range"
   priority                    = 610
   direction                   = "Inbound"
   access                      = "Allow"
@@ -75,6 +79,7 @@ resource "azurerm_network_security_rule" "worker_ingress_k8s_nodeport" {
 resource "azurerm_network_security_rule" "worker_ingress_flannel_from_worker" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-udp-4789-worker"
+  description            = "${var.cluster_name} worker - flannel from worker"
   priority               = 620
   direction              = "Inbound"
   access                 = "Allow"
@@ -92,6 +97,7 @@ resource "azurerm_network_security_rule" "worker_ingress_flannel_from_worker" {
 resource "azurerm_network_security_rule" "worker_ingress_flannel_from_master" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-udp-4789-master"
+  description            = "${var.cluster_name} worker - flannel from master"
   priority               = 625
   direction              = "Inbound"
   access                 = "Allow"
@@ -109,6 +115,7 @@ resource "azurerm_network_security_rule" "worker_ingress_flannel_from_master" {
 resource "azurerm_network_security_rule" "worker_ingress_kubelet_secure" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-tcp-10255-vnet"
+  description            = "${var.cluster_name} worker - kubelet"
   priority               = 640
   direction              = "Inbound"
   access                 = "Allow"
@@ -128,6 +135,7 @@ resource "azurerm_network_security_rule" "worker_ingress_kubelet_secure" {
 resource "azurerm_network_security_rule" "worker_ingress_node_exporter_from_worker" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-tcp-9100-vnet"
+  description            = "${var.cluster_name} worker - Prometheus node exporter from worker"
   priority               = 650
   direction              = "Inbound"
   access                 = "Allow"
@@ -145,6 +153,7 @@ resource "azurerm_network_security_rule" "worker_ingress_node_exporter_from_work
 resource "azurerm_network_security_rule" "worker_ingress_node_exporter_from_master" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-tcp-9100-master"
+  description            = "${var.cluster_name} worker - Prometheus node exporter from master"
   priority               = 655
   direction              = "Inbound"
   access                 = "Allow"
@@ -162,6 +171,7 @@ resource "azurerm_network_security_rule" "worker_ingress_node_exporter_from_mast
 resource "azurerm_network_security_rule" "worker_ingress_heapster_from_master" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-tcp-4194-master"
+  description            = "${var.cluster_name} worker - Heapster from master"
   priority               = 665
   direction              = "Inbound"
   access                 = "Allow"
