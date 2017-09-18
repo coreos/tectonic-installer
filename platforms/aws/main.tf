@@ -173,10 +173,6 @@ module "workers" {
   cluster_name    = "${var.tectonic_cluster_name}"
   worker_iam_role = "${var.tectonic_aws_worker_iam_role_name}"
 
-  vpc_id                       = "${module.vpc.vpc_id}"
-  subnet_ids                   = ["${module.vpc.worker_subnet_ids}"]
-  sg_ids                       = ["${split(",", var.tectonic_aws_external_worker_sg_id == "" ? join(",", var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id)) : join(",", var.tectonic_aws_worker_extra_sg_ids, list(var.tectonic_aws_external_worker_sg_id)))}"]
-  ssh_key                      = "${var.tectonic_aws_ssh_key}"
   autoscaling_group_extra_tags = "${var.tectonic_autoscaling_group_extra_tags}"
   container_linux_channel      = "${var.tectonic_container_linux_channel}"
   container_linux_version      = "${module.container_linux.version}"
@@ -185,10 +181,11 @@ module "workers" {
   ec2_type                     = "${var.tectonic_aws_worker_ec2_type}"
   extra_tags                   = "${var.tectonic_aws_extra_tags}"
   instance_count               = "${var.tectonic_worker_count}"
+  load_balancers               = ["${var.tectonic_aws_worker_load_balancers}"]
   root_volume_iops             = "${var.tectonic_aws_worker_root_volume_iops}"
   root_volume_size             = "${var.tectonic_aws_worker_root_volume_size}"
   root_volume_type             = "${var.tectonic_aws_worker_root_volume_type}"
-  sg_ids                       = ["${concat(var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id))}"]
+  sg_ids                       = ["${split(",", var.tectonic_aws_external_worker_sg_id == "" ? join(",", var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id)) : join(",", var.tectonic_aws_worker_extra_sg_ids, list(var.tectonic_aws_external_worker_sg_id)))}"]
   ssh_key                      = "${var.tectonic_aws_ssh_key}"
   subnet_ids                   = ["${module.vpc.worker_subnet_ids}"]
   vpc_id                       = "${module.vpc.vpc_id}"
