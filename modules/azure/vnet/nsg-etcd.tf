@@ -63,7 +63,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_ssh_from_master" {
   count                  = "${var.external_nsg_etcd_id == "" && var.etcd_count > 0 ? 1 : 0}"
   name                   = "${var.cluster_name}-etcd-in-ssh-master"
   description            = "${var.cluster_name} etcd - SSH from master"
-  priority               = 415
+  priority               = 410
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "TCP"
@@ -81,7 +81,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_self" {
   count                  = "${var.external_nsg_etcd_id == "" && var.etcd_count > 0 ? 1 : 0}"
   name                   = "${var.cluster_name}-etcd-in-client-self"
   description            = "${var.cluster_name} etcd - etcd client"
-  priority               = 420
+  priority               = 415
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "TCP"
@@ -99,7 +99,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_client_master" {
   count                  = "${var.external_nsg_etcd_id == "" && var.etcd_count > 0 ? 1 : 0}"
   name                   = "${var.cluster_name}-etcd-in-client-master"
   description            = "${var.cluster_name} etcd - etcd client from master"
-  priority               = 425
+  priority               = 420
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "TCP"
@@ -117,7 +117,7 @@ resource "azurerm_network_security_rule" "etcd_ingress_peer" {
   count                  = "${var.external_nsg_etcd_id == "" && var.etcd_count > 0 ? 1 : 0}"
   name                   = "${var.cluster_name}-etcd-in-peer"
   description            = "${var.cluster_name} etcd - etcd peer"
-  priority               = 435
+  priority               = 425
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "TCP"

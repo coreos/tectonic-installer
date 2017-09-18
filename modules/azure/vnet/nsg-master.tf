@@ -243,7 +243,7 @@ resource "azurerm_network_security_rule" "master_ingress_kubelet_secure" {
   count                  = "${var.external_nsg_master_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-master-in-tcp-10255-vnet"
   description            = "${var.cluster_name} master - kubelet"
-  priority               = 565
+  priority               = 540
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "TCP"
