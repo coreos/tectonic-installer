@@ -20,5 +20,3 @@ data:
       cluster_cidr: ${cluster_cidr}
       etcd_servers: ${etcd_servers}
       service_cidr: ${service_cidr}
-    inititalConfig: |
-      initial_master_count: ${master_count}
