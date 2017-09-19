@@ -9,7 +9,7 @@ metadata:
   annotations:
     tectonic-operators.coreos.com/upgrade-behaviour: 'CreateOrUpgrade'
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       k8s-app: tectonic-cluo-operator
