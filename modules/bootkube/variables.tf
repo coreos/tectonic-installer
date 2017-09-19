@@ -149,11 +149,6 @@ variable "pod_eviction_timeout" {
   default     = "5m"
 }
 
-variable "cloud_config_path" {
-  description = "The path to the secret file that contains the cloud config contents. Either be empty ('') or ('/etc/kubernetes/cloud/config')."
-  type        = "string"
-}
-
 variable "service_cidr" {
   description = "A CIDR notation IP range from which to assign service cluster IPs"
   type        = "string"
