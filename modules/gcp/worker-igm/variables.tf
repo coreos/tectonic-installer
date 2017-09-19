@@ -70,7 +70,3 @@ variable "disk_size" {
 variable "ign_gcs_puller_id" {
   type = "string"
 }
-
-variable "ign_gcs_kubelet_env_service_id" {
-  type = "string"
-}

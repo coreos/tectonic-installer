@@ -89,10 +89,6 @@ variable "ign_tectonic_path_unit_id" {
   type = "string"
 }
 
-variable "ign_gcs_kubelet_env_service_id" {
-  type = "string"
-}
-
 variable "ign_gcs_puller_id" {
   type = "string"
 }

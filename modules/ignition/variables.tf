@@ -72,4 +72,3 @@ variable "assets_location" {
   description = "(optional) The storing location to retrieve the assets."
   default     = ""
 }
-

@@ -118,19 +118,20 @@ module "masters" {
   disk_type = "${var.tectonic_gcp_master_disktype}"
   disk_size = "${var.tectonic_gcp_master_disk_size}"
 
-  ign_bootkube_path_unit_id      = "${module.bootkube.systemd_path_unit_id}"
-  ign_bootkube_service_id        = "${module.bootkube.systemd_service_id}"
-  ign_docker_dropin_id           = "${module.ignition_masters.docker_dropin_id}"
-  ign_kubelet_service_id         = "${module.ignition_masters.kubelet_service_id}"
-  ign_init_assets_service_id     = "${module.ignition_masters.init_assets_service_id}"
-  ign_locksmithd_service_id      = "${module.ignition_masters.locksmithd_service_id}"
-  ign_max_user_watches_id        = "${module.ignition_masters.max_user_watches_id}"
-  ign_gcs_kubelet_env_service_id = "${module.ignition_masters.kubelet_env_service_id}"
-  ign_gcs_puller_id              = "${module.ignition_masters.gcs_puller_id}"
-  ign_tectonic_path_unit_id      = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
-  ign_tectonic_service_id        = "${module.tectonic.systemd_service_id}"
-  image_re                       = "${var.tectonic_image_re}"
-  container_images               = "${var.tectonic_container_images}"
+  ign_k8s_node_bootstrap_service_id = "${module.ignition_masters.k8s_node_bootstrap_service_id}"
+  ign_bootkube_path_unit_id         = "${module.bootkube.systemd_path_unit_id}"
+  ign_bootkube_service_id           = "${module.bootkube.systemd_service_id}"
+  ign_docker_dropin_id              = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_service_id            = "${module.ignition_masters.kubelet_service_id}"
+  ign_init_assets_service_id        = "${module.ignition_masters.init_assets_service_id}"
+  ign_locksmithd_service_id         = "${module.ignition_masters.locksmithd_service_id}"
+  ign_max_user_watches_id           = "${module.ignition_masters.max_user_watches_id}"
+  ign_installer_kubelet_env_id      = "${module.ignition_masters.installer_kubelet_env_id}"
+  ign_gcs_puller_id                 = "${module.ignition_masters.gcs_puller_id}"
+  ign_tectonic_path_unit_id         = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
+  ign_tectonic_service_id           = "${module.tectonic.systemd_service_id}"
+  image_re                          = "${var.tectonic_image_re}"
+  container_images                  = "${var.tectonic_container_images}"
 }
 
 module "workers" {
@@ -153,17 +154,21 @@ module "workers" {
   disk_type = "${var.tectonic_gcp_worker_disktype}"
   disk_size = "${var.tectonic_gcp_worker_disk_size}"
 
-  ign_docker_dropin_id           = "${module.ignition_workers.docker_dropin_id}"
-  ign_kubelet_service_id         = "${module.ignition_workers.kubelet_service_id}"
-  ign_locksmithd_service_id      = "${module.ignition_masters.locksmithd_service_id}"
-  ign_max_user_watches_id        = "${module.ignition_workers.max_user_watches_id}"
-  ign_gcs_kubelet_env_service_id = "${module.ignition_workers.kubelet_env_service_id}"
-  ign_gcs_puller_id              = "${module.ignition_workers.gcs_puller_id}"
+  ign_k8s_node_bootstrap_service_id = "${module.ignition_workers.k8s_node_bootstrap_service_id}"
+  ign_installer_kubelet_env_id      = "${module.ignition_workers.installer_kubelet_env_id}"
+  ign_docker_dropin_id              = "${module.ignition_workers.docker_dropin_id}"
+  ign_kubelet_service_id            = "${module.ignition_workers.kubelet_service_id}"
+  ign_locksmithd_service_id         = "${module.ignition_masters.locksmithd_service_id}"
+  ign_max_user_watches_id           = "${module.ignition_workers.max_user_watches_id}"
+  ign_installer_kubelet_env_id      = "${module.ignition_workers.installer_kubelet_env_id}"
+  ign_gcs_puller_id                 = "${module.ignition_workers.gcs_puller_id}"
 }
 
 module "ignition_masters" {
   source = "../../modules/ignition"
 
+  bootstrap_upgrade_cl = "${var.tectonic_bootstrap_upgrade_cl}"
+  tectonic_vanilla_k8s = "${var.tectonic_vanilla_k8s}"
   container_images     = "${var.tectonic_container_images}"
   image_re             = "${var.tectonic_image_re}"
   kube_dns_service_ip  = "${module.bootkube.kube_dns_service_ip}"
@@ -177,6 +182,8 @@ module "ignition_masters" {
 module "ignition_workers" {
   source = "../../modules/ignition"
 
+  bootstrap_upgrade_cl = "${var.tectonic_bootstrap_upgrade_cl}"
+  tectonic_vanilla_k8s = "${var.tectonic_vanilla_k8s}"
   container_images     = "${var.tectonic_container_images}"
   image_re             = "${var.tectonic_image_re}"
   kube_dns_service_ip  = "${module.bootkube.kube_dns_service_ip}"
