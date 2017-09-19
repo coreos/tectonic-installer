@@ -9,7 +9,7 @@ import { DropdownInline } from './ui';
 import { AWS_DomainValidation } from './aws-domain-validation';
 import { commitPhases } from '../actions';
 import { TFDestroy } from '../aws-actions';
-import { CLUSTER_NAME, PLATFORM_TYPE, getTectonicDomain } from '../cluster-config';
+import { CLUSTER_NAME, ETCD_OPTION, ETCD_OPTIONS, PLATFORM_TYPE, getTectonicDomain } from '../cluster-config';
 import { AWS_TF, BARE_METAL_TF } from '../platforms';
 import { commitToServer, observeClusterStatus } from '../server';
 
@@ -78,6 +78,7 @@ const stateToProps = ({cluster, clusterConfig, commitState}) => {
     commitState,
     isAWS: clusterConfig[PLATFORM_TYPE] === AWS_TF,
     isBareMetal: clusterConfig[PLATFORM_TYPE] === BARE_METAL_TF,
+    isEtcdSelfHosted: clusterConfig[ETCD_OPTION] === ETCD_OPTIONS.SELF_HOSTED,
     tectonic: tectonic || {},
     tectonicDomain: getTectonicDomain(clusterConfig),
   };
@@ -94,12 +95,22 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
       super(props);
 
       this.state = {
-        services: [],
+        services: [
+          {key: 'kubernetes', name: 'Kubernetes'},
+          {key: 'identity', name: 'Tectonic Identity'},
+          {key: 'ingress', name: 'Tectonic Ingress Controller'},
+          {key: 'console', name: 'Tectonic Console'},
+          {key: 'tectonicSystem', name: 'other Tectonic services'},
+        ],
         showLogs: null,
         tectonicProgress: 0,
         terraformProgress: 0,
         xhrError: null,
       };
+
+      if (props.isEtcdSelfHosted) {
+        this.state.services.unshift({key: 'etcd', name: 'Etcd'});
+      }
 
       this.destroy = this.destroy.bind(this);
       this.retry = this.retry.bind(this);
@@ -121,22 +132,18 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
 
     updateStatus ({tectonic, terraform}) {
       if (terraform.action === 'apply') {
-        const services = (tectonic.isEtcdSelfHosted ? [{key: 'etcd', name: 'Etcd'}] : []).concat([
-          {key: 'kubernetes', name: 'Kubernetes'},
-          {key: 'identity', name: 'Tectonic Identity'},
-          {key: 'ingress', name: 'Tectonic Ingress Controller'},
-          {key: 'console', name: 'Tectonic Console'},
-          {key: 'tectonicSystem', name: 'other Tectonic services'},
-        ]);
-        this.setState({services});
+        const {services} = this.state;
 
-        const tectonicSucceeded = services.filter(s => _.get(tectonic[s.key], 'success')).length;
-        const tectonicProgress = tectonicSucceeded / services.length;
+        _.each(services, ({key}, i) => {
+          const {failed, message, success} = tectonic[key];
 
-        // Don't let progress bars go backwards (e.g. if a service flips back to incomplete)
-        if (tectonicProgress > this.state.tectonicProgress) {
-          this.setState({tectonicProgress});
-        }
+          // The backend sometimes flips a service from success equals true back to success = false. This looks strange,
+          // so once a service has been reported as successful, keep it true.
+          services[i] = _.assign(services[i], {failed, message, success: services[i].success || success});
+        });
+
+        const tectonicSucceeded = _.filter(services, 'success').length;
+        this.setState({services, tectonicProgress: tectonicSucceeded / services.length});
 
         if (this.props.isAWS && (this.state.terraformProgress === 0 || !this.isOutputSame(terraform))) {
           const terraformProgress = estimateTerraformProgress(terraform);
@@ -226,8 +233,8 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
           </Step>
         );
 
-        const anyFailed = state.services.some(s => tectonic[s.key].failed);
-        const allDone = state.services.every(s => tectonic[s.key].success);
+        const anyFailed = _.some(state.services, 'failed');
+        const allDone = _.every(state.services, 'success');
 
         consoleSubsteps.push(
           <Step pending={isTFRunning} done={allDone} error={anyFailed} cancel={tfError} key="tectonicReady">
@@ -237,12 +244,11 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
             <div style={{marginLeft: 22}}>
               {isApplySuccess && !allDone && <div>
                 <ProgressBar progress={state.tectonicProgress} isActive={!anyFailed} />
-                {state.services.map(({key, name}) => {
-                  const {failed, message, success} = tectonic[key];
-                  return <Step done={success} error={failed} key={key} substep={true}>
+                {state.services.map(
+                  ({failed, key, message, name, success}) => <Step done={success} error={failed} key={key} substep={true}>
                     {failed ? <span><b>{name}</b>{message && `: ${message}`}</span> : name}
-                  </Step>;
-                })}
+                  </Step>
+                )}
               </div>
               }
               {anyFailed &&
