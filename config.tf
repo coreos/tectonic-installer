@@ -16,13 +16,13 @@ variable "tectonic_container_images" {
   type        = "map"
 
   default = {
-    hyperkube                       = "quay.io/coreos/hyperkube:v1.6.8_coreos.0"
+    hyperkube                       = "quay.io/coreos/hyperkube:v1.6.10_coreos.0"
     pod_checkpointer                = "quay.io/coreos/pod-checkpointer:4e7a7dab10bc4d895b66c21656291c6e0b017248"
     bootkube                        = "quay.io/coreos/bootkube:v0.5.0"
     console                         = "quay.io/coreos/tectonic-console:v1.7.4"
     identity                        = "quay.io/coreos/dex:v2.4.1"
     container_linux_update_operator = "quay.io/coreos/container-linux-update-operator:v0.2.1"
-    kube_version_operator           = "quay.io/coreos/kube-version-operator:v1.6.8-kvo.2"
+    kube_version_operator           = "quay.io/coreos/kube-version-operator:v1.6.10-kvo.1"
     tectonic_channel_operator       = "quay.io/coreos/tectonic-channel-operator:0.4.2"
     node_agent                      = "quay.io/coreos/node-agent:787844277099e8c10d617c3c807244fc9f873e46"
     prometheus_operator             = "quay.io/coreos/prometheus-operator:v0.10.2"
@@ -63,8 +63,8 @@ variable "tectonic_versions" {
     prometheus    = "v1.7.1"
     alertmanager  = "v0.7.1"
     monitoring    = "1.3.0"
-    kubernetes    = "1.6.8+tectonic.1"
-    tectonic      = "1.6.8-tectonic.1"
+    kubernetes    = "1.6.10+tectonic.1"
+    tectonic      = "1.6.10-tectonic.1"
     tectonic-etcd = "0.0.1"
   }
 }
