@@ -6,14 +6,12 @@ This document gives an overview of variables used in the Google Cloud platform o
 
 | Name | Description | Type | Default |
 |------|-------------|:----:|:-----:|
-| google_managedzone_name | GCP resource name of Cloud DNS ManagedZone - created outside of Tectonic | string | `my-managed-zone` |
-| tectonic_dns_prefix_name | DNS prefix used to construct the console and API server endpoints. | string | `` |
-| tectonic_etcd_nodes_max | Upper limit for auto-scaling, per zone. | string | `2` |
 | tectonic_gcp_config_version | This declares the version of the GCP configuration variables. It has no impact on generated assets but declares the version contract of the configuration. | string | `1.0` |
 | tectonic_gcp_credentials | The GCP credentials to use, leave blank for GCE metadata | string | `` |
 | tectonic_gcp_etcd_disk_size | The size of the disk in gigabytes for the root block device of etcd nodes. | string | `30` |
 | tectonic_gcp_etcd_disktype | The type of disk (pd-standard or pd-ssd) for the etcd nodes. | string | `pd-standard` |
 | tectonic_gcp_etcd_gce_type | Instance size for the etcd node(s). Example: `n1-standard-2`. | string | `n1-standard-2` |
+| tectonic_gcp_ext_google_managedzone_name | GCP resource name of Cloud DNS ManagedZone - created outside of Tectonic | string | - |
 | tectonic_gcp_master_disk_size | The size of the disk in gigabytes for the root block device of master nodes. | string | `30` |
 | tectonic_gcp_master_disktype | The type of disk (pd-standard or pd-ssd) for the master nodes. | string | `pd-standard` |
 | tectonic_gcp_master_gce_type | Instance size for the master node(s). Example: `n1-standard-2`. | string | `n1-standard-2` |
@@ -21,12 +19,10 @@ This document gives an overview of variables used in the Google Cloud platform o
 | tectonic_gcp_network_etcd_loadbalancer_ip | The private IP address to use for the internal etcd load-balancer. Must be a valid IP in the etcd_cidr_range. | string | `10.12.0.2` |
 | tectonic_gcp_network_masters_cidr_range | The CIDR range to use for the subnetwork for Masters. | string | `10.10.0.0/16` |
 | tectonic_gcp_network_workers_cidr_range | The CIDR range to use for the subnetwork for Workers. | string | `10.11.0.0/16` |
-| tectonic_gcp_project_id | The GCP project ID (string) to use. | string | `` |
+| tectonic_gcp_project_id | The GCP project ID (string) to use. | string | - |
 | tectonic_gcp_region | The GCP region to use. Some regions only have 2 zones. | string | `us-central1` |
 | tectonic_gcp_worker_disk_size | The size of the disk in gigabytes for the root block device of worker nodes. | string | `30` |
 | tectonic_gcp_worker_disktype | The type of disk (pd-standard or pd-ssd) for the worker nodes. | string | `pd-standard` |
 | tectonic_gcp_worker_gce_type | Instance size for the worker node(s). Example: `n1-standard-2`. | string | `n1-standard-2` |
 | tectonic_gcp_zones | List of two or more zones to use from specified GCP region. | list | `<list>` |
-| tectonic_masters_max | Upper limit for auto-scaling, per zone. | string | `2` |
-| tectonic_workers_max | Upper limit for auto-scaling, per zone. | string | `3` |
 

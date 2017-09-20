@@ -25,7 +25,6 @@ EOF
 
 variable "tectonic_gcp_project_id" {
   type        = "string"
-  default     = ""
   description = "The GCP project ID (string) to use."
 }
 
@@ -35,17 +34,10 @@ variable "tectonic_gcp_credentials" {
   description = "The GCP credentials to use, leave blank for GCE metadata"
 }
 
-variable "google_managedzone_name" {
+variable "tectonic_gcp_ext_google_managedzone_name" {
   # not to be confused with tectonic_base_domain (the DNS compliant domain name)
   type        = "string"
-  default     = "my-managed-zone"
   description = "GCP resource name of Cloud DNS ManagedZone - created outside of Tectonic"
-}
-
-variable "tectonic_dns_prefix_name" {
-  type        = "string"
-  default     = ""
-  description = "DNS prefix used to construct the console and API server endpoints."
 }
 
 variable "tectonic_gcp_region" {
@@ -82,24 +74,6 @@ variable "tectonic_gcp_network_etcd_loadbalancer_ip" {
   type        = "string"
   default     = "10.12.0.2"
   description = "The private IP address to use for the internal etcd load-balancer. Must be a valid IP in the etcd_cidr_range."
-}
-
-variable "tectonic_masters_max" {
-  type        = "string"
-  default     = "2"
-  description = "Upper limit for auto-scaling, per zone."
-}
-
-variable "tectonic_workers_max" {
-  type        = "string"
-  default     = "3"
-  description = "Upper limit for auto-scaling, per zone."
-}
-
-variable "tectonic_etcd_nodes_max" {
-  type        = "string"
-  default     = "2"
-  description = "Upper limit for auto-scaling, per zone."
 }
 
 variable "tectonic_gcp_master_gce_type" {

@@ -50,17 +50,6 @@ variable "instance_count" {
   type = "string"
 }
 
-variable "base_domain" {
-  type        = "string"
-  description = "Domain on which the ELB records will be created"
-}
-
-variable "custom_dns_name" {
-  type        = "string"
-  default     = ""
-  description = "DNS prefix used to construct the console and API server endpoints."
-}
-
 variable "disk_type" {
   type        = "string"
   description = "The type of volume for the root block device."

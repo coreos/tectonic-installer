@@ -28,7 +28,7 @@ module "network" {
   master_ip_cidr_range = "${var.tectonic_gcp_network_masters_cidr_range}"
   worker_ip_cidr_range = "${var.tectonic_gcp_network_workers_cidr_range}"
 
-  managed_zone_name = "${var.google_managedzone_name}"
+  managed_zone_name = "${var.tectonic_gcp_ext_google_managedzone_name}"
   base_domain       = "${var.tectonic_base_domain}"
   cluster_name      = "${var.tectonic_cluster_name}"
 
@@ -73,7 +73,7 @@ module "etcd" {
   instance_count    = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(var.tectonic_gcp_zones) == 5 ? 5 : 3}"
   zone_list         = "${var.tectonic_gcp_zones}"
   machine_type      = "${var.tectonic_gcp_etcd_gce_type}"
-  managed_zone_name = "${var.google_managedzone_name}"
+  managed_zone_name = "${var.tectonic_gcp_ext_google_managedzone_name}"
   cluster_name      = "${var.tectonic_cluster_name}"
   base_domain       = "${var.tectonic_base_domain}"
   container_image   = "${var.tectonic_container_images["etcd"]}"
@@ -112,9 +112,6 @@ module "masters" {
 
   cl_channel = "${var.tectonic_cl_channel}"
 
-  base_domain     = "${var.tectonic_base_domain}"
-  custom_dns_name = "${var.tectonic_dns_prefix_name}"
-
   disk_type = "${var.tectonic_gcp_master_disktype}"
   disk_size = "${var.tectonic_gcp_master_disk_size}"
 
@@ -147,9 +144,6 @@ module "workers" {
   worker_targetpool_self_link = "${module.network.worker_targetpool_self_link}"
 
   cl_channel = "${var.tectonic_cl_channel}"
-
-  base_domain     = "${var.tectonic_base_domain}"
-  custom_dns_name = "${var.tectonic_dns_prefix_name}"
 
   disk_type = "${var.tectonic_gcp_worker_disktype}"
   disk_size = "${var.tectonic_gcp_worker_disk_size}"
@@ -201,7 +195,7 @@ module "dns" {
   tls_enabled         = "${var.tectonic_etcd_tls_enabled}"
   external_endpoints  = ["${compact(var.tectonic_etcd_servers)}"]
   etcd_instance_count = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(var.tectonic_gcp_zones) == 5 ? 5 : 3}"
-  managed_zone_name   = "${var.google_managedzone_name}"
+  managed_zone_name   = "${var.tectonic_gcp_ext_google_managedzone_name}"
   etcd_ip_addresses   = "${module.etcd.etcd_ip_addresses}"
   base_domain         = "${var.tectonic_base_domain}"
   tectonic_masters_ip = "${module.network.master_ip}"

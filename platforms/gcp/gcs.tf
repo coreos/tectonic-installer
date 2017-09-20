@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 resource "google_storage_bucket" "tectonic" {
-  name          = "${var.tectonic_cluster_name}-${var.tectonic_gcp_region}-${var.google_managedzone_name}"
+  name          = "${var.tectonic_cluster_name}-${var.tectonic_gcp_region}-${var.tectonic_gcp_ext_google_managedzone_name}"
   location      = "${upper(var.tectonic_gcp_region)}"
   storage_class = "REGIONAL"
 }
