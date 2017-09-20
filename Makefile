@@ -11,7 +11,7 @@ INSTALLER_BIN = $(INSTALLER_PATH)/installer
 TF_DOCS := $(shell which terraform-docs 2> /dev/null)
 TF_EXAMPLES := $(shell which terraform-examples 2> /dev/null)
 TF_CMD = terraform
-TEST_COMMAND = /bin/bash -c "bundler exec rspec ${TEST}"
+TEST_COMMAND = /bin/bash -c "bundler exec rspec spec/${TEST}"
 
 include ./makelib/*.mk
 
