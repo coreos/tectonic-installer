@@ -20,6 +20,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo "Invoking terraform to populate the templates..." >&2
 pushd "${DIR}"
+terraform init .
 while true; do echo "place_holder_for_terraform_input"; done | terraform apply ./
 popd
 
@@ -81,7 +82,7 @@ tmpfile=$(mktemp /tmp/desiredVersion.XXXXXX)
 # shellcheck disable=SC2086
 name=$(yaml2json < ${f} | jq .metadata.name)
 # shellcheck disable=SC2086
-desiredVersion=$(yaml2json < ${f} | jq .status.currentVersion)
+desiredVersion=$(yaml2json < ${f} | jq .spec.desiredVersion)
 # shellcheck disable=SC2086
 cat <<EOF > ${tmpfile}
 {
@@ -98,13 +99,13 @@ for f in ${ASSETS_DIR}/app_versions/*.yaml; do
   fi
   tmpfile=$(mktemp /tmp/desiredVersion.XXXXXX)
   # shellcheck disable=SC2086
-  metadata=$(yaml2json < ${f} | jq .metadata)
+  name=$(yaml2json < ${f} | jq .metadata.name)
   # shellcheck disable=SC2086
-  desiredVersion=$(yaml2json < ${f} | jq .status.currentVersion)
+  desiredVersion=$(yaml2json < ${f} | jq .spec.desiredVersion)
   # shellcheck disable=SC2086
   cat <<EOF > ${tmpfile}
 {
-  "metadata": ${metadata},
+  "name": ${name},
   "version": ${desiredVersion}
 }
 EOF
