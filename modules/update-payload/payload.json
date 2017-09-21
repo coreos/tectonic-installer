@@ -308,23 +308,11 @@
       "version": "1.6.10+tectonic.1"
     },
     {
-      "metadata": {
-        "labels": {
-          "managed-by-channel-operator": "true"
-        },
-        "name": "tectonic-etcd",
-        "namespace": "tectonic-system"
-      },
+      "name": "tectonic-etcd",
       "version": "0.0.1"
     },
     {
-      "metadata": {
-        "labels": {
-          "managed-by-channel-operator": "true"
-        },
-        "name": "tectonic-monitoring",
-        "namespace": "tectonic-system"
-      },
+      "name": "tectonic-monitoring",
       "version": "1.3.0"
     }
   ]
