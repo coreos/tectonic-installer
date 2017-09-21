@@ -9,5 +9,4 @@ spec:
   desiredVersion: ${kubernetes_version}
   paused: false
 status:
-  currentVersion: ${kubernetes_version}
   paused: false

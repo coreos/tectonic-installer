@@ -22,3 +22,4 @@ data:
       service_cidr: ${service_cidr}
     initialConfig:
       initial_master_count: ${master_count}
+      initial_cluster_version: ${kubernetes_version}

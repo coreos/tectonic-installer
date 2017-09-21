@@ -15,7 +15,6 @@ resource "template_dir" "tectonic" {
     heapster_image                     = "${var.container_images["heapster"]}"
     identity_image                     = "${var.container_images["identity"]}"
     ingress_controller_image           = "${var.container_images["ingress_controller"]}"
-    kube_version_operator_image        = "${var.container_images["kube_version_operator"]}"
     node_agent_image                   = "${var.container_images["node_agent"]}"
     etcd_operator_image                = "${var.container_images["etcd_operator"]}"
     stats_emitter_image                = "${var.container_images["stats_emitter"]}"

@@ -50,11 +50,12 @@ resource "template_dir" "bootkube" {
   destination_dir = "./generated/manifests"
 
   vars {
-    hyperkube_image        = "${var.container_images["hyperkube"]}"
-    pod_checkpointer_image = "${var.container_images["pod_checkpointer"]}"
-    kubedns_image          = "${var.container_images["kubedns"]}"
-    kubednsmasq_image      = "${var.container_images["kubednsmasq"]}"
-    kubedns_sidecar_image  = "${var.container_images["kubedns_sidecar"]}"
+    kube_version_operator_image = "${var.container_images["kube_version_operator"]}"
+    hyperkube_image             = "${var.container_images["hyperkube"]}"
+    pod_checkpointer_image      = "${var.container_images["pod_checkpointer"]}"
+    kubedns_image               = "${var.container_images["kubedns"]}"
+    kubednsmasq_image           = "${var.container_images["kubednsmasq"]}"
+    kubedns_sidecar_image       = "${var.container_images["kubedns_sidecar"]}"
 
     # Choose the etcd endpoints to use.
     # 1. If experimental mode is enabled (self-hosted etcd), then use
