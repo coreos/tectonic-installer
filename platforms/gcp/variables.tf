@@ -42,38 +42,12 @@ variable "tectonic_gcp_ext_google_managedzone_name" {
 
 variable "tectonic_gcp_region" {
   type        = "string"
-  default     = "us-central1"
   description = "The GCP region to use. Some regions only have 2 zones."
 }
 
 variable "tectonic_gcp_zones" {
   type        = "list"
-  default     = ["us-central1-a", "us-central1-b"]
   description = "List of two or more zones to use from specified GCP region."
-}
-
-variable "tectonic_gcp_network_masters_cidr_range" {
-  type        = "string"
-  default     = "10.10.0.0/16"
-  description = "The CIDR range to use for the subnetwork for Masters."
-}
-
-variable "tectonic_gcp_network_workers_cidr_range" {
-  type        = "string"
-  default     = "10.11.0.0/16"
-  description = "The CIDR range to use for the subnetwork for Workers."
-}
-
-variable "tectonic_gcp_network_etcd_cidr_range" {
-  type        = "string"
-  default     = "10.12.0.0/16"
-  description = "The CIDR range to use for the subnetwork for etcd."
-}
-
-variable "tectonic_gcp_network_etcd_loadbalancer_ip" {
-  type        = "string"
-  default     = "10.12.0.2"
-  description = "The private IP address to use for the internal etcd load-balancer. Must be a valid IP in the etcd_cidr_range."
 }
 
 variable "tectonic_gcp_master_gce_type" {

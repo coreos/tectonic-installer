@@ -25,8 +25,8 @@ module "network" {
   source = "../../modules/gcp/network"
 
   gcp_region           = "${var.tectonic_gcp_region}"
-  master_ip_cidr_range = "${var.tectonic_gcp_network_masters_cidr_range}"
-  worker_ip_cidr_range = "${var.tectonic_gcp_network_workers_cidr_range}"
+  master_ip_cidr_range = "10.10.0.0/16"
+  worker_ip_cidr_range = "10.11.0.0/16"
 
   managed_zone_name = "${var.tectonic_gcp_ext_google_managedzone_name}"
   base_domain       = "${var.tectonic_base_domain}"
