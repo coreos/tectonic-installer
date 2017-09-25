@@ -76,29 +76,11 @@ resource "azurerm_network_security_rule" "worker_ingress_k8s_nodeport" {
   network_security_group_name = "${azurerm_network_security_group.worker.name}"
 }
 
-resource "azurerm_network_security_rule" "worker_ingress_flannel_from_worker" {
+resource "azurerm_network_security_rule" "worker_ingress_flannel" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker-in-udp-4789-worker"
-  description            = "${var.cluster_name} worker - flannel from worker"
+  name                   = "${var.cluster_name}-worker-in-udp-4789"
+  description            = "${var.cluster_name} worker - flannel"
   priority               = 615
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "UDP"
-  source_port_range      = "*"
-  destination_port_range = "4789"
-
-  # TODO: Reference subnet
-  source_address_prefix       = "${var.vnet_cidr_block}"
-  destination_address_prefix  = "${var.vnet_cidr_block}"
-  resource_group_name         = "${var.resource_group_name}"
-  network_security_group_name = "${azurerm_network_security_group.worker.name}"
-}
-
-resource "azurerm_network_security_rule" "worker_ingress_flannel_from_master" {
-  count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-worker-in-udp-4789-master"
-  description            = "${var.cluster_name} worker - flannel from master"
-  priority               = 620
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "UDP"
@@ -116,7 +98,7 @@ resource "azurerm_network_security_rule" "worker_ingress_kubelet_secure" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-tcp-10255-vnet"
   description            = "${var.cluster_name} worker - kubelet"
-  priority               = 625
+  priority               = 620
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "TCP"
@@ -136,7 +118,7 @@ resource "azurerm_network_security_rule" "worker_ingress_node_exporter_from_work
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-tcp-9100-vnet"
   description            = "${var.cluster_name} worker - Prometheus node exporter from worker"
-  priority               = 630
+  priority               = 625
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "TCP"
@@ -154,7 +136,7 @@ resource "azurerm_network_security_rule" "worker_ingress_node_exporter_from_mast
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-tcp-9100-master"
   description            = "${var.cluster_name} worker - Prometheus node exporter from master"
-  priority               = 635
+  priority               = 630
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "TCP"
@@ -172,7 +154,7 @@ resource "azurerm_network_security_rule" "worker_ingress_heapster_from_master" {
   count                  = "${var.external_nsg_worker_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-worker-in-tcp-4194-master"
   description            = "${var.cluster_name} worker - Heapster from master"
-  priority               = 640
+  priority               = 635
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "TCP"

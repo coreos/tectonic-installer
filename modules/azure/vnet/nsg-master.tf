@@ -1,3 +1,10 @@
+resource "azurerm_network_security_group" "master" {
+  count               = "${var.external_nsg_master_id == "" ? 1 : 0}"
+  name                = "${var.cluster_name}-master"
+  location            = "${var.location}"
+  resource_group_name = "${var.resource_group_name}"
+}
+
 ### LB rules
 resource "azurerm_network_security_rule" "alb_probe" {
   count                       = "${var.external_nsg_worker_id == "" ? 1 : 0}"
@@ -72,13 +79,6 @@ resource "azurerm_network_security_rule" "console_ingress_http" {
 
 ### Master node rules
 
-resource "azurerm_network_security_group" "master" {
-  count               = "${var.external_nsg_master_id == "" ? 1 : 0}"
-  name                = "${var.cluster_name}-master"
-  location            = "${var.location}"
-  resource_group_name = "${var.resource_group_name}"
-}
-
 resource "azurerm_network_security_rule" "master_egress" {
   count                  = "${var.external_nsg_master_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-master-out"
@@ -133,29 +133,11 @@ resource "azurerm_network_security_rule" "master_ingress_ssh_admin" {
   network_security_group_name = "${azurerm_network_security_group.master.name}"
 }
 
-resource "azurerm_network_security_rule" "master_ingress_flannel_from_master" {
+resource "azurerm_network_security_rule" "master_ingress_flannel" {
   count                  = "${var.external_nsg_master_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-master-in-udp-4789-master"
-  description            = "${var.cluster_name} master - flannel from master"
+  name                   = "${var.cluster_name}-master-in-udp-4789"
+  description            = "${var.cluster_name} master - flannel"
   priority               = 510
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "UDP"
-  source_port_range      = "*"
-  destination_port_range = "4789"
-
-  # TODO: Reference subnet
-  source_address_prefix       = "${var.vnet_cidr_block}"
-  destination_address_prefix  = "${var.vnet_cidr_block}"
-  resource_group_name         = "${var.resource_group_name}"
-  network_security_group_name = "${azurerm_network_security_group.master.name}"
-}
-
-resource "azurerm_network_security_rule" "master_ingress_flannel_from_worker" {
-  count                  = "${var.external_nsg_master_id == "" ? 1 : 0}"
-  name                   = "${var.cluster_name}-master-in-udp-4789-worker"
-  description            = "${var.cluster_name} master - flannel from worker"
-  priority               = 515
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "UDP"
@@ -173,7 +155,7 @@ resource "azurerm_network_security_rule" "master_ingress_node_exporter_from_mast
   count                       = "${var.external_nsg_master_id == "" ? 1 : 0}"
   name                        = "${var.cluster_name}-master-in-tcp-9100-master"
   description                 = "${var.cluster_name} master - Prometheus node exporter from master"
-  priority                    = 520
+  priority                    = 515
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "TCP"
@@ -189,7 +171,7 @@ resource "azurerm_network_security_rule" "master_ingress_node_exporter_from_work
   count                       = "${var.external_nsg_master_id == "" ? 1 : 0}"
   name                        = "${var.cluster_name}-master-in-tcp-9100-worker"
   description                 = "${var.cluster_name} master - Prometheus node exporter from worker"
-  priority                    = 525
+  priority                    = 520
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "TCP"
@@ -206,7 +188,7 @@ resource "azurerm_network_security_rule" "master_ingress_k8s_nodeport_from_alb" 
   count                  = "${var.external_nsg_master_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-master-in-any-30000-32767-alb"
   description            = "${var.cluster_name} master - Kubernetes NodePort range from Azure Load Balancer"
-  priority               = 530
+  priority               = 525
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "*"
@@ -225,7 +207,7 @@ resource "azurerm_network_security_rule" "master_ingress_k8s_nodeport" {
   count                  = "${var.external_nsg_master_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-master-in-any-30000-32767"
   description            = "${var.cluster_name} master - Kubernetes NodePort range"
-  priority               = 535
+  priority               = 530
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "*"
@@ -243,7 +225,7 @@ resource "azurerm_network_security_rule" "master_ingress_kubelet_secure" {
   count                  = "${var.external_nsg_master_id == "" ? 1 : 0}"
   name                   = "${var.cluster_name}-master-in-tcp-10255-vnet"
   description            = "${var.cluster_name} master - kubelet"
-  priority               = 540
+  priority               = 535
   direction              = "Inbound"
   access                 = "Allow"
   protocol               = "TCP"
