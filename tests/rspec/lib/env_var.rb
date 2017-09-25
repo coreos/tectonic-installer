@@ -6,7 +6,7 @@ module EnvVar
     vars.all? { |var| ENV.key?(var) }
   end
 
-  def self.containsAny?(vars)
+  def self.contains_any?(vars)
     vars.any? { |var| ENV.key?(var) }
   end
 end

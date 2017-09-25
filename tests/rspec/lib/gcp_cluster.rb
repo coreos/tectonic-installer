@@ -5,7 +5,6 @@ require 'env_var'
 
 # GCPCluster represents a k8s cluster on CGP cloud provider
 class GcpCluster < Cluster
-
   def env_variables
     variables = super
     variables['PLATFORM'] = 'gcp'
@@ -25,6 +24,6 @@ class GcpCluster < Cluster
       GCLOUD_KEYFILE_JSON
       GOOGLE_APPLICATION_CREDENTIALS
     ]
-    EnvVar.containsAny?(credential_vars)
+    EnvVar.contains_any(credential_vars)
   end
 end

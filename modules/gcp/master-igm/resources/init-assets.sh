@@ -2,6 +2,7 @@
 set -e
 
 # Download the assets from GCS
+# shellcheck disable=SC2086,SC2154
 /usr/bin/bash /opt/gcs-puller.sh ${assets_gcs_location} /var/tmp/tectonic.zip
 unzip -o -d /var/tmp/tectonic/ /var/tmp/tectonic.zip
 rm /var/tmp/tectonic.zip

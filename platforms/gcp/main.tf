@@ -15,10 +15,8 @@ limitations under the License.
 */
 
 provider "google" {
-  project     = "${var.tectonic_gcp_project_id}"
-  region      = "${var.tectonic_gcp_region}"
-  credentials = "${var.tectonic_gcp_credentials}"
-  version     = "0.1.3"
+  region  = "${var.tectonic_gcp_region}"
+  version = "0.1.3"
 }
 
 module "network" {
@@ -99,7 +97,6 @@ module "etcd" {
 module "masters" {
   source = "../../modules/gcp/master-igm"
 
-  project_id          = "${var.tectonic_gcp_project_id}"
   region              = "${var.tectonic_gcp_region}"
   instance_count      = "${var.tectonic_master_count}"
   zone_list           = "${var.tectonic_gcp_zones}"

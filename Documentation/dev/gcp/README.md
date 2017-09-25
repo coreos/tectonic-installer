@@ -36,6 +36,7 @@ Customizations to the base installation live in examples/terraform.tfvars.gcp. E
 
 ```
 $ export CLUSTER=my-cluster
+$ export GOOGLE_PROJECT=my-project-id
 ```
 
 Create a build directory to hold your customizations and copy the example file into it:

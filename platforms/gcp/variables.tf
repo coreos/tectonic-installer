@@ -23,17 +23,6 @@ EOF
   default = "1.0"
 }
 
-variable "tectonic_gcp_project_id" {
-  type        = "string"
-  description = "The GCP project ID (string) to use."
-}
-
-variable "tectonic_gcp_credentials" {
-  type        = "string"
-  default     = ""
-  description = "The GCP credentials to use, leave blank for GCE metadata"
-}
-
 variable "tectonic_gcp_ext_google_managedzone_name" {
   # not to be confused with tectonic_base_domain (the DNS compliant domain name)
   type        = "string"

@@ -121,9 +121,6 @@ tectonic_experimental = false
 // It has no impact on generated assets but declares the version contract of the configuration.
 tectonic_gcp_config_version = "1.0"
 
-// The GCP credentials to use, leave blank for GCE metadata
-tectonic_gcp_credentials = ""
-
 // The size of the disk in gigabytes for the root block device of etcd nodes.
 tectonic_gcp_etcd_disk_size = "30"
 
@@ -144,9 +141,6 @@ tectonic_gcp_master_disktype = "pd-standard"
 
 // Instance size for the master node(s). Example: `n1-standard-2`.
 tectonic_gcp_master_gce_type = "n1-standard-2"
-
-// The GCP project ID (string) to use.
-tectonic_gcp_project_id = ""
 
 // The GCP region to use. Some regions only have 2 zones.
 tectonic_gcp_region = ""
