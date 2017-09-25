@@ -194,6 +194,9 @@ kubectl create -f updater/app_versions/app-version-kubernetes.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-monitoring.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-cluo.yaml
 
+echo "Creating AddOn Operator Config"
+kubectl create -f addon-config.yaml
+
 if [ "$EXPERIMENTAL" = "true" ]; then
   echo "Creating Experimental resources"
   kubectl apply -f updater/cluster-config.yaml
