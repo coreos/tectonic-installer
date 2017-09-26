@@ -1,4 +1,9 @@
 
+// (optional) Unique name of the S3 bucket
+// 
+// If name is not provided the installer will construct the name using "tectonic_cluster_name", current AWS region and "tectonic_base_domain"
+// tectonic_S3_bucket_name = ""
+
 // The e-mail address used to:
 // 1. login as the admin user to the Tectonic Console.
 // 2. generate DNS zones for some providers.
