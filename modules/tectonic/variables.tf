@@ -63,7 +63,6 @@ variable "admin_email" {
 variable "admin_password" {
   description = "Password used to by the cluster admin to login to the Tectonic Console. Backslashes and double quotes must be escaped."
   type        = "string"
-  default     = "password"
 }
 
 variable "update_server" {
