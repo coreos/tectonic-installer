@@ -23,4 +23,26 @@ module AwsSupport
                     end
     ssh_master_ip
   end
+
+  def self.create_aws_key_pairs(aws_region)
+    client = Aws::EC2::Client.new(region: aws_region)
+    key_pair_name = NameGenerator.generate_short_name
+
+    dir_home = `echo ${HOME}`.chomp
+    ssh_pub_key = File.read("#{dir_home}/.ssh/id_rsa.pub")
+
+    resp = client.import_key_pair(dry_run: false,
+                                  key_name: key_pair_name,
+                                  public_key_material: ssh_pub_key)
+    raise 'Error to import AWS key pair' unless resp.successful?
+    resp.key_name
+  end
+
+  def self.delete_aws_key_pairs(key_pair_name, aws_region)
+    client = Aws::EC2::Client.new(region: aws_region)
+
+    resp = client.delete_key_pair(key_name: key_pair_name,
+                                  dry_run: false)
+    raise "Error to delete AWS key pair - #{key_pair_name}" unless resp.successful?
+  end
 end

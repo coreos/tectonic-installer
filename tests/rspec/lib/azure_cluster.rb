@@ -9,8 +9,9 @@ class AzureCluster < Cluster
   extend AzureSupport
 
   def initialize(tfvars_file)
-    super(tfvars_file)
     @random_location = AzureSupport.random_location_unless_defined
+    @azure_ssh_key_path = AzureSupport.set_ssh_key_path unless EnvVar.set?(%w[TF_VAR_tectonic_azure_ssh_key])
+    super(tfvars_file)
   end
 
   def master_ip_address

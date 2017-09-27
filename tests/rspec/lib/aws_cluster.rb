@@ -17,6 +17,7 @@ class AwsCluster < Cluster
       # AWSIAM.assume_role
     end
     @aws_region = tfvars_file.tectonic_aws_region
+    @aws_ssh_key = ENV['TF_VAR_tectonic_aws_ssh_key'] = AwsSupport.create_aws_key_pairs(@aws_region)
     super(tfvars_file)
   end
 
@@ -24,6 +25,12 @@ class AwsCluster < Cluster
     variables = super
     variables['PLATFORM'] = 'aws'
     variables
+  end
+
+  def stop
+    AwsSupport.delete_aws_key_pairs(@aws_ssh_key, @aws_region)
+
+    super
   end
 
   def master_ip_address
