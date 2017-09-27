@@ -21,12 +21,6 @@ def creds = [
     variable: 'TF_VAR_tectonic_azure_ssh_key'
   ],
   [
-    $class: 'UsernamePasswordMultiBinding',
-    credentialsId: 'tectonic-console-login',
-    passwordVariable: 'TF_VAR_tectonic_admin_email',
-    usernameVariable: 'TF_VAR_tectonic_admin_password'
-  ],
-  [
     $class: 'AmazonWebServicesCredentialsBinding',
     credentialsId: 'tectonic-jenkins-installer'
   ],
