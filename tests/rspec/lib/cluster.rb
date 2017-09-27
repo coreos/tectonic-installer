@@ -9,8 +9,8 @@ require 'fileutils'
 require 'name_generator'
 require 'password_generator'
 
-SSH_CMD_BOOTKUBE_DONE = "journalctl --no-pager -u bootkube | grep -q 'Started Bootstrap a Kubernetes cluster.'"
-SSH_CMD_TECTONIC_DONE = "journalctl --no-pager -u tectonic | grep -q 'Started Bootstrap a Tectonic cluster.'"
+SSH_CMD_BOOTKUBE_DONE = 'systemctl is-active bootkube'
+SSH_CMD_TECTONIC_DONE = 'systemctl is-active tectonic'
 
 # Cluster represents a k8s cluster
 class Cluster
@@ -134,7 +134,7 @@ class Cluster
   def wait_for_bootstrapping
     ssh_master_ip = master_ip_address
     from = Time.now
-    Net::SSH.start(ssh_master_ip, 'core') do |ssh|
+    Net::SSH.start(ssh_master_ip, 'core', forward_agent: true, use_agent: true) do |ssh|
       loop do
         bootkube_done = ssh.exec!(SSH_CMD_BOOTKUBE_DONE).exitstatus.zero?
         tectonic_done = ssh.exec!(SSH_CMD_TECTONIC_DONE).exitstatus.zero?

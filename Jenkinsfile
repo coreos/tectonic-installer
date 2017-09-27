@@ -10,12 +10,6 @@ def creds = [
   file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_license_path'),
   file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'),
   [
-    $class: 'UsernamePasswordMultiBinding',
-    credentialsId: 'azure-smoke-ssh-key',
-    passwordVariable: 'AZURE_SMOKE_SSH_KEY',
-    usernameVariable: 'AZURE_SMOKE_SSH_KEY_PUB'
-  ],
-  [
     $class: 'FileBinding',
     credentialsId: 'azure-smoke-public-ssh-key',
     variable: 'TF_VAR_tectonic_azure_ssh_key'
@@ -190,7 +184,7 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  sshagent(['aws-smoke-test-ssh-key']) {
+                  sshagent(credentials: ['aws-smoke-test-ssh-key']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
@@ -211,7 +205,7 @@ pipeline {
                     image: tectonic_smoke_test_env_image,
                     args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'
                 ) {
-                  sshagent(['aws-smoke-test-ssh-key']) {
+                  sshagent(credentials: ['aws-smoke-test-ssh-key']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
@@ -229,7 +223,7 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  sshagent(['aws-smoke-test-ssh-key']) {
+                  sshagent(credentials: ['aws-smoke-test-ssh-key']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
@@ -247,7 +241,7 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  sshagent(['aws-smoke-test-ssh-key']) {
+                  sshagent(credentials: ['aws-smoke-test-ssh-key']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
@@ -265,7 +259,7 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  sshagent(['aws-smoke-test-ssh-key']) {
+                  sshagent(credentials: ['aws-smoke-test-ssh-key']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
@@ -283,7 +277,7 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                  sshagent(credentials: ['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
@@ -301,7 +295,7 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                  sshagent(credentials: ['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
@@ -322,7 +316,7 @@ pipeline {
                     image: tectonic_smoke_test_env_image,
                     args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'
                 ) {
-                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                  sshagent(credentials: ['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
@@ -343,7 +337,7 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                  sshagent(credentials: ['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
@@ -362,7 +356,7 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                  sshagent(credentials: ['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
@@ -380,7 +374,7 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                  sshagent(credentials: ['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
@@ -398,7 +392,7 @@ pipeline {
             node('worker && ec2') {
               withCredentials(creds) {
                 withDockerContainer(tectonic_smoke_test_env_image) {
-                  sshagent(['azure-smoke-ssh-key-kind-ssh']) {
+                  sshagent(credentials: ['azure-smoke-ssh-key-kind-ssh']) {
                     ansiColor('xterm') {
                       unstash 'repository'
                       sh """#!/bin/bash -ex
