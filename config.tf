@@ -43,7 +43,7 @@ variable "tectonic_container_images" {
     identity                     = "quay.io/coreos/dex:v2.6.1"
     ingress_controller           = "gcr.io/google_containers/nginx-ingress-controller:0.9.0-beta.11"
     kenc                         = "quay.io/coreos/kenc:0.0.2"
-    kubedns                      = "gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.4"
+    kubedns                      = "gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.5"
     kubednsmasq                  = "gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.4"
     kubedns_sidecar              = "gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.4"
     kube_state_metrics           = "quay.io/coreos/kube-state-metrics:v1.0.0"
