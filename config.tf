@@ -22,7 +22,7 @@ variable "tectonic_container_images" {
     console                         = "quay.io/coreos/tectonic-console:v1.7.4"
     identity                        = "quay.io/coreos/dex:v2.4.1"
     container_linux_update_operator = "quay.io/coreos/container-linux-update-operator:v0.2.1"
-    kube_version_operator           = "quay.io/coreos/kube-version-operator:v1.6.10-kvo.1"
+    kube_version_operator           = "quay.io/coreos/kube-version-operator:v1.6.10-kvo.2"
     tectonic_channel_operator       = "quay.io/coreos/tectonic-channel-operator:0.4.2"
     node_agent                      = "quay.io/coreos/node-agent:787844277099e8c10d617c3c807244fc9f873e46"
     prometheus_operator             = "quay.io/coreos/prometheus-operator:v0.11.2"
