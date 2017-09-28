@@ -63,8 +63,8 @@ variable "tectonic_versions" {
     prometheus    = "v1.7.1"
     alertmanager  = "v0.7.1"
     monitoring    = "1.3.1"
-    kubernetes    = "1.6.10+tectonic.1"
-    tectonic      = "1.6.10-tectonic.1"
+    kubernetes    = "1.6.10+tectonic.2"
+    tectonic      = "1.6.10-tectonic.2"
     tectonic-etcd = "0.0.1"
   }
 }
