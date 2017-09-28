@@ -10,7 +10,7 @@ module AzureSupport
   end
 
   def self.set_ssh_key_path
-    dir_home = `echo ${HOME}`.chomp
+    dir_home = ENV['HOME']
     ssh_pub_key_path = "#{dir_home}/.ssh/id_rsa.pub"
     ENV['TF_VAR_tectonic_azure_ssh_key'] = ssh_pub_key_path
     ssh_pub_key_path

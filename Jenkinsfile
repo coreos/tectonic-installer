@@ -37,7 +37,7 @@ def tectonic_smoke_test_env_image = 'quay.io/coreos/tectonic-smoke-test-env:v5.3
 pipeline {
   agent none
   options {
-    timeout(time:70, unit:'MINUTES')
+    timeout(time:120, unit:'MINUTES')
     timestamps()
     buildDiscarder(logRotator(numToKeepStr:'100'))
   }

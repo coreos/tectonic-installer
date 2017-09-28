@@ -121,14 +121,14 @@ class Cluster
     loop do
       begin
         KubeCTL.run(@kubeconfig, 'cluster-info')
-        wait_for_bootstrapping
-        return
+        break
       rescue KubeCTL::KubeCTLCmdError
         elapsed = Time.now - from
         raise 'kubectl cluster-info never returned with successful error code' if elapsed > 1200 # 20 mins timeout
         sleep 10
       end
     end
+    wait_for_bootstrapping
   end
 
   def wait_for_bootstrapping
