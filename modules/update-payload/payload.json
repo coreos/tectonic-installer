@@ -1,5 +1,5 @@
 {
-  "version": "1.7.3-tectonic.2",
+  "version": "1.7.3-tectonic.3",
   "deployments": [
     {
       "apiVersion": "extensions/v1beta1",
@@ -115,7 +115,7 @@
                   "--cache-images=true",
                   "--version-mapping=/upgrade-spec.json"
                 ],
-                "image": "quay.io/coreos/kube-version-operator:v1.7.3-kvo.3",
+                "image": "quay.io/coreos/kube-version-operator:v1.7.3-kvo.4",
                 "name": "kube-version-operator"
               }
             ],
@@ -321,7 +321,7 @@
         "name": "kubernetes",
         "namespace": "tectonic-system"
       },
-      "version": "1.7.3+tectonic.1"
+      "version": "1.7.3+tectonic.3"
     },
     {
       "metadata": {
