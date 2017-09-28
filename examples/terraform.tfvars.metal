@@ -1,9 +1,4 @@
 
-// (optional) Unique name of the S3 bucket
-// 
-// If name is not provided the installer will construct the name using "tectonic_cluster_name", current AWS region and "tectonic_base_domain"
-// tectonic_S3_bucket_name = ""
-
 // The e-mail address used to:
 // 1. login as the admin user to the Tectonic Console.
 // 2. generate DNS zones for some providers.
@@ -247,7 +242,12 @@ tectonic_metal_worker_names = ""
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_pull_secret_path = ""
 
-// (optional) This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation.
+// (optional) Unique name under which the Amazon S3 bucket will be created. Bucket name must start with a lower case name and is limited to 63 characters
+// 
+// If name is not provided the installer will construct the name using "tectonic_cluster_name", current AWS region and "tectonic_base_domain"
+// tectonic_s3_bucket_name = ""
+
+// (optional) This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation. 
 // The maximum size of this IP range is /12
 // tectonic_service_cidr = "10.3.0.0/16"
 
