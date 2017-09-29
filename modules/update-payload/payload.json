@@ -115,7 +115,7 @@
                   "--cache-images=true",
                   "--version-mapping=/upgrade-spec.json"
                 ],
-                "image": "quay.io/coreos/kube-version-operator:v1.7.5-kvo.6",
+                "image": "quay.io/coreos/kube-version-operator:v1.7.5-kvo.7",
                 "name": "kube-version-operator"
               }
             ],
