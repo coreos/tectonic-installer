@@ -1,63 +1,49 @@
-// The hyperkube image tag.
-variable kube_image_tag {
-  type = "string"
-}
-
-// The hyperkube image url.
-variable kube_image_url {
-  type = "string"
-}
-
-// The content of the kubeconfig file.
-variable kubeconfig_content {
-  type = "string"
-}
-
-// The content of the /etc/resolv.conf file.
-variable resolv_conf_content {
-  type = "string"
-}
-
-// The amount of nodes to be created.
-// Example: `3`
-variable "instance_count" {
-  type = "string"
+variable "cluster_name" {
+  type        = "string"
+  description = "The name of the cluster. The master hostnames will be prefixed with this."
 }
 
 variable "core_public_keys" {
   type = "list"
 }
 
-// The name of the cluster.
-// The master hostnames will be prefixed with this.
-variable "cluster_name" {
-  type = "string"
-}
-
-variable "tectonic_kube_dns_service_ip" {
-  type = "string"
-}
-
-variable "node_labels" {
-  type = "string"
-}
-
-variable "node_taints" {
-  type = "string"
-}
-
 variable "hostname_infix" {
   type = "string"
 }
 
-variable "bootkube_service" {
-  type = "string"
+variable "instance_count" {
+  type        = "string"
+  description = "The amount of nodes to be created. Example: `3`"
 }
 
-variable "tectonic_service" {
-  type = "string"
+variable "kubeconfig_content" {
+  type        = "string"
+  description = "The content of the kubeconfig file."
 }
 
-variable "tectonic_experimental" {
-  default = false
+variable "resolv_conf_content" {
+  type        = "string"
+  description = "The content of the /etc/resolv.conf file."
+}
+
+variable "ign_bootkube_service_id" {
+  type        = "string"
+  description = "The ID of the bootkube systemd service unit"
+  default     = ""
+}
+
+variable "ign_bootkube_path_unit_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "ign_tectonic_service_id" {
+  type        = "string"
+  description = "The ID of the tectonic installer systemd service unit"
+  default     = ""
+}
+
+variable "ign_tectonic_path_unit_id" {
+  type    = "string"
+  default = ""
 }

@@ -1,5 +1,5 @@
 # This output is meant to be used to inject a dependency on the generated
-# assets. As of TerraForm v0.9, it is difficult to make a module depend on
+# assets. As of Terraform v0.9, it is difficult to make a module depend on
 # another module (no depends_on, no triggers), or to make a data source
 # depend on a module (no depends_on, no triggers, generally no dummy variable).
 #
@@ -19,8 +19,20 @@ output "id" {
   value = "${sha1("${template_dir.tectonic.id} ${local_file.tectonic.id}")}"
 }
 
-output "systemd_service" {
+output "systemd_service_rendered" {
   value = "${data.template_file.tectonic_service.rendered}"
+}
+
+output "systemd_service_id" {
+  value = "${data.ignition_systemd_unit.tectonic_service.id}"
+}
+
+output "systemd_path_unit_rendered" {
+  value = "${data.template_file.tectonic_path.rendered}"
+}
+
+output "systemd_path_unit_id" {
+  value = "${data.ignition_systemd_unit.tectonic_path.id}"
 }
 
 output "cluster_id" {

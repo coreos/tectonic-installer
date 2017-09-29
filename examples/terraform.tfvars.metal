@@ -1,21 +1,29 @@
 
-// The e-mail address used to login as the admin user to the Tectonic Console.
+// The e-mail address used to:
+// 1. login as the admin user to the Tectonic Console.
+// 2. generate DNS zones for some providers.
 // 
-// Note: This field MUST be set manually prior to creating the cluster.
+// Note: This field MUST be in all lower-case e-mail address format and set manually prior to creating the cluster.
 tectonic_admin_email = ""
 
-// The bcrypt hash of admin user password to login to the Tectonic Console.
-// Use the bcrypt-hash tool (https://github.com/coreos/bcrypt-tool/releases/tag/v1.0.0) to generate it.
+// The admin user password to login to the Tectonic Console.
 // 
-// Note: This field MUST be set manually prior to creating the cluster.
-tectonic_admin_password_hash = ""
+// Note: This field MUST be set manually prior to creating the cluster. Backslashes and double quotes must
+// also be escaped.
+tectonic_admin_password = ""
 
-// The base DNS domain of the cluster.
+// The base DNS domain of the cluster. It must NOT contain a trailing period. Some
+// DNS providers will automatically add this if necessary.
 // 
 // Example: `openstack.dev.coreos.systems`.
 // 
 // Note: This field MUST be set manually prior to creating the cluster.
 // This applies only to cloud platforms.
+// 
+// [Azure-specific NOTE]
+// To use Azure-provided DNS, `tectonic_base_domain` should be set to `""`
+// If using DNS records, ensure that `tectonic_base_domain` is set to a properly configured external DNS zone.
+// Instructions for configuring delegated domains for Azure DNS can be found here: https://docs.microsoft.com/en-us/azure/dns/dns-delegate-domain-azure-dns
 tectonic_base_domain = ""
 
 // (optional) The content of the PEM-encoded CA certificate, used to generate Tectonic Console's server certificate.
@@ -27,17 +35,22 @@ tectonic_base_domain = ""
 // tectonic_ca_key = ""
 
 // (optional) The algorithm used to generate tectonic_ca_key.
-// The default value is currently recommend.
+// The default value is currently recommended.
 // This field is mandatory if `tectonic_ca_cert` is set.
 // tectonic_ca_key_alg = "RSA"
 
-// The Container Linux update channel.
+// (optional) [ALPHA] If set to true, calico network policy support will be deployed.
+// WARNING: Enabling an alpha feature means that future updates may become unsupported.
+// This should only be enabled on clusters that are meant to be short-lived to begin validating the alpha feature.
+// tectonic_calico_network_policy = false
+
+// (optional) The Container Linux update channel.
 // 
 // Examples: `stable`, `beta`, `alpha`
-tectonic_cl_channel = "stable"
+// tectonic_cl_channel = "stable"
 
-// This declares the IP range to assign Kubernetes pod IPs in CIDR notation.
-tectonic_cluster_cidr = "10.2.0.0/16"
+// (optional) This declares the IP range to assign Kubernetes pod IPs in CIDR notation.
+// tectonic_cluster_cidr = "10.2.0.0/16"
 
 // The name of the cluster.
 // If used in a cloud-environment, this will be prepended to `tectonic_base_domain` resulting in the URL to the Tectonic console.
@@ -45,6 +58,26 @@ tectonic_cluster_cidr = "10.2.0.0/16"
 // Note: This field MUST be set manually prior to creating the cluster.
 // Warning: Special characters in the name like '.' may cause errors on OpenStack platforms due to resource name constraints.
 tectonic_cluster_name = ""
+
+// (optional) This only applies if you use the modules/dns/ddns module.
+// 
+// Specifies the RFC2136 Dynamic DNS server key algorithm.
+// tectonic_ddns_key_algorithm = ""
+
+// (optional) This only applies if you use the modules/dns/ddns module.
+// 
+// Specifies the RFC2136 Dynamic DNS server key name.
+// tectonic_ddns_key_name = ""
+
+// (optional) This only applies if you use the modules/dns/ddns module.
+// 
+// Specifies the RFC2136 Dynamic DNS server key secret.
+// tectonic_ddns_key_secret = ""
+
+// (optional) This only applies if you use the modules/dns/ddns module.
+// 
+// Specifies the RFC2136 Dynamic DNS server IP/host to register IP addresses to.
+// tectonic_ddns_server = ""
 
 // (optional) The path of the file containing the CA certificate for TLS communication with etcd.
 // 
@@ -67,7 +100,7 @@ tectonic_cluster_name = ""
 // The number of etcd nodes to be created.
 // If set to zero, the count of etcd nodes will be determined automatically.
 // 
-// Note: This is currently only supported on AWS.
+// Note: This is not supported on bare metal.
 tectonic_etcd_count = "0"
 
 // (optional) List of external etcd v3 servers to connect with (hostnames/IPs only).
@@ -85,6 +118,9 @@ tectonic_etcd_count = "0"
 tectonic_experimental = false
 
 // The path to the tectonic licence file.
+// You can download the Tectonic license file from your Account overview page at [1].
+// 
+// [1] https://account.coreos.com/overview
 // 
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_license_path = ""
@@ -193,20 +229,27 @@ tectonic_metal_worker_macs = ""
 tectonic_metal_worker_names = ""
 
 // The path the pull secret file in JSON format.
+// This is known to be a "Docker pull secret" as produced by the docker login [1] command.
+// A sample JSON content is shown in [2].
+// You can download the pull secret from your Account overview page at [3].
+// 
+// [1] https://docs.docker.com/engine/reference/commandline/login/
+// 
+// [2] https://coreos.com/os/docs/latest/registry-authentication.html#manual-registry-auth-setup
+// 
+// [3] https://account.coreos.com/overview
 // 
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_pull_secret_path = ""
 
-// This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation. The maximum size of this IP range is /12
-tectonic_service_cidr = "10.3.0.0/16"
+// (optional) This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation.
+// The maximum size of this IP range is /12
+// tectonic_service_cidr = "10.3.0.0/16"
 
 // SSH public key to use as an authorized key.
 // 
 // Example: `ssh-rsa AAAB3N...`
 tectonic_ssh_authorized_key = ""
-
-// The Tectonic statistics collection URL to which to report.
-tectonic_stats_url = "https://stats-collector.tectonic.com"
 
 // If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
 tectonic_vanilla_k8s = false

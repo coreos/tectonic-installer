@@ -113,9 +113,8 @@ tectonic_ssh_authorized_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPQFdwVLr+a
 
 # Tectonic
 
-# generate a hash with the bcrypt-hash tool (https://github.com/coreos/bcrypt-tool/releases/tag/v1.0.0) that will be used for your admin user.
 tectonic_admin_email = "admin@example.com"
-tectonic_admin_password_hash = "$2a$12$k9wa31uE/4uD9aVtT/vNtOZwxXyEJ/9DwXXEYB/eUpb9fvEPsH/kO" # PASSWORD
+tectonic_admin_password = "password"
 
 # Update Details
 # leave blank for default values

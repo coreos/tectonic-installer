@@ -4,7 +4,7 @@ data "aws_region" "current" {
 
 resource "aws_s3_bucket" "tectonic" {
   # Buckets must start with a lower case name and are limited to 63 characters,
-  # so we prepende the letter 'a' and use the md5 hex digest for the case of a long domain
+  # so we prepend the letter 'a' and use the md5 hex digest for the case of a long domain
   # leaving 29 chars for the cluster name.
   bucket = "a${var.tectonic_cluster_name}-${md5("${data.aws_region.current.name}-${var.tectonic_base_domain}")}"
 
@@ -18,7 +18,7 @@ resource "aws_s3_bucket" "tectonic" {
 }
 
 # Bootkube / Tectonic assets
-resource "aws_s3_bucket_object" "tectonic-assets" {
+resource "aws_s3_bucket_object" "tectonic_assets" {
   bucket = "${aws_s3_bucket.tectonic.bucket}"
   key    = "assets.zip"
   source = "${data.archive_file.assets.output_path}"

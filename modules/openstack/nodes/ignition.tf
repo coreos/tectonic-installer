@@ -7,19 +7,23 @@ data "ignition_config" "node" {
 
   files = [
     "${data.ignition_file.kubeconfig.id}",
-    "${data.ignition_file.kubelet-env.id}",
-    "${data.ignition_file.max-user-watches.id}",
+    "${var.ign_installer_kubelet_env_id}",
+    "${var.ign_max_user_watches_id}",
     "${data.ignition_file.resolv_conf.id}",
     "${data.ignition_file.hostname.*.id[count.index]}",
+    "${data.ignition_file.sshd.id}",
   ]
 
-  systemd = [
-    "${data.ignition_systemd_unit.docker.id}",
-    "${data.ignition_systemd_unit.locksmithd.id}",
-    "${data.ignition_systemd_unit.kubelet.id}",
-    "${data.ignition_systemd_unit.bootkube.id}",
-    "${data.ignition_systemd_unit.tectonic.id}",
-  ]
+  systemd = ["${compact(list(
+    var.ign_docker_dropin_id,
+    var.ign_k8s_node_bootstrap_service_id,
+    var.ign_locksmithd_service_id,
+    var.ign_kubelet_service_id,
+    var.ign_bootkube_service_id,
+    var.ign_tectonic_service_id,
+    var.ign_bootkube_path_unit_id,
+    var.ign_tectonic_path_unit_id,
+   ))}"]
 }
 
 data "ignition_file" "resolv_conf" {
@@ -50,39 +54,6 @@ data "ignition_file" "hostname" {
   }
 }
 
-data "ignition_systemd_unit" "docker" {
-  name   = "docker.service"
-  enable = true
-
-  dropin = [
-    {
-      name    = "10-dockeropts.conf"
-      content = "[Service]\nEnvironment=\"DOCKER_OPTS=--log-opt max-size=50m --log-opt max-file=3\"\n"
-    },
-  ]
-}
-
-data "ignition_systemd_unit" "locksmithd" {
-  name = "locksmithd.service"
-  mask = true
-}
-
-data "template_file" "kubelet" {
-  template = "${file("${path.module}/resources/kubelet.service")}"
-
-  vars {
-    cluster_dns       = "${var.tectonic_kube_dns_service_ip}"
-    node_labels       = "${var.node_labels}"
-    node_taints_param = "${var.node_taints != "" ? "--register-with-taints=${var.node_taints}" : ""}"
-  }
-}
-
-data "ignition_systemd_unit" "kubelet" {
-  name    = "kubelet.service"
-  enable  = true
-  content = "${data.template_file.kubelet.rendered}"
-}
-
 data "ignition_file" "kubeconfig" {
   filesystem = "root"
   path       = "/etc/kubernetes/kubeconfig"
@@ -93,35 +64,18 @@ data "ignition_file" "kubeconfig" {
   }
 }
 
-data "ignition_file" "kubelet-env" {
+data "ignition_file" "sshd" {
   filesystem = "root"
-  path       = "/etc/kubernetes/kubelet.env"
-  mode       = 0644
+  path       = "/etc/ssh/sshd_config"
+  mode       = 0600
 
   content {
     content = <<EOF
-KUBELET_IMAGE_URL=${var.kube_image_url}
-KUBELET_IMAGE_TAG="${var.kube_image_tag}"
+UsePrivilegeSeparation sandbox
+Subsystem sftp internal-sftp
+
+PermitRootLogin no
+AuthenticationMethods publickey
 EOF
   }
-}
-
-data "ignition_file" "max-user-watches" {
-  filesystem = "root"
-  path       = "/etc/sysctl.d/max-user-watches.conf"
-  mode       = 0644
-
-  content {
-    content = "fs.inotify.max_user_watches=16184"
-  }
-}
-
-data "ignition_systemd_unit" "bootkube" {
-  name    = "bootkube.service"
-  content = "${var.bootkube_service}"
-}
-
-data "ignition_systemd_unit" "tectonic" {
-  name    = "tectonic.service"
-  content = "${var.tectonic_service}"
 }

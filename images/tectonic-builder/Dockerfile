@@ -4,25 +4,48 @@
 # Node install inspired by: https://github.com/dockerfile/nodejs/blob/master/Dockerfile
 #
 # Update the builder image manually by running:
+# (See README.md/##Upstream-and-CoreOS-Terraform)
 #
-# docker build -f builder/Dockerfile .
-# docker tag <resulting-image-id> quay.io/coreos/tectonic-builder:<next-semver>
+# docker build -t quay.io/coreos/tectonic-builder:<next-semver> -f images/builder/Dockerfile .
 # docker push quay.io/coreos/tectonic-builder:<next-semver>
+#
+# docker build \
+# --build-arg TERRAFORM_URL=<upstream terraform download url> \
+# -t quay.io/coreos/tectonic-builder:<next-semver>-upstream-terraform \
+# -f images/builder/Dockerfile .
+# docker push quay.io/coreos/tectonic-builder:<next-semver>-upstream-terraform
 ###
 
-FROM golang:1.8-stretch
+FROM golang:1.9-stretch
 
 ### For golang testing stuff
 RUN go get -u github.com/golang/lint/golint
 RUN go get github.com/jstemmer/go-junit-report
 
+### Tools used by 'make structure-check'
+RUN go get github.com/segmentio/terraform-docs
+RUN go get github.com/s-urbaniak/terraform-examples
+RUN go get github.com/bronze1man/yaml2json
+
 ### License parser
 RUN go get github.com/coreos/license-bill-of-materials
 
-### Install Terraform, NodeJS and Yarn
-ENV TERRAFORM_VERSION="0.9.6"
+### 'grafiti' for cluster cleanup
+ENV GRAFITI_VERSION "v0.1.1"
+RUN git clone -q https://github.com/coreos/grafiti.git ${GOPATH}/src/github.com/coreos/grafiti \
+    && cd ${GOPATH}/src/github.com/coreos/grafiti \
+    && git checkout -q tags/${GRAFITI_VERSION} \
+    && make install
+
+# /go needs to be writable by jenkins user like it is in the upstream golang image
+RUN chmod 777 -R /go
+
+### Install Shellcheck, Terraform, NodeJS and Yarn
+ENV SHELLCHECK_VERSION="v0.4.6"
+ENV TERRAFORM_VERSION="v0.10.4-coreos.1"
 ENV NODE_VERSION="v8.1.2"
 ENV YARN_VERSION="v0.24.6"
+ENV MATCHBOXVERSION="v0.6.1"
 # yarn needs a home writable by any user running the container
 ENV HOME /opt/home
 RUN mkdir -p ${HOME}
@@ -30,11 +53,14 @@ RUN chmod 777 -R ${HOME}
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
-    build-essential sudo curl wget git autoconf automake unzip libtool jq shellcheck awscli gnupg1 \
+    build-essential sudo curl wget git autoconf automake unzip libtool jq awscli gnupg1 \
     openvpn xvfb xauth
 
 # Install Terraform
-RUN curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip | funzip > /usr/local/bin/terraform && chmod +x /usr/local/bin/terraform
+# TERRAFORM_URL enables us to build the upstream-terraform Tectonic builder
+# image (See README.md/##Upstream-and-CoreOS-Terraform)
+ARG TERRAFORM_URL=https://github.com/coreos/terraform/releases/download/${TERRAFORM_VERSION}/linux_amd64.zip
+RUN curl -L ${TERRAFORM_URL} | funzip > /usr/local/bin/terraform && chmod +x /usr/local/bin/terraform
 
 # Install NodeJS
 RUN cd /tmp && \
@@ -56,6 +82,15 @@ RUN cd /tmp && \
     mv /tmp/dist /usr/local/yarn && \
     ln -s /usr/local/yarn/bin/yarn /usr/local/bin/yarn
 
+# Install Azure-cli
+RUN yarn global add azure-cli
+
+# Install Shellcheck
+RUN cd /tmp && \
+    wget --quiet https://storage.googleapis.com/shellcheck/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz && \
+    tar xJf shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz && \
+    mv /tmp/shellcheck-${SHELLCHECK_VERSION}/shellcheck /usr/local/bin/shellcheck
+
 # Install Chrome for installer gui tests
 # Use Chrome beta because v60 or higher is needed for headless mode
 RUN wget --quiet -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
@@ -63,6 +98,13 @@ RUN wget --quiet -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | ap
     apt-get update && \
     apt-get install --no-install-recommends -y -q \
     google-chrome-beta ca-certificates
+
+# matchbox for baremetal installer gui tests
+RUN cd /tmp && \
+    wget --quiet -O /tmp/matchbox.tar.gz https://github.com/coreos/matchbox/releases/download/${MATCHBOXVERSION}/matchbox-${MATCHBOXVERSION}-linux-amd64.tar.gz && \
+    tar xzvf /tmp/matchbox.tar.gz && \
+    rm -f /tmp/matchbox.tar.gz && \
+    cp matchbox-*/matchbox /usr/local/bin
 
 # cleanup
 RUN rm -rf /tmp/node-v*

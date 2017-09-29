@@ -18,7 +18,9 @@ spec:
     - --bind-address=0.0.0.0
     - --client-ca-file=/etc/kubernetes/secrets/ca.crt
     - --cloud-provider=${cloud_provider}
+    ${cloud_provider_config_flag}
     - --etcd-servers=${etcd_servers}
+    - --etcd-quorum-read=true
     ${etcd_ca_flag}
     ${etcd_cert_flag}
     ${etcd_key_flag}
@@ -40,6 +42,9 @@ spec:
     - mountPath: /etc/kubernetes/secrets
       name: secrets
       readOnly: true
+    - mountPath: /etc/kubernetes/cloud
+      name: etc-kubernetes-cloud
+      readOnly: true
     - mountPath: /var/lock
       name: var-lock
       readOnly: false
@@ -48,6 +53,9 @@ spec:
   - name: secrets
     hostPath:
       path: /etc/kubernetes/bootstrap-secrets
+  - name: etc-kubernetes-cloud
+    hostPath:
+      path: /etc/kubernetes/cloud
   - name: ssl-certs-host
     hostPath:
       path: /usr/share/ca-certificates

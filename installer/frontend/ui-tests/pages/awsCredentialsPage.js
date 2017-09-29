@@ -1,39 +1,37 @@
-const util = require('util');
-
 const awsCredentialsPageCommands = {
-  enterAwsCredentials() {
-    return this
-      .setValue('@awsAccessKey', process.env.AWS_ACCESS_KEY_ID)
-      .setValue('@secretAccesskey', process.env.AWS_SECRET_ACCESS_KEY);
+  test(json) {
+    const regionOption = `select#awsRegion option[value=${json.tectonic_aws_region}]`;
+
+    this.expect.element('@sessionTokenFalse').to.be.selected;
+
+    if (process.env.AWS_SESSION_TOKEN) {
+      this
+        .setField('@sessionTokenTrue')
+        .setField('@sessionToken', process.env.AWS_SESSION_TOKEN);
+    }
+
+    this
+      .setField('@awsAccessKey', 'abc')
+      .expectValidationErrorContains('AWS key IDs are at least 20 characters')
+      .setField('@awsAccessKey', process.env.AWS_ACCESS_KEY_ID)
+      .expectNoValidationError()
+      .setField('@secretAccesskey', 'abc')
+      .expectValidationErrorContains('AWS secrets are at least 40 characters')
+      .setField('@secretAccesskey', process.env.AWS_SECRET_ACCESS_KEY)
+      .expectNoValidationError();
+
+    this.expect.element(regionOption).to.be.visible.before(60000);
+    this.selectOption(regionOption);
   },
 };
 
 module.exports = {
-  url: '',
-  commands: [
-    awsCredentialsPageCommands, {
-      el: function(elementName, data) {
-        const element = this.elements[elementName.slice(1)];
-        return util.format(element.selector, data);
-      },
-    }, {
-      nextStep() {
-        return this
-          .click('@nextStep');
-      },
-    },
-  ],
+  commands: [awsCredentialsPageCommands],
   elements: {
-    awsAccessKey: {
-      selector: 'input[id=accessKeyId]',
-    },
-    secretAccesskey: {
-      selector: 'input[id=secretAccessKey]',
-    },
-    region: "option[value='%s']",
-    nextStep: {
-      selector:'//*[text()[contains(.,"Next Step")]]',
-      locateStrategy: 'xpath',
-    },
+    awsAccessKey: 'input#accessKeyId',
+    secretAccesskey: 'input#secretAccessKey',
+    sessionToken: 'input#awsSessionToken',
+    sessionTokenTrue: 'input#stsEnabledTrue',
+    sessionTokenFalse: 'input#stsEnabledFalse',
   },
 };

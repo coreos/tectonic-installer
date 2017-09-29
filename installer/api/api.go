@@ -85,9 +85,12 @@ func New(config *Config) (http.Handler, error) {
 
 	// handlers_terraform.go
 	mux.Handle("/terraform/apply", logRequests(httpHandler("POST", ctx, terraformApplyHandler)))
-	mux.Handle("/terraform/status", logRequests(httpHandler("POST", ctx, terraformStatusHandler)))
 	mux.Handle("/terraform/assets", logRequests(httpHandler("GET", ctx, terraformAssetsHandler)))
 	mux.Handle("/terraform/destroy", logRequests(httpHandler("POST", ctx, terraformDestroyHandler)))
+
+	// handlers_tectonic.go
+	mux.Handle("/tectonic/status", logRequests(httpHandler("POST", ctx, tectonicStatusHandler)))
+	mux.Handle("/tectonic/kubeconfig", logRequests(httpHandler("GET", ctx, tectonicKubeconfigHandler)))
 
 	// handlers_containerlinux.go
 	mux.Handle("/containerlinux/images/matchbox", logRequests(httpHandler("GET", ctx, listMatchboxImagesHandler)))

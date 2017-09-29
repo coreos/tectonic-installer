@@ -1,14 +1,22 @@
-variable "tectonic_azure_external_vnet_id" {
-  type    = "string"
-  default = ""
+// This var is for internal use only.
+// It is to be considered a constant, because Terraform can't acutally define constants.
+variable "const_id_to_group_name_regex" {
+  default     = "//subscriptions/[-\\w]+/resourceGroups/([-\\w]+)/providers/[.\\w]+/[.\\w]+/([.\\w-]+)/"
+  type        = "string"
+  description = "(internal) A regular expression that parses Azure resource IDs into component identifiers."
 }
 
-variable "tectonic_azure_vnet_cidr_block" {
-  type    = "string"
-  default = "10.0.0.0/16"
+variable "cluster_name" {
+  type = "string"
 }
 
-variable "tectonic_cluster_name" {
+variable "cluster_id" {
+  type = "string"
+}
+
+// The base DNS domain of the cluster.
+// Example: `azure.dev.coreos.systems`
+variable "base_domain" {
   type = "string"
 }
 
@@ -24,7 +32,7 @@ variable "location" {
   type = "string"
 }
 
-variable "external_vnet_name" {
+variable "external_vnet_id" {
   type    = "string"
   default = ""
 }
@@ -35,6 +43,16 @@ variable "external_master_subnet_id" {
 }
 
 variable "external_worker_subnet_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "external_nsg_master_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "external_nsg_worker_id" {
   type    = "string"
   default = ""
 }
@@ -69,26 +87,18 @@ variable "ssh_network_external" {
   default = ""
 }
 
-variable "external_resource_group" {
+variable "master_count" {
   type = "string"
 }
 
-variable "external_nsg_etcd" {
-  type    = "string"
-  default = ""
+variable "worker_count" {
+  type = "string"
 }
 
-variable "external_nsg_api" {
-  type    = "string"
-  default = ""
+variable "extra_tags" {
+  type = "map"
 }
 
-variable "external_nsg_master" {
-  type    = "string"
-  default = ""
-}
-
-variable "external_nsg_worker" {
-  type    = "string"
-  default = ""
+variable "private_cluster" {
+  default = false
 }

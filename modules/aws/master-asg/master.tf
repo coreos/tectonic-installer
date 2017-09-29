@@ -26,11 +26,11 @@ resource "aws_autoscaling_group" "masters" {
   name                 = "${var.cluster_name}-masters"
   desired_capacity     = "${var.instance_count}"
   max_size             = "${var.instance_count * 3}"
-  min_size             = "1"
+  min_size             = "${var.instance_count}"
   launch_configuration = "${aws_launch_configuration.master_conf.id}"
   vpc_zone_identifier  = ["${var.subnet_ids}"]
 
-  load_balancers = ["${aws_elb.api-internal.id}", "${join("",aws_elb.api-external.*.id)}", "${aws_elb.console.id}"]
+  load_balancers = ["${compact(concat(aws_elb.api_internal.*.id, list(aws_elb.console.id), aws_elb.api_external.*.id))}"]
 
   tags = [
     {
@@ -63,8 +63,8 @@ resource "aws_launch_configuration" "master_conf" {
   key_name                    = "${var.ssh_key}"
   security_groups             = ["${var.master_sg_ids}"]
   iam_instance_profile        = "${aws_iam_instance_profile.master_profile.arn}"
-  associate_public_ip_address = "${var.public_vpc}"
-  user_data                   = "${var.user_data}"
+  associate_public_ip_address = "${var.public_endpoints}"
+  user_data                   = "${data.ignition_config.main.rendered}"
 
   lifecycle {
     create_before_destroy = true
@@ -85,8 +85,8 @@ resource "aws_launch_configuration" "master_conf" {
 resource "aws_iam_instance_profile" "master_profile" {
   name = "${var.cluster_name}-master-profile"
 
-  role = "${var.master_iam_role == "" ? 
-    join("|", aws_iam_role.master_role.*.name) : 
+  role = "${var.master_iam_role == "" ?
+    join("|", aws_iam_role.master_role.*.name) :
     join("|", data.aws_iam_role.master_role.*.role_name)
   }"
 }

@@ -1,15 +1,17 @@
+import _ from 'lodash';
 import classNames from 'classnames';
 import React from 'react';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
+import { Route, Switch, withRouter } from 'react-router-dom';
 
+import { fixLocation } from '../app';
+import { withNav } from '../nav';
 import { savable } from '../reducer';
-import * as trail from '../trail';
+import { sections as trailSections, trail } from '../trail';
 
 import { Loader } from './loader';
-import { ResetButton } from './reset-button';
 import { restoreModal } from './restore';
-import { WithTooltip } from './tooltip';
 import { PLATFORM_TYPE } from '../cluster-config';
 import { TectonicGA } from '../tectonic-ga';
 import { Header } from './header';
@@ -39,9 +41,9 @@ const NavSection = connect(state => ({state}))(
             });
             return (
               <li className={classes} key={page.path}>
-                <button className='wiz-wizard__nav__link btn btn-link btn-link-ordinary'
-                        onClick={() => handlePage(page)}
-                        disabled={!navTrail.navigable(page) || !navTrail.canNavigateForward(currentPage, page, state)}
+                <button className="wiz-wizard__nav__link btn btn-link btn-link-ordinary"
+                  onClick={() => handlePage(page)}
+                  disabled={!navTrail.navigable(page) || !navTrail.canNavigateForward(currentPage, page, state)}
                 >{page.title}</button>
               </li>
             );
@@ -52,166 +54,140 @@ const NavSection = connect(state => ({state}))(
   }
 );
 
-const Pager = ({showPrev, showNext, disableNext, loadingNext, navigatePrevious, navigateNext, resetBtn}) => {
-  const nextLinkClasses = classNames('btn', 'btn-primary', {
-    disabled: disableNext || loadingNext,
-  });
+const NextButton = withNav(
+  ({disabled, navNext}) => <div className="withtooltip">
+    <button onClick={navNext} className={`btn btn-primary ${disabled ? 'disabled' : ''}`}>Next Step</button>
+    {disabled && <div className="tooltip">All fields are required unless specified.</div>}
+  </div>
+);
 
-  return (
-    <div className="wiz-form__actions">
-      {
-        showPrev &&
-        <button onClick={navigatePrevious}
-                className="btn btn-default wiz-form__actions__prev"
-                >Previous Step</button>
-      }
-      { resetBtn && <div className="wiz-form__actions__prev">
-        <ResetButton />
-      </div>
-      }
-      {
-        showNext &&
-          <div className="wiz-form__actions__next">
-            <WithTooltip text="All fields are required unless specified." shouldShow={disableNext}>
-              <button onClick={navigateNext}
-                      className={nextLinkClasses}>
-                {loadingNext &&
-                 <span><i className="fa fa-spin fa-circle-o-notch"></i>{' '}</span>}
-                 Next Step
-              </button>
-            </WithTooltip>
-          </div>
-      }
-    </div>
-  );
-};
+const PreviousButton = withNav(
+  ({navPrevious}) => <button onClick={navPrevious} className="btn btn-default">Previous Step</button>
+);
 
-const stateToProps = (state) => {
-  const t = trail.trail(state);
-  const currentPage = t.pageByPath.get(state.path);
+const ResetButton = () => <button onClick={() => {
+  // eslint-disable-next-line no-alert
+  (window.config.devMode || window.confirm('Do you really want to start over?')) && window.reset();
+}} className="btn btn-link">
+  <i className="fa fa-refresh"></i>&nbsp;&nbsp;Start Over
+</button>;
+
+const stateToProps = (state, {history}) => {
+  const t = trail(state);
+  const currentPage = t.pageByPath.get(history.location.pathname);
   return {
     currentPage,
-    nextPage: t.nextFrom(currentPage),
-    prevPage: t.previousFrom(currentPage),
     state,
     t,
-    title: `${currentPage.title}${window.config.devMode ? ' (dev)' : ''}`,
+    title: `${_.get(currentPage, 'title')}${window.config.devMode ? ' (dev)' : ''}`,
   };
 };
 
-const Wizard = connect(stateToProps)(
-class extends React.Component {
-  static get contextTypes() {
-    return {
-      router: React.PropTypes.object.isRequired,
-    };
-  }
+// No components have the same path, so this is safe.
+// If a user guesses an invalid URL, they could get in a weird state. Oh well.
+const routes = _.uniq(_.flatMap(trailSections));
 
-  navigate (currentPage, nextPage, state) {
-    const {router} = this.context;
+const Wizard = withNav(withRouter(connect(stateToProps)(
+  class extends React.Component {
+    navigate (currentPage, nextPage, state) {
+      if (currentPage.path === '/define/cluster-type' && nextPage !== currentPage && state) {
+        TectonicGA.sendEvent('Platform Selected', 'user input', state.clusterConfig[PLATFORM_TYPE], state.clusterConfig[PLATFORM_TYPE]);
+      }
 
-    if (currentPage.path === '/define/cluster-type' && nextPage !== currentPage && state) {
-      TectonicGA.sendEvent('Platform Selected', 'user input', state.clusterConfig[PLATFORM_TYPE], state.clusterConfig[PLATFORM_TYPE]);
+      if (nextPage === currentPage) {
+        return;
+      }
+
+      if (state) {
+        TectonicGA.sendEvent('Page Navigation Next', 'click', 'next on', state.clusterConfig[PLATFORM_TYPE]);
+      }
+      this.props.history.push(nextPage.path);
     }
 
-    if (nextPage === currentPage) {
-      return;
+    componentDidMount() {
+      document.title = `Tectonic - ${this.props.title}`;
     }
 
-    if (state) {
-      TectonicGA.sendEvent('Page Navigation Next', 'click', 'next on', state.clusterConfig[PLATFORM_TYPE]);
+    componentWillReceiveProps (nextProps) {
+      if (!nextProps.currentPage) {
+        fixLocation();
+      }
+      if (nextProps.title === this.props.title) {
+        return;
+      }
+      document.title = `Tectonic - ${nextProps.title}`;
     }
-    router.push(nextPage.path);
-  }
 
-  componentDidMount() {
-    document.title = `Tectonic - ${this.props.title}`;
-  }
+    render() {
+      const {t, currentPage, navNext, state, title} = this.props;
+      if (!currentPage) {
+        return null;
+      }
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.title === this.props.title) {
-      return;
-    }
-    document.title = `Tectonic - ${nextProps.title}`;
-  }
+      const nav = page => this.navigate(currentPage, page);
 
-  render() {
-    const {children, t, currentPage, prevPage, nextPage, state} = this.props;
+      const {canNavigateForward} = currentPage.component;
+      const disableNext = canNavigateForward ? !canNavigateForward(state) : false;
 
-    const navigatePrevious = () => this.navigate(currentPage, prevPage, state);
-    const navigateNext = () => this.navigate(currentPage, nextPage, state);
-    const nav = page => this.navigate(currentPage, page);
-
-    const kids = React.Children.map(children, el => {
-      return React.cloneElement(el, {navigatePrevious, navigateNext});
-    });
-
-    const canNavigateForward = currentPage.component.canNavigateForward || (() => true);
-    return (
-      <div className="tectonic">
-        <Header />
-        <div className="tectonic-installer">
-          <div className="wiz-wizard">
-            <div className="wiz-wizard__cell wiz-wizard__nav">
-              <NavSection
+      return (
+        <div className="tectonic">
+          <Header />
+          <div className="tectonic-installer">
+            <div className="wiz-wizard">
+              <div className="wiz-wizard__cell wiz-wizard__nav">
+                <NavSection
                   title="1. Choose Cluster Type"
                   navTrail={t}
-                  sections={[trail.sections.choose]}
+                  sections={[trailSections.choose]}
                   currentPage={currentPage}
                   handlePage={nav} />
-              <NavSection
+                <NavSection
                   title="2. Define Cluster"
                   navTrail={t}
-                  sections={[trail.sections.defineBaremetal, trail.sections.defineAWS]}
+                  sections={[trailSections.defineBaremetal, trailSections.defineAWS]}
                   currentPage={currentPage}
                   handlePage={nav} />
-              <NavSection
+                <NavSection
                   title="3. Boot Cluster"
                   navTrail={t}
                   sections={[
-                    trail.sections.bootBaremetal,
-                    trail.sections.bootAWS,
-                    trail.sections.bootAWSTF,
-                    trail.sections.bootDryRun,
+                    trailSections.bootBaremetalTF,
+                    trailSections.bootAWSTF,
+                    trailSections.bootDryRun,
                   ]}
                   currentPage={currentPage}
                   handlePage={nav} />
-            </div>
-            <div className="wiz-wizard__content wiz-wizard__cell">
-              <div className="wiz-form__header">
-                <span className="wiz-form__header__title">{this.props.title}</span>
-                {currentPage.showRestore &&
-                  <span className="wiz-form__header__control">
-                    <a onClick={restoreModal}><i className="fa fa-upload"></i>&nbsp;&nbsp;Restore progress</a>
-                  </span>
-                }
-                {currentPage.hideSave ||
-                 <span className="wiz-form__header__control">
-                   <a onClick={() => downloadState(state)}><i className="fa fa-download"></i>&nbsp;&nbsp;Save progress</a>
-                 </span>
+              </div>
+              <div className="wiz-wizard__content wiz-wizard__cell">
+                <div className="wiz-form__header">
+                  <span className="wiz-form__header__title">{title}</span>
+                  {currentPage.showRestore && <a onClick={() => restoreModal(navNext)}><i className="fa fa-upload"></i>&nbsp;&nbsp;Restore progress</a>}
+                  {currentPage.hideSave || <a onClick={() => downloadState(state)}><i className="fa fa-download"></i>&nbsp;&nbsp;Save progress</a>}
+                </div>
+                <div className="wiz-wizard__content__body">
+                  <Switch>
+                    {routes.map(r => <Route exact key={r.path} path={r.path} render={() => <r.component />} />)}
+                  </Switch>
+                </div>
+                {currentPage.hidePager || <div className="wiz-form__actions">
+                  <div className="wiz-form__actions__prev">
+                    {t.previousFrom(currentPage) && <PreviousButton />}
+                    {currentPage.canReset && <ResetButton />}
+                  </div>
+                  <div className="wiz-form__actions__next">
+                    {t.nextFrom(currentPage) && <NextButton disabled={disableNext} />}
+                  </div>
+                </div>
                 }
               </div>
-              <div className="wiz-wizard__content__body">
-                {kids}
-              </div>
-              {
-                currentPage.hidePager ||
-                <Pager
-                    showPrev={!!prevPage}
-                    showNext={!!nextPage}
-                    disableNext={!canNavigateForward(state)}
-                    navigatePrevious={navigatePrevious}
-                    resetBtn={t.canReset}
-                    navigateNext={navigateNext} />
-              }
             </div>
           </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-    );
+      );
+    }
   }
-});
+)));
 
 export const Base = connect(
   ({cluster, serverFacts}) => {
@@ -223,9 +199,9 @@ export const Base = connect(
   undefined, // mapDispatchToProps
   undefined, // mergeProps
   {pure: false} // base isn't pure because Wizard isn't pure
-)(({loaded, failed, children}) => {
+)(({loaded, failed}) => {
   if (loaded && !failed) {
-    return <Wizard>{children}</Wizard>;
+    return <Wizard />;
   }
 
   if (loaded) {

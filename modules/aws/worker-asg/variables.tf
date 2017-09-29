@@ -35,9 +35,10 @@ variable "sg_ids" {
   description = "The security group IDs to be applied."
 }
 
-variable "user_data" {
-  type        = "string"
-  description = "User-data content used to boot the instances"
+variable "load_balancers" {
+  description = "List of ELBs to attach all worker instances to."
+  type        = "list"
+  default     = []
 }
 
 variable "extra_tags" {
@@ -72,4 +73,8 @@ variable "worker_iam_role" {
   type        = "string"
   default     = ""
   description = "IAM role to use for the instance profiles of worker nodes."
+}
+
+variable "ign_s3_puller_id" {
+  type = "string"
 }

@@ -30,7 +30,7 @@ BIN_DIR="$ROOT/bin_test"
 
 MATCHBOX_VERSION=v0.6.1
 KUBECTL_VERSION=v1.6.4
-TERRAFORM_VERSION=0.9.6
+TERRAFORM_VERSION=0.10.4
 
 KUBECTL_URL="https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
 TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
@@ -66,6 +66,16 @@ main() {
   until $(curl --silent --fail -k http://matchbox.example.com:8080 > /dev/null); do
     echo "Waiting for matchbox..."
     sleep 5
+
+    if sudo -E systemctl is-failed dev-matchbox; then
+      sudo -E journalctl -u dev-matchbox
+      exit 1
+    fi
+
+    if sudo -E systemctl is-failed dev-dnsmasq; then
+      sudo -E journalctl -u dev-dnsmasq
+      exit 1
+    fi
   done
 
   echo "Starting Terraform"
@@ -153,7 +163,7 @@ configure() {
   COREOS_CHANNEL=$(awk -F "=" '/^tectonic_cl_channel/ {gsub(/[ \t"]/, "", $2); print $2}' ${CONFIG})
   COREOS_VERSION=$(awk -F "=" '/^tectonic_metal_cl_version/ {gsub(/[ \t"]/, "", $2); print $2}' ${CONFIG})
 
-  export TEST_KUBECONFIG=${ROOT}/build/${CLUSTER}/generated/auth/kubeconfig
+  export SMOKE_KUBECONFIG=${ROOT}/build/${CLUSTER}/generated/auth/kubeconfig
 }
 
 cleanup() {
@@ -196,6 +206,11 @@ kill_terraform_and_cleanup() {
 }
 
 kubelet_up() {
+  ssh -q -i ${ROOT}/matchbox/tests/smoke/fake_rsa \
+   -o StrictHostKeyChecking=no \
+   -o UserKnownHostsFile=/dev/null \
+   -o PreferredAuthentications=publickey \
+   core@$1 /usr/bin/systemctl status k8s-node-bootstrap kubelet
   curl --silent --fail -m 1 "http://$1:10255/healthz" > /dev/null
 }
 
@@ -237,7 +252,7 @@ cluster_up() {
 }
 
 k8s() {
-  ${BIN_DIR}/kubectl --kubeconfig=${TEST_KUBECONFIG} "$@"
+  ${BIN_DIR}/kubectl --kubeconfig=${SMOKE_KUBECONFIG} "$@"
 }
 
 # ready nodes returns the number of Ready Kubernetes nodes
@@ -261,7 +276,12 @@ podCount() {
 test_cluster() {
   MASTER_COUNT=$(grep tectonic_master_count "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}')
   WORKER_COUNT=$(grep tectonic_worker_count "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}')
-  export NODE_COUNT=$(( MASTER_COUNT + WORKER_COUNT ))
+  export SMOKE_NODE_COUNT=$(( MASTER_COUNT + WORKER_COUNT ))
+  export SMOKE_MANIFEST_PATHS=${ROOT}/build/${CLUSTER}/generated/
+  # shellcheck disable=SC2155
+  export SMOKE_MANIFEST_EXPERIMENTAL=$(grep tectonic_experimental "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}' | tr -d ' ')
+  # shellcheck disable=SC2155
+  export SMOKE_CALICO_NETWORK_POLICY=$(grep tectonic_calico_network_policy "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}' | tr -d ' ')
   bin/smoke -test.v -test.parallel=1 --cluster
 }
 

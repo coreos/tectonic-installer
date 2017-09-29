@@ -3,6 +3,11 @@
   position: relative;
 }
 
+.cos-loader-inline {
+  display: inline-block;
+  margin: 8px 2px 8px 0;
+}
+
 html {
   background-color: #2276ad;
   background: url('../lib/mochi/img/bg/cells.png') left top repeat, linear-gradient(30deg, #2276ad, #144768) no-repeat left top fixed;
@@ -62,6 +67,7 @@ label {
 }
 
 textarea {
+  display: block;
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
   min-height: 60px;
 }
@@ -71,15 +77,19 @@ strong {
 }
 
 code {
-  background: rgba(0, 0, 0, 0.03);
+  background: #f5f5f5;
+  border: 1px solid rgba(0, 0, 0, 0.075);
   border-radius: 3px;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.075);
-  color: rgba(0, 0, 0, 0.75);
+  color: #333;
   display: inline-block;
   font-family: "Source Code Pro", Menlo, monospace;
-  font-size: 85%;
+  font-size: 11px;
   font-weight: 400;
-  padding: 0px 4px;
+  line-height: 20px;
+  margin-bottom: 15px;
+  padding: 4px 8px;
+  white-space: pre-wrap;
+  width: 100%;
 }
 
 h4 {
@@ -138,22 +148,23 @@ input[type="text"].wiz-node-field {
   width: 150px;
 }
 
-.wiz-launch-progress,
-.wiz-launch-progress__substep {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.wiz-launch-progress {
   font-size: 16px;
 }
 
+.wiz-launch-progress__help {
+  color: #999;
+  font-size: 11px;
+  margin: 5px 0 10px 0;
+}
+
 .wiz-launch-progress__step {
-  list-style: none;
   margin: 0 0 10px 0;
   padding: 0;
 }
 
-.wiz-launch-progress__step:last-child {
-  margin: 0;
+.wiz-launch-progress__step--substep {
+  font-size: 14px;
 }
 
 .wiz-minitable__header {
@@ -376,12 +387,17 @@ input[type="text"].wiz-node-field {
   -moz-user-select: all;
   -webkit-user-select: all;
 }
+
 .wiz-shell-example:hover {
   cursor: copy;
 }
 
 input.wiz-super-short-input {
   width: 72px;
+}
+
+.wiz-pending-fg {
+  color: #999;
 }
 
 .wiz-success-fg {
@@ -392,8 +408,20 @@ input.wiz-super-short-input {
   color: #D64456;
 }
 
+.wiz-cancel-fg {
+  color: #999;
+}
+
 .wiz-running-fg {
   color: #777;
+}
+
+.wiz-launch-progress__step--substep.wiz-success-fg {
+  color: #333;
+}
+
+.wiz-launch-progress__step--substep.wiz-running-fg {
+  color: #999;
 }
 
 .wiz-ssh-key-container {
@@ -408,17 +436,28 @@ input.wiz-super-short-input {
   padding: 10px;
   padding-bottom: 7px;
 }
+
 .alert a {
   text-decoration: underline;
 }
+
 .alert-info {
-  background-color: rgba(82, 163, 217, 0.05);
-  border: 1px solid #52A3D9;
-  color: #52A3D9;
+  background-color: #e9f6ff;
+  color: #154a6d;
 }
+
+.alert-info .btn-info {
+  border-color: #419eda;
+  color: #419eda;
+}
+
+.alert-info .btn-info:active, .alert-info .btn-info:focus, .alert-info .btn-info:hover {
+  background-color: #419eda;
+  color: #fff;
+}
+
 .alert-error {
   background-color: #FDF4F5;
-  border: 1px solid #DC415E;
   color: #DC415E;
 }
 
@@ -432,22 +471,6 @@ input.wiz-super-short-input {
 
 .wiz-radio-group__body {
   margin: 20px 0 0 20px;
-}
-
-/* Use with "btn btn-block btn-link" */
-.wiz-button--upload,
-.wiz-button--download {
-  padding: 15px;
-  border: 1px solid #DDDDDD;
-  border-radius: 2px;
-  font-size: 18px;
-}
-
-.wiz-button--upload:hover,
-.wiz-button--upload:focus,
-.wiz-button--download:hover,
-.wiz-button--download:focus {
-  text-decoration: none;
 }
 
 .wiz-invalid.wiz-dirty {
@@ -544,6 +567,10 @@ input.wiz-super-short-input {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
+.tectonic-modal:focus {
+  outline: none;
+}
+
 .tectonic-modal-overlay {
   background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
@@ -623,7 +650,7 @@ span.spacer {
 
 .log-pane {
   color: #fff;
-  padding: 10px 0 10px 20px;
+  padding: 10px 0 10px 0;
 }
 
 .log-pane__header {
@@ -682,9 +709,26 @@ span.spacer {
   color: #52A3D9;
 }
 
-
 .tectonic-footer > a:hover {
   color: #52A3D9;
+}
+
+.progress-bar, .progress-bar-wrap {
+  border-radius: 2px;
+  height: 4px;
+}
+
+.progress-bar-wrap {
+  background-color: #e5e5e5;
+  margin: 10px 0 15px 0;
+}
+
+.progress-bar--active {
+  background-color: #2fc98e;
+}
+
+.progress-bar--stalled {
+  background-color: #999;
 }
 
 /**  NavBar from mochi.css **/
@@ -736,7 +780,9 @@ span.spacer {
 
 .co-navbar__logo {
   display: inline-block;
-  max-height: 25px; }
+  max-height: 25px;
+  width: 100px;
+}
 
 .co-navbar-nav {
   display: block;
@@ -788,6 +834,29 @@ span.spacer {
   -webkit-box-shadow: 0 6px 12px rgba(0,0,0,0.175);
   box-shadow: 0 6px 12px rgba(0,0,0,0.175);
   background-clip: padding-box;
+}
+
+.dropdown-menu--dark {
+  background-color: rgba(33, 33, 33, 0.85);
+  box-shadow: 0 3px 2px rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+  margin-top: 5px;
+  min-width: 200px;
+  padding: 5px 0;
+  position: absolute;
+  right: 0;
+  z-index: 1000;
+}
+
+.dropdown-menu--dark__item {
+  color: #fff;
+  cursor: pointer;
+  list-style-type: none;
+  padding: 4px 15px;
+}
+
+.dropdown-menu--dark__item:hover {
+  background-color: rgba(33, 33, 33, 1);
 }
 
 .tectonic-dropdown-menu {

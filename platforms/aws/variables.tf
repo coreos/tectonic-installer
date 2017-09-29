@@ -28,7 +28,7 @@ variable "tectonic_aws_etcd_ec2_type" {
   type = "string"
 
   description = <<EOF
-  Instance size for the etcd node(s). Example: `t2.medium`. Read the [etcd recommended hardware] (https://coreos.com/etcd/docs/latest/op-guide/hardware.html) guide for best performance
+  Instance size for the etcd node(s). Example: `t2.medium`. Read the [etcd recommended hardware](https://coreos.com/etcd/docs/latest/op-guide/hardware.html) guide for best performance
   EOF
 
   default = "t2.medium"
@@ -90,12 +90,21 @@ EOF
   default = ""
 }
 
-variable "tectonic_aws_external_vpc_public" {
+variable "tectonic_aws_private_endpoints" {
   default = true
 
   description = <<EOF
-If set to true, create public facing ingress resources (ELB, A-records).
-If set to false, a "private" cluster will be created with an internal ELB only.
+(optional) If set to true, create private-facing ingress resources (ELB, A-records).
+If set to false, no private-facing ingress resources will be provisioned and all DNS records will be created in the public Route53 zone.
+EOF
+}
+
+variable "tectonic_aws_public_endpoints" {
+  default = true
+
+  description = <<EOF
+(optional) If set to true, create public-facing ingress resources (ELB, A-records).
+If set to false, no public-facing ingress resources will be created.
 EOF
 }
 
@@ -121,7 +130,7 @@ Required to use an existing VPC and the list must match the AZ count.
 Example: `["subnet-111111", "subnet-222222", "subnet-333333"]`
 EOF
 
-  default = [""]
+  default = []
 }
 
 variable "tectonic_aws_external_worker_subnet_ids" {
@@ -134,7 +143,7 @@ Required to use an existing VPC and the list must match the AZ count.
 Example: `["subnet-111111", "subnet-222222", "subnet-333333"]`
 EOF
 
-  default = [""]
+  default = []
 }
 
 variable "tectonic_aws_extra_tags" {
@@ -174,9 +183,13 @@ variable "tectonic_aws_etcd_root_volume_size" {
 }
 
 variable "tectonic_aws_etcd_root_volume_iops" {
-  type        = "string"
-  default     = "100"
-  description = "The amount of provisioned IOPS for the root block device of etcd nodes."
+  type    = "string"
+  default = "100"
+
+  description = <<EOF
+The amount of provisioned IOPS for the root block device of etcd nodes.
+Ignored if the volume type is not io1.
+EOF
 }
 
 variable "tectonic_aws_master_root_volume_type" {
@@ -192,9 +205,13 @@ variable "tectonic_aws_master_root_volume_size" {
 }
 
 variable "tectonic_aws_master_root_volume_iops" {
-  type        = "string"
-  default     = "100"
-  description = "The amount of provisioned IOPS for the root block device of master nodes."
+  type    = "string"
+  default = "100"
+
+  description = <<EOF
+The amount of provisioned IOPS for the root block device of master nodes.
+Ignored if the volume type is not io1.
+EOF
 }
 
 variable "tectonic_aws_worker_root_volume_type" {
@@ -210,9 +227,13 @@ variable "tectonic_aws_worker_root_volume_size" {
 }
 
 variable "tectonic_aws_worker_root_volume_iops" {
-  type        = "string"
-  default     = "100"
-  description = "The amount of provisioned IOPS for the root block device of worker nodes."
+  type    = "string"
+  default = "100"
+
+  description = <<EOF
+The amount of provisioned IOPS for the root block device of worker nodes.
+Ignored if the volume type is not io1.
+EOF
 }
 
 variable "tectonic_aws_master_custom_subnets" {
@@ -269,5 +290,18 @@ The name is also the last part of a role's ARN.
 Example:
  * Role ARN  = arn:aws:iam::123456789012:role/tectonic-installer
  * Role Name = tectonic-installer
+EOF
+}
+
+variable "tectonic_aws_worker_load_balancers" {
+  type    = "list"
+  default = []
+
+  description = <<EOF
+(optional) List of ELBs to attach all worker instances to.
+This is useful for exposing NodePort services via load-balancers managed separately from the cluster.
+
+Example:
+ * `["ingress-nginx"]`
 EOF
 }

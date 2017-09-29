@@ -1,6 +1,6 @@
 {
-  "apiVersion": "etcd.coreos.com/v1beta1",
-  "kind": "Cluster",
+  "apiVersion": "etcd.database.coreos.com/v1beta2",
+  "kind": "EtcdCluster",
   "metadata": {
     "name": "kube-etcd",
     "namespace": "kube-system"
@@ -26,10 +26,10 @@
     "TLS": {
       "static": {
         "member": {
-          "peerSecret": "etcd-member-peer-tls",
-          "clientSecret": "etcd-member-client-tls"
+          "peerSecret": "etcd-peer-tls",
+          "serverSecret": "etcd-server-tls"
         },
-        "operatorSecret": "etcd-operator-client-tls"
+        "operatorSecret": "etcd-client-tls"
       }
     }
   }

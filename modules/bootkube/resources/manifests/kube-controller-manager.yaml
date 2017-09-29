@@ -6,14 +6,24 @@ metadata:
   labels:
     tier: control-plane
     k8s-app: kube-controller-manager
+    tectonic-operators.coreos.com/managed-by: kube-version-operator
 spec:
   replicas: ${master_count}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      tier: control-plane
+      k8s-app: kube-controller-manager
   template:
     metadata:
       labels:
         tier: control-plane
         k8s-app: kube-controller-manager
-        pod-anti-affinity: kube-controller-manager-${tectonic_version}
+        pod-anti-affinity: kube-controller-manager-${kubernetes_version}
+        tectonic-operators.coreos.com/managed-by: kube-version-operator
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
     spec:
@@ -22,7 +32,7 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
               matchLabels:
-                pod-anti-affinity: kube-controller-manager-${tectonic_version}
+                pod-anti-affinity: kube-controller-manager-${kubernetes_version}
             namespaces:
               - kube-system
             topologyKey: kubernetes.io/hostname
@@ -38,7 +48,10 @@ spec:
         - --root-ca-file=/etc/kubernetes/secrets/ca.crt
         - --service-account-private-key-file=/etc/kubernetes/secrets/service-account.key
         - --leader-elect=true
+        - --node-monitor-grace-period=${node_monitor_grace_period}
+        - --pod-eviction-timeout=${pod_eviction_timeout}
         - --cloud-provider=${cloud_provider}
+        ${cloud_provider_config_flag}
         livenessProbe:
           httpGet:
             path: /healthz
@@ -48,6 +61,9 @@ spec:
         volumeMounts:
         - name: secrets
           mountPath: /etc/kubernetes/secrets
+          readOnly: true
+        - mountPath: /etc/kubernetes/cloud
+          name: cloud-config
           readOnly: true
         - name: ssl-host
           mountPath: /etc/ssl/certs
@@ -67,6 +83,9 @@ spec:
       - name: secrets
         secret:
           secretName: kube-controller-manager
+      - name: cloud-config
+        secret:
+          secretName: kube-cloud-cfg
       - name: ssl-host
         hostPath:
           path: /usr/share/ca-certificates

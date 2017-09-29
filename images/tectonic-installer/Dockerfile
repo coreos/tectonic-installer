@@ -1,6 +1,6 @@
-FROM golang:1.8-stretch
+FROM golang:1.9.0-stretch
 
-ENV TERRAFORM_VERSION="0.9.6"
+ENV TERRAFORM_VERSION="0.10.4"
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y -q \
@@ -11,10 +11,4 @@ RUN curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform
 
 ENV PROJECT_DIR /go/src/github.com/coreos/tectonic-installer
 
-ADD Makefile $PROJECT_DIR/
-ADD config.tf $PROJECT_DIR/
-ADD installer/bin/linux/installer $PROJECT_DIR/installer/bin/linux/
-ADD platforms $PROJECT_DIR/platforms
-ADD modules $PROJECT_DIR/modules
-ADD terraformrc.example $PROJECT_DIR/
-
+ADD . $PROJECT_DIR/

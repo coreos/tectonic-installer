@@ -1,14 +1,19 @@
-const installerInput = require('../utils/installerInput');
+const nodesPageCommands = {
+  test() {
+    this.selectOption('input[type=radio]#external');
+    this.expect.element('@provisionedEtcdCount').to.not.be.present;
+    this.expect.element('@externalEtcdAddress').to.be.present;
+
+    this.selectOption('input[type=radio]#provisioned');
+    this.expect.element('@provisionedEtcdCount').to.be.present;
+    this.expect.element('@externalEtcdAddress').to.not.be.present;
+  },
+};
 
 module.exports = {
-  url: '',
+  commands: [nodesPageCommands],
   elements: {
-    etcdOption: {
-      selector:`#${installerInput.etcdOption()}`,
-    },
-    nextStep: {
-      selector:'//*[text()[contains(.,"Next Step")]]',
-      locateStrategy: 'xpath',
-    },
+    externalEtcdAddress: 'input#externalETCDClient[type=text]',
+    provisionedEtcdCount: 'input[id="etcd--number"][type=number][min="1"]',
   },
 };

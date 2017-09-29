@@ -1,28 +1,10 @@
-const installerInput = require('../utils/installerInput');
-
-const sshKey = installerInput.sshKeys();
-
 const keysPageCommands = {
-  selectSshKeys() {
-    return this
-      .waitForElementPresent('@sshKeys', 10000)
-      .click('@sshKeys')
-      .waitForElementPresent('@nextStep', 10000)
-      .click('@nextStep');
-
+  test(json) {
+    this.selectOption(`option[value=${json.tectonic_aws_ssh_key}]`);
   },
 };
 
 module.exports = {
-  url: '',
   commands: [keysPageCommands],
-  elements: {
-    sshKeys: {
-      selector: 'option[value=' + sshKey + ']',
-    },
-    nextStep: {
-      selector:'//*[text()[contains(.,"Next Step")]]',
-      locateStrategy: 'xpath',
-    },
-  },
+  elements: {},
 };

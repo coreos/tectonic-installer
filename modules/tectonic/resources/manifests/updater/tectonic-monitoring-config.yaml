@@ -6,12 +6,19 @@ metadata:
 data:
   config.yaml: |+
     prometheusOperator:
-      baseImage: ${element(split(":",prometheus_operator_image),0)}
-      prometheusConfigReloaderBaseImage: ${element(split(":",prometheus_config_reload_image),0)}
-      configReloaderBaseImage: ${element(split(":",config_reload_image),0)}
+      baseImage: ${prometheus_operator_base_image}
+      prometheusConfigReloaderBaseImage: ${prometheus_config_reload_base_image}
+      configReloaderBaseImage: ${config_reload_base_image}
     prometheusK8s:
-      baseImage: ${element(split(":",prometheus_image),0)}
+      baseImage: ${prometheus_base_image}
     alertmanagerMain:
-      baseImage: ${element(split(":",alertmanager_image),0)}
+      baseImage: ${alertmanager_base_image}
     ingress:
-      baseAddress: ${console_base_address}
+      baseAddress: ${console_base_host}
+    auth:
+      baseImage: ${tectonic_monitoring_auth_base_image}
+    nodeExporter:
+      baseImage: ${node_exporter_base_image}
+    kubeStateMetrics:
+      baseImage: ${kube_state_metrics_base_image}
+      addonResizerBaseImage: ${addon_resizer_base_image}

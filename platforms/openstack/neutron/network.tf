@@ -15,7 +15,7 @@ resource "openstack_networking_subnet_v2" "subnet" {
   cidr       = "${var.tectonic_openstack_subnet_cidr}"
   ip_version = 4
 
-  dns_nameservers = ["${var.tectonic_openstack_dns_nameservers}"]
+  dns_nameservers = "${var.tectonic_openstack_dns_nameservers}"
 }
 
 resource "openstack_networking_router_interface_v2" "interface" {
@@ -87,6 +87,11 @@ resource "openstack_networking_port_v2" "worker" {
 }
 
 resource "openstack_networking_floatingip_v2" "worker" {
-  count = "${var.tectonic_worker_count}"
+  count = "${var.tectonic_openstack_disable_floatingip ? 0 : var.tectonic_worker_count}"
   pool  = "${var.tectonic_openstack_floatingip_pool}"
+}
+
+resource "openstack_networking_floatingip_v2" "loadbalancer" {
+  pool    = "${var.tectonic_openstack_floatingip_pool}"
+  port_id = "${openstack_lb_loadbalancer_v2.master_lb.vip_port_id}"
 }

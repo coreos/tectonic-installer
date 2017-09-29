@@ -7,12 +7,18 @@ data "ignition_config" "etcd" {
 
   files = [
     "${data.ignition_file.node_hostname.*.id[count.index]}",
+    "${data.ignition_file.etcd_ca.id}",
+    "${data.ignition_file.etcd_server_crt.id}",
+    "${data.ignition_file.etcd_server_key.id}",
+    "${data.ignition_file.etcd_client_crt.id}",
+    "${data.ignition_file.etcd_client_key.id}",
+    "${data.ignition_file.etcd_peer_crt.id}",
+    "${data.ignition_file.etcd_peer_key.id}",
   ]
 
   systemd = [
-    "${data.ignition_systemd_unit.locksmithd.id}",
-    "${data.ignition_systemd_unit.etcd3.*.id[count.index]}",
-    "${data.ignition_systemd_unit.vmtoolsd_member.id}",
+    "${data.ignition_systemd_unit.locksmithd.*.id[count.index]}",
+    "${var.ign_etcd_dropin_id_list[count.index]}",
   ]
 
   networkd = [
@@ -25,8 +31,92 @@ data "ignition_user" "core" {
   ssh_authorized_keys = ["${var.core_public_keys}"]
 }
 
+data "ignition_file" "etcd_ca" {
+  path       = "/etc/ssl/etcd/ca.crt"
+  mode       = 0644
+  uid        = 232
+  gid        = 232
+  filesystem = "root"
+
+  content {
+    content = "${var.tls_ca_crt_pem}"
+  }
+}
+
+data "ignition_file" "etcd_client_key" {
+  path       = "/etc/ssl/etcd/client.key"
+  mode       = 0400
+  uid        = 0
+  gid        = 0
+  filesystem = "root"
+
+  content {
+    content = "${var.tls_client_key_pem}"
+  }
+}
+
+data "ignition_file" "etcd_client_crt" {
+  path       = "/etc/ssl/etcd/client.crt"
+  mode       = 0400
+  uid        = 0
+  gid        = 0
+  filesystem = "root"
+
+  content {
+    content = "${var.tls_client_crt_pem}"
+  }
+}
+
+data "ignition_file" "etcd_server_key" {
+  path       = "/etc/ssl/etcd/server.key"
+  mode       = 0400
+  uid        = 232
+  gid        = 232
+  filesystem = "root"
+
+  content {
+    content = "${var.tls_server_key_pem}"
+  }
+}
+
+data "ignition_file" "etcd_server_crt" {
+  path       = "/etc/ssl/etcd/server.crt"
+  mode       = 0400
+  uid        = 232
+  gid        = 232
+  filesystem = "root"
+
+  content {
+    content = "${var.tls_server_crt_pem}"
+  }
+}
+
+data "ignition_file" "etcd_peer_key" {
+  path       = "/etc/ssl/etcd/peer.key"
+  mode       = 0400
+  uid        = 232
+  gid        = 232
+  filesystem = "root"
+
+  content {
+    content = "${var.tls_peer_key_pem}"
+  }
+}
+
+data "ignition_file" "etcd_peer_crt" {
+  path       = "/etc/ssl/etcd/peer.crt"
+  mode       = 0400
+  uid        = 232
+  gid        = 232
+  filesystem = "root"
+
+  content {
+    content = "${var.tls_peer_crt_pem}"
+  }
+}
+
 data "ignition_systemd_unit" "locksmithd" {
-  count = "${length(var.external_endpoints) == 0 ? 1 : 0}"
+  count = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
 
   name   = "locksmithd.service"
   enable = true
@@ -35,41 +125,15 @@ data "ignition_systemd_unit" "locksmithd" {
     {
       name    = "40-etcd-lock.conf"
       content = "[Service]\nEnvironment=REBOOT_STRATEGY=etcd-lock\n"
-    },
-  ]
-}
-
-data "template_file" "etcd-cluster" {
-  template = "${file("${path.module}/resources/etcd-cluster")}"
-  count    = "${var.instance_count}"
-
-  vars = {
-    etcd-name    = "${var.hostname["${count.index}"]}"
-    etcd-address = "${var.hostname["${count.index}"]}.${var.base_domain}"
-  }
-}
-
-data "ignition_systemd_unit" "etcd3" {
-  count  = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
-  name   = "etcd-member.service"
-  enable = true
-
-  dropin = [
-    {
-      name = "40-etcd-cluster.conf"
+      name    = "40-etcd-lock.conf"
 
       content = <<EOF
-      [Service]
-      Environment="ETCD_IMAGE=docker://${var.container_image}"
-      Environment="RKT_RUN_ARGS=--uuid-file-save=/var/lib/coreos/etcd-member-wrapper.uuid --insecure-options=all"
-      ExecStart=
-      ExecStart=/usr/lib/coreos/etcd-wrapper \
-        --name=${var.hostname["${count.index}"]} \
-        --advertise-client-urls=http://${var.hostname["${count.index}"]}.${var.base_domain}:2379 \
-        --initial-advertise-peer-urls=http://${var.hostname["${count.index}"]}.${var.base_domain}:2380 \
-        --listen-client-urls=http://0.0.0.0:2379 \
-        --listen-peer-urls=http://0.0.0.0:2380 \
-        --initial-cluster="${join("," , data.template_file.etcd-cluster.*.rendered)}" 
+[Service]
+Environment=REBOOT_STRATEGY=etcd-lock
+Environment=LOCKSMITHD_ETCD_CAFILE=/etc/ssl/etcd/ca.crt
+Environment=LOCKSMITHD_ETCD_KEYFILE=/etc/ssl/etcd/client.key
+Environment=LOCKSMITHD_ETCD_CERTFILE=/etc/ssl/etcd/client.crt
+Environment=LOCKSMITHD_ENDPOINT=https://${var.hostname["${count.index}"]}.${var.base_domain}:2379
 EOF
     },
   ]
@@ -99,21 +163,5 @@ data "ignition_networkd_unit" "vmnetwork" {
   Gateway=${var.gateway}
   UseDomains=yes
   Domains=${var.base_domain}
-EOF
-}
-
-data "ignition_systemd_unit" "vmtoolsd_member" {
-  name   = "vmtoolsd.service"
-  enable = true
-
-  content = <<EOF
-  [Unit]
-  Description=VMware Tools Agent
-  Documentation=http://open-vm-tools.sourceforge.net/
-  ConditionVirtualization=vmware
-  [Service]
-  ExecStartPre=/usr/bin/ln -sfT /usr/share/oem/vmware-tools /etc/vmware-tools
-  ExecStart=/usr/share/oem/bin/vmtoolsd
-  TimeoutStopSec=5
 EOF
 }

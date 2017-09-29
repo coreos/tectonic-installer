@@ -13,7 +13,6 @@ import {
   dirtyActionTypes,
   eventErrorsActionTypes,
   loadFactsActionTypes,
-  navActionTypes,
   restoreActionTypes,
   serverActionTypes,
   sequenceActionTypes,
@@ -58,7 +57,7 @@ const reducersTogether = combineReducers({
       };
     }
 
-    switch(action.type) {
+    switch (action.type) {
     case serverActionTypes.COMMIT_REQUESTED:
       return {
         phase: commitPhases.REQUESTED,
@@ -122,6 +121,8 @@ const reducersTogether = combineReducers({
     }
 
     switch (action.type) {
+    case configActionTypes.RESET:
+      return {};
     case configActionTypes.SET:
       Object.keys(action.payload).forEach(k => {
         if (!DEFAULT_CLUSTER_CONFIG.hasOwnProperty(k)) {
@@ -214,21 +215,6 @@ const reducersTogether = combineReducers({
         error: action.payload,
         awsRegions: null,
       };
-    default:
-      return state;
-    }
-  },
-
-  // The current location as reported by react-router
-  // Should not be saved or restored.
-  path: (state, action) => {
-    if (state === undefined) {
-      return window.location.pathname;
-    }
-
-    switch (action.type) {
-    case navActionTypes.LOCATION_CHANGE:
-      return action.payload.pathname;
     default:
       return state;
     }
@@ -328,7 +314,7 @@ const reducersTogether = combineReducers({
   },
 });
 
-function filterClusterConfig(cc={}) {
+function filterClusterConfig(cc = {}) {
   Object.keys(cc).forEach(k => {
     if (!DEFAULT_CLUSTER_CONFIG.hasOwnProperty(k)) {
       console.error(`Removed clusterConfig.${k} because it's not in defaults.`);

@@ -60,11 +60,11 @@ common() {
     # Set the specified vars file
     TF_VARS_FILE=$1
     TEST_NAME=$(basename "$TF_VARS_FILE" | cut -d "." -f 1)
-    
+
     # Set required configuration
     CLUSTER="$TEST_NAME-$BRANCH_NAME-$BUILD_ID"
     MAX_LENGTH=28
-    
+
     LENGTH=${#CLUSTER}
     if [ "$LENGTH" -gt "$MAX_LENGTH" ]
     then
@@ -78,19 +78,24 @@ common() {
         CLUSTER="$CLUSTER${APPEND_STR:0:APPEND}"
         echo "Cluster name too short. Appended to $CLUSTER"
     fi
-    
+
     random_region
     CLUSTER=$(echo "${CLUSTER}" | awk '{print tolower($0)}')
     export CLUSTER
     export TF_VAR_tectonic_cluster_name=$CLUSTER
-    
+
     echo "selected region: $TF_VAR_tectonic_aws_region"
     echo "cluster name: $CLUSTER"
 
-    # Create local config
-    make localconfig
-    # Use smoke test configuration for deployment
-    cp "$DIR/$TF_VARS_FILE" "$WORKSPACE/build/$CLUSTER/terraform.tfvars"
+    export CONFIG="${WORKSPACE}/build/${CLUSTER}/terraform.tfvars"
+    if [ ! -f "$CONFIG" ]; then
+      # Create local config
+      make localconfig
+      # Use smoke test configuration for deployment
+      cp "$DIR/$TF_VARS_FILE" "$CONFIG"
+      # Store AWS region in tfvars file
+      echo -e "tectonic_aws_region = \"$TF_VAR_tectonic_aws_region\"" >> "$CONFIG"
+    fi
 }
 
 create() {
@@ -98,70 +103,35 @@ create() {
     make apply | filter
 }
 
-common_vpc() {
-    random_region
-    export TF_VAR_vpc_aws_region="$TF_VAR_tectonic_aws_region"
-    # shellcheck disable=SC2155
-    export TF_VAR_vpc_name="$(echo "vpc-$BRANCH_NAME-$BUILD_ID" | awk '{print tolower($0)}')"
-}
+grafiti_clean() {
+    common "$1"
 
-create_vpc() {
-    common_vpc
-    pushd "$WORKSPACE/contrib/internal-cluster"
-    set +x
+    # Parse AWS_REGION from a tfvars file
     # shellcheck disable=SC2155
-    export TF_VAR_ovpn_password="$(tr -cd '[:alnum:]' < /dev/urandom | head -c 32 ; echo)"
-    export TF_VAR_base_domain="tectonic.dev.coreos.systems"
-    set -x
-    # Create the vpc.
-    terraform apply
-    # Get the VPN details.
-    # shellcheck disable=SC2155
-    local vpn_url="$(terraform output -json | jq -r '.ovpn_url.value')"
-    until curl -k -L --silent "$vpn_url" > /dev/null; do
-        echo "waiting for vpn access server to become available"
-        sleep 5
-    done
-    set +x
-    curl -k -L -u "openvpn:$TF_VAR_ovpn_password" --silent --fail "$(terraform output -json | jq -r '.ovpn_url.value')"/rest/GetUserlogin > vpn.conf
-    printf "openvpn\n%s\n" "$TF_VAR_ovpn_password" > vpn_credentials
-    set -x
-    sed -i 's/auth-user-pass/auth-user-pass vpn_credentials/g' vpn.conf
-    # Start the VPN.
-    openvpn --config vpn.conf --daemon
-    until ping -c 1 8.8.8.8 > /dev/null; do
-        echo "waiting for vpn connection to become available"
-        sleep 5
-    done
-    # Use AWS VPC DNS rather than host's.
-    # shellcheck disable=SC2155
-    local vpc_dns="$(terraform output -json | jq -r '.vpc_dns.value')"
-    cp /etc/resolv.conf /etc/resolv.conf.bak
-    echo "nameserver $vpc_dns" > /etc/resolv.conf
-    echo "nameserver 8.8.8.8"  >> /etc/resolv.conf
-    # Export all of the VPC details.
-    # shellcheck disable=SC2155,SC2183,SC2046
-    {
-        export TF_VAR_tectonic_aws_external_private_zone="$(terraform output -json | jq -r '.private_zone_id.value')"
-        export TF_VAR_tectonic_aws_external_vpc_id="$(terraform output -json | jq -r '.vpc_id.value')"
-        export TF_VAR_tectonic_aws_external_master_subnet_ids="$(printf "[%s, %s]" $(terraform output -json | jq '.subnets.value[0,1]'))"
-        export TF_VAR_tectonic_aws_external_worker_subnet_ids="$(printf "[%s, %s]" $(terraform output -json | jq '.subnets.value[2,3]'))"
-    }
-    popd
-}
+    export AWS_REGION="$(grep -oP 'tectonic_aws_region\s*=\s*"\K([^"]+)' "$CONFIG")"
 
-destroy_vpc() {
-    common_vpc
-    # Restore host DNS settings.
-    [ -f /etc/resolv.conf.bak ] && cat /etc/resolv.conf.bak > /etc/resolv.conf && rm /etc/resolv.conf.bak
-    pushd "$WORKSPACE/contrib/internal-cluster"
-    pkill openvpn || true
-    until ping -c 1 8.8.8.8 > /dev/null; do
-        echo "waiting for network to become available"
-        sleep 5
-    done
-    terraform destroy --force
-    popd
+    # Get CLUSTER_ID from `terraform apply` output. Because 'tectonicClusterID'
+    # is created during a 'terraform apply' step, which might fail before a state
+    # file is generated, we must collect and parse log output
+    if [ ! -f "${WORKSPACE}/terraform.log" ]; then
+        echo "Cannot find terraform log file"
+        exit
+    fi
+    CLUSTER_ID="$(grep -m 1 -oP 'tags.tectonicClusterID:\s*""[^"]*"\K([^"]+)' "${WORKSPACE}/terraform.log")"
+
+    GRAFITI_TMP_DIR="$(mktemp -d -p $WORKSPACE)"
+
+    GRAFITI_CONFIG_FILE="${GRAFITI_TMP_DIR}/config.toml"
+    echo "maxNumRequestRetries = 11" > "$GRAFITI_CONFIG_FILE"
+
+    GRAFITI_TAG_FILE="${GRAFITI_TMP_DIR}/tag.json"
+    echo -e "{\"TagFilters\":[{\"Key\":\"tectonicClusterID\",\"Values\":[\"$CLUSTER_ID\"]}]}"  > "$GRAFITI_TAG_FILE"
+
+    echo "Cleaning up \"${CLUSTER_ID}\"..."
+
+    grafiti --config "$GRAFITI_CONFIG_FILE" --ignore-errors delete --silent --all-deps --delete-file "$GRAFITI_TAG_FILE"
+
+    rm -rf "$GRAFITI_TMP_DIR"
 }
 
 destroy() {
@@ -178,11 +148,15 @@ plan() {
 test_cluster() {
     common "$1"
     # TODO: replace in Go
-    CONFIG=$WORKSPACE/build/$CLUSTER/terraform.tfvars
     MASTER_COUNT=$(grep tectonic_master_count "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}')
     WORKER_COUNT=$(grep tectonic_worker_count "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}')
-    export NODE_COUNT=$(( MASTER_COUNT + WORKER_COUNT ))
-    export TEST_KUBECONFIG=$WORKSPACE/build/$CLUSTER/generated/auth/kubeconfig
+    export SMOKE_NODE_COUNT=$(( MASTER_COUNT + WORKER_COUNT ))
+    export SMOKE_KUBECONFIG=$WORKSPACE/build/$CLUSTER/generated/auth/kubeconfig
+    export SMOKE_MANIFEST_PATHS=$WORKSPACE/build/$CLUSTER/generated/
+    # shellcheck disable=SC2155
+    export SMOKE_MANIFEST_EXPERIMENTAL=$(grep tectonic_experimental "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}' | tr -d ' ')
+    # shellcheck disable=SC2155
+    export SMOKE_CALICO_NETWORK_POLICY=$(grep tectonic_calico_network_policy "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}' | tr -d ' ')
     bin/smoke -test.v -test.parallel=1 --cluster
 }
 
@@ -208,19 +182,19 @@ main () {
         usage
         exit 1
     fi
-    
+
     shift
     case $COMMAND in
+        common)
+            common "$@";;
         assume-role)
             assume_role "$@";;
         create)
             create "$@";;
-        create-vpc)
-            create_vpc "$@";;
         destroy)
             destroy "$@";;
-        destroy-vpc)
-            destroy_vpc "$@";;
+        grafiti-clean)
+            grafiti_clean "$@";;
         plan)
             plan "$@";;
         set-role)

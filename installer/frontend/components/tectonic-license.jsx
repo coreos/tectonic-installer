@@ -65,9 +65,11 @@ export const TectonicLicense = () =>
       </div>
       <div className="col-xs-9">
         <Connect field={TECTONIC_LICENSE}>
-          <FileArea id="tectonicLicense" placeholder={TECTONIC_LICENSE_PLACEHOLDER} uploadButtonLabel='Upload "tectonic-license.txt"'/>
+          <FileArea id="tectonicLicense" placeholder={TECTONIC_LICENSE_PLACEHOLDER} uploadButtonLabel='Upload "tectonic-license.txt"' />
         </Connect>
-        <p className="text-muted">Input "CoreOS License" from <a href="https://account.coreos.com" target="_blank">account.coreos.com</a>.</p>
+        {/* eslint-disable react/jsx-no-target-blank */}
+        <p className="text-muted">Input "CoreOS License" from <a href="https://account.coreos.com" rel="noopener" target="_blank">account.coreos.com</a>.</p>
+        {/* eslint-enable react/jsx-no-target-blank */}
       </div>
     </div>
 
@@ -77,9 +79,11 @@ export const TectonicLicense = () =>
       </div>
       <div className="col-xs-9">
         <Connect field={PULL_SECRET}>
-          <FileArea id={PULL_SECRET} placeholder={PULL_SECRET_PLACEHOLDER} uploadButtonLabel='Upload "config.json"'/>
+          <FileArea id={PULL_SECRET} placeholder={PULL_SECRET_PLACEHOLDER} uploadButtonLabel='Upload "config.json"' />
         </Connect>
-        <p className="text-muted">Input "Pull Secret" <a href="https://account.coreos.com" target="_blank">account.coreos.com</a>.</p>
+        {/* eslint-disable react/jsx-no-target-blank */}
+        <p className="text-muted">Input "Pull Secret" from <a href="https://account.coreos.com" rel="noopener" target="_blank">account.coreos.com</a>.</p>
+        {/* eslint-enable react/jsx-no-target-blank */}
       </div>
     </div>
 

@@ -7,18 +7,18 @@ const send = (obj) => {
 
   try {
     const ga = window[window.GoogleAnalyticsObject || 'ga'];
-    if (typeof ga === 'function') {
-      if (obj.type === 'pageview') {
-        ga('TectonicInstaller.send', 'pageview', obj.page);
-        ga('CoreOS.send', 'pageview', obj.page);
-      } else if (obj.type === 'event') {
-        const {category, action, label, value} = obj;
-        ga('TectonicInstaller.send', 'event', category, action, label, value);
-        ga('CoreOS.send', 'event', category, action, label, value);
-      }
+    if (typeof ga !== 'function') {
+      throw new Error('ga is not a function!');
     }
-  }
-  catch(err) {
+    if (obj.type === 'pageview') {
+      ga('TectonicInstaller.send', 'pageview', obj.page);
+      ga('CoreOS.send', 'pageview', obj.page);
+    } else if (obj.type === 'event') {
+      const {category, action, label, value} = obj;
+      ga('TectonicInstaller.send', 'event', category, action, label, value);
+      ga('CoreOS.send', 'event', category, action, label, value);
+    }
+  } catch (err) {
     console.error(`Failed to send GA event: ${err.message}`);
   }
 };
@@ -44,21 +44,28 @@ export const TectonicGA = {
     send({ type: 'pageview', page});
   },
 
-  sendEvent: (category, action, label, value = "") => {
+  sendError: (message, stack = '') => {
     send({
       type: 'event',
-      category, action,
-      label,
-      value: `${value} ${GIT_TAG}`,
+      category: 'installerError',
+      label: `${GIT_TAG} ${message} Stack: ${stack}`,
     });
   },
 
-  sendDocsEvent: () => {
+  sendEvent: (category, action, label = '', platform = '') => {
+    send({
+      type: 'event',
+      category, action,
+      label: `${platform}-${GIT_TAG} ${label}`,
+    });
+  },
+
+  sendDocsEvent: (platform = '') => {
     send({
       type: 'event',
       category: 'Installer Docs Link',
       action: 'click',
-      label: 'User clicks on documentation link',
+      label: `${platform}-${GIT_TAG} User clicks on documentation link`,
     });
   },
 };

@@ -1,8 +1,8 @@
 // Install CoreOS to disk
-resource "matchbox_group" "coreos-install" {
+resource "matchbox_group" "coreos_install" {
   count   = "${length(var.tectonic_metal_controller_names) + length(var.tectonic_metal_worker_names)}"
   name    = "${format("coreos-install-%s", element(concat(var.tectonic_metal_controller_names, var.tectonic_metal_worker_names), count.index))}"
-  profile = "${matchbox_profile.coreos-install.name}"
+  profile = "${matchbox_profile.coreos_install.name}"
 
   selector {
     mac = "${element(concat(var.tectonic_metal_controller_macs, var.tectonic_metal_worker_macs), count.index)}"
@@ -19,10 +19,28 @@ resource "matchbox_group" "coreos-install" {
 
 // DO NOT PLACE SECRETS IN USER-DATA
 
+module "ignition_masters" {
+  source = "../../modules/ignition"
+
+  bootstrap_upgrade_cl      = "${var.tectonic_bootstrap_upgrade_cl}"
+  cluster_name              = "${var.tectonic_cluster_name}"
+  container_images          = "${var.tectonic_container_images}"
+  etcd_advertise_name_list  = "${var.tectonic_metal_controller_domains}"
+  etcd_count                = "${length(var.tectonic_metal_controller_names)}"
+  etcd_initial_cluster_list = "${var.tectonic_metal_controller_domains}"
+  image_re                  = "${var.tectonic_image_re}"
+  kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
+  kubelet_cni_bin_dir       = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
+  kubelet_node_label        = "node-role.kubernetes.io/master"
+  kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
+  use_metadata              = false
+  tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
+}
+
 resource "matchbox_group" "controller" {
   count   = "${length(var.tectonic_metal_controller_names)}"
   name    = "${format("%s-%s", var.tectonic_cluster_name, element(var.tectonic_metal_controller_names, count.index))}"
-  profile = "${matchbox_profile.tectonic-controller.name}"
+  profile = "${matchbox_profile.tectonic_controller.name}"
 
   selector {
     mac = "${element(var.tectonic_metal_controller_macs, count.index)}"
@@ -31,35 +49,40 @@ resource "matchbox_group" "controller" {
 
   metadata {
     domain_name        = "${element(var.tectonic_metal_controller_domains, count.index)}"
-    k8s_dns_service_ip = "${module.bootkube.kube_dns_service_ip}"
-    ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
+    etcd_enabled       = "${var.tectonic_experimental ? "false" : length(compact(var.tectonic_etcd_servers)) != 0 ? "false" : "true"}"
     exclude_tectonic   = "${var.tectonic_vanilla_k8s}"
+    ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
 
-    etcd_enabled = "${var.tectonic_experimental ? "false" : "true"}"
-
-    etcd_initial_cluster = "${
-      join(",", formatlist(
-        var.tectonic_etcd_tls_enabled ? "%s=https://%s:2380" : "%s=http://%s:2380",
-        var.tectonic_metal_controller_names,
-        var.tectonic_metal_controller_domains
-      ))
-    }"
-
-    etcd_name        = "${element(var.tectonic_metal_controller_names, count.index)}"
-    etcd_scheme      = "${var.tectonic_etcd_tls_enabled ? "https" : "http"}"
-    etcd_tls_enabled = "${var.tectonic_etcd_tls_enabled}"
-
-    # extra data
-    etcd_image_tag    = "v${var.tectonic_versions["etcd"]}"
-    kubelet_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
-    kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+    ign_bootkube_path_unit_json         = "${jsonencode(module.bootkube.systemd_path_unit_rendered)}"
+    ign_bootkube_service_json           = "${jsonencode(module.bootkube.systemd_service_rendered)}"
+    ign_docker_dropin_json              = "${jsonencode(module.ignition_masters.docker_dropin_rendered)}"
+    ign_etcd_dropin_json                = "${jsonencode(module.ignition_masters.etcd_dropin_rendered_list[count.index])}"
+    ign_installer_kubelet_env_json      = "${jsonencode(module.ignition_masters.installer_kubelet_env_rendered)}"
+    ign_k8s_node_bootstrap_service_json = "${jsonencode(module.ignition_masters.k8s_node_bootstrap_service_rendered)}"
+    ign_kubelet_service_json            = "${jsonencode(module.ignition_masters.kubelet_service_rendered)}"
+    ign_max_user_watches_json           = "${jsonencode(module.ignition_masters.max_user_watches_rendered)}"
+    ign_tectonic_path_unit_json         = "${jsonencode(module.tectonic.systemd_path_unit_rendered)}"
+    ign_tectonic_service_json           = "${jsonencode(module.tectonic.systemd_service_rendered)}"
   }
+}
+
+module "ignition_workers" {
+  source = "../../modules/ignition"
+
+  bootstrap_upgrade_cl = "${var.tectonic_bootstrap_upgrade_cl}"
+  container_images     = "${var.tectonic_container_images}"
+  image_re             = "${var.tectonic_image_re}"
+  kube_dns_service_ip  = "${module.bootkube.kube_dns_service_ip}"
+  kubelet_cni_bin_dir  = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
+  kubelet_node_label   = "node-role.kubernetes.io/node"
+  kubelet_node_taints  = ""
+  tectonic_vanilla_k8s = "${var.tectonic_vanilla_k8s}"
 }
 
 resource "matchbox_group" "worker" {
   count   = "${length(var.tectonic_metal_worker_names)}"
   name    = "${format("%s-%s", var.tectonic_cluster_name, element(var.tectonic_metal_worker_names, count.index))}"
-  profile = "${matchbox_profile.tectonic-worker.name}"
+  profile = "${matchbox_profile.tectonic_worker.name}"
 
   selector {
     mac = "${element(var.tectonic_metal_worker_macs, count.index)}"
@@ -68,12 +91,17 @@ resource "matchbox_group" "worker" {
 
   metadata {
     domain_name        = "${element(var.tectonic_metal_worker_domains, count.index)}"
-    k8s_dns_service_ip = "${module.bootkube.kube_dns_service_ip}"
     ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
 
     # extra data
-    kubelet_image_url  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
-    kubelet_image_tag  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+    kubelet_image_url  = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
+    kubelet_image_tag  = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
     kube_version_image = "${var.tectonic_container_images["kube_version"]}"
+
+    ign_docker_dropin_json              = "${jsonencode(module.ignition_workers.docker_dropin_rendered)}"
+    ign_installer_kubelet_env_json      = "${jsonencode(module.ignition_workers.installer_kubelet_env_rendered)}"
+    ign_k8s_node_bootstrap_service_json = "${jsonencode(module.ignition_workers.k8s_node_bootstrap_service_rendered)}"
+    ign_kubelet_service_json            = "${jsonencode(module.ignition_workers.kubelet_service_rendered)}"
+    ign_max_user_watches_json           = "${jsonencode(module.ignition_workers.max_user_watches_rendered)}"
   }
 }

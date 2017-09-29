@@ -44,11 +44,11 @@ const Errors = connect(
   ({clusterConfig}, {type}) => ({
     error: _.get(clusterConfig, toError(type)) || _.get(clusterConfig, toAsyncError(type)),
   })
-)(props => props.error ? <div className="wiz-error-message">{props.error}</div> : <span/>);
+)(props => props.error ? <div className="wiz-error-message">{props.error}</div> : <span />);
 
 export const DefineNode = ({name, type, disabled, withoutTitle, max}) =>
   <div>
-    { !withoutTitle &&
+    {!withoutTitle &&
       <div>
         <h3>{name}</h3>
         <br />
@@ -76,13 +76,15 @@ export const DefineNode = ({name, type, disabled, withoutTitle, max}) =>
         </Select>
       </Connect>
       {type === 'aws_etcds' && <p className="text-muted wiz-help-text">
-        Read the <a href="https://coreos.com/etcd/docs/latest/op-guide/hardware.html" target="_blank">etcd recommended hardware</a> guide for best performance.
+        {/* eslint-disable react/jsx-no-target-blank */}
+        Read the <a href="https://coreos.com/etcd/docs/latest/op-guide/hardware.html" rel="noopener" target="_blank">etcd recommended hardware</a> guide for best performance.
+        {/* eslint-enable react/jsx-no-target-blank */}
       </p>}
     </Row>
     <Row htmlFor={`${name}--storage-size`} label="Storage Size">
       <Connect field={toKey(type, STORAGE_SIZE_IN_GIB)}>
         <NumberInput id={`${name}--storage-size`} className="wiz-super-short-input" suffix="GiB" />
-        </Connect>
+      </Connect>
     </Row>
     <Row htmlFor={`${name}--storage-type`} label="Storage Type">
       <Connect field={toKey(type, STORAGE_TYPE)}>
@@ -106,15 +108,11 @@ const fields = [
   makeNodeForm(AWS_WORKERS),
 ];
 
-const DefineNodesForm = 'DefineNodesForm';
-const form = new Form(DefineNodesForm, fields, {
-  // TODO: add after we have an ENTITLEMENTS field...
-  // dependencies: [ENTITLEMENTS],
-});
+const form = new Form('DefineNodesForm', fields);
 
 export const AWS_DefineNodes = () => <div>
   <DefineNode type={AWS_CONTROLLERS} name="Master Nodes" max={10} />
-  <hr/>
+  <hr />
   <DefineNode type={AWS_WORKERS} name="Worker Nodes" />
   <form.Errors />
   <hr />

@@ -29,7 +29,7 @@ resource "aws_launch_configuration" "worker_conf" {
   key_name             = "${var.ssh_key}"
   security_groups      = ["${var.sg_ids}"]
   iam_instance_profile = "${aws_iam_instance_profile.worker_profile.arn}"
-  user_data            = "${var.user_data}"
+  user_data            = "${data.ignition_config.main.rendered}"
 
   lifecycle {
     create_before_destroy = true
@@ -51,7 +51,7 @@ resource "aws_autoscaling_group" "workers" {
   name                 = "${var.cluster_name}-workers"
   desired_capacity     = "${var.instance_count}"
   max_size             = "${var.instance_count * 3}"
-  min_size             = "1"
+  min_size             = "${var.instance_count}"
   launch_configuration = "${aws_launch_configuration.worker_conf.id}"
   vpc_zone_identifier  = ["${var.subnet_ids}"]
 
@@ -79,11 +79,18 @@ resource "aws_autoscaling_group" "workers" {
   }
 }
 
+resource "aws_autoscaling_attachment" "workers" {
+  count = "${length(var.load_balancers)}"
+
+  autoscaling_group_name = "${aws_autoscaling_group.workers.name}"
+  elb                    = "${var.load_balancers[count.index]}"
+}
+
 resource "aws_iam_instance_profile" "worker_profile" {
   name = "${var.cluster_name}-worker-profile"
 
-  role = "${var.worker_iam_role == "" ? 
-    join("|", aws_iam_role.worker_role.*.name) : 
+  role = "${var.worker_iam_role == "" ?
+    join("|", aws_iam_role.worker_role.*.name) :
     join("|", data.aws_iam_role.worker_role.*.role_name)
   }"
 }
@@ -125,9 +132,19 @@ resource "aws_iam_role_policy" "worker_policy" {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Action": "ec2:*",
-      "Resource": "*",
-      "Effect": "Allow"
+      "Effect": "Allow",
+      "Action": "ec2:Describe*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "ec2:AttachVolume",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "ec2:DetachVolume",
+      "Resource": "*"
     },
     {
       "Action": "elasticloadbalancing:*",

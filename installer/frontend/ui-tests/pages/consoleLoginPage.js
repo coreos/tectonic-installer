@@ -1,34 +1,31 @@
-const installerInput = require('../utils/installerInput');
-const adminEmail = installerInput.adminEmail();
-const adminPassword = installerInput.adminPassword();
-
-
 const consoleLoginPageCommands = {
-  enterLoginCredentails() {
-    return this
-      .setValue('@email', adminEmail)
-      .setValue('@password', adminPassword)
-      .setValue('@confirmPassword',adminPassword)
-      .click('@nextStep');
+  test(json) {
+    this
+      .setField('@email', 'abc')
+      .expectValidationErrorContains('Invalid email address')
+      .setField('@email', json.tectonic_admin_email)
+      .expectNoValidationError();
+
+    this.setField('@password', 'password');
+    this.setField('@confirmPassword', 'abc');
+    this.expect.element('@alertError').text.to.contain('Passwords do not match');
+
+    this.setField('@password', 'abc');
+    this.setField('@confirmPassword', 'password');
+    this.expect.element('@alertError').text.to.contain('Passwords do not match');
+
+    this.setField('@password', 'password');
+    this.setField('@confirmPassword', 'password');
+    this.expect.element('@alertError').to.not.be.present;
   },
 };
 
 module.exports = {
-  url: '',
   commands: [consoleLoginPageCommands],
   elements: {
-    email: {
-      selector: 'input[id=adminEmail]',
-    },
-    password: {
-      selector: 'input[id=adminPassword]',
-    },
-    confirmPassword: {
-      selector: 'input[id=adminPassword2]',
-    },
-    nextStep: {
-      selector:'//*[text()[contains(.,"Next Step")]]',
-      locateStrategy: 'xpath',
-    },
+    alertError: '.alert-error',
+    email: 'input#adminEmail',
+    password: 'input#adminPassword',
+    confirmPassword: 'input#adminPassword2',
   },
 };

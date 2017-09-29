@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -21,7 +22,6 @@ import (
 )
 
 const (
-	configFileName = ".terraformrc"
 	stateFileName  = "terraform.tfstate"
 	tfVarsFileName = "terraform.tfvars"
 	logsFolderName = "logs"
@@ -74,7 +74,6 @@ const (
 // expose the live state to a file (or else).
 type Executor struct {
 	executionPath string
-	configPath    string
 	binaryPath    string
 	envVariables  map[string]string
 }
@@ -88,23 +87,12 @@ func NewExecutor(executionPath string) (*Executor, error) {
 	// if not existing.
 	os.MkdirAll(filepath.Join(ex.executionPath, logsFolderName), 0770)
 
-	// Create a Executor CLI configuration file, that contains the list of
-	// vendored providers/provisioners.
-	config, err := BuildPluginsConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	ex.configPath = filepath.Join(ex.WorkingDirectory(), configFileName)
-	if err := ioutil.WriteFile(ex.configPath, []byte(config), 0660); err != nil {
-		return nil, err
-	}
-
 	// Find the TerraForm binary.
-	ex.binaryPath, err = tfBinaryPath()
+	out, err := tfBinaryPath()
 	if err != nil {
 		return nil, err
 	}
+	ex.binaryPath = out
 
 	return ex, nil
 }
@@ -114,6 +102,24 @@ func NewExecutor(executionPath string) (*Executor, error) {
 func (ex *Executor) AddFile(name string, content []byte) error {
 	filePath := filepath.Join(ex.WorkingDirectory(), name)
 	return ioutil.WriteFile(filePath, content, 0660)
+}
+
+// LoadVars is a convenience function to load the tfvars file into memory
+// as a JSON object.
+func (ex *Executor) LoadVars() (map[string]interface{}, error) {
+	filePath := filepath.Join(ex.WorkingDirectory(), tfVarsFileName)
+	txt, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+	var obj interface{}
+	if err = json.Unmarshal([]byte(txt), &obj); err != nil {
+		return nil, err
+	}
+	if data, ok := obj.(map[string]interface{}); ok {
+		return data, nil
+	}
+	return nil, errors.New("Could not parse config as JSON object")
 }
 
 // AddVariables writes the `terraform.tfvars` file in the Executor's working
@@ -168,10 +174,10 @@ func (ex *Executor) Execute(args ...string) (int, chan struct{}, error) {
 	// working directory (so the files such as terraform.tfstate are stored at
 	// the right place), extra environment variables and outputs.
 	cmd := exec.Command(ex.binaryPath, args...)
-	cmd.Env = append(cmd.Env, fmt.Sprintf("TERRAFORM_CONFIG=%s", ex.configPath))
 	// ssh changes its behavior based on these. pass them through so ssh-agent & stuff works
 	cmd.Env = append(cmd.Env, fmt.Sprintf("DISPLAY=%s", os.Getenv("DISPLAY")))
 	cmd.Env = append(cmd.Env, fmt.Sprintf("PATH=%s", os.Getenv("PATH")))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=%s", os.Getenv("HOME")))
 	for _, v := range os.Environ() {
 		if strings.HasPrefix(v, "SSH_") {
 			cmd.Env = append(cmd.Env, v)
@@ -216,6 +222,27 @@ func (ex *Executor) Execute(args ...string) (int, chan struct{}, error) {
 	}()
 
 	return cmd.Process.Pid, done, nil
+}
+
+// ExecuteSync Like Execute, but synchronous. TODO: clean up duplicate cmd setup code
+func (ex *Executor) ExecuteSync(args ...string) ([]byte, error) {
+	// Prepare TerraForm command by setting up the command, configuration,
+	// working directory (so the files such as terraform.tfstate are stored at
+	// the right place), extra environment variables and outputs.
+	cmd := exec.Command(ex.binaryPath, args...)
+	// ssh changes its behavior based on these. pass them through so ssh-agent & stuff works
+	cmd.Env = append(cmd.Env, fmt.Sprintf("DISPLAY=%s", os.Getenv("DISPLAY")))
+	cmd.Env = append(cmd.Env, fmt.Sprintf("PATH=%s", os.Getenv("PATH")))
+	for _, v := range os.Environ() {
+		if strings.HasPrefix(v, "SSH_") {
+			cmd.Env = append(cmd.Env, v)
+		}
+	}
+	for k, v := range ex.envVariables {
+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", strings.ToUpper(k), v))
+	}
+	cmd.Dir = ex.executionPath
+	return cmd.Output()
 }
 
 // WorkingDirectory returns the directory in which TerraForm runs, which can be
@@ -271,6 +298,12 @@ func (ex *Executor) State() *terraform.State {
 	return s
 }
 
+// Ignore certain relative paths in the Terraform data dir. Paths must start at
+// the top dir
+var pathsToIgnore = map[string]struct{}{
+	logsFolderName: {},
+}
+
 // Zip streams the working directory as a ZIP file to the given io.writer.
 func (ex *Executor) Zip(w io.Writer, withTopFolder bool) error {
 	// Determine the working directory, free of symlinks.
@@ -284,6 +317,11 @@ func (ex *Executor) Zip(w io.Writer, withTopFolder bool) error {
 	defer z.Close()
 
 	f := func(path, relPath string, fi os.FileInfo) error {
+		bd := filepath.Base(relPath)
+		if _, ok := pathsToIgnore[bd]; ok {
+			return errors.New(fmt.Sprintln("Skipping dir", bd))
+		}
+
 		// Build a ZIP header based on the given os.FileInfo.
 		header, err := zip.FileInfoHeader(fi)
 		if err != nil {
@@ -380,8 +418,11 @@ func recursiveFileWalk(dir, root string, withTopFolder bool, f recursiveFileWalk
 			entryRelPath = filepath.Join(rootDirS[len(rootDirS)-1], entryRelPath)
 		}
 
-		// Execute the function we were instructed to run.
-		f(entryPath, entryRelPath, entry)
+		// Execute the function we were instructed to run. Continue onto the next
+		// entry if error is returned.
+		if err := f(entryPath, entryRelPath, entry); err != nil {
+			continue
+		}
 
 		if entry.IsDir() {
 			// That's a folder, recurse into it.

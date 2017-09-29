@@ -8,7 +8,7 @@ const getAssets = (launchUrl, cookie, callback) => {
     method: 'GET',
     encoding: null,
     headers: {
-      'Cookie': "tectonic-installer=" + cookie,
+      'Cookie': 'tectonic-installer=' + cookie,
     },
   };
   request(options, (err, res, body) => {
@@ -33,14 +33,13 @@ const getTerraformTfvars = (response, callback) => {
         fileName = key;
       }
     });
-    zip.file(fileName).async("string").then(callback);
+    zip.file(fileName).async('string').then(callback);
   });
 };
 
 const returnRequiredTerraformTfvars = (terraformTfvars) => {
   const json = JSON.parse(terraformTfvars);
   const extraTfvars = [
-    'tectonic_admin_password_hash',
     'tectonic_license_path',
     'tectonic_pull_secret_path',
     'tectonic_kube_apiserver_service_ip',
@@ -59,7 +58,7 @@ const returnTerraformTfvars = (launchUrl, cookie, callback) => {
       return callback(err);
     }
     if (res.statusCode !== 200 || res.headers['content-type'] !== 'application/zip' ) {
-      return callback("Terraform get assets api call failed", res);
+      return callback('Terraform get assets api call failed', res);
     }
     getTerraformTfvars(terraformAssestsResponse, (terraformTfvars) => {
       const actualJson = returnRequiredTerraformTfvars(terraformTfvars);
@@ -68,22 +67,21 @@ const returnTerraformTfvars = (launchUrl, cookie, callback) => {
   });
 };
 
-const compareJson = (actualJson, expectedJson) => {
-  let msg = '';
-  const diff = deep(actualJson,expectedJson);
-  if (typeof diff !== 'undefined') {
-    diff.forEach(key => {
-      msg = msg + "\n" + "TerraformTfvar:" + key.path + " ||"+" actualValue:" + key.lhs + " ||"
-      +" expectedValue:"+ key.rhs;
-    });
-    msg = msg + "\nThe above Json attributes are not matching.";
+const assertDeepEqual = (client, actual, expected) => {
+  // The password hash will be different every time, so can't diff
+  delete actual.tectonic_admin_password_hash;
+  delete expected.tectonic_admin_password_hash;
+
+  const diff = deep(actual, expected);
+  if (diff !== undefined) {
+    client.assert.fail(
+      'The following terraform.tfvars attributes differ from their expected value: ' +
+      diff.map(({path, lhs, rhs}) => `${path} (expected: ${rhs}, got: ${lhs})`).join(', ')
+    );
   }
-  return msg;
 };
 
 module.exports = {
-  getAssets,
-  returnRequiredTerraformTfvars,
   returnTerraformTfvars,
-  compareJson,
+  assertDeepEqual,
 };

@@ -3,7 +3,11 @@ export CGO_ENABLED=0
 OS=$(shell uname | tr A-Z a-z)
 LD_FLAGS="-w"
 INSTALLER_OPTS=--address=127.0.0.1:4444 --open-browser=false --log-level=debug --dev
-
+TLS_CERTS=../tests/smoke/bare-metal/fake-creds
+MATCHBOX_ASSETS_PATH=/tmp/assets
+MATCHBOX_IMAGES_PATH=/tmp/images
+MATCHBOX_OPTS=-data-path=$(MATCHBOX_IMAGES_PATH) -assets-path=$(MATCHBOX_ASSETS_PATH) -cert-file=$(TLS_CERTS)/server.crt -key-file=$(TLS_CERTS)/server.key -ca-file=$(TLS_CERTS)/ca.crt
+COREOS_VERSION=1353.8.0
 REPO=github.com/coreos/tectonic-installer/installer
 
 # Wrapper around find. Works with filenamess containing spaces.
@@ -68,17 +72,6 @@ shellcheck: $(SHELL_FILES)
 dirtycheck:
 	@if git status --short | grep 'yarn.lock' > /dev/null; then echo "outdated yarn.lock (commit it to fix)"; exit 1; fi
 
-.PHONY: dist
-dist: release-bins
-	./scripts/release/make_release_tarball.sh
-
-.PHONY: release
-release: release-bins
-	./scripts/release/upload_installer_bins.sh
-	./scripts/release/make_release_tarball.sh
-	./scripts/release/upload_release_tarball.sh
-	./scripts/release/make_github_release.sh
-
 .PHONY: license-parse
 license-parse:
 	./scripts/license-gen/collect_project_licenses.sh
@@ -105,17 +98,33 @@ bin/go-bindata:
 
 .PHONY: launch-installer
 launch-installer:
-	mkdir -p frontend/ui-tests/reports/
-	./bin/$(OS)/installer $(INSTALLER_OPTS) & echo $$! > frontend/ui-tests/reports/installer.pid
+	./bin/$(OS)/installer $(INSTALLER_OPTS) & echo $$! > /tmp/installer.pid
 
-.PHONY: launch-installer-guitests
-launch-installer-guitests: launch-installer
-	cd frontend && xvfb-run -a yarn run installer-tests
+.PHONY: launch-matchbox
+launch-matchbox:
+	./scripts/add_matchbox_hosts.sh
+	mkdir -p $(MATCHBOX_IMAGES_PATH) $(MATCHBOX_ASSETS_PATH)/coreos/$(COREOS_VERSION)
+	/usr/local/bin/matchbox $(MATCHBOX_OPTS) & echo $$! > /tmp/matchbox.pid
+
+.PHONY: launch-aws-installer-guitests
+launch-aws-installer-guitests: launch-installer
+	cd frontend && xvfb-run -a yarn run aws-installer-tests
+
+.PHONY: launch-baremetal-installer-guitests
+launch-baremetal-installer-guitests: launch-installer launch-matchbox
+	cd frontend && xvfb-run -a yarn run baremetal-installer-tests
 
 .PHONY: gui-tests-cleanup
 gui-tests-cleanup:
-	kill `cat frontend/ui-tests/reports/installer.pid`
-	rm -fr frontend/ui-tests/reports/
+	kill `cat /tmp/installer.pid`
+
+.PHONY: gui-aws-tests-cleanup
+gui-aws-tests-cleanup: gui-tests-cleanup
+
+.PHONY: gui-baremetal-tests-cleanup
+gui-baremetal-tests-cleanup: gui-tests-cleanup
+	kill `cat /tmp/matchbox.pid`
+	rm -fr $(MATCHBOX_IMAGES_PATH) $(MATCHBOX_ASSETS_PATH)/coreos/$(COREOS_VERSION)
 
 .PHONY: clean
 clean:
@@ -125,3 +134,4 @@ clean:
 	rm -fr assets/frontend/scripts
 	rm -fr bin/
 	rm -fr frontend/node_modules
+	rm -fr frontend/tests_output

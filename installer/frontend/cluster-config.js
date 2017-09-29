@@ -1,10 +1,7 @@
 import _ from 'lodash';
-import bcrypt from 'bcryptjs';
 
 import { BARE_METAL_TF } from './platforms';
-import { keyToAlg, toExtraData } from './utils';
-
-const bcryptCost = 12;
+import { keyToAlg } from './utils';
 
 // TODO: (ggreer) clean up key names. Warning: Doing this will break progress files.
 export const AWS_ACCESS_KEY_ID = 'awsAccessKeyId';
@@ -41,7 +38,6 @@ export const BM_WORKERS = 'workers';
 export const CA_CERTIFICATE = 'caCertificate';
 export const CA_PRIVATE_KEY = 'caPrivateKey';
 export const CA_TYPE = 'caType';
-export const CHANNEL_TO_USE = 'channelToUse';
 export const CLUSTER_NAME = 'clusterName';
 export const CLUSTER_SUBDOMAIN = 'clusterSubdomain';
 export const CONTROLLER_DOMAIN = 'controllerDomain';
@@ -50,7 +46,6 @@ export const EXTERNAL_ETCD_CLIENT = 'externalETCDClient';
 export const ETCD_OPTION = 'etcdOption';
 
 export const DRY_RUN = 'dryRun';
-export const ENTITLEMENTS = 'entitlements';
 export const PLATFORM_TYPE = 'platformType';
 export const PULL_SECRET = 'pullSecret';
 export const SSH_AUTHORIZED_KEY = 'sshAuthorizedKey';
@@ -84,20 +79,17 @@ export const BM_SSH_KEY = 'bm_sshKey';
 export const CREDS = 'creds';
 export const LICENSING = 'licensing';
 export const PLATFORM_FORM = 'platform';
-export const EXPERIMENTAL_FEATURES = 'experimentalFeatures';
 
-
-export const SPLIT_DNS_ON = "on";
-export const SPLIT_DNS_OFF = "off";
+export const SPLIT_DNS_ON = 'on';
+export const SPLIT_DNS_OFF = 'off';
 export const SPLIT_DNS_OPTIONS = {
-  [SPLIT_DNS_ON]: "Create an additional Route 53 private zone (default).",
-  [SPLIT_DNS_OFF]: "Do not create a private zone.",
+  [SPLIT_DNS_ON]: 'Create an additional Route 53 private zone (default).',
+  [SPLIT_DNS_OFF]: 'Do not create a private zone.',
 };
 
-const SELF_HOSTED = "selfHosted";
-const EXTERNAL = "external";
-const PROVISIONED = "provisioned";
-export const ETCD_OPTIONS = { SELF_HOSTED, EXTERNAL, PROVISIONED };
+const EXTERNAL = 'external';
+const PROVISIONED = 'provisioned';
+export const ETCD_OPTIONS = { EXTERNAL, PROVISIONED };
 
 export const toVPCSubnet = (region, subnets, deselected) => {
   const vpcSubnets = {};
@@ -131,7 +123,6 @@ const getZoneDomain = (cc) => {
   if (cc[PLATFORM_TYPE] === BARE_METAL_TF) {
     throw new Error("Can't get base domain for bare metal!");
   }
-  // TODO: if we ever change toExtraData()'s key, this breaks
   return _.get(cc, ['extra', AWS_HOSTED_ZONE_ID, 'zoneToName', cc[AWS_HOSTED_ZONE_ID]]);
 };
 
@@ -146,8 +137,7 @@ export const getTectonicDomain = (cc) => {
   if (cc[PLATFORM_TYPE] === BARE_METAL_TF) {
     return cc[BM_TECTONIC_DOMAIN];
   }
-  const tectonicDomain = cc[CLUSTER_SUBDOMAIN] + (cc[CLUSTER_SUBDOMAIN].endsWith('.') ? '' : '.') + getZoneDomain(cc);
-  return tectonicDomain;
+  return cc[CLUSTER_SUBDOMAIN] + (cc[CLUSTER_SUBDOMAIN].endsWith('.') ? '' : '.') + getZoneDomain(cc);
 };
 
 export const DEFAULT_CLUSTER_CONFIG = {
@@ -184,7 +174,6 @@ export const DEFAULT_CLUSTER_CONFIG = {
   [CLUSTER_NAME]: '',
   [CONTROLLER_DOMAIN]: '',
   [DRY_RUN]: false,
-  [ENTITLEMENTS]: {},
   [PULL_SECRET]: '',
   [RETRY]: false, // whether we're retrying a terraform apply
   [STS_ENABLED]: false,
@@ -194,12 +183,12 @@ export const DEFAULT_CLUSTER_CONFIG = {
     channel: 'tectonic-1.6',
     appID: '6bc7b986-4654-4a0f-94b3-84ce6feb1db4',
   },
-  [POD_CIDR]: "10.2.0.0/16",
-  [SERVICE_CIDR]: "10.3.0.0/16",
+  [POD_CIDR]: '10.2.0.0/16',
+  [SERVICE_CIDR]: '10.3.0.0/16',
 };
 
 
-export const toAWS_TF = (cc, FORMS, opts={}) => {
+export const toAWS_TF = (cc, FORMS) => {
   const controllers = FORMS[AWS_CONTROLLERS].getData(cc);
   const etcds = FORMS[AWS_ETCDS].getData(cc);
   const workers = FORMS[AWS_WORKERS].getData(cc);
@@ -218,7 +207,7 @@ export const toAWS_TF = (cc, FORMS, opts={}) => {
 
   const extraTags = {};
   _.each(cc[AWS_TAGS], ({key, value}) => {
-    if(key && value) {
+    if (key && value) {
       extraTags[key] = value;
     }
   });
@@ -226,16 +215,17 @@ export const toAWS_TF = (cc, FORMS, opts={}) => {
   const ret = {
     clusterKind: 'tectonic-aws-tf',
     dryRun: cc[DRY_RUN],
-    platform: "aws",
+    platform: 'aws',
     license: cc[TECTONIC_LICENSE],
     pullSecret: cc[PULL_SECRET],
+    retry: cc[RETRY],
     credentials: {
       AWSAccessKeyID: cc[AWS_ACCESS_KEY_ID],
       AWSSecretAccessKey: cc[AWS_SECRET_ACCESS_KEY],
     },
     variables: {
       // eslint-disable-next-line no-sync
-      tectonic_admin_password_hash: bcrypt.hashSync(cc[ADMIN_PASSWORD], opts.salt || bcrypt.genSaltSync(bcryptCost)),
+      tectonic_admin_password: cc[ADMIN_PASSWORD],
       tectonic_aws_region: cc[AWS_REGION],
       tectonic_admin_email: cc[ADMIN_EMAIL],
       tectonic_aws_master_ec2_type: controllers[INSTANCE_TYPE],
@@ -248,7 +238,6 @@ export const toAWS_TF = (cc, FORMS, opts={}) => {
       tectonic_aws_worker_root_volume_type: workers[STORAGE_TYPE],
       tectonic_aws_ssh_key: cc[AWS_SSH],
       tectonic_base_domain: getZoneDomain(cc),
-      tectonic_cl_channel: cc[CHANNEL_TO_USE],
       tectonic_cluster_cidr: cc[POD_CIDR],
       tectonic_cluster_name: cc[CLUSTER_NAME],
       tectonic_master_count: controllers[NUMBER_OF_INSTANCES],
@@ -256,7 +245,6 @@ export const toAWS_TF = (cc, FORMS, opts={}) => {
       tectonic_worker_count: workers[NUMBER_OF_INSTANCES],
       // TODO: shouldn't hostedZoneID be specified somewhere?
       tectonic_dns_name: cc[CLUSTER_SUBDOMAIN],
-      tectonic_experimental: cc[ETCD_OPTION] === SELF_HOSTED,
     },
   };
 
@@ -285,12 +273,11 @@ export const toAWS_TF = (cc, FORMS, opts={}) => {
     ret.variables.tectonic_aws_external_vpc_id = cc[AWS_VPC_ID];
     ret.variables.tectonic_aws_external_master_subnet_ids = controllerSubnets;
     ret.variables.tectonic_aws_external_worker_subnet_ids = workerSubnets;
-    ret.variables.tectonic_aws_external_vpc_public = cc[AWS_CREATE_VPC] !== 'VPC_PRIVATE';
+    ret.variables.tectonic_aws_public_endpoints = cc[AWS_CREATE_VPC] !== 'VPC_PRIVATE';
   }
 
-  const privateZone = _.get(cc, toExtraData(AWS_HOSTED_ZONE_ID) + '.privateZones.' + cc[AWS_HOSTED_ZONE_ID]);
-  if (!privateZone && cc[AWS_SPLIT_DNS] === SPLIT_DNS_OFF) {
-    ret.variables.tectonic_aws_external_private_zone = cc[AWS_HOSTED_ZONE_ID];
+  if (cc[AWS_CREATE_VPC] !== 'VPC_PRIVATE' && cc[AWS_SPLIT_DNS] === SPLIT_DNS_OFF) {
+    ret.variables.tectonic_aws_private_endpoints = false;
   }
 
   if (cc[CA_TYPE] === 'owned') {
@@ -301,7 +288,7 @@ export const toAWS_TF = (cc, FORMS, opts={}) => {
   return ret;
 };
 
-export const toBaremetal_TF = (cc, FORMS, opts={}) => {
+export const toBaremetal_TF = (cc, FORMS) => {
   const sshKey = FORMS[BM_SSH_KEY].getData(cc);
   const masters = cc[BM_MASTERS];
   const workers = cc[BM_WORKERS];
@@ -312,11 +299,11 @@ export const toBaremetal_TF = (cc, FORMS, opts={}) => {
     platform: 'metal',
     license: cc[TECTONIC_LICENSE],
     pullSecret: cc[PULL_SECRET],
+    retry: cc[RETRY],
     variables: {
       // eslint-disable-next-line no-sync
-      tectonic_admin_password_hash: bcrypt.hashSync(cc[ADMIN_PASSWORD], opts.salt || bcrypt.genSaltSync(bcryptCost)),
+      tectonic_admin_password: cc[ADMIN_PASSWORD],
       tectonic_cluster_name: cc[CLUSTER_NAME],
-      tectonic_cl_channel: cc[CHANNEL_TO_USE],
       tectonic_admin_email: cc[ADMIN_EMAIL],
       tectonic_metal_cl_version: cc[BM_OS_TO_USE],
       tectonic_metal_ingress_domain: getTectonicDomain(cc),
@@ -336,7 +323,6 @@ export const toBaremetal_TF = (cc, FORMS, opts={}) => {
       tectonic_cluster_cidr: cc[POD_CIDR],
       tectonic_service_cidr: cc[SERVICE_CIDR],
       tectonic_dns_name: cc[CLUSTER_SUBDOMAIN],
-      tectonic_experimental: cc[ETCD_OPTION] === SELF_HOSTED,
       tectonic_base_domain: 'unused',
     },
   };

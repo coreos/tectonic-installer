@@ -6,32 +6,37 @@ import { Dropdown } from './ui';
 const fetchLatestRelease = () => {
   return fetch('/releases/latest',
     { method: 'GET' }).then((response) => {
-      if (response.ok) {
-        return response.text();
-      }
-      return response.text().then(err => Promise.reject(err));
-    });
+    if (response.ok) {
+      return response.text();
+    }
+    return response.text().then(err => Promise.reject(err));
+  });
 };
 
 const parseLatestVersion = (html) => {
   const parser = new DOMParser();
-  const htmlDoc = parser.parseFromString(html, "text/html");
+  const htmlDoc = parser.parseFromString(html, 'text/html');
   return htmlDoc.getElementsByClassName('latestReleaseTag')[0].textContent.trim();
 };
 
 const hasNewVersion = (latestRelease) => {
-  if (semver.major(latestRelease) > semver.major(GIT_TAG)) {
-    return true;
+  const lrMajor = semver.major(latestRelease);
+  const gtMajor = semver.major(GIT_TAG);
+  if (lrMajor !== gtMajor) {
+    return lrMajor > gtMajor;
   }
 
-  if (semver.minor(latestRelease) > semver.minor(GIT_TAG)) {
-    return true;
+  const lrMinor = semver.minor(latestRelease);
+  const gtMinor = semver.minor(GIT_TAG);
+  if (lrMinor !== gtMinor) {
+    return lrMinor > gtMinor;
   }
 
-  if (semver.patch(latestRelease) > semver.patch(GIT_TAG)) {
-    return true;
+  const lrPatch = semver.patch(latestRelease);
+  const gtPatch = semver.patch(GIT_TAG);
+  if (lrPatch !== gtPatch) {
+    return lrPatch > gtPatch;
   }
-
 
   const latestReleasePr = semver.prerelease(latestRelease);
   const gitTagPr = semver.prerelease(GIT_TAG);
@@ -42,13 +47,13 @@ const hasNewVersion = (latestRelease) => {
   }
 
   //compares rc-x string
-  if (latestReleasePr[1] > gitTagPr[1]) {
-    return true;
+  if (latestReleasePr[1] !== gitTagPr[1]) {
+    return latestReleasePr[1] > gitTagPr[1];
   }
 
   //rc version
-  if (latestReleasePr[2] > gitTagPr[2]) {
-    return true;
+  if (latestReleasePr[2] !== gitTagPr[2]) {
+    return latestReleasePr[2] > gitTagPr[2];
   }
 
   return false;
@@ -103,24 +108,28 @@ export class Header extends React.Component {
       <div>
         <ul className="co-navbar-nav">
           <li>
-            <Dropdown items={productDdItems} header="Product"/>
+            <Dropdown items={productDdItems} header="Product" />
           </li>
           <li>
-            <Dropdown items={openSourceDdItems} header="Open Source"/>
+            <Dropdown items={openSourceDdItems} header="Open Source" />
           </li>
           <li className="tectonic-dropdown-menu-title">
-            <a href="https://coreos.com/tectonic/docs/latest/" target="_blank" className="tectonic-dropdown-menu-title__link">Tectonic Docs</a>
+            {/* eslint-disable react/jsx-no-target-blank */}
+            <a href="https://coreos.com/tectonic/docs/latest/" rel="noopener" target="_blank" className="tectonic-dropdown-menu-title__link">Tectonic Docs</a>
+            {/* eslint-enable react/jsx-no-target-blank */}
           </li>
         </ul>
         <div className="co-navbar--right">
           <ul className="co-navbar-nav">
             {latestRelease && hasNewVersion(latestRelease) && <li className="co-navbar-nav-item__version">
               <span className="co-navbar-nav-item__version--new">
-                New installer version: <a href="https://coreos.com/tectonic/releases/" target="_blank">Release notes {latestRelease}</a>
+                {/* eslint-disable react/jsx-no-target-blank */}
+                New installer version: <a href="https://coreos.com/tectonic/releases/" rel="noopener" target="_blank">Release notes {latestRelease}</a>
+                {/* eslint-enable react/jsx-no-target-blank */}
               </span>
             </li>}
             <li className="co-navbar-nav-item__version">
-              <span>Version: {GIT_TAG}</span>
+              <span>Version: {GIT_TAG} ({GIT_COMMIT})</span>
             </li>
           </ul>
         </div>

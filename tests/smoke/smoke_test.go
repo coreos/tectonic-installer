@@ -13,7 +13,13 @@ import (
 
 const (
 	// kubeconfigEnv is the environment variable that is checked for a the kubeconfig path to be loaded.
-	kubeconfigEnv = "TEST_KUBECONFIG"
+	kubeconfigEnv = "SMOKE_KUBECONFIG"
+	// apiServerSelector is the pod label selector for the apiserver.
+	apiServerSelector = "k8s-app=kube-apiserver"
+	// kubeSystemNamespace is the namespace for k8s.
+	kubeSystemNamespace = "kube-system"
+	// tectonicSystemNamespace is the namespace for Tectonic.
+	tectonicSystemNamespace = "tectonic-system"
 )
 
 var (
@@ -43,7 +49,7 @@ func Test(t *testing.T) {
 }
 
 // newClient is a convenient helper for generating a client-go client from a *testing.T.
-func newClient(t *testing.T) *kubernetes.Clientset {
+func newClient(t *testing.T) (*kubernetes.Clientset, clientcmd.ClientConfig) {
 	kcfgPath := os.Getenv(kubeconfigEnv)
 	if len(kcfgPath) == 0 {
 		t.Fatalf("no kubeconfig path in environment variable %s", kubeconfigEnv)
@@ -60,7 +66,7 @@ func newClient(t *testing.T) *kubernetes.Clientset {
 	if err != nil {
 		t.Fatalf("could not create clientset: %v", err)
 	}
-	return cs
+	return cs, cfg
 }
 
 // stopped returns true if the done chan is closed and returns false otherwise.

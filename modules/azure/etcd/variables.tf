@@ -7,9 +7,8 @@ variable "resource_group_name" {
   type = "string"
 }
 
-// Image refernce to use for master instances
-variable "image_reference" {
-  type = "map"
+variable "cluster_id" {
+  type = "string"
 }
 
 // VM Size name
@@ -18,7 +17,11 @@ variable "vm_size" {
 }
 
 // Storage account type
-variable "storage_account_type" {
+variable "storage_type" {
+  type = "string"
+}
+
+variable "storage_id" {
   type = "string"
 }
 
@@ -42,18 +45,65 @@ variable "public_ssh_key" {
   type = "string"
 }
 
-variable "virtual_network" {
-  type = "string"
-}
-
-variable "subnet" {
-  type = "string"
-}
-
 variable "network_interface_ids" {
   type = "list"
 }
 
-variable "endpoints" {
+variable "versions" {
+  description = "(internal) Versions of the components to use"
+  type        = "map"
+}
+
+variable "cl_channel" {
+  type = "string"
+}
+
+variable "const_internal_node_names" {
+  type        = "list"
+  default     = ["etcd-0", "etcd-1", "etcd-2", "etcd-3", "etcd-4"]
+  description = "(internal) The list of hostnames assigned to etcd member nodes."
+}
+
+variable "tls_enabled" {
+  default = false
+}
+
+variable "tls_ca_crt_pem" {
+  default = ""
+}
+
+variable "tls_client_key_pem" {
+  default = ""
+}
+
+variable "tls_client_crt_pem" {
+  default = ""
+}
+
+variable "tls_server_key_pem" {
+  default = ""
+}
+
+variable "tls_server_crt_pem" {
+  default = ""
+}
+
+variable "tls_peer_key_pem" {
+  default = ""
+}
+
+variable "tls_peer_crt_pem" {
+  default = ""
+}
+
+variable "container_image" {
+  type = "string"
+}
+
+variable "extra_tags" {
+  type = "map"
+}
+
+variable "ign_etcd_dropin_id_list" {
   type = "list"
 }

@@ -1,26 +1,35 @@
+const wizard = require('../utils/wizard');
+
 const platformPageCommands = {
-  selectPlatform() {
-    return this
-      .waitForElementVisible('select#platformType', 100000)
-      .click('@awsPlatform')
-      .click('@nextStep');
+  test(platformEl) {
+    this.expect.element('select#platformType').to.be.visible.before(60000);
+
+    this.selectOption('@awsGUI');
+    this.expect.element(wizard.nextStep).to.be.present;
+    this.selectOption('@awsAdvanced');
+    this.expect.element(wizard.nextStep).to.not.be.present;
+    this.selectOption('@azureAdvanced');
+    this.expect.element(wizard.nextStep).to.not.be.present;
+    this.selectOption('@metalGUI');
+    this.expect.element(wizard.nextStep).to.be.present;
+    this.selectOption('@metalAdvanced');
+    this.expect.element(wizard.nextStep).to.not.be.present;
+    this.selectOption('@openstackAdvanced');
+    this.expect.element(wizard.nextStep).to.not.be.present;
+
+    this.selectOption(platformEl);
+    this.expect.element(wizard.nextStep).to.be.present;
   },
 };
 
 module.exports = {
-
-  url: () => {
-    return this.api.launchUrl + '/define/cluster-type';
-  },
-
   commands: [platformPageCommands],
   elements: {
-    awsPlatform: {
-      selector: 'option[value="aws-tf"]',
-    },
-    nextStep: {
-      selector:'//*[text()[contains(.,"Next Step")]]',
-      locateStrategy: 'xpath',
-    },
+    awsAdvanced: 'option[value="aws"]',
+    awsGUI: 'option[value="aws-tf"]',
+    azureAdvanced: 'option[value="azure"]',
+    metalAdvanced: 'option[value="bare-metal"]',
+    metalGUI: 'option[value="bare-metal-tf"]',
+    openstackAdvanced: 'option[value="openstack"]',
   },
 };
