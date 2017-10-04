@@ -115,6 +115,7 @@ module "tectonic" {
 
   base_address       = "${module.dns.kube_ingress_fqdn}"
   kube_apiserver_url = "https://${module.dns.kube_apiserver_fqdn}:443"
+  service_cidr       = "${var.tectonic_service_cidr}"
 
   # Platform-independent variables wiring, do not modify.
   container_images      = "${var.tectonic_container_images}"
