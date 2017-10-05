@@ -45,6 +45,18 @@ EOF
   default = []
 }
 
+variable "tectonic_aws_external_master_sg_id" {
+  description = <<EOF
+(optional) Security group ID for master nodes. If not set, a security group is created.
+These groups must have proper ingress/egress rules for installation to be successful. 
+
+Example: `"sg-51530134"`
+EOF
+
+  type    = "string"
+  default = ""
+}
+
 variable "tectonic_aws_master_extra_sg_ids" {
   description = <<EOF
 (optional) List of additional security group IDs for master nodes.
@@ -54,6 +66,18 @@ EOF
 
   type    = "list"
   default = []
+}
+
+variable "tectonic_aws_external_worker_sg_id" {
+  description = <<EOF
+(optional) Security group ID for worker nodes. If not set, a security group is created.
+These groups must have proper ingress/egress rules for installation to be successful. 
+
+Example: `"sg-51530134"`
+EOF
+
+  type    = "string"
+  default = ""
 }
 
 variable "tectonic_aws_worker_extra_sg_ids" {

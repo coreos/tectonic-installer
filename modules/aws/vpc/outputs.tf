@@ -17,11 +17,11 @@ output "etcd_sg_id" {
 }
 
 output "master_sg_id" {
-  value = "${aws_security_group.master.id}"
+  value = "${var.external_sg_master == "" ? join(" ", aws_security_group.master.*.id) : var.external_sg_master }"
 }
 
 output "worker_sg_id" {
-  value = "${aws_security_group.worker.id}"
+  value = "${var.external_sg_worker == "" ? join(" ", aws_security_group.worker.*.id) : var.external_sg_worker }"
 }
 
 output "api_sg_id" {

@@ -18,6 +18,8 @@ module "vpc" {
   cluster_id              = "${module.tectonic.cluster_id}"
   extra_tags              = "${var.tectonic_aws_extra_tags}"
   enable_etcd_sg          = "${!var.tectonic_experimental && length(compact(var.tectonic_etcd_servers)) == 0 ? 1 : 0}"
+  external_sg_master      = "${var.tectonic_aws_external_master_sg_id}"
+  external_sg_worker      = "${var.tectonic_aws_external_worker_sg_id}"
 
   # VPC layout settings.
   #
@@ -119,7 +121,7 @@ module "masters" {
   instance_count               = "${var.tectonic_master_count}"
   internal_zone_id             = "${data.null_data_source.zones.inputs["private"]}"
   master_iam_role              = "${var.tectonic_aws_master_iam_role_name}"
-  master_sg_ids                = "${concat(var.tectonic_aws_master_extra_sg_ids, list(module.vpc.master_sg_id))}"
+  master_sg_ids                = ["${concat(var.tectonic_aws_master_extra_sg_ids, list(module.vpc.master_sg_id))}"]
   private_endpoints            = "${var.tectonic_aws_private_endpoints}"
   public_endpoints             = "${var.tectonic_aws_public_endpoints}"
   root_volume_iops             = "${var.tectonic_aws_master_root_volume_iops}"
@@ -159,6 +161,11 @@ module "ignition_workers" {
 module "workers" {
   source = "../../modules/aws/worker-asg"
 
+  instance_count  = "${var.tectonic_worker_count}"
+  ec2_type        = "${var.tectonic_aws_worker_ec2_type}"
+  cluster_name    = "${var.tectonic_cluster_name}"
+  worker_iam_role = "${var.tectonic_aws_worker_iam_role_name}"
+
   autoscaling_group_extra_tags = "${var.tectonic_autoscaling_group_extra_tags}"
   cl_channel                   = "${var.tectonic_cl_channel}"
   cluster_id                   = "${module.tectonic.cluster_id}"
@@ -166,15 +173,15 @@ module "workers" {
   ec2_type                     = "${var.tectonic_aws_worker_ec2_type}"
   extra_tags                   = "${var.tectonic_aws_extra_tags}"
   instance_count               = "${var.tectonic_worker_count}"
+  load_balancers               = ["${var.tectonic_aws_worker_load_balancers}"]
   root_volume_iops             = "${var.tectonic_aws_worker_root_volume_iops}"
   root_volume_size             = "${var.tectonic_aws_worker_root_volume_size}"
   root_volume_type             = "${var.tectonic_aws_worker_root_volume_type}"
-  sg_ids                       = "${concat(var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id))}"
+  sg_ids                       = ["${split(",", var.tectonic_aws_external_worker_sg_id == "" ? join(",", var.tectonic_aws_worker_extra_sg_ids, list(module.vpc.worker_sg_id)) : join(",", var.tectonic_aws_worker_extra_sg_ids, list(var.tectonic_aws_external_worker_sg_id)))}"]
   ssh_key                      = "${var.tectonic_aws_ssh_key}"
-  subnet_ids                   = "${module.vpc.worker_subnet_ids}"
+  subnet_ids                   = ["${module.vpc.worker_subnet_ids}"]
   vpc_id                       = "${module.vpc.vpc_id}"
   worker_iam_role              = "${var.tectonic_aws_worker_iam_role_name}"
-  load_balancers               = ["${var.tectonic_aws_worker_load_balancers}"]
 
   ign_docker_dropin_id              = "${module.ignition_workers.docker_dropin_id}"
   ign_installer_kubelet_env_id      = "${module.ignition_workers.installer_kubelet_env_id}"

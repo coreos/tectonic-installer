@@ -29,7 +29,7 @@ resource "aws_security_group" "etcd" {
     to_port   = 22
     self      = true
 
-    security_groups = ["${aws_security_group.master.id}"]
+    security_groups = ["${var.external_sg_master == "" ? join(" ", aws_security_group.master.*.id) : var.external_sg_master }"]
   }
 
   ingress {
@@ -38,7 +38,7 @@ resource "aws_security_group" "etcd" {
     to_port   = 2379
     self      = true
 
-    security_groups = ["${aws_security_group.master.id}"]
+    security_groups = ["${var.external_sg_master == "" ? join(" ", aws_security_group.master.*.id) : var.external_sg_master }"]
   }
 
   ingress {
