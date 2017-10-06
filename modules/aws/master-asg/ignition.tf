@@ -14,6 +14,7 @@ data "ignition_config" "main" {
     var.ign_k8s_node_bootstrap_service_id,
     data.ignition_systemd_unit.init_assets.id,
     var.ign_bootkube_service_id,
+    var.ign_kvo_service_id,
     var.ign_tectonic_service_id,
     var.ign_bootkube_path_unit_id,
     var.ign_tectonic_path_unit_id,

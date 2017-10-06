@@ -51,6 +51,7 @@ resource "template_dir" "bootkube" {
 
   vars {
     kube_version_operator_image = "${var.container_images["kube_version_operator"]}"
+    pull_secret                 = "${base64encode(file(var.pull_secret_path))}"
     hyperkube_image             = "${var.container_images["hyperkube"]}"
     pod_checkpointer_image      = "${var.container_images["pod_checkpointer"]}"
     kubedns_image               = "${var.container_images["kubedns"]}"
@@ -116,6 +117,7 @@ resource "template_dir" "bootkube" {
   }
 }
 
+<<<<<<< 0f17a57def561bc7402e528a65149a126b7c1ab1
 # Self-hosted bootstrapping manifests (resources/generated/manifests-bootstrap/)
 resource "template_dir" "bootkube_bootstrap" {
   source_dir      = "${path.module}/resources/bootstrap-manifests"
@@ -186,15 +188,66 @@ resource "local_file" "bootkube_sh" {
   filename = "./generated/bootkube.sh"
 }
 
+resource "local_file" "kvo_config" {
+  content  = "${data.template_file.kvo_config.rendered}"
+  filename = "./generated/kvo-config.yaml"
+}
+
+resource "local_file" "pull_secret" {
+  content  = "${file(var.pull_secret_path)}"
+  filename = "./generated/config.json"
+}
+
 # bootkube.service (available as output variable)
 data "template_file" "bootkube_service" {
   template = "${file("${path.module}/resources/bootkube.service")}"
+}
+
+# kvo.service (available as output variable)
+data "template_file" "kvo_service" {
+  template = "${file("${path.module}/resources/kvo.service")}"
+  vars {
+    kube_version_operator_image = "${var.container_images["kube_version_operator"]}"
+    kubernetes_version          = "${var.versions["kubernetes"]}"
+  }
+}
+
+data "template_file" "kvo_config" {
+  template = "${file("${path.module}/resources/kvo-config.yaml")}"
+  vars {
+    oidc_issuer_url     = "${var.oidc_issuer_url}"
+    oidc_client_id      = "${var.oidc_client_id}"
+    oidc_username_claim = "${var.oidc_username_claim}"
+    oidc_groups_claim   = "${var.oidc_groups_claim}"
+
+    cloud_provider_profile = "${var.cloud_provider != "" ? "${var.cloud_provider}" : "metal"}"
+    cloud_config_path      = "${var.cloud_config_path}"
+
+    cluster_cidr        = "${var.cluster_cidr}"
+    service_cidr        = "${var.service_cidr}"
+    advertise_address   = "${var.advertise_address}"
+    etcd_servers = "${
+      var.experimental_enabled
+        ? format("https://%s:2379", cidrhost(var.service_cidr, 15))
+        : var.etcd_ca_cert_pem == ""
+          ? join(",", formatlist("http://%s:2379", var.etcd_endpoints))
+          : join(",", formatlist("https://%s:2379", var.etcd_endpoints))
+      }"
+
+    master_count = "${var.master_count}"
+  }
 }
 
 data "ignition_systemd_unit" "bootkube_service" {
   name    = "bootkube.service"
   enable  = false
   content = "${data.template_file.bootkube_service.rendered}"
+}
+
+data "ignition_systemd_unit" "kvo_service" {
+  name    = "kvo.service"
+  enable  = true
+  content = "${data.template_file.kvo_service.rendered}"
 }
 
 # bootkube.path (available as output variable)
