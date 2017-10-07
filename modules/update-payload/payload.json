@@ -125,7 +125,7 @@
                   "--cache-images=true",
                   "--version-mapping=/upgrade-spec.json"
                 ],
-                "image": "quay.io/coreos/kube-version-operator:v1.7.3-kvo.4",
+                "image": "quay.io/coreos/kube-version-operator:v1.7.3-kvo.5",
                 "name": "kube-version-operator"
               }
             ],
@@ -331,7 +331,7 @@
         "name": "kubernetes",
         "namespace": "tectonic-system"
       },
-      "version": "1.7.3+tectonic.3"
+      "version": "1.7.3+tectonic.4"
     },
     {
       "metadata": {
