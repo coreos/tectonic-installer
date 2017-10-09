@@ -75,7 +75,7 @@ variable "tectonic_versions" {
     kubernetes    = "1.7.3+tectonic.4"
     monitoring    = "1.5.2"
     prometheus    = "v1.7.1"
-    tectonic      = "1.7.3-tectonic.3"
+    tectonic      = "1.7.3-tectonic.4"
     tectonic-etcd = "0.0.1"
     cluo          = "0.1.3"
   }
