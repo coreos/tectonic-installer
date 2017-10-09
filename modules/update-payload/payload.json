@@ -1,5 +1,5 @@
 {
-  "version": "1.7.3-tectonic.3",
+  "version": "1.7.3-tectonic.4",
   "deployments": [
     {
       "apiVersion": "extensions/v1beta1",
