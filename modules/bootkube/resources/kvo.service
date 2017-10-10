@@ -18,7 +18,7 @@ ExecStart=/usr/bin/docker \
             -v /opt/tectonic:/opt/tectonic \
             ${kube_version_operator_image} \
             /kube-version-operator \
-            --upgrade-spec=/upgrade-spec.json \
+            --upgrade-spec=/upgrade-spec.yaml \
             --version=${kubernetes_version} \
             --cluster-config=/opt/tectonic/kvo-config.yaml \
             --outdir=/opt/tectonic \

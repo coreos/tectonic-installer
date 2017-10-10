@@ -177,7 +177,6 @@ kubectl create -f stats-emitter.yaml
 
 echo "Creating Operators"
 kubectl create -f updater/tectonic-channel-operator-kind.yaml
-kubectl create -f updater/app-version-kind.yaml
 kubectl create -f updater/migration-status-kind.yaml
 kubectl create -f updater/node-agent.yaml
 kubectl create -f updater/tectonic-monitoring-config.yaml

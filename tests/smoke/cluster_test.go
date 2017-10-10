@@ -42,7 +42,7 @@ const (
 var (
 	// defaultIgnoredManifests represents the manifests that are ignored by
 	// testAllResourcesCreated by default.
-	defaultIgnoredManifests = []string{"bootstrap"}
+	defaultIgnoredManifests = []string{"bootstrap", "kvo-config.yaml", "config.json"}
 
 	// experimentalManifests represents the manifests that are ignored by
 	// testAllResourcesCreated when manifestExperimentalEnv isn't set to 'true'.
