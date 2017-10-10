@@ -6,15 +6,13 @@ tectonic_etcd_count = "1"
 
 tectonic_etcd_servers = [""]
 
-tectonic_base_domain = "dparker.k8s.work"
+tectonic_base_domain = "tectonic.dev.coreos.systems"
 
 tectonic_cl_channel = "stable"
 
 tectonic_ca_cert = ""
 
 tectonic_ca_key = ""
-
-tectonic_aws_ssh_key = "dparker"
 
 tectonic_aws_master_ec2_type = "m4.large"
 

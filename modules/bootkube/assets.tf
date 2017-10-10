@@ -117,7 +117,6 @@ resource "template_dir" "bootkube" {
   }
 }
 
-<<<<<<< 0f17a57def561bc7402e528a65149a126b7c1ab1
 # Self-hosted bootstrapping manifests (resources/generated/manifests-bootstrap/)
 resource "template_dir" "bootkube_bootstrap" {
   source_dir      = "${path.module}/resources/bootstrap-manifests"
