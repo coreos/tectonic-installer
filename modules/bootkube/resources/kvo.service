@@ -5,14 +5,15 @@ Wants=kubelet.service
 After=kubelet.service
 
 [Service]
-Type=oneshot
+Type=simple
+Restart=on-failure
 RemainAfterExit=true
 WorkingDirectory=/opt/tectonic
 
 User=root
 Group=root
 
-ExecStart=/usr/bin/docker \
+ExecStartPre=/usr/bin/docker \
             --config=/opt/tectonic \
             run --rm \
             -v /opt/tectonic:/opt/tectonic \

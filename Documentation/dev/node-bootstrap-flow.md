@@ -20,7 +20,9 @@ When a cluster node is being bootstrapped from scratch, it goes through several 
 
 Additionally, only on one of the master nodes the following kubernetes bootstrapping happens:
 
-1. `bootkube.service` is started after `kubelet.service` start
+1. `kvo.service` is started after `kubelet.service` start
+1. `kvo.service` renders all bootstrap and self-hosted control plane assets
+1. `bootkube.service` is started after `kvo.service` start
 1. a static bootstrapping control-plane is deployed
 1. a fully self-hosted control-plane starts and takes over the previous one
 1. `bootkube.service` is completed with success
@@ -37,7 +39,8 @@ The following systemd units are deployed to a node by tectonic-installer and tak
 
 Additionally, only on one of the master nodes the following kubernetes bootstrapping happens:
 
-* `bootkube.service` deploys the initial bootstrapping control-plane. It is started only after `kubelet.service` _is started_. It is a oneshot unit and cannot crash, and it runs only during bootstrap
+* `kvo.service` renders all bootstrap and self-hosted control plane assets using the cluster config object that was pre-rendered by Terraform
+* `bootkube.service` deploys the initial bootstrapping control-plane. It is started only after `kvo.service` _is finished. It is a oneshot unit and cannot crash, and it runs only during bootstrap
 * `bootkube.path` waits for bootkube assets/scripts to exist on disk and triggers `bootkube.service`
 * `tectonic.service` deploys tectonic control-plane. It is started only after `bootkube.service` _has completed_.  It is a oneshot unit and cannot crash, and it runs only during bootstrap
 * `bootkube.path` waits for tectonic assets/scripts to exist on disk and triggers `tectonic.service`
@@ -79,6 +82,20 @@ This service is enabled by default and can crash-loop until success.
 On first boot, it is initially blocked by `k8s-node-bootstrap.service`.
 It crash-loop until the `kubelet.env` file exists.
 It is started on every boot.
+
+### `kvo.service`
+
+```
+Description=Generate resources for Bootkube
+ConditionPathExists=!/opt/tectonic/init_kvo.done
+Wants=kubelet.service
+After=kubelet.service
+Type=simple
+Restart=on-failure
+RemainAfterExit=true
+WorkingDirectory=/opt/tectonic
+```
+
 
 ### `bootkube.path` and `bootkube.service`
 

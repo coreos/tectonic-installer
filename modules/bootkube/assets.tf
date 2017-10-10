@@ -215,17 +215,17 @@ data "template_file" "kvo_service" {
 data "template_file" "kvo_config" {
   template = "${file("${path.module}/resources/kvo-config.yaml")}"
   vars {
-    oidc_issuer_url     = "${var.oidc_issuer_url}"
-    oidc_client_id      = "${var.oidc_client_id}"
-    oidc_username_claim = "${var.oidc_username_claim}"
-    oidc_groups_claim   = "${var.oidc_groups_claim}"
-
+    advertise_address      = "${var.advertise_address}"
     cloud_provider_profile = "${var.cloud_provider != "" ? "${var.cloud_provider}" : "metal"}"
     cloud_config_path      = "${var.cloud_config_path}"
+    cluster_cidr           = "${var.cluster_cidr}"
+    master_count           = "${var.master_count}"
+    oidc_issuer_url        = "${var.oidc_issuer_url}"
+    oidc_client_id         = "${var.oidc_client_id}"
+    oidc_username_claim    = "${var.oidc_username_claim}"
+    oidc_groups_claim      = "${var.oidc_groups_claim}"
+    service_cidr           = "${var.service_cidr}"
 
-    cluster_cidr        = "${var.cluster_cidr}"
-    service_cidr        = "${var.service_cidr}"
-    advertise_address   = "${var.advertise_address}"
     etcd_servers = "${
       var.experimental_enabled
         ? format("https://%s:2379", cidrhost(var.service_cidr, 15))
@@ -233,8 +233,6 @@ data "template_file" "kvo_config" {
           ? join(",", formatlist("http://%s:2379", var.etcd_endpoints))
           : join(",", formatlist("https://%s:2379", var.etcd_endpoints))
       }"
-
-    master_count = "${var.master_count}"
   }
 }
 
