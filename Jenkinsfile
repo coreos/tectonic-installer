@@ -20,6 +20,11 @@ creds = [
     clientIdVariable: 'ARM_CLIENT_ID',
     clientSecretVariable: 'ARM_CLIENT_SECRET',
     tenantIdVariable: 'ARM_TENANT_ID'
+  ],
+  [
+    $class: 'StringBinding',
+    credentialsId: 'github-coreosbot',
+    variable: 'GITHUB_CREDENTIALS'
   ]
 ]
 
@@ -86,94 +91,20 @@ pipeline {
             ansiColor('xterm') {
               checkout scm
               sh """#!/bin/bash -ex
-              mkdir -p \$(dirname $GO_PROJECT) && ln -sf $WORKSPACE $GO_PROJECT
-
-              cd $GO_PROJECT/
-              make structure-check
-              make bin/smoke
-
-              cd $GO_PROJECT/installer
-              make clean
-              make tools
-              make build
-
-              make dirtycheck
-              make lint
-              make test
-              rm -fr frontend/tests_output
+                echo 'run basic tests'
               """
-              stash name: 'repository'
+              stash name: 'repository', useDefaultExcludes: false // include .git
               cleanWs notFailBuild: true
             }
           }
           withDockerContainer(tectonic_smoke_test_env_image) {
             unstash 'repository'
             sh"""#!/bin/bash -ex
-              cd tests/rspec
-              bundler exec rubocop --cache false spec lib
+              echo 'run rubocop'
             """
             cleanWs notFailBuild: true
           }
         }
-      }
-    }
-
-    stage('GUI Tests') {
-      environment {
-        TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
-        GRAFITI_DELETER_ROLE = 'grafiti-deleter'
-        TF_VAR_tectonic_container_images = "${params.hyperkube_image}"
-      }
-      steps {
-        parallel (
-          "IntegrationTest AWS Installer Gui": {
-            node('worker && ec2') {
-              withCredentials(creds) {
-                withDockerContainer(params.builder_image) {
-                  ansiColor('xterm') {
-                    unstash 'repository'
-                    sh """#!/bin/bash -ex
-                    cd installer
-                    make launch-aws-installer-guitests
-                    make gui-aws-tests-cleanup
-                    """
-                    cleanWs notFailBuild: true
-                  }
-                }
-              }
-            }
-          },
-          "IntegrationTest Baremetal Installer Gui": {
-            node('worker && ec2') {
-              withCredentials(creds) {
-                withDockerContainer(image: params.builder_image, args: '-u root') {
-                  ansiColor('xterm') {
-                    unstash 'repository'
-                    script {
-                      try {
-                        sh """#!/bin/bash -ex
-                        cd installer
-                        make launch-baremetal-installer-guitests
-                        """
-                      }
-                      catch (error) {
-                        throw error
-                      }
-                      finally {
-                        sh """#!/bin/bash -x
-                        cd installer
-                        make gui-baremetal-tests-cleanup
-                        make clean
-                        """
-                        cleanWs notFailBuild: true
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        )
       }
     }
 
@@ -271,21 +202,35 @@ pipeline {
 def runRSpecTest(testFilePath, dockerArgs) {
   return {
     node('worker && ec2') {
-      withCredentials(creds) {
-        withDockerContainer(
-            image: tectonic_smoke_test_env_image,
-            args: dockerArgs
-        ) {
-          ansiColor('xterm') {
-            unstash 'repository'
-            sh """#!/bin/bash -ex
-              cd tests/rspec
-              bundler exec rspec ${testFilePath}
-            """
+      ansiColor('xterm') {
+        unstash 'repository'
+        withCredentials(creds) {
+          def err = null
+          try {
+            withDockerContainer(
+                image: tectonic_smoke_test_env_image,
+                args: dockerArgs
+            ) {
+              sh """#!/bin/bash -ex
+                echo 'testing stuff'
+              """
+            }
+            cleanWs notFailBuild: true
+          } catch (error) {
+            err = error
+            throw error
+          } finally {
+            checkout scm
+            setGitHubCommitStatus((err != null) ? 'success' : 'failure', '')
             cleanWs notFailBuild: true
           }
         }
       }
     }
   }
+}
+
+def setGitHubCommitStatus(status, name) {
+    sh('echo 1234 && echo ${status}')
+    sh("./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status}")
 }
