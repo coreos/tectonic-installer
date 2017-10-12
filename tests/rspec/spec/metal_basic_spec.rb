@@ -13,8 +13,6 @@ RSpec.describe 'bare-metal-standard' do
     @varfile = TFVarsFile.new(TEST_CLUSTER_CONFIG_FILE)
     ENV['CLUSTER'] ||= NameGenerator.generate(@varfile.prefix)
     MetalSupport.install_base_software
-    puts "===="
-    puts @varfile
     MetalSupport.setup_bare(@varfile)
     MetalSupport.start_matchbox
 

@@ -51,7 +51,7 @@ module MetalSupport
     end
 
     # Download CoreOS images
-    system(self.env_variables, "#{root}/matchbox/scripts/get-coreos #{varfile.tectonic_cl_channel} #{varfile.tectonic_metal_cl_version} ${ASSETS_DIR}")
+    system(self.env_variables, "#{root}/matchbox/scripts/get-coreos #{varfile.tectonic_container_linux_channel} #{varfile.tectonic_container_linux_version} ${ASSETS_DIR}")
 
     # Configuring ssh-agent
     `eval "$(ssh-agent -s)"`
