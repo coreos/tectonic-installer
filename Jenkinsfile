@@ -227,6 +227,12 @@ pipeline {
                   withCredentials(creds) {
                       sh """#!/bin/bash -ex
                       cd tests/rspec
+                      export RBENV_ROOT=/usr/local/rbenv
+                      export PATH="/usr/local/rbenv/bin:$PATH"
+                      eval \"\$(rbenv init -)\"
+                      rbenv install -s
+                      gem install bundler
+                      bundler install
                       bundler exec rspec spec/metal_basic_spec.rb
                       """
                     cleanWs notFailBuild: true
