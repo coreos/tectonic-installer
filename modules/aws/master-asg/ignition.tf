@@ -54,6 +54,6 @@ data "ignition_file" "init_assets" {
 
 data "ignition_systemd_unit" "init_assets" {
   name    = "init-assets.service"
-  enable  = "${var.assets_s3_location != "" ? true : false}"
+  enabled = "${var.assets_s3_location != "" ? true : false}"
   content = "${file("${path.module}/resources/services/init-assets.service")}"
 }
