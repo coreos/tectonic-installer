@@ -10,7 +10,8 @@ module "vpc" {
   cidr_block   = "${var.tectonic_aws_vpc_cidr_block}"
   cluster_name = "${var.tectonic_cluster_name}"
 
-  external_vpc_id          = "${var.tectonic_aws_external_vpc_id}"
+  external_vpc_id         = "${var.tectonic_aws_external_vpc_id}"
+  disable_s3_vpc_endpoint = "${var.tectonic_aws_disable_s3_vpc_endpoint}"
 
   external_master_subnet_ids = "${compact(var.tectonic_aws_external_master_subnet_ids)}"
   external_worker_subnet_ids = "${compact(var.tectonic_aws_external_worker_subnet_ids)}"

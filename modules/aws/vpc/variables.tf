@@ -22,6 +22,10 @@ variable "external_worker_subnet_ids" {
   type = "list"
 }
 
+variable "disable_s3_vpc_endpoint" {
+  default = false
+}
+
 variable "extra_tags" {
   description = "Extra AWS tags to be applied to created resources."
   type        = "map"
