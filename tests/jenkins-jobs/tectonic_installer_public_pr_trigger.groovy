@@ -165,7 +165,7 @@ for (prBuild in job.builds) {
         properties.load(it);
     }
     properties.each { prop, val ->
-      temp = new BooleanParameterValue(prop,val);
+      temp = new BooleanParameterValue(prop,val.toBoolean());
       params.add(temp);
     }
     sleep(5000);
