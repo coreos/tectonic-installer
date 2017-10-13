@@ -32,7 +32,7 @@ data "ignition_user" "core" {
 
 data "ignition_systemd_unit" "docker" {
   name   = "docker.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {
@@ -60,7 +60,7 @@ data "template_file" "kubelet" {
 
 data "ignition_systemd_unit" "kubelet" {
   name    = "kubelet.service"
-  enable  = true
+  enabled = true
   content = "${data.template_file.kubelet.rendered}"
 }
 
@@ -76,7 +76,7 @@ data "template_file" "kubelet-env" {
 
 data "ignition_systemd_unit" "kubelet-env" {
   name    = "kubelet-env.service"
-  enable  = true
+  enabled = true
   content = "${data.template_file.kubelet-env.rendered}"
 }
 
@@ -97,7 +97,7 @@ data "ignition_systemd_unit" "bootkube" {
 
 data "ignition_systemd_unit" "tectonic" {
   name    = "tectonic.service"
-  enable  = "${var.tectonic_service_disabled == 0 ? true : false}"
+  enabled = "${var.tectonic_service_disabled == 0 ? true : false}"
   content = "${var.tectonic_service}"
 }
 

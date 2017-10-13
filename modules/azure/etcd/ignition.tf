@@ -129,7 +129,7 @@ data "ignition_systemd_unit" "locksmithd" {
   count = "${var.etcd_count}"
 
   name   = "locksmithd.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {
@@ -151,7 +151,7 @@ data "ignition_systemd_unit" "etcd3" {
   count = "${var.etcd_count}"
 
   name   = "etcd-member.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {
