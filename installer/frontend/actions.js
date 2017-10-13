@@ -39,16 +39,11 @@ export const restoreActionTypes = {
   RESTORE_STATE: 'RESTORE_RESTORE_STATE',
 };
 
-export const sequenceActionTypes = {
-  INCREMENT: 'SEQUENCE_INCREMENT',
-};
-
 export const serverActionTypes = {
   COMMIT_REQUESTED: 'COMMIT_REQUESTED',
   COMMIT_SENT: 'COMMIT_SENT',
   COMMIT_SUCCESSFUL: 'COMMIT_SUCCESSFUL',
   COMMIT_FAILED: 'COMMIT_FAILED',
-  COMMIT_RESET: 'COMMIT_RESET',
 };
 
 // Commit state machine

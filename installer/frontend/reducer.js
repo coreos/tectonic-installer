@@ -15,7 +15,6 @@ import {
   loadFactsActionTypes,
   restoreActionTypes,
   serverActionTypes,
-  sequenceActionTypes,
   commitPhases,
 } from './actions';
 
@@ -80,16 +79,6 @@ const reducersTogether = combineReducers({
       return {
         phase: commitPhases.FAILED,
         response: action.payload,
-      };
-    case serverActionTypes.COMMIT_RESET:
-      if (state.phase !== commitPhases.SUCCEEDED &&
-          state.phase !== commitPhases.FAILED &&
-          state.phase !== commitPhases.IDLE) {
-        throw Error('attempt to reset a working server connection');
-      }
-
-      return {
-        phase: commitPhases.IDLE,
       };
     default:
       return state;
@@ -299,20 +288,6 @@ const reducersTogether = combineReducers({
       return state;
     }
   },
-
-  // A value guaranteed to monotonically increase. Should be saved/restored.
-  sequence: (state, action) => {
-    if (state === undefined) {
-      return 0;
-    }
-
-    switch (action.type) {
-    case sequenceActionTypes.INCREMENT:
-      return state + 1;
-    default:
-      return state;
-    }
-  },
 });
 
 function filterClusterConfig(cc = {}) {
@@ -371,6 +346,6 @@ export const reducer = (state, action) => {
 
 // Preserves only the savable bits of state
 export const savable = (state) => {
-  const {dirty, clusterConfig, sequence} = state;
-  return {dirty, clusterConfig, sequence};
+  const {dirty, clusterConfig} = state;
+  return {dirty, clusterConfig};
 };
