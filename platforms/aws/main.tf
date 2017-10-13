@@ -19,7 +19,8 @@ module "vpc" {
   base_domain  = "${var.tectonic_base_domain}"
   cluster_name = "${var.tectonic_cluster_name}"
 
-  external_vpc_id          = "${var.tectonic_aws_external_vpc_id}"
+  external_vpc_id         = "${var.tectonic_aws_external_vpc_id}"
+  disable_s3_vpc_endpoint = "${var.tectonic_aws_disable_s3_vpc_endpoint}"
 
   external_master_subnet_ids = "${compact(var.tectonic_aws_external_master_subnet_ids)}"
   external_worker_subnet_ids = "${compact(var.tectonic_aws_external_worker_subnet_ids)}"
