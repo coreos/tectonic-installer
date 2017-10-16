@@ -109,12 +109,12 @@ def build = thr?.executable
 def resolver = build.buildVariableResolver
 def PRNum = resolver.resolve("ghprbPullId")
 
-// Get the channel to later connect to the salve to get the file
+// Get the channel to later connect to the slave to get the file
 if(manager.build.workspace.isRemote()){
   channel = manager.build.workspace.channel
 }
 
-// Connect to the salve to copy the file
+// Connect to the slave to copy the file
 manager.listener.logger.println("Copying the file from the remote slave...");
 String fp = manager.build.workspace.getRemote().toString() + "/env_vars";
 remoteFile = new hudson.FilePath(channel, fp);
@@ -123,7 +123,6 @@ projectWorkspaceOnMaster = new hudson.FilePath(new File(manager.build.getProject
 projectWorkspaceOnMaster.mkdirs();
 File localFile = File.createTempFile("jenkins","parameter");
 remoteFile.copyTo(new hudson.FilePath(localFile));
-String vars = localFile.getText('UTF-8');
 manager.listener.logger.println("Done copying");
 
 // sleep a bit to wait jenkins refresh the jobs
@@ -149,9 +148,9 @@ for (prBuild in job.builds) {
     run.doKill();
 
     while(prBuild.isBuilding()) {
-        manager.listener.logger.println("Trying to kill the job....");
-        run.doKill();
-        sleep(1000);
+      manager.listener.logger.println("Trying to kill the job....");
+      run.doKill();
+      sleep(1000);
      }
 
     manager.listener.logger.println("Job Killed");
