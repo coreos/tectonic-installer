@@ -34,6 +34,8 @@ module "vpc" {
   private_master_endpoints = "${var.tectonic_aws_private_endpoints}"
   public_master_endpoints  = "${var.tectonic_aws_public_endpoints}"
 
+  master_ssh_allowed_ips = "${var.tectonic_aws_master_ssh_allowed_ips}"
+
   # VPC layout settings.
   #
   # The following parameters control the layout of the VPC accross availability zones.

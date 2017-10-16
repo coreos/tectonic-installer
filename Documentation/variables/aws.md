@@ -29,6 +29,7 @@ This document gives an overview of variables used in the AWS platform of the Tec
 | tectonic_aws_master_root_volume_iops | The amount of provisioned IOPS for the root block device of master nodes. Ignored if the volume type is not io1. | string | `100` |
 | tectonic_aws_master_root_volume_size | The size of the volume in gigabytes for the root block device of master nodes. | string | `30` |
 | tectonic_aws_master_root_volume_type | The type of volume for the root block device of master nodes. | string | `gp2` |
+| tectonic_aws_master_ssh_allowed_ips | (optional) This configures trusted subnets for SSH access to the master nodes.<br><br>Example: `"10.0.0.0/16"` | list | `<list>` |
 | tectonic_aws_private_endpoints | (optional) If set to true, create private-facing ingress resources (ELB, A-records). If set to false, no private-facing ingress resources will be provisioned and all DNS records will be created in the public Route53 zone. | string | `true` |
 | tectonic_aws_profile | (optional) This declares the AWS credentials profile to use. | string | `default` |
 | tectonic_aws_public_endpoints | (optional) If set to true, create public-facing ingress resources (ELB, A-records). If set to false, no public-facing ingress resources will be created. | string | `true` |
