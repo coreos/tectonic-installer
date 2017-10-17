@@ -10,6 +10,10 @@ job("triggers/tectonic-installer-pr-trigger") {
   logRotator(30, 100)
   label("worker && ec2")
 
+  parameters {
+    stringParam('ghprbPullId', '', 'PR number')
+  }
+
   properties {
     githubProjectUrl('https://github.com/coreos/tectonic-installer')
   }
@@ -19,6 +23,9 @@ job("triggers/tectonic-installer-pr-trigger") {
     timestamps()
     buildInDocker {
       image('quay.io/coreos/tectonic-smoke-test-env:v5.6')
+    }
+    timeout {
+        absolute(30)
     }
   }
 
@@ -95,52 +102,37 @@ job("triggers/tectonic-installer-pr-trigger") {
     publishers {
         groovyPostBuild("""
 import jenkins.model.Jenkins
-import hudson.model.ParametersAction
-import hudson.model.BooleanParameterValue
-import hudson.model.Result
-import hudson.model.Run
+import hudson.model.*
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
 import org.jenkinsci.plugins.workflow.support.steps.StageStepExecution
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 
 //Get the PR Number
 def thr = Thread.currentThread()
-def build = thr?.executable
-def resolver = build.buildVariableResolver
+def currentBuild = thr?.executable
+def resolver = currentBuild.buildVariableResolver
 def PRNum = resolver.resolve("ghprbPullId")
 
-// Get the channel to later connect to the slave to get the file
-if(manager.build.workspace.isRemote()){
-  channel = manager.build.workspace.channel
-}
-
-// Connect to the slave to copy the file
-manager.listener.logger.println("Copying the file from the remote slave...");
-String fp = manager.build.workspace.getRemote().toString() + "/env_vars";
-remoteFile = new hudson.FilePath(channel, fp);
-
-projectWorkspaceOnMaster = new hudson.FilePath(new File(manager.build.getProject().getRootDir(), "workspace"));
-projectWorkspaceOnMaster.mkdirs();
-File localFile = File.createTempFile("jenkins","parameter");
-remoteFile.copyTo(new hudson.FilePath(localFile));
-manager.listener.logger.println("Done copying");
 
 // sleep a bit to wait jenkins refresh the jobs
-sleep(3000);
+sleep(5000);
 
 def params = [ ];
 
 // Get the PR Job
 def job = Jenkins.instance.getItemByFullName("tectonic-installer/PR-" + PRNum)
-
+manager.listener.logger.println("Jobs: " + job);
+manager.listener.logger.println("PR Num: " + PRNum);
 // If job is in the queue wait for that
-manager.listener.logger.println(job.isInQueue());
+manager.listener.logger.println("Job is in queue?: " + job.isInQueue());
 while(job.isInQueue()) {
   manager.listener.logger.println("Job in the queue, waiting....");
   sleep(1000);
 }
-
+manager.listener.logger.println(job.builds);
 for (prBuild in job.builds) {
+manager.listener.logger.println("Job Num: " + prBuild.getNumber().toInteger());
+manager.listener.logger.println("Job is building?: " + prBuild.isBuilding());
   if (prBuild.getNumber().toInteger() == 1 && prBuild.isBuilding()) {
     manager.listener.logger.println("Build 1 is running, will try to kill...");
     WorkflowRun run = (WorkflowRun) prBuild;
@@ -151,26 +143,23 @@ for (prBuild in job.builds) {
       manager.listener.logger.println("Trying to kill the job....");
       run.doKill();
       sleep(1000);
-     }
+    }
 
     manager.listener.logger.println("Job Killed");
     //release pipeline concurrency locks
     StageStepExecution.exit(run);
 
     sleep(1000);
-    // Load the File and set the job trigger
-    Properties properties = new Properties();
-    localFile.withInputStream {
-        properties.load(it);
-    }
-    properties.each { prop, val ->
-      temp = new BooleanParameterValue(prop,val.toBoolean());
-      params.add(temp);
-    }
-    sleep(5000);
-    manager.listener.logger.println("Will trigger new build...");
-    job.scheduleBuild2(5, null, new ParametersAction(params));
-    manager.listener.logger.println("New job triggered");
+    def parameters = currentBuild?.actions.find{ it instanceof ParametersAction }?.parameters
+
+    def cause = new Cause.UpstreamCause(currentBuild)
+    def causeAction = new hudson.model.CauseAction(cause)
+
+    def pr_trigger_job = Jenkins.instance.getItemByFullName("triggers/tectonic-installer-pr-trigger")
+    def paramsAction = new ParametersAction(parameters)
+    manager.listener.logger.println(parameters);
+
+    hudson.model.Hudson.instance.queue.schedule(pr_trigger_job, 0, causeAction, paramsAction)
     break;
   }
 }
