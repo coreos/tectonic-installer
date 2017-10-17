@@ -267,7 +267,7 @@ spec:
             path: /var/run/calico
         - name: host-cni-bin
           hostPath:
-            path: /var/lib/cni/bin
+            path: /opt/cni/bin
         - name: cni-net-dir
           hostPath:
             path: /etc/kubernetes/cni/net.d
