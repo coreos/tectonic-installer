@@ -194,6 +194,9 @@ tectonic_base_domain = ""
 // Warning: Special characters in the name like '.' may cause errors on OpenStack platforms due to resource name constraints.
 tectonic_cluster_name = ""
 
+// (optional) List of CIDR blocks allowed access to the Tectonic console
+// tectonic_console_allowed_cidr = ""
+
 // (optional) The Container Linux update channel.
 // 
 // Examples: `stable`, `beta`, `alpha`

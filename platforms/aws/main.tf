@@ -15,12 +15,14 @@ module "container_linux" {
 module "vpc" {
   source = "../../modules/aws/vpc"
 
+
   cidr_block               = "${var.tectonic_aws_vpc_cidr_block}"
   base_domain              = "${var.tectonic_base_domain}"
   cluster_name             = "${var.tectonic_cluster_name}"
   external_vpc_id          = "${var.tectonic_aws_external_vpc_id}"
   external_master_subnets  = "${compact(var.tectonic_aws_external_master_subnet_ids)}"
   external_worker_subnets  = "${compact(var.tectonic_aws_external_worker_subnet_ids)}"
+  console_allowed_cidr     = "${var.tectonic_console_allowed_cidr}"
   cluster_id               = "${module.tectonic.cluster_id}"
   extra_tags               = "${var.tectonic_aws_extra_tags}"
   enable_etcd_sg           = "${var.tectonic_self_hosted_etcd == "" && length(compact(var.tectonic_etcd_servers)) == 0 ? 1 : 0}"

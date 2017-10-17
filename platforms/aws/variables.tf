@@ -316,3 +316,10 @@ Example:
  * `["ingress-nginx"]`
 EOF
 }
+
+variable "tectonic_console_allowed_cidr" {
+  type    = "list"
+  default = ["0.0.0.0"]
+
+  description = "(optional) List of CIDR blocks allowed access to the Tectonic console"
+}
