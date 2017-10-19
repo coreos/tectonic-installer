@@ -109,6 +109,24 @@ tectonic_aws_master_root_volume_type = "gp2"
 // If set to false, no public-facing ingress resources will be created.
 // tectonic_aws_public_endpoints = true
 
+// (optional) Tectonic Ingress CA Certificate PEM path
+//-----BEGIN CERTIFICATE-----
+//<contents of the public CA certificate in PEM format>
+//-----END CERTIFICATE-----
+#tectonic_ingress_ca_cert_pem_path = ""
+
+// (optional) Tectonic Ingress Certificate PEM path
+// -----BEGIN CERTIFICATE-----
+//<contents of the public ingress certificate signed by the above CA in PEM format>
+//-----END CERTIFICATE-----
+#tectonic_ingress_cert_pem_path = ""
+
+// (optional) Tectonic Ingress Certificate Key PEM path
+// -----BEGIN CERTIFICATE-----
+//<contents of the private ingress key used to generate the above certificate PEM format>
+//-----END CERTIFICATE-----
+#tectonic_ingress_key_pem_path = ""
+
 // The target AWS region for the cluster.
 tectonic_aws_region = "eu-west-1"
 
