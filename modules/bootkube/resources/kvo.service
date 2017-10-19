@@ -1,0 +1,31 @@
+[Unit]
+Description=Generate resources for Bootkube
+ConditionPathExists=!/opt/tectonic/init_kvo.done
+Wants=kubelet.service
+After=kubelet.service
+
+[Service]
+Type=simple
+Restart=on-failure
+RemainAfterExit=true
+WorkingDirectory=/opt/tectonic
+
+User=root
+Group=root
+
+ExecStartPre=/usr/bin/docker \
+            --config=/opt/tectonic \
+            run --rm \
+            -v /opt/tectonic:/opt/tectonic \
+            ${kube_version_operator_image} \
+            /kube-version-operator \
+            --upgrade-spec=/upgrade-spec.yaml \
+            --version=${kubernetes_version} \
+            --cluster-config=/opt/tectonic/kvo-config.yaml \
+            --outdir=/opt/tectonic \
+            render
+
+ExecStartPost=/bin/touch /opt/tectonic/init_kvo.done
+
+[Install]
+WantedBy=multi-user.target

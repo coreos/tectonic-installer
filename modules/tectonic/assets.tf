@@ -15,7 +15,6 @@ resource "template_dir" "tectonic" {
     heapster_image                     = "${var.container_images["heapster"]}"
     identity_image                     = "${var.container_images["identity"]}"
     ingress_controller_image           = "${var.container_images["ingress_controller"]}"
-    kube_version_operator_image        = "${var.container_images["kube_version_operator"]}"
     node_agent_image                   = "${var.container_images["node_agent"]}"
     etcd_operator_image                = "${var.container_images["etcd_operator"]}"
     stats_emitter_image                = "${var.container_images["stats_emitter"]}"
@@ -47,7 +46,6 @@ resource "template_dir" "tectonic" {
     etcd_cluster_size = "${var.master_count > 2 ? 3 : 1}"
 
     license     = "${base64encode(file(var.license_path))}"
-    pull_secret = "${base64encode(file(var.pull_secret_path))}"
     ca_cert     = "${base64encode(var.ca_cert)}"
 
     update_server  = "${var.update_server}"

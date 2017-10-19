@@ -134,6 +134,11 @@ variable "ign_bootkube_service_id" {
   description = "The ID of the bootkube systemd service unit"
 }
 
+variable "ign_kvo_service_id" {
+  type        = "string"
+  description = "The ID of the kvo systemd service unit"
+}
+
 variable "ign_bootkube_path_unit_id" {
   type = "string"
 }

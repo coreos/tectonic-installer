@@ -139,6 +139,7 @@ module "masters" {
 
   ign_bootkube_path_unit_id         = "${module.bootkube.systemd_path_unit_id}"
   ign_bootkube_service_id           = "${module.bootkube.systemd_service_id}"
+  ign_kvo_service_id                = "${module.bootkube.kvo_systemd_service_id}"
   ign_docker_dropin_id              = "${module.ignition_masters.docker_dropin_id}"
   ign_installer_kubelet_env_id      = "${module.ignition_masters.installer_kubelet_env_id}"
   ign_k8s_node_bootstrap_service_id = "${module.ignition_masters.k8s_node_bootstrap_service_id}"

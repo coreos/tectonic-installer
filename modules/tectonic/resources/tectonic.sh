@@ -134,7 +134,6 @@ echo "Creating Tectonic ConfigMaps"
 kubectl create -f config.yaml
 
 echo "Creating Tectonic Secrets"
-kubectl create -f secrets/pull.json
 kubectl create -f secrets/license.json
 kubectl create -f secrets/ingress-tls.yaml
 kubectl create -f secrets/ca-cert.yaml
@@ -178,7 +177,6 @@ kubectl create -f stats-emitter.yaml
 
 echo "Creating Operators"
 kubectl create -f updater/tectonic-channel-operator-kind.yaml
-kubectl create -f updater/app-version-kind.yaml
 kubectl create -f updater/migration-status-kind.yaml
 kubectl create -f updater/node-agent.yaml
 kubectl create -f updater/tectonic-monitoring-config.yaml
@@ -186,14 +184,12 @@ kubectl create -f updater/tectonic-monitoring-config.yaml
 wait_for_crd tectonic-system channeloperatorconfigs.tco.coreos.com
 kubectl create -f updater/tectonic-channel-operator-config.yaml
 
-kubectl create -f updater/operators/kube-version-operator.yaml
 kubectl create -f updater/operators/tectonic-channel-operator.yaml
 kubectl create -f updater/operators/tectonic-prometheus-operator.yaml
 kubectl create -f updater/operators/tectonic-cluo-operator.yaml
 
 wait_for_crd tectonic-system appversions.tco.coreos.com
 kubectl create -f updater/app_versions/app-version-tectonic-cluster.yaml
-kubectl create -f updater/app_versions/app-version-kubernetes.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-monitoring.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-cluo.yaml
 

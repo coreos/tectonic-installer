@@ -50,11 +50,13 @@ resource "template_dir" "bootkube" {
   destination_dir = "./generated/manifests"
 
   vars {
-    hyperkube_image        = "${var.container_images["hyperkube"]}"
-    pod_checkpointer_image = "${var.container_images["pod_checkpointer"]}"
-    kubedns_image          = "${var.container_images["kubedns"]}"
-    kubednsmasq_image      = "${var.container_images["kubednsmasq"]}"
-    kubedns_sidecar_image  = "${var.container_images["kubedns_sidecar"]}"
+    kube_version_operator_image = "${var.container_images["kube_version_operator"]}"
+    pull_secret                 = "${base64encode(file(var.pull_secret_path))}"
+    hyperkube_image             = "${var.container_images["hyperkube"]}"
+    pod_checkpointer_image      = "${var.container_images["pod_checkpointer"]}"
+    kubedns_image               = "${var.container_images["kubedns"]}"
+    kubednsmasq_image           = "${var.container_images["kubednsmasq"]}"
+    kubedns_sidecar_image       = "${var.container_images["kubedns_sidecar"]}"
 
     # Choose the etcd endpoints to use.
     # 1. If experimental mode is enabled (self-hosted etcd), then use
@@ -185,15 +187,64 @@ resource "local_file" "bootkube_sh" {
   filename = "./generated/bootkube.sh"
 }
 
+resource "local_file" "kvo_config" {
+  content  = "${data.template_file.kvo_config.rendered}"
+  filename = "./generated/kvo-config.yaml"
+}
+
+resource "local_file" "pull_secret" {
+  content  = "${file(var.pull_secret_path)}"
+  filename = "./generated/config.json"
+}
+
 # bootkube.service (available as output variable)
 data "template_file" "bootkube_service" {
   template = "${file("${path.module}/resources/bootkube.service")}"
+}
+
+# kvo.service (available as output variable)
+data "template_file" "kvo_service" {
+  template = "${file("${path.module}/resources/kvo.service")}"
+  vars {
+    kube_version_operator_image = "${var.container_images["kube_version_operator"]}"
+    kubernetes_version          = "${var.versions["kubernetes"]}"
+  }
+}
+
+data "template_file" "kvo_config" {
+  template = "${file("${path.module}/resources/kvo-config.yaml")}"
+  vars {
+    advertise_address      = "${var.advertise_address}"
+    cloud_provider_profile = "${var.cloud_provider != "" ? "${var.cloud_provider}" : "metal"}"
+    cloud_config_path      = "${var.cloud_config_path}"
+    cluster_cidr           = "${var.cluster_cidr}"
+    master_count           = "${var.master_count}"
+    oidc_issuer_url        = "${var.oidc_issuer_url}"
+    oidc_client_id         = "${var.oidc_client_id}"
+    oidc_username_claim    = "${var.oidc_username_claim}"
+    oidc_groups_claim      = "${var.oidc_groups_claim}"
+    service_cidr           = "${var.service_cidr}"
+
+    etcd_servers = "${
+      var.experimental_enabled
+        ? format("https://%s:2379", cidrhost(var.service_cidr, 15))
+        : var.etcd_ca_cert_pem == ""
+          ? join(",", formatlist("http://%s:2379", var.etcd_endpoints))
+          : join(",", formatlist("https://%s:2379", var.etcd_endpoints))
+      }"
+  }
 }
 
 data "ignition_systemd_unit" "bootkube_service" {
   name    = "bootkube.service"
   enable  = false
   content = "${data.template_file.bootkube_service.rendered}"
+}
+
+data "ignition_systemd_unit" "kvo_service" {
+  name    = "kvo.service"
+  enable  = true
+  content = "${data.template_file.kvo_service.rendered}"
 }
 
 # bootkube.path (available as output variable)

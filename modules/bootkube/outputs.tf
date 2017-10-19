@@ -19,7 +19,9 @@ output "id" {
   value = "${sha1("
   ${local_file.kubeconfig.id}
   ${local_file.bootkube_sh.id}
-  ${template_dir.bootkube.id} ${template_dir.bootkube_bootstrap.id}
+  ${local_file.pull_secret.id}
+  ${local_file.kvo_config.id}
+  ${template_dir.bootkube.id}
   ${join(" ",
     template_dir.experimental.*.id,
     template_dir.bootstrap_experimental.*.id,
@@ -38,6 +40,14 @@ output "systemd_service_rendered" {
 
 output "systemd_service_id" {
   value = "${data.ignition_systemd_unit.bootkube_service.id}"
+}
+
+output "kvo_config_id" {
+  value = "${data.template_file.kvo_config.id}"
+}
+
+output "kvo_systemd_service_id" {
+  value = "${data.ignition_systemd_unit.kvo_service.id}"
 }
 
 output "systemd_path_unit_rendered" {
