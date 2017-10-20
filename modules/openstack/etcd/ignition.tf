@@ -119,8 +119,8 @@ data "ignition_file" "resolv_conf" {
 data "ignition_systemd_unit" "locksmithd" {
   count = "${var.instance_count}"
 
-  name   = "locksmithd.service"
-  enable = true
+  name    = "locksmithd.service"
+  enabled = true
 
   dropin = [
     {
