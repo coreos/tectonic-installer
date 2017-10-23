@@ -307,6 +307,10 @@ tectonic_master_count = "1"
 // "(optional) This variable should contain a comma-separated list of domain extensions proxy should not be used for. For instance, if the value of no_proxy is ‘.mit.edu’, proxy will not be used to retrieve documents from MIT."
 tectonic_no_proxy = ""
 
+// (optional) If left blank, the default Container Linux NTP servers will be used.
+// A list of NTP servers to be used for time synchronization on the cluster nodes.
+// tectonic_ntp_servers = ""
+
 // The path the pull secret file in JSON format.
 // This is known to be a "Docker pull secret" as produced by the docker login [1] command.
 // A sample JSON content is shown in [2].

@@ -42,6 +42,26 @@ data "ignition_file" "installer_runtime_mappings" {
   }
 }
 
+data "template_file" "ntp_dropin" {
+  count    = "${length(var.ntp_servers) > 0 ? 1 : 0}"
+  template = "${file("${path.module}/resources/dropins/10-timesyncd.conf")}"
+
+  vars {
+    ntp_servers = "${join(" ", var.ntp_servers)}"
+  }
+}
+
+data "ignition_file" "ntp_dropin" {
+  count      = "${length(var.ntp_servers) > 0 ? 1 : 0}"
+  path       = "/etc/systemd/timesyncd.conf.d/10-tectonic-installer.conf"
+  filesystem = "root"
+  mode       = 0644
+
+  content {
+    content = "${data.template_file.ntp_dropin.rendered}"
+  }
+}
+
 data "template_file" "kubelet" {
   template = "${file("${path.module}/resources/services/kubelet.service")}"
 
