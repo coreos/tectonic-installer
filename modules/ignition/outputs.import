@@ -36,3 +36,7 @@ variable "ign_ca_cert_id_list" {
   type        = "list"
   description = "The list of public CA certificate ignition file IDs."
 }
+
+variable "ign_ntp_dropin_id" {
+  type = "string"
+}

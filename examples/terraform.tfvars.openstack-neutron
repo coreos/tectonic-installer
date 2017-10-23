@@ -133,6 +133,11 @@ tectonic_master_count = "1"
 // - "calico": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
 // tectonic_networking = "flannel"
 
+// (optional) If left blank, the default Container Linux NTP servers will be used.
+// 
+// A list of NTP servers to be used for time synchronization on the cluster nodes.
+// tectonic_ntp_servers = ""
+
 // Disable floating ip assignments for k8s nodes.
 // Warning: Enabling this option removes direct internet access,
 // which prevents NodePorts from working.
