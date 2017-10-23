@@ -23,6 +23,9 @@ tectonic_admin_password = ""
 // If name is not provided the installer will construct the name using "tectonic_cluster_name", current AWS region and "tectonic_base_domain"
 // tectonic_aws_assets_s3_bucket_name = ""
 
+// (optional) List of CIDR blocks allowed access to the Tectonic console
+// tectonic_aws_console_allowed_cidr = ""
+
 // Instance size for the etcd node(s). Example: `t2.medium`. Read the [etcd recommended hardware](https://coreos.com/etcd/docs/latest/op-guide/hardware.html) guide for best performance
 tectonic_aws_etcd_ec2_type = "t2.medium"
 
@@ -193,9 +196,6 @@ tectonic_base_domain = ""
 // Note: This field MUST be set manually prior to creating the cluster.
 // Warning: Special characters in the name like '.' may cause errors on OpenStack platforms due to resource name constraints.
 tectonic_cluster_name = ""
-
-// (optional) List of CIDR blocks allowed access to the Tectonic console
-// tectonic_console_allowed_cidr = ""
 
 // (optional) The Container Linux update channel.
 // 

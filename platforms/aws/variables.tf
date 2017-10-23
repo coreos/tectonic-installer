@@ -317,7 +317,7 @@ Example:
 EOF
 }
 
-variable "tectonic_console_allowed_cidr" {
+variable "tectonic_aws_console_allowed_cidr" {
   type    = "list"
   default = ["0.0.0.0"]
 
