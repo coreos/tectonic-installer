@@ -234,6 +234,11 @@ tectonic_metal_worker_names = ""
 // - "calico": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
 // tectonic_networking = "flannel"
 
+// (optional) If left blank, the default Container Linux NTP servers will be used.
+// 
+// A list of NTP servers to be used for time synchronization on the cluster nodes.
+// tectonic_ntp_servers = ""
+
 // The path the pull secret file in JSON format.
 // This is known to be a "Docker pull secret" as produced by the docker login [1] command.
 // A sample JSON content is shown in [2].

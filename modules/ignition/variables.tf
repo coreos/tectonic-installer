@@ -123,6 +123,11 @@ variable "kube_ca_cert_pem" {
   description = "The public kube CA certificate in PEM format."
 }
 
+variable "ntp_servers" {
+  type        = "list"
+  description = "A list of NTP servers to be used for time synchronization on the cluster nodes."
+}
+
 variable "ingress_ca_cert_pem" {
   type        = "string"
   description = "The ingress kube CA certificate in PEM format."

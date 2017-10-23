@@ -537,3 +537,14 @@ variable "tectonic_iscsi_enabled" {
   default     = "false"
   description = "(optional) Start iscsid.service to enable iscsi volume attachment."
 }
+
+variable "tectonic_ntp_servers" {
+  type    = "list"
+  default = []
+
+  description = <<EOF
+(optional) If left blank, the default Container Linux NTP servers will be used.
+
+A list of NTP servers to be used for time synchronization on the cluster nodes.
+EOF
+}
