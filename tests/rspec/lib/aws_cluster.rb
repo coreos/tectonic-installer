@@ -47,14 +47,12 @@ class AwsCluster < Cluster
 
   def master_ip_addresses
     ssh_master_ips = []
-    Dir.chdir(@build_path) do
-      terraform_state = `terraform state show module.masters.aws_autoscaling_group.masters`.chomp.split("\n")
-      terraform_state.each do |value|
-        attributes = value.split('=')
-        next unless attributes[0].strip.eql?('id')
-        instances_id = AwsSupport.sorted_auto_scaling_instances(attributes[1].strip.chomp, @aws_region)
-        ssh_master_ips.push AwsSupport.preferred_instance_ip_address(instances_id[0], @aws_region)
-      end
+    terraform_state = tf_state('module.masters.aws_autoscaling_group.masters').split("\n")
+    terraform_state.each do |value|
+      attributes = value.split('=')
+      next unless attributes[0].strip.eql?('id')
+      instances_id = AwsSupport.sorted_auto_scaling_instances(attributes[1].strip.chomp, @aws_region)
+      ssh_master_ips.push AwsSupport.preferred_instance_ip_address(instances_id[0], @aws_region)
     end
     ssh_master_ips
   end
@@ -98,16 +96,14 @@ class AwsCluster < Cluster
   end
 
   def tectonic_console_url
-    Dir.chdir(@build_path) do
-      ingress_ext = `echo module.masters.ingress_external_fqdn | terraform console ../../platforms/aws`.chomp
-      ingress_int = `echo module.masters.ingress_internal_fqdn | terraform console ../../platforms/aws`.chomp
-      if ingress_ext.empty?
-        if ingress_int.empty?
-          raise 'failed to get the console url to use in the UI tests.'
-        end
-        return ingress_int
+    ingress_ext = tf_value('module.masters.ingress_external_fqdn')
+    ingress_int = tf_value('module.masters.ingress_internal_fqdn')
+    if ingress_ext.empty?
+      if ingress_int.empty?
+        raise 'failed to get the console url to use in the UI tests.'
       end
-      ingress_ext
+      return ingress_int
     end
+    ingress_ext
   end
 end
