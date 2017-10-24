@@ -28,24 +28,29 @@ metadata:
     k8s-app: kube-dns
     kubernetes.io/cluster-service: "true"
 spec:
-  # replicas: not specified here:
-  # 1. In order to make Addon Manager do not reconcile this replicas parameter.
-  # 2. Default is 1.
-  # 3. Will be tuned in real time if DNS horizontal auto-scaling is turned on.
+  replicas: ${master_count}
   strategy:
     rollingUpdate:
       maxSurge: 10%
       maxUnavailable: 0
-  selector:
-    matchLabels:
-      k8s-app: kube-dns
   template:
     metadata:
       labels:
+        tier: control-plane
         k8s-app: kube-dns
+        pod-anti-affinity: kube-dns-${tectonic_version}
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                pod-anti-affinity: kube-dns-${tectonic_version}
+            namespaces:
+              - kube-system
+            topologyKey: kubernetes.io/hostname
       containers:
       - name: kubedns
         image: ${kubedns_image}
