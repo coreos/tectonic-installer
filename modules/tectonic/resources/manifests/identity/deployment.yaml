@@ -10,6 +10,7 @@ spec:
   selector:
     matchLabels:
       k8s-app: tectonic-identity
+      component: identity
   replicas: 2
   # New identity pods must be healthy for 30 seconds
   # before they're marked as ready.
