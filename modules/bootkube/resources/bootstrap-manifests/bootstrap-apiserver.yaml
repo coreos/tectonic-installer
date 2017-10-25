@@ -36,6 +36,7 @@ spec:
     - --tls-ca-file=/etc/kubernetes/secrets/ca.crt
     - --tls-cert-file=/etc/kubernetes/secrets/apiserver.crt
     - --tls-private-key-file=/etc/kubernetes/secrets/apiserver.key
+    - --v=${k8s_log_verbosity}
     volumeMounts:
     - mountPath: /etc/ssl/certs
       name: ssl-certs-host

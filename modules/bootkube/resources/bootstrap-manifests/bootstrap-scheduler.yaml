@@ -13,6 +13,7 @@ spec:
     - scheduler
     - --kubeconfig=/etc/kubernetes/kubeconfig
     - --leader-elect=true
+    - --v=${k8s_log_verbosity}
     volumeMounts:
     - name: etc-kubernetes
       mountPath: /etc/kubernetes

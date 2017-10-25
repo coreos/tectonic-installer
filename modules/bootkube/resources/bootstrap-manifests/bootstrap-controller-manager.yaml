@@ -19,6 +19,7 @@ spec:
     - --kubeconfig=/etc/kubernetes/kubeconfig
     - --root-ca-file=/etc/kubernetes/bootstrap-secrets/ca.crt
     - --service-account-private-key-file=/etc/kubernetes/bootstrap-secrets/service-account.key
+    - --v=${k8s_log_verbosity}
     volumeMounts:
     - name: etc-kubernetes
       mountPath: /etc/kubernetes

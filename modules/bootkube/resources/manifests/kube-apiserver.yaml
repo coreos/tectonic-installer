@@ -66,6 +66,7 @@ spec:
         - --audit-log-maxage=30
         - --audit-log-maxbackup=3
         - --audit-log-maxsize=100
+        - --v=${k8s_log_verbosity}
         volumeMounts:
         - mountPath: /etc/ssl/certs
           name: ssl-certs-host

@@ -529,3 +529,14 @@ variable "tectonic_custom_ca_pem_list" {
 (optional) A list of PEM encoded CA files that will be installed in /etc/ssl/certs on etcd, master, and worker nodes.
 EOF
 }
+
+variable "tectonic_k8s_log_verbosity" {
+  type    = "string"
+  default = "2"
+
+  description = <<EOF
+(optional) Configure the log verbosity of Kubernetes control plane components. Valid options are integers from 0-10, with 10 being most verbose.
+
+See https://github.com/kubernetes/community/blob/master/contributors/devel/logging.md for more information.
+EOF
+}
