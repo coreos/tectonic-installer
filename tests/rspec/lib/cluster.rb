@@ -77,6 +77,12 @@ class Cluster
     end
   end
 
+  def tf_state(v)
+    Dir.chdir(@build_path) do
+      `terraform state show #{v}`.chomp
+    end
+  end
+
   private
 
   def license_and_pull_secret_defined?

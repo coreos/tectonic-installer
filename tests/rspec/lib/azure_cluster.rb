@@ -16,10 +16,8 @@ class AzureCluster < Cluster
   end
 
   def master_ip_addresses
-    Dir.chdir(@build_path) do
-      ips_raw = `echo 'jsonencode(module.vnet.api_ip_addresses)' | terraform console ../../platforms/azure`.chomp
-      JSON.parse(ips_raw)
-    end
+    ips_raw = tf_value('jsonencode(module.vnet.api_ip_addresses)')
+    JSON.parse(ips_raw)
   end
 
   def master_ip_address
@@ -59,12 +57,10 @@ class AzureCluster < Cluster
   end
 
   def tectonic_console_url
-    Dir.chdir(@build_path) do
-      console_url = `echo module.vnet.ingress_fqdn | terraform console ../../platforms/azure`.chomp
-      if console_url.empty?
-        raise 'failed to get the console url to use in the UI tests.'
-      end
-      console_url
+    console_url = tf_value('module.vnet.ingress_fqdn')
+    if console_url.empty?
+      raise 'failed to get the console url to use in the UI tests.'
     end
+    console_url
   end
 end
