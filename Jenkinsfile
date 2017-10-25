@@ -288,6 +288,9 @@ pipeline {
                 ansiColor('xterm') {
                   unstash 'repository'
                   withCredentials(creds) {
+                    def err = null
+                    def specFile = 'spec/metal/basic_spec.rb'
+                    try {
                       sh """#!/bin/bash -ex
                       cd tests/rspec
                       export RBENV_ROOT=/usr/local/rbenv
@@ -296,9 +299,15 @@ pipeline {
                       rbenv install -s
                       gem install bundler
                       bundler install
-                      bundler exec rspec spec/metal_basic_spec.rb
+                      bundler exec rspec $specFile
                       """
-                    cleanWs notFailBuild: true
+                    } catch (error) {
+                      err = error
+                      throw error
+                    } finally {
+                      reportStatusToGithub((err == null) ? 'success' : 'failure', specFile)
+                      cleanWs notFailBuild: true
+                    }
                   }
                 }
               }
