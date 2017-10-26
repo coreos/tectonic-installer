@@ -37,6 +37,14 @@ module "ingress_certs" {
   ca_key_pem   = "${module.kube_certs.ca_key_pem}"
 }
 
+//module "ingress_certs" {
+//  source = "../../modules/tls/ingress/user-provided"
+//
+//  ca_cert_pem = "${file(var.tectonic_ingress_ca_cert_pem_path)}"
+//  cert_pem    = "${file(var.tectonic_ingress_cert_pem_path)}"
+//  key_pem     = "${file(var.tectonic_ingress_key_pem_path)}"
+//}
+
 module "identity_certs" {
   source = "../../../modules/tls/identity/self-signed"
 
