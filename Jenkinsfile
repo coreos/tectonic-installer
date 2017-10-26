@@ -268,10 +268,6 @@ pipeline {
         script {
           def builds = [:]
           def aws = [
-            [file: 'basic_spec.rb', args: ''],
-            [file: 'vpc_internal_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'],
-            [file: 'network_canal_spec.rb', args: ''],
-            [file: 'exp_spec.rb', args: ''],
             [file: 'ca_spec.rb', args: '']
           ]
           def azure = [
@@ -427,9 +423,10 @@ def runRSpecTest(testFilePath, dockerArgs) {
               ) {
                 checkout scm
                 unstash 'smoke-test-binary'
+                echo "Starting format documentation"
                 sh """#!/bin/bash -ex
                   cd tests/rspec
-                  bundler exec rspec ${testFilePath}
+                  bundler exec rspec ${testFilePath} --format documentation
                 """
               }
             }
