@@ -135,9 +135,7 @@ pipeline {
               err = error
               throw error
             } finally {
-              withCredentials(creds) {
-                reportStatusToGithub((err == null) ? 'success' : 'failure', 'basic-tests')
-              }
+              reportStatusToGithub((err == null) ? 'success' : 'failure', 'basic-tests')
               cleanWs notFailBuild: true
             }
           }
@@ -217,9 +215,7 @@ pipeline {
           } finally {
             node('worker && ec2') {
               unstash 'repository'
-              withCredentials(creds) {
-                reportStatusToGithub((err == null) ? 'success' : 'failure', 'gui-tests')
-              }
+              reportStatusToGithub((err == null) ? 'success' : 'failure', 'gui-tests')
             }
           }
         }
@@ -390,7 +386,9 @@ def runRSpecTest(testFilePath, dockerArgs) {
 
 
 def reportStatusToGithub(status, context) {
-  sh """#!/bin/bash -ex
-    ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context}
-  """
+  withCredentials(creds) {
+    sh """#!/bin/bash -ex
+      ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context}
+    """
+  }
 }
