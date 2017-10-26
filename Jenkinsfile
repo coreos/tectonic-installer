@@ -160,7 +160,6 @@ pipeline {
         script {
           def err = null
           try {
-            println 'inside script'
             parallel (
               "IntegrationTest AWS Installer Gui": {
                 node('worker && ec2') {
@@ -213,11 +212,9 @@ pipeline {
               }
             )
           } catch (error) {
-            println 'inside error'
             err = error
             throw error
           } finally {
-            println 'inside finally'
             node('worker && ec2') {
               unstash 'repository'
               withCredentials(creds) {
@@ -285,12 +282,12 @@ pipeline {
           if (params."PLATFORM/BARE_METAL") {
             builds['bare_metal'] = {
               node('worker && bare-metal') {
-                ansiColor('xterm') {
-                  unstash 'repository'
-                  withCredentials(creds) {
-                    def err = null
-                    def specFile = 'spec/metal/basic_spec.rb'
-                    try {
+                def err = null
+                def specFile = 'spec/metal/basic_spec.rb'
+                try {
+                  ansiColor('xterm') {
+                    unstash 'repository'
+                    withCredentials(creds) {
                       sh """#!/bin/bash -ex
                       cd tests/rspec
                       export RBENV_ROOT=/usr/local/rbenv
@@ -301,19 +298,18 @@ pipeline {
                       bundler install
                       bundler exec rspec $specFile
                       """
-                    } catch (error) {
-                      err = error
-                      throw error
-                    } finally {
-                      reportStatusToGithub((err == null) ? 'success' : 'failure', specFile)
-                      cleanWs notFailBuild: true
                     }
                   }
+                } catch (error) {
+                  err = error
+                  throw error
+                } finally {
+                  reportStatusToGithub((err == null) ? 'success' : 'failure', specFile)
+                  cleanWs notFailBuild: true
                 }
               }
             }
           }
-
           parallel builds
         }
       }
@@ -363,37 +359,37 @@ def forcefullyCleanWorkspace() {
 def runRSpecTest(testFilePath, dockerArgs) {
   return {
     node('worker && ec2') {
-      forcefullyCleanWorkspace()
-      ansiColor('xterm') {
-        unstash 'repository'
-        withCredentials(creds) {
-          def err = null
-          try {
-            withDockerContainer(
-              image: tectonic_smoke_test_env_image,
-              args: dockerArgs
-            ) {
-              sh """#!/bin/bash -ex
-                cd tests/rspec
-                bundler exec rspec ${testFilePath}
-              """
-            }
-          } catch (error) {
-            err = error
-            throw error
-          } finally {
-            reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath)
-            cleanWs notFailBuild: true
+      def err = null
+      try {
+        forcefullyCleanWorkspace()
+        ansiColor('xterm') {
+          unstash 'repository'
+          withCredentials(creds) {
+              withDockerContainer(
+                image: tectonic_smoke_test_env_image,
+                args: dockerArgs
+              ) {
+                sh """#!/bin/bash -ex
+                  cd tests/rspec
+                  bundler exec rspec ${testFilePath}
+                """
+              }
           }
         }
+      } catch (error) {
+        err = error
+        throw error
+      } finally {
+        reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath)
+        cleanWs notFailBuild: true
       }
+
     }
   }
 }
 
 
 def reportStatusToGithub(status, context) {
-  println 'inside reportStatusToGithub'
   sh """#!/bin/bash -ex
     ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context}
   """
