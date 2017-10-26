@@ -7,6 +7,8 @@ require 'jenkins'
 require 'aws_iam'
 
 RSpec.describe 'aws-vpc' do
+  puts "TestCase=#{self.description.to_s}"
+  puts "platform=aws"
   before(:all) do
     export_random_region_if_not_defined
     # AWSIAM.assume_role if Jenkins.environment?

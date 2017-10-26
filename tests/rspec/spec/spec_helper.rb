@@ -19,6 +19,7 @@ require 'ssh'
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
+  puts "TestCase=#{self.description.to_s}"
   # Creating the ssh keys
   config.before(:suite) do
     create_if_not_exist_and_add_ssh_key

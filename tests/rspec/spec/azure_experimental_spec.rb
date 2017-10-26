@@ -3,5 +3,7 @@
 require 'shared_examples/k8s'
 
 RSpec.describe 'azure-experimental' do
+  puts "TestCase=#{self.description.to_s}"
+  puts "platform=azure"
   include_examples('withRunningCluster', '../smoke/azure/vars/experimental.tfvars')
 end

@@ -99,14 +99,16 @@ class Cluster
   end
 
   def apply
-    3.times do
+    3.times do |count|
+      print "tf_apply_attempts=#{count}"
       return if system(env_variables, 'make -C ../.. apply')
     end
     raise 'Applying cluster failed'
   end
 
   def destroy
-    3.times do
+    3.times do |count|
+      print "tf_destroy_attempts=#{count}"
       return if system(env_variables, 'make -C ../.. destroy')
     end
 

@@ -6,6 +6,8 @@ require 'metal_support'
 TEST_CLUSTER_CONFIG_FILE = '../smoke/bare-metal/vars/metal.tfvars.json'
 
 RSpec.describe 'bare-metal-standard' do
+  puts "TestCase=#{self.description.to_s}"
+  puts "platform=metal"
   before(:context) do |_context|
     @varfile = TFVarsFile.new(TEST_CLUSTER_CONFIG_FILE)
     ENV['CLUSTER'] ||= NameGenerator.generate(@varfile.prefix)

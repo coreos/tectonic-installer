@@ -6,6 +6,8 @@ require 'azure_vpn'
 TEST_CLUSTER_CONFIG_FILE = '../smoke/azure/vars/private-cluster.tfvars'
 
 RSpec.describe 'azure-private-external' do
+  puts "TestCase=#{self.description.to_s}"
+  puts "platform=azure"
   before(:context) do |_context|
     # Save environment, to restore it once the test it done
     # (since we alter it further down)
