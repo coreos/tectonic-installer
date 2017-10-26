@@ -316,39 +316,3 @@ Example:
  * `["ingress-nginx"]`
 EOF
 }
-
-variable "tectonic_ingress_ca_cert_pem_path" {
-  type  = "string"
-  default = ""
-
-  description = <<EOF
-(optional) File with contents the public CA certificate in PEM format
------BEGIN CERTIFICATE-----
-<contents of the public CA certificate in PEM format>
------END CERTIFICATE-----
-EOF
-}
-
-variable "tectonic_ingress_cert_pem_path" {
-  type = "string"
-  default = ""
-
-  description = <<EOF
-  (optional) File with contents the public CA certificate in PEM format
------BEGIN CERTIFICATE-----
-<contents of the public ingress certificate signed by the above CA in PEM format>
------END CERTIFICATE-----
-EOF
-}
-
-variable "tectonic_ingress_key_pem_path" {
-  type = "string"
-  default = ""
-
-  description = <<EOF
-(optional) File with contents the public CA certificate in PEM format
------BEGIN CERTIFICATE-----
-<contents of the private ingress key used to generate the above certificate PEM format>
------END CERTIFICATE-----
-EOF
-}
