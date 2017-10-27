@@ -25,15 +25,22 @@ variable "tectonic_vmware_folder" {
   description = "vSphere Folder to create and add the Tectonic nodes"
 }
 
-variable "tectonic_vmware_network" {
+variable "tectonic_vmware_type" {
   type        = "string"
-  description = "Portgroup to attach the cluster nodes"
+  description = "The type of folder to create. Allowed options: datacenter,host,vm, datastore, and network."
+  default     = "vm"
 }
 
 variable "tectonic_vmware_datacenter" {
   type        = "string"
   description = "Virtual DataCenter to deploy VMs"
 }
+
+variable "tectonic_vmware_network" {
+  type        = "string"
+  description = "Portgroup to attach the cluster nodes"
+}
+
 
 variable "tectonic_vmware_cluster" {
   type        = "string"
