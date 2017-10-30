@@ -112,6 +112,47 @@ tectonic_aws_master_root_volume_type = "gp2"
 // The target AWS region for the cluster.
 tectonic_aws_region = "eu-west-1"
 
+// Number of instances you'd like Spotinst to run at maximum.
+tectonic_aws_spotinst_capacity_max = "0"
+
+// Number of instance you'd like Spotinst to run at minimum.
+tectonic_aws_spotinst_capacity_min = "0"
+
+// Number of instances you'd like Spotinst to target.
+tectonic_aws_spotinst_capacity_target = "0"
+
+// Choose the orientation the Spotinst’s algorithm will lean towards. Appropriate values are:
+// 
+// balanced - (Default) Optimize towards both continuity and cost-effective infrastructure - We highly
+// recommend using this orientation
+// 
+// availability - Optimize towards the continuity of your instances. Please note: no instance
+// replacement will take place - not while replacing On-demand instances nor replacement of expensive
+// Spot instances. 
+// 
+// cost - Optimized towards the most cost-effective infrastructure
+tectonic_aws_spotinst_cluster_orientation = "balanced"
+
+// In the case of no available spot instances, this will enable the fallback to On-Demand instances.
+tectonic_aws_spotinst_fallback_to_ondemand = "true"
+
+// Prefix added to the name of every Spotinst Elasticgroup.
+tectonic_aws_spotinst_group_prefix = ""
+
+// List of instance types Spotinst should consider when bidding.
+tectonic_aws_spotinst_instance_types = ""
+
+// The time in seconds, the instance is allowed to run while detached from the ELB.  This is to allow 
+// the instance time to be drained from incoming TCP connections before terminating it, during a scale 
+// down operation.
+tectonic_aws_spotinst_strategy_draining_timeout = "600"
+
+// The percentage of Spot instances that would spin up from the spot_capacity_target number
+tectonic_aws_spotinst_strategy_risk = "100"
+
+// Enables use of Spotinst for worker pool rather than AWS Autoscaling Group.
+tectonic_aws_spotinst_worker_pool = "false"
+
 // Name of an SSH key located within the AWS region. Example: coreos-user.
 tectonic_aws_ssh_key = ""
 
@@ -226,6 +267,12 @@ tectonic_container_linux_version = "latest"
 
 // (optional) DNS prefix used to construct the console and API server endpoints.
 // tectonic_dns_name = ""
+
+// (optional) Extra AWS tags to be applied to Spotinst elasticgroup instances. This is only applicable
+// when using Spotinst.
+// 
+// Example: `[ { key = "foo", value = "bar" } ]`
+// tectonic_elastic_group_extra_tags = ""
 
 // (optional) The path of the file containing the CA certificate for TLS communication with etcd.
 // 

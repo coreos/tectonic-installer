@@ -12,6 +12,14 @@ output "worker_subnet_ids" {
   value = ["${split(",", var.external_vpc_id == "" ? join(",", aws_subnet.worker_subnet.*.id) :  join(",", data.aws_subnet.external_worker.*.id))}"]
 }
 
+output "worker_subnet_azs" {
+  value = ["${aws_subnet.worker_subnet.*.availability_zone}"]
+}
+
+output "worker_external_subnet_azs" {
+  value = ["${data.aws_subnet.worker_azs.*.availability_zone}"]
+}
+
 output "etcd_sg_id" {
   value = "${aws_security_group.etcd.id}"
 }
