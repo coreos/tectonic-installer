@@ -115,11 +115,9 @@ pipeline {
               rm -fr frontend/tests_output
               """
               stash name: 'repository'
-              cleanWs notFailBuild: true
             }
           }
           withDockerContainer(tectonic_smoke_test_env_image) {
-            unstash 'repository'
             sh"""#!/bin/bash -ex
               cd tests/rspec
               bundler exec rubocop --cache false spec lib
@@ -142,10 +140,10 @@ pipeline {
           "IntegrationTest AWS Installer Gui": {
             node('worker && ec2') {
               forcefullyCleanWorkspace()
+              checkout scm
               withCredentials(creds) {
                 withDockerContainer(params.builder_image) {
                   ansiColor('xterm') {
-                    unstash 'repository'
                     sh """#!/bin/bash -ex
                     cd installer
                     make launch-aws-installer-guitests
@@ -160,10 +158,10 @@ pipeline {
           "IntegrationTest Baremetal Installer Gui": {
             node('worker && ec2') {
               forcefullyCleanWorkspace()
+              checkout scm
               withCredentials(creds) {
                 withDockerContainer(image: params.builder_image, args: '-u root') {
                   ansiColor('xterm') {
-                    unstash 'repository'
                     script {
                       try {
                         sh """#!/bin/bash -ex
@@ -240,8 +238,8 @@ pipeline {
           if (params."PLATFORM/BARE_METAL") {
             builds['bare_metal'] = {
               node('worker && bare-metal') {
+                checkout scm
                 ansiColor('xterm') {
-                  unstash 'repository'
                   withCredentials(creds) {
                       sh """#!/bin/bash -ex
                       cd tests/rspec
@@ -310,13 +308,13 @@ def runRSpecTest(testFilePath, dockerArgs) {
   return {
     node('worker && ec2') {
       forcefullyCleanWorkspace()
+      checkout scm
       withCredentials(creds) {
         withDockerContainer(
             image: tectonic_smoke_test_env_image,
             args: dockerArgs
         ) {
           ansiColor('xterm') {
-            unstash 'repository'
             sh """#!/bin/bash -ex
               cd tests/rspec
               bundler exec rspec ${testFilePath}
