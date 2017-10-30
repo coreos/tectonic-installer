@@ -359,12 +359,12 @@ def runRSpecTest(testFilePath, dockerArgs) {
       try {
         forcefullyCleanWorkspace()
         ansiColor('xterm') {
-          unstash 'repository'
           withCredentials(creds) {
               withDockerContainer(
                 image: tectonic_smoke_test_env_image,
                 args: dockerArgs
               ) {
+                unstash 'repository'
                 sh """#!/bin/bash -ex
                   cd tests/rspec
                   bundler exec rspec ${testFilePath}
