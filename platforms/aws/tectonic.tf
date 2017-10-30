@@ -1,6 +1,6 @@
 data "template_file" "etcd_hostname_list" {
   count    = "${var.tectonic_experimental ? 0 : var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(data.aws_availability_zones.azs.names) == 5 ? 5 : 3}"
-  template = "${var.tectonic_cluster_name}-etcd-${count.index}.${var.tectonic_base_domain}"
+  template = "etcd-${count.index}.${var.tectonic_dns_name == "" ? var.tectonic_cluster_name : var.tectonic_dns_name}${var.tectonic_base_domain == "" ? "" : ".${var.tectonic_base_domain}"}"
 }
 
 module "kube_certs" {

@@ -20,7 +20,7 @@ data "ignition_file" "node_hostname" {
   filesystem = "root"
 
   content {
-    content = "${var.cluster_name}-etcd-${count.index}.${var.base_domain}"
+    content = "etcd-${count.index}.${var.cluster_name}.${var.base_domain}"
   }
 }
 
@@ -73,7 +73,7 @@ Environment=REBOOT_STRATEGY=etcd-lock
 ${var.tls_enabled ? "Environment=\"LOCKSMITHD_ETCD_CAFILE=/etc/ssl/etcd/ca.crt\"" : ""}
 ${var.tls_enabled ? "Environment=\"LOCKSMITHD_ETCD_KEYFILE=/etc/ssl/etcd/client.key\"" : ""}
 ${var.tls_enabled ? "Environment=\"LOCKSMITHD_ETCD_CERTFILE=/etc/ssl/etcd/client.crt\"" : ""}
-Environment="LOCKSMITHD_ENDPOINT=${var.tls_enabled ? "https" : "http"}://${var.cluster_name}-etcd-${count.index}.${var.base_domain}:2379"
+Environment="LOCKSMITHD_ENDPOINT=${var.tls_enabled ? "https" : "http"}://etcd-${count.index}.${var.custom_dns_name}.${var.base_domain}:2379"
 EOF
     },
   ]
