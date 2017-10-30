@@ -122,7 +122,9 @@ pipeline {
                   make test
                   rm -fr frontend/tests_output
                   """
-                  stash name: 'repository', useDefaultExcludes: false // include .git
+                  stash name: 'installer-binary', includes: 'installer/bin/linux/installer'
+                  stash name: 'node-modules', includes: 'installer/frontend/node_modules/**'
+                  stash name: 'smoke-test-binary', includes: 'bin/smoke'
                 }
               }
               withDockerContainer(tectonic_smoke_test_env_image) {
@@ -165,7 +167,9 @@ pipeline {
                   withCredentials(creds) {
                     withDockerContainer(params.builder_image) {
                       ansiColor('xterm') {
-                        unstash 'repository'
+                        checkout scm
+                        unstash 'installer-binary'
+                        unstash 'node-modules'
                         sh """#!/bin/bash -ex
                         cd installer
                         make launch-aws-installer-guitests
@@ -183,7 +187,9 @@ pipeline {
                   withCredentials(creds) {
                     withDockerContainer(image: params.builder_image, args: '-u root') {
                       ansiColor('xterm') {
-                        unstash 'repository'
+                        checkout scm
+                        unstash 'installer-binary'
+                        unstash 'node-modules'
                         script {
                           try {
                             sh """#!/bin/bash -ex
@@ -214,7 +220,7 @@ pipeline {
             throw error
           } finally {
             node('worker && ec2') {
-              unstash 'repository'
+              checkout scm
               reportStatusToGithub((err == null) ? 'success' : 'failure', 'gui-tests')
             }
           }
@@ -282,7 +288,8 @@ pipeline {
                 def specFile = 'spec/metal/basic_spec.rb'
                 try {
                   ansiColor('xterm') {
-                    unstash 'repository'
+                    checkout scm
+                    unstash 'smoke-test-binary'
                     withCredentials(creds) {
                       sh """#!/bin/bash -ex
                       cd tests/rspec
@@ -320,7 +327,7 @@ pipeline {
           forcefullyCleanWorkspace()
           withCredentials(quay_creds) {
             ansiColor('xterm') {
-              unstash 'repository'
+              checkout scm
               sh """
                 docker build -t quay.io/coreos/tectonic-installer:master -f images/tectonic-installer/Dockerfile .
                 docker login -u="$QUAY_ROBOT_USERNAME" -p="$QUAY_ROBOT_SECRET" quay.io
@@ -364,7 +371,8 @@ def runRSpecTest(testFilePath, dockerArgs) {
                 image: tectonic_smoke_test_env_image,
                 args: dockerArgs
               ) {
-                unstash 'repository'
+                checkout scm
+                unstash 'smoke-test-binary'
                 sh """#!/bin/bash -ex
                   cd tests/rspec
                   bundler exec rspec ${testFilePath}
