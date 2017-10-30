@@ -68,6 +68,11 @@ variable "vm_disk_template" {
   description = "Disk template to use for cloning CoreOS Container Linux"
 }
 
+variable "vmware_resource_pool" {
+  type        = "string"
+  description = "vSphere resource pool to create VMs in"
+}
+
 variable "vm_disk_template_folder" {
   type        = "string"
   description = "vSphere Folder CoreOS Container Linux is located in"
