@@ -61,6 +61,8 @@ module "etcd" {
   master_subnetwork_name = "${module.network.master_subnetwork_name}"
   external_endpoints     = ["${compact(var.tectonic_etcd_servers)}"]
 
+  etcd_scheme = "${var.tectonic_etcd_scheme}"
+
   tls_enabled             = "${var.tectonic_etcd_tls_enabled}"
   tls_ca_crt_pem          = "${module.etcd_certs.etcd_ca_crt_pem}"
   tls_server_crt_pem      = "${module.etcd_certs.etcd_server_crt_pem}"
@@ -148,6 +150,7 @@ module "ignition_masters" {
   etcd_advertise_name_list  = "${data.template_file.etcd_hostname_list.*.rendered}"
   etcd_count                = "${length(data.template_file.etcd_hostname_list.*.id)}"
   etcd_initial_cluster_list = "${data.template_file.etcd_hostname_list.*.rendered}"
+  etcd_scheme               = "${var.tectonic_etcd_scheme}"
   etcd_tls_enabled          = "${var.tectonic_etcd_tls_enabled}"
 }
 

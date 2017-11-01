@@ -7,6 +7,7 @@ module "etcd" {
   container_image    = "${var.tectonic_container_images["etcd"]}"
   base_domain        = "${var.tectonic_base_domain}"
   external_endpoints = ["${compact(var.tectonic_etcd_servers)}"]
+  etcd_scheme        = "${var.tectonic_etcd_scheme}"
 
   tls_ca_crt_pem     = "${module.etcd_certs.etcd_ca_crt_pem}"
   tls_server_crt_pem = "${module.etcd_certs.etcd_server_crt_pem}"
@@ -48,6 +49,7 @@ module "ignition_masters" {
   cluster_name             = "${var.tectonic_cluster_name}"
   container_images         = "${var.tectonic_container_images}"
   etcd_advertise_name_list = "${data.template_file.etcd_hostname_list.*.rendered}"
+  etcd_scheme              = "${var.tectonic_etcd_scheme}"
   image_re                 = "${var.tectonic_image_re}"
   kube_dns_service_ip      = "${module.bootkube.kube_dns_service_ip}"
   kubelet_cni_bin_dir      = "${var.tectonic_networking == "calico" || var.tectonic_networking == "canal" ? "/var/lib/cni/bin" : "" }"

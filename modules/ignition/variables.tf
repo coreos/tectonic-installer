@@ -83,6 +83,11 @@ variable "etcd_tls_enabled" {
   default = true
 }
 
+variable "etcd_scheme" {
+  type    = "string"
+  default = "https"
+}
+
 variable "etcd_advertise_name_list" {
   type    = "list"
   default = []

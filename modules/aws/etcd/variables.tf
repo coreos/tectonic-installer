@@ -79,6 +79,11 @@ variable "dns_enabled" {
   default     = "false"
 }
 
+variable "etcd_scheme" {
+  type    = "string"
+  default = "https"
+}
+
 variable "tls_enabled" {
   default = false
 }

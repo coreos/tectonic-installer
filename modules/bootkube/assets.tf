@@ -13,14 +13,13 @@ resource "template_dir" "bootkube" {
     # Choose the etcd endpoints to use.
     # 1. If self-hosted etcd is enabled, then use
     # var.etcd_service_ip.
-    # 2. Else if no etcd TLS certificates are provided, i.e. we bootstrap etcd
-    # nodes ourselves (using http), then use insecure http var.etcd_endpoints.
-    # 3. Else (if etcd TLS certific are provided), then use the secure https
+    # 2. Else if var.tectonic_etcd_scheme is http? Then use that scheme.
+    # 3. Else use the secure https
     # var.etcd_endpoints.
     etcd_servers = "${
       var.self_hosted_etcd != ""
         ? format("https://%s:2379", cidrhost(var.service_cidr, 15))
-        : var.etcd_ca_cert_pem == ""
+        : var.etcd_scheme == "http"
           ? join(",", formatlist("http://%s:2379", var.etcd_endpoints))
           : join(",", formatlist("https://%s:2379", var.etcd_endpoints))
       }"
@@ -81,14 +80,13 @@ resource "template_dir" "bootkube_bootstrap" {
     # Choose the etcd endpoints to use.
     # 1. If self-hosted etcd mode is enabled, then use
     # var.etcd_service_ip.
-    # 2. Else if no etcd TLS certificates are provided, i.e. we bootstrap etcd
-    # nodes ourselves (using http), then use insecure http var.etcd_endpoints.
-    # 3. Else (if etcd TLS certific are provided), then use the secure https
+    # 2. Else if var.tectonic_etcd_scheme is http? Then use that scheme.
+    # 3. Else use the secure https
     # var.etcd_endpoints.
     etcd_servers = "${
       var.self_hosted_etcd != ""
         ? format("https://%s:2379,https://127.0.0.1:12379", cidrhost(var.service_cidr, 15))
-        : var.etcd_ca_cert_pem == ""
+        : var.etcd_scheme == "http"
           ? join(",", formatlist("http://%s:2379", var.etcd_endpoints))
           : join(",", formatlist("https://%s:2379", var.etcd_endpoints))
       }"

@@ -123,6 +123,11 @@ variable "tls_peer_crt_pem" {
   default = ""
 }
 
+variable "etcd_scheme" {
+  default = "https"
+  type    = "string"
+}
+
 variable "ign_etcd_dropin_id_list" {
   type = "list"
 }
