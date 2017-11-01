@@ -59,3 +59,7 @@ variable "public_ssh_key" {
 variable "kubeconfig_content" {
   type = "string"
 }
+
+variable "cloud_provider_config" {
+  type = "string"
+}

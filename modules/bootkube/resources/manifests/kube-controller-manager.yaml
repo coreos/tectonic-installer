@@ -40,8 +40,9 @@ spec:
         command:
         - ./hyperkube
         - controller-manager
+        - --cluster-name=${cluster_name}
         - --allocate-node-cidrs=true
-        - --configure-cloud-routes=false
+        - --configure-cloud-routes=${configure_cloud_routes}
         - --cluster-cidr=${cluster_cidr}
         - --root-ca-file=/etc/kubernetes/secrets/ca.crt
         - --service-account-private-key-file=/etc/kubernetes/secrets/service-account.key
