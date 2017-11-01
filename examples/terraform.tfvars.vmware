@@ -192,8 +192,13 @@ tectonic_vmware_etcd_datacenters = ""
 // The storage LUN used by etcd nodes. In order to use vSphere Datastore Cluster use the syntax DatastoreClusterName/datastore.
 tectonic_vmware_etcd_datastore = ""
 
-// Default Gateway IP address for etcd nodes(s)
-tectonic_vmware_etcd_gateway = ""
+// Terraform map of default Gateway IP address for etcd node(s), Example:
+//   tectonic_vmware_etcd_gateways = {
+//   "0" = "192.168.246.1"
+//   "1" = "192.168.247.1"
+//   "2" = "192.168.248.1"
+// }
+tectonic_vmware_etcd_gateways = ""
 
 // Terraform map of etcd node(s) Hostnames, Example:
 //   tectonic_vmware_etcd_hostnames = {
@@ -210,6 +215,14 @@ tectonic_vmware_etcd_hostnames = ""
 //   "2" = "192.168.246.12/24"
 // }
 tectonic_vmware_etcd_ip = ""
+
+// Terraform map of Portgroup to attach the etcd cluster node(s), Example: */
+//   tectonic_vmware_etcd_networks" {
+//   "0" = "VM Network 1"
+//   "1" = "VM Network 2"
+//   "2" = "VM Network 3"
+// }
+tectonic_vmware_etcd_networks = ""
 
 // etcd node(s) VM Memory Size in MB
 tectonic_vmware_etcd_memory = "4096"
@@ -258,14 +271,19 @@ tectonic_vmware_master_hostnames = ""
 // }
 tectonic_vmware_master_ip = ""
 
+// Terraform map of Portgroup to attach the master cluster node(s), Example: */
+//   tectonic_vmware_master_networks" {
+//   "0" = "VM Network 1"
+//   "1" = "VM Network 2"
+//   "2" = "VM Network 3"
+// }
+tectonic_vmware_master_networks = ""
+
 // Master node(s) Memory Size in MB
 tectonic_vmware_master_memory = "4096"
 
 // Master node(s) vCPU count
 tectonic_vmware_master_vcpu = "1"
-
-// Portgroup to attach the cluster nodes
-tectonic_vmware_network = ""
 
 // DNS Server to be used by Virtual Machine(s). Multiple DNS servers can be separated by whitespace. Example: `"192.168.1.1 192.168.2.1"`
 tectonic_vmware_node_dns = ""
@@ -294,6 +312,14 @@ tectonic_vmware_vm_template_folder = ""
 //   "1" = "myvmwarecluster-1"
 // }
 tectonic_vmware_worker_clusters = ""
+
+// Terraform map of Portgroup to attach the worker cluster node(s), Example: */
+//   tectonic_vmware_worker_networks" {
+//   "0" = "VM Network 1"
+//   "1" = "VM Network 2"
+//   "2" = "VM Network 3"
+// }
+tectonic_vmware_worker_networks = ""
 
 // terraform map of worker node(s) Virtual DataCenters, example:
 //   tectonic_vmware_worker_datacenters = {

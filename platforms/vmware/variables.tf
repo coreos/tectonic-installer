@@ -25,9 +25,10 @@ variable "tectonic_vmware_folder" {
   description = "vSphere Folder to create and add the Tectonic nodes"
 }
 
-variable "tectonic_vmware_network" {
+variable "tectonic_vmware_type" {
   type        = "string"
-  description = "Portgroup to attach the cluster nodes"
+  description = "The type of folder to create. Allowed options: datacenter,host,vm, datastore, and network."
+  default     = "vm"
 }
 
 // # Global
@@ -113,6 +114,19 @@ variable "tectonic_vmware_etcd_datacenters" {
 EOF
 }
 
+variable "tectonic_vmware_etcd_networks" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of Portgroup to attach the etcd cluster node(s), Example:
+  tectonic_vmware_etcd_networks = {
+  "0" = "VM Network 1"
+  "1" = "VM Network 2"
+  "2" = "VM Network 3"
+}
+EOF
+}
+
 variable "tectonic_vmware_etcd_ip" {
   type = "map"
 
@@ -126,9 +140,17 @@ variable "tectonic_vmware_etcd_ip" {
 EOF
 }
 
-variable "tectonic_vmware_etcd_gateway" {
-  type        = "string"
-  description = "Default Gateway IP address for etcd nodes(s)"
+variable "tectonic_vmware_etcd_gateways" {
+  type = "map"
+
+  description = <<EOF
+  "Default Gateway IP addresses for etcd nodes(s)"
+  tectonic_vmware_etcd_gateways = {
+  "0" = "192.168.246.1/24"
+  "1" = "192.168.246.2/24"
+  "2" = "192.168.246.3/24"
+}
+EOF
 }
 
 variable "tectonic_vmware_etcd_datastore" {
@@ -200,9 +222,30 @@ variable "tectonic_vmware_master_ip" {
 EOF
 }
 
-variable "tectonic_vmware_master_gateway" {
-  type        = "string"
-  description = "Default Gateway IP address for Master nodes(s)"
+variable "tectonic_vmware_master_networks" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of Portgroup to attach the master cluster node(s), Example:
+  tectonic_vmware_master_networks = {
+  "0" = "VM Network 1"
+  "1" = "VM Network 2"
+  "2" = "VM Network 3"
+}
+EOF
+}
+
+variable "tectonic_vmware_master_gateways" {
+  type = "map"
+
+  description = <<EOF
+  "Default Gateway IP addresses for Master nodes(s)"
+  tectonic_vmware_master_gateways = {
+  "0" = "192.168.246.1"
+  "1" = "192.168.246.2"
+  "2" = "192.168.246.3"
+}
+EOF
 }
 
 variable "tectonic_vmware_master_datastore" {
@@ -273,9 +316,30 @@ variable "tectonic_vmware_worker_ip" {
 EOF
 }
 
-variable "tectonic_vmware_worker_gateway" {
-  type        = "string"
-  description = "Default Gateway IP address for Master nodes(s)"
+variable "tectonic_vmware_worker_networks" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of Portgroup to attach the worker cluster node(s), Example:
+  tectonic_vmware_worker_networks = {
+  "0" = "VM Network 1"
+  "1" = "VM Network 2"
+  "2" = "VM Network 3"
+}
+EOF
+}
+
+variable "tectonic_vmware_worker_gateways" {
+  type = "map"
+
+  description = <<EOF
+  "Default Gateway IP addresses for worker nodes(s)"
+  tectonic_vmware_worker_gateways = {
+  "0" = "192.168.246.1/24"
+  "1" = "192.168.246.2/24"
+  "2" = "192.168.246.3/24"
+}
+EOF
 }
 
 variable "tectonic_vmware_worker_datastore" {

@@ -19,13 +19,13 @@ module "etcd" {
   hostname   = "${var.tectonic_vmware_etcd_hostnames}"
   dns_server = "${var.tectonic_vmware_node_dns}"
   ip_address = "${var.tectonic_vmware_etcd_ip}"
-  gateway    = "${var.tectonic_vmware_etcd_gateway}"
+  gateway    = "${var.tectonic_vmware_etcd_gateways}"
 
   vmware_datacenters      = "${var.tectonic_vmware_etcd_datacenters}"
   vmware_clusters         = "${var.tectonic_vmware_etcd_clusters}"
   vm_vcpu                 = "${var.tectonic_vmware_etcd_vcpu}"
   vm_memory               = "${var.tectonic_vmware_etcd_memory}"
-  vm_network_label        = "${var.tectonic_vmware_network}"
+  vm_network_labels       = "${var.tectonic_vmware_etcd_networks}"
   vm_disk_datastore       = "${var.tectonic_vmware_etcd_datastore}"
   vm_disk_template        = "${var.tectonic_vmware_vm_template}"
   vm_disk_template_folder = "${var.tectonic_vmware_vm_template_folder}"
@@ -63,7 +63,7 @@ module "masters" {
   hostname         = "${var.tectonic_vmware_master_hostnames}"
   dns_server       = "${var.tectonic_vmware_node_dns}"
   ip_address       = "${var.tectonic_vmware_master_ip}"
-  gateway          = "${var.tectonic_vmware_master_gateway}"
+  gateway          = "${var.tectonic_vmware_master_gateways}"
 
   container_images = "${var.tectonic_container_images}"
 
@@ -71,7 +71,7 @@ module "masters" {
   vmware_clusters         = "${var.tectonic_vmware_master_clusters}"
   vm_vcpu                 = "${var.tectonic_vmware_master_vcpu}"
   vm_memory               = "${var.tectonic_vmware_master_memory}"
-  vm_network_label        = "${var.tectonic_vmware_network}"
+  vm_network_labels       = "${var.tectonic_vmware_master_networks}"
   vm_disk_datastore       = "${var.tectonic_vmware_master_datastore}"
   vm_disk_template        = "${var.tectonic_vmware_vm_template}"
   vm_disk_template_folder = "${var.tectonic_vmware_vm_template_folder}"
@@ -113,7 +113,7 @@ module "workers" {
   hostname         = "${var.tectonic_vmware_worker_hostnames}"
   dns_server       = "${var.tectonic_vmware_node_dns}"
   ip_address       = "${var.tectonic_vmware_worker_ip}"
-  gateway          = "${var.tectonic_vmware_worker_gateway}"
+  gateway          = "${var.tectonic_vmware_worker_gateways}"
 
   container_images = "${var.tectonic_container_images}"
 
@@ -121,7 +121,7 @@ module "workers" {
   vmware_clusters         = "${var.tectonic_vmware_worker_clusters}"
   vm_vcpu                 = "${var.tectonic_vmware_worker_vcpu}"
   vm_memory               = "${var.tectonic_vmware_worker_memory}"
-  vm_network_label        = "${var.tectonic_vmware_network}"
+  vm_network_labels       = "${var.tectonic_vmware_worker_networks}"
   vm_disk_datastore       = "${var.tectonic_vmware_worker_datastore}"
   vm_disk_template        = "${var.tectonic_vmware_vm_template}"
   vm_disk_template_folder = "${var.tectonic_vmware_vm_template_folder}"

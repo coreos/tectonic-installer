@@ -44,7 +44,7 @@ variable "dns_server" {
 }
 
 variable "gateway" {
-  type        = "string"
+  type        = "map"
   description = "Gateway of the node"
 }
 
@@ -78,8 +78,8 @@ variable "vm_memory" {
   description = "VMs Memory size in MB"
 }
 
-variable "vm_network_label" {
-  type        = "string"
+variable "vm_network_labels" {
+  type        = "map"
   description = "VMs PortGroup"
 }
 
