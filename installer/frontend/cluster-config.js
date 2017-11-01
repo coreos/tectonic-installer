@@ -9,7 +9,6 @@ export const AWS_SUBNETS = 'awsSubnets';
 export const AWS_CONTROLLER_SUBNETS = 'awsControllerSubnets';
 export const AWS_CONTROLLER_SUBNET_IDS = 'awsControllerSubnetIds';
 export const DESELECTED_FIELDS = 'deselectedFields';
-export const AWS_DOMAIN = 'awsDomain';
 export const AWS_HOSTED_ZONE_ID = 'awsHostedZoneId';
 export const AWS_SPLIT_DNS = 'awsSplitDNS';
 export const AWS_REGION = 'awsRegion';
@@ -21,6 +20,10 @@ export const AWS_TAGS = 'awsTags';
 export const AWS_CREATE_VPC = 'awsCreateVpc';
 export const AWS_VPC_CIDR = 'awsVpcCIDR';
 export const AWS_VPC_ID = 'awsVpcId';
+
+export const VPC_CREATE = 'VPC_CREATE';
+export const VPC_PRIVATE = 'VPC_PRIVATE';
+export const VPC_PUBLIC = 'VPC_PUBLIC';
 
 export const AWS_WORKER_SUBNETS = 'awsWorkerSubnets';
 export const AWS_WORKER_SUBNET_IDS = 'awsWorkerSubnetIds';
@@ -74,7 +77,6 @@ export const AWS_CREDS = 'AWSCreds';
 export const AWS_ETCDS = 'aws_etcds';
 export const AWS_VPC_FORM = 'aws_vpc';
 export const AWS_CONTROLLERS = 'aws_controllers';
-export const AWS_CLUSTER_INFO = 'aws_clusterInfo';
 export const AWS_WORKERS = 'aws_workers';
 export const AWS_REGION_FORM = 'aws_regionForm';
 export const BM_SSH_KEY = 'bm_sshKey';
@@ -131,7 +133,7 @@ const getZoneDomain = (cc) => {
   return _.get(cc, ['extra', AWS_HOSTED_ZONE_ID, 'zoneToName', cc[AWS_HOSTED_ZONE_ID]]);
 };
 
-export const getControllerDomain = (cc) => {
+const getControllerDomain = (cc) => {
   if (cc[PLATFORM_TYPE] === BARE_METAL_TF) {
     return cc[CONTROLLER_DOMAIN];
   }
@@ -151,11 +153,7 @@ export const DEFAULT_CLUSTER_CONFIG = {
   ignore: {}, // to store validation errors
   inFly: {}, // to store inFly
   extra: {}, // extraneous, non-value data for this field
-  bootCfgInfly: false, // TODO (ggreer): total hack. clean up after release
-  [AWS_VPC_ID]: '',
-  [AWS_CONTROLLER_SUBNET_IDS]: {},
   [DESELECTED_FIELDS]: {},
-  [AWS_WORKER_SUBNET_IDS]: {},
   [BM_MATCHBOX_HTTP]: '',
   [BM_OS_TO_USE]: '',
   [DRY_RUN]: false,
@@ -171,7 +169,7 @@ export const toAWS_TF = (cc, FORMS) => {
   let controllerSubnets;
   let workerSubnets;
 
-  if (cc[AWS_CREATE_VPC] === 'VPC_CREATE') {
+  if (cc[AWS_CREATE_VPC] === VPC_CREATE) {
     controllerSubnets = toVPCSubnet(region, cc[AWS_CONTROLLER_SUBNETS], cc[DESELECTED_FIELDS][AWS_SUBNETS]);
     workerSubnets = toVPCSubnet(region, cc[AWS_WORKER_SUBNETS], cc[DESELECTED_FIELDS][AWS_SUBNETS]);
   } else {
@@ -241,7 +239,7 @@ export const toAWS_TF = (cc, FORMS) => {
   if (cc[STS_ENABLED]) {
     ret.credentials.AWSSessionToken = cc[AWS_SESSION_TOKEN];
   }
-  if (cc[AWS_CREATE_VPC] === 'VPC_CREATE') {
+  if (cc[AWS_CREATE_VPC] === VPC_CREATE) {
     ret.variables.tectonic_aws_vpc_cidr_block = cc[AWS_VPC_CIDR];
     ret.variables.tectonic_aws_master_custom_subnets = controllerSubnets;
     ret.variables.tectonic_aws_worker_custom_subnets = workerSubnets;
@@ -249,10 +247,10 @@ export const toAWS_TF = (cc, FORMS) => {
     ret.variables.tectonic_aws_external_vpc_id = cc[AWS_VPC_ID];
     ret.variables.tectonic_aws_external_master_subnet_ids = controllerSubnets;
     ret.variables.tectonic_aws_external_worker_subnet_ids = workerSubnets;
-    ret.variables.tectonic_aws_public_endpoints = cc[AWS_CREATE_VPC] !== 'VPC_PRIVATE';
+    ret.variables.tectonic_aws_public_endpoints = cc[AWS_CREATE_VPC] !== VPC_PRIVATE;
   }
 
-  if (cc[AWS_CREATE_VPC] !== 'VPC_PRIVATE' && cc[AWS_SPLIT_DNS] === SPLIT_DNS_OFF) {
+  if (cc[AWS_CREATE_VPC] !== VPC_PRIVATE && cc[AWS_SPLIT_DNS] === SPLIT_DNS_OFF) {
     ret.variables.tectonic_aws_private_endpoints = false;
   }
 

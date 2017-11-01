@@ -48,7 +48,7 @@ job("triggers/tectonic-installer-pr-trigger") {
       allowMembersOfWhitelistedOrgsAsAdmin(true)
       msgSuccess("")
       msgFailure("")
-      commitStatusContext("Jenkins-Tectonic-Installer")
+      commitStatusContext("pr-trigger")
       buildDescTemplate("#\$pullId: \$abbrTitle")
       blackListLabels("")
       whiteListLabels("")
@@ -59,7 +59,7 @@ job("triggers/tectonic-installer-pr-trigger") {
 
   steps {
     shell """#!/bin/bash -ex
-      curl "https://api.github.com/repos/coreos/tectonic-installer/labels" > repoLabels
+      curl "https://api.github.com/repos/coreos/tectonic-installer/labels?per_page=100" > repoLabels
       repoLabels=\$(jq ".[] | .name" repoLabels)
       repoLabels=\$(echo \$repoLabels | tr -d "\\"" | tr [a-z] [A-Z] | tr - _)
       for label in \$repoLabels

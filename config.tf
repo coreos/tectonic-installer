@@ -62,7 +62,7 @@ variable "tectonic_container_images" {
     bootkube                     = "quay.io/coreos/bootkube:v0.6.2"
     calico                       = "quay.io/calico/node:v2.6.1"
     calico_cni                   = "quay.io/calico/cni:v1.11.0"
-    console                      = "quay.io/coreos/tectonic-console:v2.3.1"
+    console                      = "quay.io/coreos/tectonic-console:v2.3.2"
     error_server                 = "quay.io/coreos/tectonic-error-server:1.0"
     etcd                         = "quay.io/coreos/etcd:v3.1.8"
     etcd_operator                = "quay.io/coreos/etcd-operator:v0.5.0"
@@ -77,7 +77,7 @@ variable "tectonic_container_images" {
     kubednsmasq                  = "gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.5"
     kubedns_sidecar              = "gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.5"
     kube_version                 = "quay.io/coreos/kube-version:0.1.0"
-    kube_version_operator        = "quay.io/coreos/kube-version-operator:v1.7.5-kvo.12"
+    kube_version_operator        = "quay.io/coreos/kube-version-operator:v1.7.9-kvo.3"
     node_agent                   = "quay.io/coreos/node-agent:v1.7.5-kvo.3"
     pod_checkpointer             = "quay.io/coreos/pod-checkpointer:3517908b1a1837e78cfd041a0e51e61c7835d85f"
     stats_emitter                = "quay.io/coreos/tectonic-stats:6e882361357fe4b773adbf279cddf48cb50164c1"
@@ -115,7 +115,7 @@ variable "tectonic_versions" {
 
   default = {
     etcd          = "3.1.8"
-    kubernetes    = "1.7.5+tectonic.1"
+    kubernetes    = "1.7.9+tectonic.1"
     monitoring    = "1.7.0"
     tectonic      = "1.8.2-tectonic.1"
     tectonic-etcd = "0.0.1"
@@ -397,14 +397,6 @@ If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tect
 EOF
 }
 
-variable "tectonic_experimental" {
-  default = false
-
-  description = <<EOF
-If set to true, experimental Tectonic assets are being deployed.
-EOF
-}
-
 variable "tectonic_stats_url" {
   type        = "string"
   default     = "https://stats-collector.tectonic.com"
@@ -467,6 +459,31 @@ variable "tectonic_networking" {
 
 - "calico": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
 EOF
+}
+
+variable "tectonic_self_hosted_etcd" {
+  default = ""
+
+  description = <<EOF
+(optional) [ALPHA] If set to one of the following values, self-hosted etcd is deployed:
+
+- "enabled": Deploys a self-hosted etcd cluster.
+
+- "pv_backup": Deploys a self-hosted etcd cluster including backups to Persistence Volumes.
+`tectonic_etcd_backup_size` and `tectonic_etcd_backup_storage_class` must be configured when using this setting.
+EOF
+}
+
+variable "tectonic_etcd_backup_size" {
+  type        = "string"
+  description = "(optional) The size in MB of the PersistentVolume used for handling etcd backups."
+  default     = "512"
+}
+
+variable "tectonic_etcd_backup_storage_class" {
+  type        = "string"
+  default     = ""
+  description = "(optional) The name of an existing Kubernetes StorageClass that will be used for handling etcd backups."
 }
 
 variable "tectonic_bootstrap_upgrade_cl" {

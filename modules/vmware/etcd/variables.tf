@@ -30,14 +30,19 @@ variable core_public_keys {
   description = "Public Key for Core User"
 }
 
-variable vmware_datacenter {
-  type        = "string"
+variable vmware_datacenters {
+  type        = "map"
   description = "vSphere Datacenter to create VMs in"
 }
 
-variable vmware_cluster {
-  type        = "string"
+variable vmware_clusters {
+  type        = "map"
   description = "vSphere Cluster to create VMs in"
+}
+
+variable "vmware_resource_pool" {
+  type        = "map"
+  description = "vSphere resource pool to create VMs in"
 }
 
 variable vm_vcpu {
@@ -50,9 +55,9 @@ variable vm_memory {
   description = "ETCD VMs Memory size in MB"
 }
 
-variable vm_network_label {
-  type        = "string"
-  description = "ETCD VMs PortGroup"
+variable vm_network_labels {
+  type        = "map"
+  description = "ETCD VMs PortGroups"
 }
 
 variable vm_disk_datastore {
@@ -80,9 +85,9 @@ variable ip_address {
   description = "IP Address of the node"
 }
 
-variable gateway {
-  type        = "string"
-  description = "Gateway of the node"
+variable gateways {
+  type        = "map"
+  description = "Network gateway IP for the node"
 }
 
 variable hostname {

@@ -8,7 +8,7 @@ Goals of the project:
 - Secure by default (uses TLS, RBAC by default, OIDC AuthN, etcd)
 - Automatable install process for scripts and CI/CD
 - Deploy on any infrastructure: Amazon AWS, Microsoft Azure, OpenStack, Google Cloud, bare metal
-- Run on any OS: Container Linux (the default), [RHEL](Documentation/install/rhel/installing-workers.md#installing-tectonic-workers-on-red-hat-enterprise-linux), Ubuntu, and others
+- Run on any OS: Container Linux (the default), [RHEL][rhel-installation], Ubuntu, and others
 - Customizable and modular: Change DNS providers, security settings, authentication providers
 - Highly Available by default: Deploy all Kubernetes components HA, use etcd Operator
 
@@ -34,8 +34,8 @@ See the official Tectonic documentation:
 
 These instructions can be used for the official stable platforms listed above, and for the following alpha/beta platforms:
 
-- [OpenStack via Terraform](Documentation/install/openstack/openstack-terraform.md) [[**alpha**][platform-lifecycle]]
-- [VMware via Terraform](Documentation/install/vmware/vmware-terraform.md) [[**alpha**][platform-lifecycle]]
+- [OpenStack via Terraform][openstack-tf] [[**alpha**][platform-lifecycle]]
+- [VMware via Terraform][vmware-tf] [[**alpha**][platform-lifecycle]]
 
 **Go and Source**
 
@@ -64,8 +64,8 @@ The [Yarn](https://yarnpkg.com) JavaScript package manager is required for build
 
 First, set the `PLATFORM=` environment variable. This example will use `PLATFORM=azure`.
 
-- `PLATFORM=openstack` [OpenStack via Terraform](Documentation/install/openstack/openstack-terraform.md) [[**alpha**][platform-lifecycle]]
-- `PLATFORM=vmware` [VMware via Terraform](Documentation/install/vmware/vmware-terraform.md) [[**alpha**][platform-lifecycle]]
+- `PLATFORM=openstack` [OpenStack via Terraform][openstack-tf] [[**alpha**][platform-lifecycle]]
+- `PLATFORM=vmware` [VMware via Terraform][vmware-tf] [[**alpha**][platform-lifecycle]]
 
 **Initiate the Cluster Configuration**
 
@@ -102,5 +102,8 @@ PLATFORM=azure CLUSTER=my-cluster make destroy
 See [tests/README.md](tests/README.md).
 
 
-[platform-lifecycle]: Documentation/platform-lifecycle.md
+[openstack-tf]: https://github.com/coreos/tectonic-docs/blob/master/Documentation/install/openstack/openstack-terraform.md
+[platform-lifecycle]: https://coreos.com/tectonic/docs/latest/platform-lifecycle.html
 [release-notes]: https://coreos.com/tectonic/releases/
+[rhel-installation]: https://coreos.com/tectonic/docs/latest/install/rhel/installing-workers.html
+[vmware-tf]: https://github.com/coreos/tectonic-docs/blob/master/Documentation/install/vmware/vmware-terraform.md

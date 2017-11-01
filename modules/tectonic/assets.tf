@@ -115,19 +115,19 @@ resource "local_file" "tectonic" {
   filename = "./generated/tectonic.sh"
 }
 
-# tectonic.sh (resources/generated/tectonic-rkt.sh)
-data "template_file" "tectonic_rkt" {
-  template = "${file("${path.module}/resources/tectonic-rkt.sh")}"
+# tectonic.sh (resources/generated/tectonic-wrapper.sh)
+data "template_file" "tectonic_wrapper" {
+  template = "${file("${path.module}/resources/tectonic-wrapper.sh")}"
 
   vars {
-    hyperkube_image = "${var.container_images["hyperkube"]}"
-    experimental    = "${var.experimental ? "true" : "false"}"
+    hyperkube_image  = "${var.container_images["hyperkube"]}"
+    self_hosted_etcd = "${var.self_hosted_etcd != "" ? "true" : "false"}"
   }
 }
 
-resource "local_file" "tectonic_rkt" {
-  content  = "${data.template_file.tectonic_rkt.rendered}"
-  filename = "./generated/tectonic-rkt.sh"
+resource "local_file" "tectonic_wrapper" {
+  content  = "${data.template_file.tectonic_wrapper.rendered}"
+  filename = "./generated/tectonic-wrapper.sh"
 }
 
 # tectonic.service (available as output variable)
