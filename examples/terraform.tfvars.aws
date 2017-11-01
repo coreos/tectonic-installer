@@ -257,6 +257,9 @@ tectonic_container_linux_version = "latest"
 // Note: This is not supported on bare metal.
 tectonic_etcd_count = "0"
 
+// (optional) Can be either "http" or "https" When set this scheme will be used for all provided etcd endpoints.
+// tectonic_etcd_scheme = "https"
+
 // (optional) List of external etcd v3 servers to connect with (hostnames/IPs only).
 // Needs to be set if using an external etcd cluster.
 // 

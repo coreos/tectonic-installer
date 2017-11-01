@@ -82,6 +82,7 @@ module "bootkube" {
       : join(",", var.tectonic_etcd_servers)
     )}"
 
+  etcd_scheme               = "${var.tectonic_etcd_scheme}"
   etcd_backup_size          = "${var.tectonic_etcd_backup_size}"
   etcd_backup_storage_class = "${var.tectonic_etcd_backup_storage_class}"
   self_hosted_etcd          = "${var.tectonic_self_hosted_etcd}"

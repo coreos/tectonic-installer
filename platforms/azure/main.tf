@@ -118,6 +118,7 @@ module "ignition_masters" {
   etcd_advertise_name_list  = "${data.template_file.etcd_advertise_name_list.*.rendered}"
   etcd_count                = "${local.etcd_count}"
   etcd_initial_cluster_list = "${data.template_file.etcd_hostname_list.*.rendered}"
+  etcd_scheme               = "${var.tectonic_etcd_scheme}"
   etcd_tls_enabled          = "${var.tectonic_etcd_tls_enabled}"
   image_re                  = "${var.tectonic_image_re}"
   kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"

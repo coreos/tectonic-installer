@@ -184,6 +184,15 @@ EOF
   default = []
 }
 
+variable "tectonic_etcd_scheme" {
+  type    = "string"
+  default = "https"
+
+  description = <<EOF
+(optional) Can be either "http" or "https" When set this scheme will be used for all provided etcd endpoints.
+EOF
+}
+
 variable "tectonic_etcd_tls_enabled" {
   default = true
 

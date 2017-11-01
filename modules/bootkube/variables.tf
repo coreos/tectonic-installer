@@ -63,6 +63,12 @@ variable "etcd_endpoints" {
   type        = "list"
 }
 
+variable "etcd_scheme" {
+  description = "scheme either http or https"
+  type        = "string"
+  default     = "https"
+}
+
 variable "etcd_peer_cert_pem" {
   type        = "string"
   description = "The etcd peer certificate in PEM format."
