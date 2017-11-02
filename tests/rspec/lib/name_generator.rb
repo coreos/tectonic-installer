@@ -20,7 +20,8 @@ module NameGenerator
   def self.jenkins_env_name(prefix)
     build_id = ENV['BUILD_ID']
     branch_name = ENV['BRANCH_NAME'].to_s.delete('.')
-    name = "#{prefix}-#{branch_name}-#{build_id}"
+    short_prefix = prefix.split('-').map { |x| x[0...3] }.join.gsub(/^(.{10,}?).*$/m, '\1')
+    name = "#{short_prefix}-#{branch_name}-#{build_id}"
     name = name[0..(MAX_NAME_LENGTH - RANDOM_HASH_LENGTH - 1)]
     name += SecureRandom.hex[0...RANDOM_HASH_LENGTH]
     name
