@@ -59,7 +59,7 @@ variable "tectonic_container_images" {
   default = {
     addon_resizer                = "gcr.io/google_containers/addon-resizer:2.1"
     awscli                       = "quay.io/coreos/awscli:025a357f05242fdad6a81e8a6b520098aa65a600"
-    bootkube                     = "quay.io/coreos/bootkube:v0.6.2"
+    bootkube                     = "quay.io/coreos/bootkube:v0.8.1"
     calico                       = "quay.io/calico/node:v2.6.1"
     calico_cni                   = "quay.io/calico/cni:v1.11.0"
     console                      = "quay.io/coreos/tectonic-console:v2.3.4"
@@ -79,7 +79,7 @@ variable "tectonic_container_images" {
     kube_version                 = "quay.io/coreos/kube-version:0.1.0"
     kube_version_operator        = "quay.io/coreos/kube-version-operator:v1.7.9-kvo.5"
     node_agent                   = "quay.io/coreos/node-agent:cd69b4a0f65b0d3a3b30edfce3bb184fd2a22c26"
-    pod_checkpointer             = "quay.io/coreos/pod-checkpointer:ec22bec63334befacc2b237ab73b1a8b95b0a654"
+    pod_checkpointer             = "quay.io/coreos/pod-checkpointer:e22cc0e3714378de92f45326474874eb602ca0ac"
     stats_emitter                = "quay.io/coreos/tectonic-stats:6e882361357fe4b773adbf279cddf48cb50164c1"
     stats_extender               = "quay.io/coreos/tectonic-stats-extender:487b3da4e175da96dabfb44fba65cdb8b823db2e"
     tectonic_channel_operator    = "quay.io/coreos/tectonic-channel-operator:0.5.4"
