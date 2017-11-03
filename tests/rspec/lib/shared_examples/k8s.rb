@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'shared_examples/build_folder_setup'
 require 'smoke_test'
 require 'forensic'
 require 'cluster_factory'
@@ -11,9 +12,14 @@ require 'password_generator'
 require 'webdriver_helpers'
 require 'k8s_conformance_tests'
 
-RSpec.shared_examples 'withRunningCluster' do |tf_vars_path, vpn_tunnel = false|
+RSpec.shared_examples 'withRunningCluster' do |tf_vars_path|
+  include_examples('withBuildFolderSetup', tf_vars_path)
+  include_examples('withRunningClusterExistingBuildFolder')
+end
+
+RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do
   before(:all) do
-    @cluster = ClusterFactory.from_tf_vars(TFVarsFile.new(tf_vars_path))
+    @cluster = ClusterFactory.from_tf_vars(@tfvars_file)
     begin
       @cluster.start
     rescue => e
@@ -114,6 +120,30 @@ RSpec.shared_examples 'withRunningCluster' do |tf_vars_path, vpn_tunnel = false|
       @login.login_page "https://#{@console_url}"
       @login.with(NameGenerator.generate_fake_email, PasswordGenerator.generate_password)
       expect(@login.fail_to_login?).to be_truthy
+    end
+  end
+
+  describe 'scale up worker cluster' do
+    before(:all) do
+      platform = @cluster.env_variables['PLATFORM']
+      skip "This test is not ready to run in #{platform}" if platform == 'metal'
+    end
+
+    it 'has the right number of nodes in the initial configuration' do
+      nodes = KubeCTL.run_and_parse(@cluster.kubeconfig, 'get nodes')
+
+      expect(nodes['items']).not_to be_empty
+      expect(nodes['items'].size).to eq(@cluster.tfvars_file.node_count)
+    end
+
+    it 'can scale up nodes by 1 worker' do
+      @cluster.tfvars_file.add_worker_node(@cluster.tfvars_file.worker_count + 1)
+      @cluster.update_cluster
+
+      nodes = KubeCTL.run_and_parse(@cluster.kubeconfig, 'get nodes')
+
+      expect(nodes['items']).not_to be_empty
+      expect(nodes['items'].size).to eq(@cluster.tfvars_file.node_count)
     end
   end
 
