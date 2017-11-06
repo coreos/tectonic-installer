@@ -10,6 +10,11 @@ resource "null_resource" "bootstrapper" {
     agent = true
   }
 
+  provisioner "local-exec" {
+    when    = "create"
+    command = "sleep ${var.wait_time}"
+  }
+
   provisioner "file" {
     when        = "create"
     source      = "./generated"

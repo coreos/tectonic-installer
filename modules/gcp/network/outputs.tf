@@ -22,6 +22,10 @@ output "ssh_master_ip" {
   value = "${google_compute_address.ssh-masters-ip.address}"
 }
 
+output "ssh_master_forwarding_rule_self_link" {
+  value = "${google_compute_forwarding_rule.api-external-ssh-fwd-rule.self_link}"
+}
+
 output "ingress_ip" {
   value = "${google_compute_address.ingress-ip.address}"
 }
