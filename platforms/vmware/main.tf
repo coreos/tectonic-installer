@@ -53,6 +53,7 @@ module "ignition_masters" {
   kubelet_cni_bin_dir      = "${var.tectonic_networking == "calico" || var.tectonic_networking == "canal" ? "/var/lib/cni/bin" : "" }"
   kubelet_node_label       = "node-role.kubernetes.io/master"
   kubelet_node_taints      = "node-role.kubernetes.io/master=:NoSchedule"
+  use_metadata             = false
   tectonic_vanilla_k8s     = "${var.tectonic_vanilla_k8s}"
 }
 
