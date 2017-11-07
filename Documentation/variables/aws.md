@@ -39,5 +39,4 @@ This document gives an overview of variables used in the AWS platform of the Tec
 | tectonic_aws_worker_root_volume_iops | The amount of provisioned IOPS for the root block device of worker nodes. Ignored if the volume type is not io1. | string | `100` |
 | tectonic_aws_worker_root_volume_size | The size of the volume in gigabytes for the root block device of worker nodes. | string | `30` |
 | tectonic_aws_worker_root_volume_type | The type of volume for the root block device of worker nodes. | string | `gp2` |
-| tectonic_dns_name | (optional) DNS prefix used to construct the console and API server endpoints. | string | `` |
 

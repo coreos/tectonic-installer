@@ -218,7 +218,6 @@ export const toAWS_TF = (cc, FORMS) => {
       tectonic_service_cidr: cc[SERVICE_CIDR],
       tectonic_worker_count: workers[NUMBER_OF_INSTANCES],
       // TODO: shouldn't hostedZoneID be specified somewhere?
-      tectonic_dns_name: cc[CLUSTER_SUBDOMAIN],
     },
   };
 
@@ -297,7 +296,6 @@ export const toBaremetal_TF = (cc, FORMS) => {
       tectonic_ssh_authorized_key: sshKey[SSH_AUTHORIZED_KEY],
       tectonic_cluster_cidr: cc[POD_CIDR],
       tectonic_service_cidr: cc[SERVICE_CIDR],
-      tectonic_dns_name: cc[CLUSTER_SUBDOMAIN],
       tectonic_base_domain: 'unused',
     },
   };
