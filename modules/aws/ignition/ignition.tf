@@ -16,12 +16,9 @@ data "ignition_config" "main" {
     "${data.ignition_systemd_unit.tectonic.id}",
   ]
 
-  append = [{
-    source = "${module.tectonic-registry-cache.ignition_config_data_url}"
-  },
-    {
-      source = "${module.custom-cacertificates.ignition_config_data_url}"
-    },
+  append = [
+    {source = "${lookup(local.append_config_urls,"registry_cache")}"},
+    {source = "${lookup(local.append_config_urls,"custom_ca")}"},
   ]
 }
 
@@ -161,21 +158,4 @@ data "ignition_systemd_unit" "tectonic" {
   name    = "tectonic.service"
   enabled = "${var.tectonic_service_disabled == 0 ? true : false}"
   content = "${var.tectonic_service}"
-}
-
-module "tectonic-registry-cache" {
-  source  = "../../../modules/field-customizations/tectonic-registry-cache"
-  enabled = "${var.registry_cache_image != "" ? true : false}"
-
-  image_repo           = "${replace(var.registry_cache_image, var.image_re, "$1")}"
-  image_tag            = "${replace(var.registry_cache_image, var.image_re, "$2")}"
-  rkt_image_protocol   = "${var.registry_cache_rkt_protocol}"
-  rkt_insecure_options = "${var.registry_cache_rkt_insecure_options}"
-}
-
-module "custom-cacertificates" {
-  source = "../../../modules/field-customizations/custom-cacertificates"
-
-  // If zero length, module will have empty output (`enabled` flag equivalent) 
-  cacertificates = "${var.custom_cacertificates}"
 }
