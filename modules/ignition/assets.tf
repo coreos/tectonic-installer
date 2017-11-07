@@ -245,5 +245,32 @@ data "ignition_file" "systemd_default_env" {
 
   content {
     content = "${data.template_file.systemd_default_env.rendered}"
+
+data "template_file" "bbr_kernel_module" {
+  template = "${file("${path.module}/resources/modules-load.d/tcp_bbr.conf")}"
+}
+
+data "ignition_file" "bbr_kernel_module" {
+  filesystem = "root"
+  path       = "/etc/modules-load.d/tcp_bbr.conf"
+  mode       = "0420"
+
+  content {
+    content = "${data.template_file.bbr_kernel_module.rendered}"
+  }
+}
+
+data "template_file" "sysctl_bbr_congestion_control" {
+  template = "${file("${path.module}/resources/sysctl.d/bbr.conf")}"
+}
+
+data "ignition_file" "sysctl_bbr_congestion_control" {
+  filesystem = "root"
+  path       = "/etc/sysctl.d/10-bbr.conf"
+  mode       = 0644
+
+  content {
+    content = "${data.template_file.sysctl_bbr_congestion_control.rendered}"
+
   }
 }
