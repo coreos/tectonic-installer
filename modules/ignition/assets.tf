@@ -245,6 +245,8 @@ data "ignition_file" "systemd_default_env" {
 
   content {
     content = "${data.template_file.systemd_default_env.rendered}"
+  }
+}
 
 data "template_file" "bbr_kernel_module" {
   template = "${file("${path.module}/resources/modules-load.d/tcp_bbr.conf")}"
@@ -271,6 +273,5 @@ data "ignition_file" "sysctl_bbr_congestion_control" {
 
   content {
     content = "${data.template_file.sysctl_bbr_congestion_control.rendered}"
-
   }
 }

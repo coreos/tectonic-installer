@@ -10,6 +10,8 @@ data "ignition_config" "main" {
     var.ign_s3_puller_id,
     var.ign_profile_env_id,
     var.ign_systemd_default_env_id,
+    var.ign_bbr_kernel_module_id,
+    var.ign_sysctl_bbr_congestion_control_id,
     var.dns_server_ip != "" ? join("", data.ignition_file.node_resolv.*.id) : "",
    ))}",
     "${var.ign_ca_cert_id_list}",

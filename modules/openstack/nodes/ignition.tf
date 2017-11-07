@@ -13,6 +13,8 @@ data "ignition_config" "node" {
     data.ignition_file.resolv_conf.id,
     data.ignition_file.hostname.*.id[count.index],
     data.ignition_file.sshd.id,
+    var.ign_bbr_kernel_module_id,
+    var.ign_sysctl_bbr_congestion_control_id,
    ))}",
     "${var.ign_ca_cert_id_list}",
   ]
