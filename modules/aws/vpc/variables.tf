@@ -45,6 +45,14 @@ variable "enable_etcd_sg" {
   default     = true
 }
 
+variable "external_sg_master" {
+  type = "string"
+}
+
+variable "external_sg_worker" {
+  type = "string"
+}
+
 variable "master_subnets" {
   type = "list"
 }
