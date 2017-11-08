@@ -9,15 +9,16 @@ Environment="RKT_RUN_ARGS=--uuid-file-save=/var/cache/kubelet-pod.uuid \
   --volume var-lib-cni,kind=host,source=/var/lib/cni \
   --mount volume=var-lib-cni,target=/var/lib/cni \
   --volume var-log,kind=host,source=/var/log \
-  --mount volume=var-log,target=/var/log"
+  --mount volume=var-log,target=/var/log \
+  --insecure-options=${rkt_insecure_options}"
 
+ExecStartPre=/usr/bin/systemctl set-environment KUBELET_IMAGE_URL=${rkt_image_protocol}$${KUBELET_IMAGE_URL}
 ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests \
   /srv/kubernetes/manifests /etc/kubernetes/checkpoint-secrets \
   /etc/kubernetes/cni/net.d /var/lib/cni
 ExecStartPre=/usr/bin/bash -c "/opt/s3-puller.sh ${kubeconfig_s3_location} /etc/kubernetes/kubeconfig"
 ExecStartPre=/usr/bin/bash -c "grep 'certificate-authority-data' /etc/kubernetes/kubeconfig | awk '{print $2}' | base64 -d > /etc/kubernetes/ca.crt"
 ExecStartPre=-/usr/bin/rkt rm --uuid-file=/var/cache/kubelet-pod.uuid
-
 ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --kubeconfig=/etc/kubernetes/kubeconfig \
   --require-kubeconfig \

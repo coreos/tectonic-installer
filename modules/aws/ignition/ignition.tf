@@ -15,6 +15,14 @@ data "ignition_config" "main" {
     "${data.ignition_systemd_unit.bootkube.id}",
     "${data.ignition_systemd_unit.tectonic.id}",
   ]
+
+  append = [{
+    source = "${module.tectonic-registry-cache.ignition_config_data_url}"
+  },
+    {
+      source = "${module.custom-cacertificates.ignition_config_data_url}"
+    },
+  ]
 }
 
 data "ignition_systemd_unit" "docker" {
@@ -44,6 +52,8 @@ data "template_file" "kubelet" {
     cni_bin_dir_flag       = "${var.kubelet_cni_bin_dir != "" ? "--cni-bin-dir=${var.kubelet_cni_bin_dir}" : ""}"
     kubeconfig_s3_location = "${var.kubeconfig_s3_location}"
     pod_infra_image        = "${var.container_images["pod_infra_image"]}"
+    rkt_insecure_options   = "${var.rkt_insecure_options}"
+    rkt_image_protocol     = "${var.rkt_image_protocol}"
   }
 }
 
@@ -85,6 +95,9 @@ data "template_file" "s3_puller" {
 
   vars {
     awscli_image = "${var.container_images["awscli"]}"
+
+    rkt_insecure_options = "${var.rkt_insecure_options}"
+    rkt_image_protocol   = "${var.rkt_image_protocol}"
   }
 }
 
@@ -117,6 +130,9 @@ data "template_file" "init_assets" {
     assets_s3_location = "${var.assets_s3_location}"
     kubelet_image_url  = "${replace(var.container_images["hyperkube"],var.image_re,"$1")}"
     kubelet_image_tag  = "${replace(var.container_images["hyperkube"],var.image_re,"$2")}"
+
+    rkt_insecure_options = "${var.rkt_insecure_options}"
+    rkt_image_protocol   = "${var.rkt_image_protocol}"
   }
 }
 
@@ -145,4 +161,21 @@ data "ignition_systemd_unit" "tectonic" {
   name    = "tectonic.service"
   enable  = "${var.tectonic_service_disabled == 0 ? true : false}"
   content = "${var.tectonic_service}"
+}
+
+module "tectonic-registry-cache" {
+  source  = "../../../modules/field-customizations/tectonic-registry-cache"
+  enabled = "${var.registry_cache_image != "" ? true : false}"
+
+  image_repo           = "${replace(var.registry_cache_image, var.image_re, "$1")}"
+  image_tag            = "${replace(var.registry_cache_image, var.image_re, "$2")}"
+  rkt_image_protocol   = "${var.registry_cache_rkt_protocol}"
+  rkt_insecure_options = "${var.registry_cache_rkt_insecure_options}"
+}
+
+module "custom-cacertificates" {
+  source = "../../../modules/field-customizations/custom-cacertificates"
+
+  // If zero length, module will have empty output (`enabled` flag equivalent) 
+  cacertificates = "${var.custom_cacertificates}"
 }

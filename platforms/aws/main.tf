@@ -96,6 +96,14 @@ module "ignition_masters" {
   tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
   cluster_name              = "${var.tectonic_cluster_name}"
   image_re                  = "${var.tectonic_image_re}"
+  custom_cacertificates     = "${var.tectonic_custom_cacertificates}"
+
+  rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
+  rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+
+  registry_cache_image                = "${var.tectonic_registry_cache_image}"
+  registry_cache_rkt_protocol         = "${var.tectonic_registry_cache_rkt_protocol}"
+  registry_cache_rkt_insecure_options = "${var.tectonic_registry_cache_rkt_insecure_options}"
 }
 
 module "masters" {
@@ -144,6 +152,14 @@ module "ignition_workers" {
   tectonic_service       = ""
   cluster_name           = ""
   image_re               = "${var.tectonic_image_re}"
+  custom_cacertificates  = "${var.tectonic_custom_cacertificates}"
+
+  rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
+  rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+
+  registry_cache_image                = "${var.tectonic_registry_cache_image}"
+  registry_cache_rkt_protocol         = "${var.tectonic_registry_cache_rkt_protocol}"
+  registry_cache_rkt_insecure_options = "${var.tectonic_registry_cache_rkt_insecure_options}"
 }
 
 module "workers" {

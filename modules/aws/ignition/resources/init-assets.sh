@@ -7,6 +7,8 @@ trap "{ /usr/bin/rkt gc --grace-period=0; /usr/bin/rkt image gc --grace-period 0
 mkdir -p /run/metadata
 # shellcheck disable=SC2086,SC2154
 /usr/bin/rkt run \
+    --insecure-options=${rkt_insecure_options} \
+    \
     --dns=host --net=host --trust-keys-from-https --interactive \
     \
     --set-env=CLUSTER_NAME=${cluster_name} \
@@ -17,7 +19,7 @@ mkdir -p /run/metadata
     --volume=detect-master,kind=host,source=/opt/detect-master.sh,readOnly=true \
     --mount=volume=detect-master,target=/detect-master.sh \
     \
-    ${awscli_image} \
+    ${rkt_image_protocol}${awscli_image} \
     --exec=/detect-master.sh
 
 MASTER=$(cat /run/metadata/master)
@@ -34,8 +36,8 @@ rm /opt/tectonic/tectonic.zip
 # Populate the kubelet.env file.
 mkdir -p /etc/kubernetes
 # shellcheck disable=SC2154
-echo "KUBELET_IMAGE_URL=${kubelet_image_url}" > /etc/kubernetes/kubelet.env
+echo "KUBELET_IMAGE_URL=${rkt_image_protocol}${kubelet_image_url}" > /etc/kubernetes/kubelet.env
 # shellcheck disable=SC2154
-echo "KUBELET_IMAGE_TAG=${kubelet_image_tag}" >> /etc/kubernetes/kubelet.env
+echo "KUBELET_IMAGE_TAG=${rkt_image_protocol}${kubelet_image_tag}" >> /etc/kubernetes/kubelet.env
 
 exit 0

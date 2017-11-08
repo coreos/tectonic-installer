@@ -7,8 +7,9 @@ fi
 
 # shellcheck disable=SC2086,SC2154
 /usr/bin/sudo /usr/bin/rkt run \
+    --insecure-options=${rkt_insecure_options} \
     --net=host --dns=host \
-    --trust-keys-from-https ${awscli_image} \
+    --trust-keys-from-https ${rkt_image_protocol}${awscli_image} \
     --volume=tmp,kind=host,source=/tmp --mount=volume=tmp,target=/tmp \
     --set-env="LOCATION=$1" \
     --exec=/bin/bash -- -c '
