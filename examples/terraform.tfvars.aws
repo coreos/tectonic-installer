@@ -11,17 +11,12 @@
 // tectonic_aws_assets_s3_bucket_name = ""
 
 // Instance size for the etcd node(s). Example: `t2.medium`. Read the [etcd recommended hardware](https://coreos.com/etcd/docs/latest/op-guide/hardware.html) guide for best performance
-//   EOF
-// 
-//   default = "t2.medium"
-// }
-// 
-// variable "tectonic_aws_etcd_extra_sg_ids" {
-//   description = <<EOF
+tectonic_aws_etcd_ec2_type = "t2.medium"
+
 // (optional) List of additional security group IDs for etcd nodes.
 // 
 // Example: `["sg-51530134", "sg-b253d7cc"]`
-tectonic_aws_etcd_ec2_type = ""
+// tectonic_aws_etcd_extra_sg_ids = ""
 
 // The amount of provisioned IOPS for the root block device of etcd nodes.
 // Ignored if the volume type is not io1.
