@@ -455,3 +455,19 @@ variable "tectonic_rkt_insecure_options" {
 Example: `image,tls`
 EOF
 }
+
+variable "tectonic_custom_cacertificates" {
+  default = []
+  description = <<EOF
+List of paths to SSL CA Certificates you would like trusted on Kubernetes nodes, in PEM-encoded x509 format.
+
+These certificates will be added to the root of trust on both master and worker nodes via the update-cacertificates-rehash systemd service enabled on every boot.
+
+Example:
+tectonic_custom_cacertificates = [
+  "~/fake-ssl/authority1.crt",
+  "~/fake-ssl/authority2.crt",
+  "~/fake-ssl/authority3.crt"
+]
+EOF
+}
