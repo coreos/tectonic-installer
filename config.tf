@@ -391,6 +391,48 @@ This field is mandatory if `tectonic_ca_cert` is set.
 EOF
 }
 
+variable "tectonic_ingress_ca_cert_pem_path" {
+  type  = "string"
+  default = ""
+
+  description = <<EOF
+(optional) The path of the file containing the CA certificate for TLS communication with the ingress controller.
+
+The file must have contents the public CA certificate in PEM format, like:
+-----BEGIN CERTIFICATE-----
+<contents of the public CA certificate in PEM format>
+-----END CERTIFICATE-----
+EOF
+}
+
+variable "tectonic_ingress_cert_pem_path" {
+  type = "string"
+  default = ""
+
+  description = <<EOF
+(optional) The path of the file containing the CA certificate for TLS communication with the ingress controller.
+
+The file must have contents the public ingress certificate in PEM format, like:
+-----BEGIN CERTIFICATE-----
+<contents of the public ingress certificate signed by the above CA in PEM format>
+-----END CERTIFICATE-----
+EOF
+}
+
+variable "tectonic_ingress_key_pem_path" {
+  type = "string"
+  default = ""
+
+  description = <<EOF
+(optional) The path of the file containing the CA certificate for TLS communication with the ingress controller.
+
+The file must have contents the private ingress key in PEM format, like:
+-----BEGIN CERTIFICATE-----
+<contents of the private ingress key used to generate the above certificate PEM format>
+-----END CERTIFICATE-----
+EOF
+}
+
 variable "tectonic_vanilla_k8s" {
   default = false
 

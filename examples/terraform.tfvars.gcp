@@ -194,3 +194,30 @@ tectonic_vanilla_k8s = false
 // The number of worker nodes to be created.
 // This applies only to cloud platforms.
 tectonic_worker_count = "3"
+
+//(optional) The path of the file containing the CA certificate for TLS communication with the ingress controller.
+// NB: Must uncomment relevant section from platforms/gcp/tectonic.tf
+//
+//The file must have contents the public CA certificate in PEM format, like:
+//-----BEGIN CERTIFICATE-----
+//<contents of the public CA certificate in PEM format>
+//-----END CERTIFICATE-----
+#tectonic_ingress_ca_cert_pem_path = ""
+
+//(optional) The path of the file containing the CA certificate for TLS communication with the ingress controller.
+// NB: Must uncomment relevant section from platforms/gcp/tectonic.tf
+//
+//The file must have contents the public ingress certificate in PEM format, like:
+//-----BEGIN CERTIFICATE-----
+//<contents of the public ingress certificate signed by the above CA in PEM format>
+//-----END CERTIFICATE-----
+#tectonic_ingress_cert_pem_path = ""
+
+//(optional) The path of the file containing the CA certificate for TLS communication with the ingress controller.
+// NB: Must uncomment relevant section from platforms/gcp/tectonic.tf
+//
+//The file must have contents the private ingress key in PEM format, like:
+//-----BEGIN CERTIFICATE-----
+//<contents of the private ingress key used to generate the above certificate PEM format>
+//-----END CERTIFICATE-----
+#tectonic_ingress_key_pem_path = ""
