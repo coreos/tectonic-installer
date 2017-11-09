@@ -1,5 +1,4 @@
 locals {
-
   _dependencies = [
     "${module.masters.instance_group}",
     "${module.etcd.etcd_ip_addresses}",
