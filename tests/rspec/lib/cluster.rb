@@ -49,7 +49,6 @@ class Cluster
 
   def update_cluster
     start
-    wait_nodes_ready
   end
 
   def stop
@@ -176,14 +175,16 @@ class Cluster
         sleep 10
       end
     end
+
+    wait_nodes_ready
   end
 
   def wait_nodes_ready
-    puts 'Waiting for nodes become in ready state after an update'
-    180.times do
-      nodes = ''
+    from = Time.now
+    loop do
+      puts 'Waiting for nodes become in ready state after an update'
       Retriable.with_retries(KubeCTL::KubeCTLCmdError, limit: 5, sleep: 10) do
-        nodes = KubeCTL.run_and_parse(@kubeconfig, 'get nodes')
+        nodes = describe_nodes
         nodes_ready = Array.new(@tfvars_file.node_count, false)
         nodes['items'].each_with_index do |item, index|
           item['status']['conditions'].each do |condition|
@@ -192,16 +193,17 @@ class Cluster
             end
           end
         end
-        if nodes_ready.uniq.length == 1
+        if nodes_ready.uniq.length == 1 && nodes_ready.uniq.include?(true)
           puts '**All nodes are Ready!**'
           return true
         end
-        puts "One or more nodes are not ready yet or missing nodes. Waiting...\n \
-              # of returned nodes #{nodes['items'].size}. Expected #{@tfvars_file.node_count}"
+        puts "One or more nodes are not ready yet or missing nodes. Waiting...\n" \
+             "# of returned nodes #{nodes['items'].size}. Expected #{@tfvars_file.node_count}"
+        elapsed = Time.now - from
+        raise 'waiting for all nodes to become ready timed out' if elapsed > 1200 # 20 mins timeout
+        sleep 20
       end
-      sleep 20
     end
-    raise 'kubectl get nodes never returned with successful error code'
   end
 
   def wait_for_bootstrapping
@@ -255,5 +257,9 @@ class Cluster
     end
 
     false
+  end
+
+  def describe_nodes
+    KubeCTL.run_and_parse(@kubeconfig, 'get nodes')
   end
 end

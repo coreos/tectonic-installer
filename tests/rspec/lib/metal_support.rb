@@ -144,10 +144,6 @@ module MetalSupport
     save_file.close
   end
 
-  def self.all_files_eof(files)
-    files.find { |f| !f.eof }.nil?
-  end
-
   def self.root_path
     File.expand_path('../../', Dir.pwd)
   end
