@@ -1,0 +1,21 @@
+[Unit]
+Description=Move Tectonic Assets
+ConditionDirectoryNotEmpty=/home/core/tectonic
+Before=k8s-node-bootstrap.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+
+User=root
+Group=root
+
+ExecStartPre=/usr/bin/bash -c "mkdir -p /opt"
+ExecStartPre=/usr/bin/bash -c "rm -rf /opt/tectonic"
+ExecStartPre=/usr/bin/bash -c 'while [ ! -z "$(ps aux | pgrep scp)" ]; do sleep 1; done'
+ExecStart=/usr/bin/bash -c "mv /home/core/tectonic /opt/"
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=k8s-node-bootstrap.service bootkube.service kubelet-env.service
+

@@ -1,5 +1,4 @@
-module "bootstrapper" {
-  source = "../../modules/bootstrap-ssh"
+locals {
 
   _dependencies = [
     "${module.masters.instance_group}",
@@ -11,6 +10,23 @@ module "bootstrapper" {
     "${module.calico.id}",
     "${module.canal.id}",
   ]
+}
 
-  bootstrapping_host = "${module.network.ssh_master_ip}"
+resource "null_resource" "bootstrapper" {
+  triggers {
+    endpoint     = "${module.network.ssh_master_ip}"
+    dependencies = "${join("", concat(flatten(local._dependencies)))}"
+  }
+
+  connection {
+    host  = "${module.network.ssh_master_ip}"
+    user  = "core"
+    agent = true
+  }
+
+  provisioner "file" {
+    when        = "create"
+    source      = "./generated"
+    destination = "$HOME/tectonic"
+  }
 }
