@@ -177,3 +177,9 @@ variable "versions" {
   description = "Container versions to use"
   type        = "map"
 }
+
+variable "configure_cloud_routes" {
+  description = "Rely on the cloud provider to configure routes"
+  type        = "string"
+  default     = false
+}

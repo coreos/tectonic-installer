@@ -291,6 +291,7 @@ pipeline {
           def gcp = [
             [file: 'basic_spec.rb', args: ''],
             [file: 'ha_spec.rb', args: ''],
+            [file: 'kubenet_ha_spec.rb', args: ''],
           ]
 
           if (params."PLATFORM/AWS") {

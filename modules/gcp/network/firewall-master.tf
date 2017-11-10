@@ -93,3 +93,23 @@ resource "google_compute_firewall" "master-ingress-services" {
   source_tags = ["tectonic-masters"]
   target_tags = ["tectonic-masters"]
 }
+
+resource "google_compute_firewall" "ingress-pods" {
+  name    = "${var.cluster_name}-ingress-pods"
+  network = "${google_compute_network.network.name}"
+
+  allow {
+    protocol = "udp"
+  }
+
+  allow {
+    protocol = "tcp"
+  }
+
+  allow {
+    protocol = "icmp"
+  }
+
+  source_ranges = ["10.0.0.0/8", "10.2.0.0/16"]
+  target_tags   = ["tectonic-masters", "tectonic-workers"]
+}

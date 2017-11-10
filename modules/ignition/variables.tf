@@ -111,3 +111,11 @@ variable "metadata_provider" {
 variable "use_metadata" {
   default = true
 }
+
+variable "network_plugin" {
+  default = "cni"
+}
+
+variable "hostname_override_cmd" {
+  default = ""
+}

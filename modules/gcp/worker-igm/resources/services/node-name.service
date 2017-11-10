@@ -1,0 +1,14 @@
+[Unit]
+Description=Set NODENAME for kubelet as expected by GCE cloud Provider
+ConditionPathExists=/etc/kubernetes/kubelet.env
+Requires=systemd-hostnamed.service systemd-networkd.service systemd-networkd-wait-online.service
+Before=kubelet.service
+After=systemd-hostnamed.service systemd-networkd.service systemd-networkd-wait-online.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c "/bin/echo NODENAME=$(hostname -s) >> /etc/kubernetes/kubelet.env"
+
+[Install]
+WantedBy=kubelet.service

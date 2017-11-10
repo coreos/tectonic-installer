@@ -66,6 +66,8 @@ resource "template_dir" "bootkube" {
 
     cloud_provider_profile = "${var.cloud_provider != "" ? "${var.cloud_provider}" : "metal"}"
     cloud_config_path      = "${var.cloud_config_path}"
+    cluster_name           = "${var.cluster_name}"
+    configure_cloud_routes = "${var.configure_cloud_routes}"
   }
 }
 
@@ -101,9 +103,11 @@ resource "template_dir" "bootkube_bootstrap" {
     cloud_provider_config      = "${var.cloud_provider_config}"
     cloud_provider_config_flag = "${var.cloud_provider_config != "" ? "- --cloud-config=/etc/kubernetes/cloud/config" : "# no cloud provider config given"}"
 
-    advertise_address = "${var.advertise_address}"
-    cluster_cidr      = "${var.cluster_cidr}"
-    service_cidr      = "${var.service_cidr}"
+    advertise_address      = "${var.advertise_address}"
+    cluster_cidr           = "${var.cluster_cidr}"
+    service_cidr           = "${var.service_cidr}"
+    cluster_name           = "${var.cluster_name}"
+    configure_cloud_routes = "${var.configure_cloud_routes}"
   }
 }
 

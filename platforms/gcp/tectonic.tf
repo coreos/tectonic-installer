@@ -60,9 +60,10 @@ module "identity_certs" {
 }
 
 module "bootkube" {
-  source         = "../../modules/bootkube"
-  cloud_provider = ""
-  cluster_name   = "${var.tectonic_cluster_name}"
+  source                = "../../modules/bootkube"
+  cloud_provider        = "${module.kubenet.cloud_provider}"
+  cloud_provider_config = "${module.kubenet.cloud_provider_config}"
+  cluster_name          = "${var.tectonic_cluster_name}"
 
   kube_apiserver_url = "https://${module.dns.kube_apiserver_fqdn}:443"
   oidc_issuer_url    = "https://${module.dns.kube_ingress_fqdn}/identity"
@@ -101,6 +102,9 @@ module "bootkube" {
   etcd_endpoints            = "${data.template_file.etcd_hostname_list.*.rendered}"
   master_count              = "${var.tectonic_master_count}"
   self_hosted_etcd          = "${var.tectonic_self_hosted_etcd}"
+
+  cloud_config_path      = "/etc/kubernetes/cloud"
+  configure_cloud_routes = "${var.tectonic_networking == "kubenet" ? true : false}"
 }
 
 module "tectonic" {
@@ -174,6 +178,11 @@ module "canal" {
   enabled          = "${var.tectonic_networking == "canal"}"
 }
 
+module "kubenet" {
+  source  = "../../modules/gcp/kubenet"
+  enabled = "${var.tectonic_networking == "kubenet"}"
+}
+
 data "archive_file" "assets" {
   type       = "zip"
   source_dir = "${path.cwd}/generated/"
@@ -188,5 +197,5 @@ data "archive_file" "assets" {
   # Additionally, data sources do not support managing any lifecycle whatsoever,
   # and therefore, the archive is never deleted. To avoid cluttering the module
   # folder, we write it in the TerraForm managed hidden folder `.terraform`.
-  output_path = "./.terraform/generated_${sha1("${module.etcd_certs.id} ${module.tectonic.id} ${module.bootkube.id} ${module.flannel_vxlan.id} ${module.calico.id} ${module.canal.id}")}.zip"
+  output_path = "./.terraform/generated_${sha1("${module.etcd_certs.id} ${module.tectonic.id} ${module.bootkube.id} ${module.flannel_vxlan.id} ${module.calico.id} ${module.canal.id} ${module.kubenet.cloud_provider}")}}.zip"
 }

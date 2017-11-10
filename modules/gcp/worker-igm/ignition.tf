@@ -3,6 +3,7 @@ data "ignition_config" "main" {
     "${data.ignition_file.kubeconfig.id}",
     "${var.ign_max_user_watches_id}",
     "${var.ign_installer_kubelet_env_id}",
+    "${data.ignition_file.cloud-provider-config.id}",
   ]
 
   systemd = [
@@ -10,6 +11,7 @@ data "ignition_config" "main" {
     "${var.ign_k8s_node_bootstrap_service_id}",
     "${var.ign_locksmithd_service_id}",
     "${var.ign_kubelet_service_id}",
+    "${data.ignition_systemd_unit.node_name.id}",
   ]
 }
 
@@ -21,4 +23,24 @@ data "ignition_file" "kubeconfig" {
   content {
     content = "${var.kubeconfig_content}"
   }
+}
+
+data "ignition_file" "cloud-provider-config" {
+  filesystem = "root"
+  path       = "/etc/kubernetes/cloud/config"
+  mode       = 0600
+
+  content {
+    content = "${var.cloud_provider_config}"
+  }
+}
+
+data "template_file" "node_name" {
+  template = "${file("${path.module}/resources/services/node-name.service")}"
+}
+
+data "ignition_systemd_unit" "node_name" {
+  name    = "node-name.service"
+  enable  = "${var.cloud_provider_config != "" ? true : false}"
+  content = "${data.template_file.node_name.rendered}"
 }

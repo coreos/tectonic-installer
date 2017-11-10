@@ -39,6 +39,8 @@ data "template_file" "kubelet" {
     kubeconfig_fetch_cmd  = "${var.kubeconfig_fetch_cmd != "" ? "ExecStartPre=${var.kubeconfig_fetch_cmd}" : ""}"
     node_label            = "${var.kubelet_node_label}"
     node_taints_param     = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
+    network_plugin        = "${var.network_plugin}"
+    hostname_override_cmd = "${var.hostname_override_cmd}"
   }
 }
 

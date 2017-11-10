@@ -24,7 +24,7 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --kubeconfig=/etc/kubernetes/kubeconfig \
   --require-kubeconfig \
   --cni-conf-dir=/etc/kubernetes/cni/net.d \
-  --network-plugin=cni \
+  --network-plugin=${network_plugin} \
   --lock-file=/var/run/lock/kubelet.lock \
   --exit-on-lock-contention \
   --pod-manifest-path=/etc/kubernetes/manifests \
@@ -38,7 +38,8 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --client-ca-file=/etc/kubernetes/ca.crt \
   --cloud-provider=${cloud_provider} \
   ${cloud_provider_config} \
-  --anonymous-auth=false
+  --anonymous-auth=false \
+  ${hostname_override_cmd} \
 
 ExecStop=-/usr/bin/rkt stop --uuid-file=/var/cache/kubelet-pod.uuid
 

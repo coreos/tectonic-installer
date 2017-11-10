@@ -70,20 +70,14 @@ variable "ign_tectonic_path_unit_id" {
   type = "string"
 }
 
-variable "container_images" {
-  description = "Container images to use"
-  type        = "map"
-}
-
-variable "image_re" {
-  description = "(internal) Regular expression used to extract repo and tag components from image strings"
-  type        = "string"
-}
-
 variable "public_ssh_key" {
   default = ""
 }
 
 variable "kubeconfig_content" {
+  type = "string"
+}
+
+variable "cloud_provider_config" {
   type = "string"
 }
