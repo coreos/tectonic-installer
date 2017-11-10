@@ -124,3 +124,8 @@ variable "ign_tectonic_path_unit_id" {
   type    = "string"
   default = ""
 }
+
+variable "ign_ca_cert_id_list" {
+  type        = "list"
+  description = "The list of public CA certificate ignition file IDs."
+}
