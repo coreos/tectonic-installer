@@ -128,8 +128,8 @@ data "ignition_user" "core" {
 data "ignition_systemd_unit" "locksmithd" {
   count = "${var.etcd_count}"
 
-  name   = "locksmithd.service"
-  enable = true
+  name    = "locksmithd.service"
+  enabled = true
 
   dropin = [
     {
