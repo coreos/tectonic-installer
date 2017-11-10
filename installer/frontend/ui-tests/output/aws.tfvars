@@ -28,7 +28,6 @@
   "tectonic_base_domain": "tectonic.dev.coreos.systems",
   "tectonic_cluster_cidr": "10.2.0.0/16",
   "tectonic_cluster_name": "test",
-  "tectonic_dns_name": "test",
   "tectonic_etcd_count": 3,
   "tectonic_kube_apiserver_service_ip": "10.3.0.1",
   "tectonic_kube_dns_service_ip": "10.3.0.10",
