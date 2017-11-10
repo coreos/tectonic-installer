@@ -38,8 +38,8 @@ data "ignition_file" "etcd_tls_zip" {
 }
 
 data "ignition_systemd_unit" "etcd_unzip_tls" {
-  name   = "etcd-unzip-tls.service"
-  enable = true
+  name    = "etcd-unzip-tls.service"
+  enabled = true
 
   content = <<EOF
 [Unit]
@@ -60,8 +60,8 @@ EOF
 data "ignition_systemd_unit" "locksmithd" {
   count = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
 
-  name   = "locksmithd.service"
-  enable = true
+  name    = "locksmithd.service"
+  enabled = true
 
   dropin = [
     {

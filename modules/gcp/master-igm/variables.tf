@@ -100,3 +100,8 @@ variable "assets_gcs_location" {
   type        = "string"
   description = "Location on gcs of the Bootkube/Tectonic assets to use (bucket/key)"
 }
+
+variable "ign_ca_cert_id_list" {
+  type        = "list"
+  description = "The list of public CA certificate ignition file IDs."
+}
