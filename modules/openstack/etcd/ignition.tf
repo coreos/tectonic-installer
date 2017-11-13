@@ -118,7 +118,7 @@ data "ignition_file" "resolv_conf" {
 data "ignition_systemd_unit" "etcd3" {
   count  = "${var.instance_count}"
   name   = "etcd-member.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {
@@ -149,7 +149,7 @@ data "ignition_systemd_unit" "locksmithd" {
   count = "${var.instance_count}"
 
   name   = "locksmithd.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {

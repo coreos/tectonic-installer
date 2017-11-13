@@ -14,6 +14,11 @@ resource "matchbox_group" "coreos_install" {
     ignition_endpoint  = "${var.tectonic_metal_matchbox_http_url}/ignition"
     baseurl            = "${var.tectonic_metal_matchbox_http_url}/assets/coreos"
     ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
+
+    append_configs = ["${compact(list(
+      module.custom-cacertificates.ignition_config_data_url,
+      module.tectonic-registry-cache.ignition_config_data_url,
+))}"]
   }
 }
 
@@ -51,9 +56,38 @@ resource "matchbox_group" "controller" {
     etcd_tls_enabled = "${var.tectonic_etcd_tls_enabled}"
 
     # extra data
+    etcd_image_url    = "${replace(var.tectonic_container_images["etcd"],var.tectonic_image_re,"$1")}"
     etcd_image_tag    = "v${var.tectonic_versions["etcd"]}"
     kubelet_image_url = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
     kubelet_image_tag = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
+
+    rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
+    rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+
+    # static IP
+    coreos_static_ip       = "${var.tectonic_static_ip}"
+    coreos_mac_address     = "${element(var.tectonic_metal_controller_macs, count.index)}"
+    coreos_network_adapter = "${var.tectonic_metal_networkadapter}"
+    coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
+    coreos_network_address = "${var.tectonic_static_ip == "" ? "" : lookup(var.tectonic_metal_master_ip, count.index,"")}"
+    coreos_network_gateway = "${var.tectonic_metal_master_gateway}"
+
+    # custom CA Cert
+    coreos_custom_cacertificate = "${replace(var.tectonic_metal_customcacertificate,"\n","\\n")}"
+
+    # custom pause container image
+    pod_infra_image = "${var.tectonic_container_images["pod_infra_image"]}"
+
+    registry_cache_image                = "${var.tectonic_registry_cache_image}"
+    registry_cache_repo                 = "${replace(var.tectonic_registry_cache_image, var.tectonic_image_re, "$1")}"
+    registry_cache_tag                  = "${replace(var.tectonic_registry_cache_image, var.tectonic_image_re, "$2")}"
+    registry_cache_rkt_protocol         = "${var.tectonic_registry_cache_rkt_protocol}"
+    registry_cache_rkt_insecure_options = "${var.tectonic_registry_cache_rkt_insecure_options}"
+
+    append_configs = ["${compact(list(
+      module.custom-cacertificates.ignition_config_data_url,
+      module.tectonic-registry-cache.ignition_config_data_url,
+))}"]
   }
 }
 
@@ -77,5 +111,33 @@ resource "matchbox_group" "worker" {
     kubelet_image_url  = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
     kubelet_image_tag  = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
     kube_version_image = "${var.tectonic_container_images["kube_version"]}"
+
+    rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
+    rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+
+    # static IP
+    coreos_mac_address     = "${element(var.tectonic_metal_worker_macs, count.index)}"
+    coreos_static_ip       = "${var.tectonic_static_ip}"
+    coreos_network_adapter = "${var.tectonic_metal_networkadapter}"
+    coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
+    coreos_network_address = "${var.tectonic_static_ip == "" ? "" : lookup(var.tectonic_metal_worker_ip, count.index, "")}"
+    coreos_network_gateway = "${var.tectonic_metal_worker_gateway}"
+
+    # custom CA Cert
+    coreos_custom_cacertificate = "${replace(var.tectonic_metal_customcacertificate,"\n","\\n")}"
+
+    # custom pause container image
+    pod_infra_image = "${var.tectonic_container_images["pod_infra_image"]}"
+
+    registry_cache_image                = "${var.tectonic_registry_cache_image}"
+    registry_cache_repo                 = "${replace(var.tectonic_registry_cache_image, var.tectonic_image_re, "$1")}"
+    registry_cache_tag                  = "${replace(var.tectonic_registry_cache_image, var.tectonic_image_re, "$2")}"
+    registry_cache_rkt_protocol         = "${var.tectonic_registry_cache_rkt_protocol}"
+    registry_cache_rkt_insecure_options = "${var.tectonic_registry_cache_rkt_insecure_options}"
+
+    append_configs = ["${compact(list(
+      module.custom-cacertificates.ignition_config_data_url,
+      module.tectonic-registry-cache.ignition_config_data_url,
+))}"]
   }
 }

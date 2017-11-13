@@ -185,3 +185,64 @@ SSH public key to use as an authorized key.
 Example: `ssh-rsa AAAB3N...`
 EOF
 }
+
+## Static IP Variables
+##########################
+
+variable "tectonic_static_ip" {
+  type        = "string"
+  description = "configure static ip for nodes (any value other than empty string)"
+  default     = ""
+}
+
+variable "tectonic_metal_networkadapter" {
+  type        = "string"
+  default     = ""
+  description = "Network Adapter Interface ex: eth0"
+}
+
+variable "tectonic_metal_dnsserver" {
+  type        = "string"
+  default     = ""
+  description = "DNS Server IP Address"
+}
+
+variable "tectonic_metal_worker_ip" {
+  type    = "map"
+  default = {}
+
+  description = <<EOF
+Metal Worker IP Address
+
+Example: `tectonic_metal_worker_ip = {
+  "0" = "192.168.2.71/24"
+  "1" = "192.168.2.72/24"
+}`
+EOF
+}
+
+variable "tectonic_metal_worker_gateway" {
+  type        = "string"
+  default     = ""
+  description = "Metal Master Gateway IP Address"
+}
+
+variable "tectonic_metal_master_ip" {
+  type    = "map"
+  default = {}
+
+  description = <<EOF
+Metal Master IP Address
+
+Example: `tectonic_metal_master_ip = {
+  "0" = "192.168.2.71/24"
+  "1" = "192.168.2.72/24"
+}`
+EOF
+}
+
+variable "tectonic_metal_master_gateway" {
+  type        = "string"
+  default     = ""
+  description = "Metal Master Gateway IP Address"
+}

@@ -116,7 +116,7 @@ variable "tectonic_aws_external_master_subnet_ids" {
 
   description = <<EOF
 (optional) List of subnet IDs within an existing VPC to deploy master nodes into.
-Required to use an existing VPC and the list must match the AZ count.
+Required to use an existing VPC, not applicable otherwise.
 
 Example: `["subnet-111111", "subnet-222222", "subnet-333333"]`
 EOF
@@ -129,12 +129,39 @@ variable "tectonic_aws_external_worker_subnet_ids" {
 
   description = <<EOF
 (optional) List of subnet IDs within an existing VPC to deploy worker nodes into.
-Required to use an existing VPC and the list must match the AZ count.
+Required to use an existing VPC, not applicable otherwise.
 
 Example: `["subnet-111111", "subnet-222222", "subnet-333333"]`
 EOF
 
   default = []
+}
+
+variable "tectonic_aws_disable_s3_vpc_endpoint" {
+  default = false
+
+  description = <<EOF
+(optional) Disable creation of an S3 VPC Endpoint. By default, the installer will create one.
+
+S3 VPC endpoints allow EC2 instances to communicate with the S3 service without leaving the AWS network and without
+incurring bandwidth charges for Internet Gateways or NAT Gateways when uploading to or downloading from S3.
+
+If not disabled here, the terraform installer will expect to be able to:
+ a) create an S3 VPC Endpoint
+ b) add a route for that endpoint to any route table attached to either a master or worker subnet
+
+Common reasons to disable (usually only if you are using an external VPC):
+ * The AWS IAM profile used by the installer doesn't have the necessary permissions:
+    * create the S3 VPC endpoint
+    * add S3 VPC endpoint to relevant route tables
+ * You already have an S3 VPC Gateway set up in your external VPC and don't wish to set up another one
+ * You explicitly want your S3 traffic to egress the VPC network in a different way
+
+It is generally recommended that you use an S3 VPC Endpoint in one way or another with Tectonic, as it results in higher throughput
+and lower cost when interacting with any S3-based service.
+
+http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/vpc-endpoints-s3.html
+EOF
 }
 
 variable "tectonic_aws_extra_tags" {

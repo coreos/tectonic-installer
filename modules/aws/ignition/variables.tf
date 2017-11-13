@@ -58,3 +58,35 @@ EOF
 
   type = "string"
 }
+
+variable "custom_cacertificates" {
+  description = <<EOF
+custom SSL CA certificates that should be trusted by Container Linux node
+EOF
+
+  default = []
+}
+
+variable "rkt_image_protocol" {
+  default = ""
+}
+
+variable "rkt_insecure_options" {
+  default = "none"
+}
+
+variable "registry_cache_image" {
+  default = ""
+
+  description = <<EOF
+tectonic-registry-cache container image string (offline). Leave blank to disable registry cache."
+EOF
+}
+
+variable "registry_cache_rkt_protocol" {
+  default = ""
+}
+
+variable "registry_cache_rkt_insecure_options" {
+  default = "none"
+}

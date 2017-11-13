@@ -62,6 +62,7 @@ variable "tectonic_container_images" {
     tectonic_monitoring_auth     = "quay.io/coreos/tectonic-monitoring-auth:v0.0.1"
     tectonic_prometheus_operator = "quay.io/coreos/tectonic-prometheus-operator:v1.5.2"
     tectonic_cluo_operator       = "quay.io/coreos/tectonic-cluo-operator:v0.1.3"
+    pod_infra_image              = "gcr.io/google_containers/pause-amd64:3.0"
   }
 }
 
@@ -406,5 +407,67 @@ variable "tectonic_calico_network_policy" {
 [ALPHA] If set to true, calico network policy support will be deployed.
 WARNING: Enabling an alpha feature means that future updates may become unsupported.
 This should only be enabled on clusters that are meant to be short-lived to begin validating the alpha feature.
+EOF
+}
+
+variable "tectonic_registry_cache_image" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) image string to pull tectonic registry cache image from. Leave blank to disable
+EOF
+}
+
+variable "tectonic_registry_cache_rkt_protocol" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) rkt image protocol string to pull tectonic registry cache image.
+EOF
+}
+
+variable "tectonic_rkt_image_protocol" {
+  type = "string"
+  description = <<EOF
+(optional) Protocol rkt will use when pulling images from registry.
+
+Example: `docker://`
+EOF
+}
+
+variable "tectonic_registry_cache_rkt_insecure_options" {
+  type    = "string"
+  default = "none"
+
+  description = <<EOF
+(optional) rkt insecure options to set when pulling tectonic registry cache image.
+EOF
+}
+
+variable "tectonic_rkt_insecure_options" {
+  type = "string"
+  default = "none"
+
+  description = <<EOF
+(optional) Comma-separated list of insecure options for rkt.
+Example: `image,tls`
+EOF
+}
+
+variable "tectonic_custom_cacertificates" {
+  default = []
+  description = <<EOF
+List of paths to SSL CA Certificates you would like trusted on Kubernetes nodes, in PEM-encoded x509 format.
+
+These certificates will be added to the root of trust on both master and worker nodes via the update-cacertificates-rehash systemd service enabled on every boot.
+
+Example:
+tectonic_custom_cacertificates = [
+  "~/fake-ssl/authority1.crt",
+  "~/fake-ssl/authority2.crt",
+  "~/fake-ssl/authority3.crt"
+]
 EOF
 }

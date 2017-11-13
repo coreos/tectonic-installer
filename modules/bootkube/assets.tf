@@ -165,7 +165,9 @@ data "template_file" "bootkube_sh" {
   template = "${file("${path.module}/resources/bootkube.sh")}"
 
   vars {
-    bootkube_image = "${var.container_images["bootkube"]}"
+    bootkube_image       = "${var.container_images["bootkube"]}"
+    rkt_insecure_options = "${var.rkt_insecure_options}"
+    rkt_image_protocol   = "${var.rkt_image_protocol}"
   }
 }
 

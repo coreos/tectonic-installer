@@ -116,8 +116,10 @@ data "template_file" "tectonic_rkt" {
   template = "${file("${path.module}/resources/tectonic-rkt.sh")}"
 
   vars {
-    hyperkube_image = "${var.container_images["hyperkube"]}"
-    experimental    = "${var.experimental ? "true" : "false"}"
+    hyperkube_image      = "${var.container_images["hyperkube"]}"
+    experimental         = "${var.experimental ? "true" : "false"}"
+    rkt_insecure_options = "${var.rkt_insecure_options}"
+    rkt_image_protocol   = "${var.rkt_image_protocol}"
   }
 }
 

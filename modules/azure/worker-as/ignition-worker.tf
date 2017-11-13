@@ -21,7 +21,7 @@ data "ignition_config" "worker" {
 
 data "ignition_systemd_unit" "docker" {
   name   = "docker.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {
@@ -49,7 +49,7 @@ data "template_file" "kubelet-worker" {
 
 data "ignition_systemd_unit" "kubelet-worker" {
   name    = "kubelet.service"
-  enable  = true
+  enabled = true
   content = "${data.template_file.kubelet-worker.rendered}"
 }
 
@@ -108,7 +108,7 @@ data "ignition_file" "cloud-provider-config" {
 
 data "ignition_systemd_unit" "tectonic" {
   name   = "tectonic.service"
-  enable = true
+  enabled = true
 
   content = <<EOF
 [Unit]

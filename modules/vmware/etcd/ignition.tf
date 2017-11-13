@@ -119,7 +119,7 @@ data "ignition_systemd_unit" "locksmithd" {
   count = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
 
   name   = "locksmithd.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {
@@ -152,7 +152,7 @@ data "template_file" "etcd-cluster" {
 data "ignition_systemd_unit" "etcd3" {
   count  = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
   name   = "etcd-member.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {

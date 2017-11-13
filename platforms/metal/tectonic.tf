@@ -43,6 +43,9 @@ module "bootkube" {
   experimental_enabled = "${var.tectonic_experimental}"
 
   master_count = "${length(var.tectonic_metal_controller_names)}"
+
+  rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+  rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
 }
 
 module "tectonic" {
@@ -83,6 +86,9 @@ module "tectonic" {
   stats_url         = "${var.tectonic_stats_url}"
 
   image_re = "${var.tectonic_image_re}"
+
+  rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+  rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
 }
 
 module "flannel_vxlan" {
@@ -121,5 +127,5 @@ data "archive_file" "assets" {
   # Additionally, data sources do not support managing any lifecycle whatsoever,
   # and therefore, the archive is never deleted. To avoid cluttering the module
   # folder, we write it in the Terraform managed hidden folder `.terraform`.
-  output_path = "./.terraform/generated_${sha1("${module.tectonic.id} ${module.bootkube.id} ${module.flannel_vxlan.id} ${module.calico_network_policy.id}")}.zip"
+  output_path = "./.terraform/generated_${sha1("${module.tectonic.id} ${module.bootkube.id} ${module.flannel_vxlan.id} ${module.calico_network_policy.id} ${module.custom-cacertificates.id} ${module.tectonic-registry-cache.id}")}.zip"
 }

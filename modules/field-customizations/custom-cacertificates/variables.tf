@@ -1,0 +1,4 @@
+variable "cacertificates" {
+  default = []
+}
+

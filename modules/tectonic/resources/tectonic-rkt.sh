@@ -5,7 +5,8 @@
   --trust-keys-from-https \
   --volume assets,kind=host,source="$(pwd)" \
   --mount volume=assets,target=/assets \
-  ${hyperkube_image} \
+  --insecure-options=${rkt_insecure_options} \
+  ${rkt_image_protocol}${hyperkube_image} \
   --net=host \
   --dns=host \
   --exec=/bin/sh -- /assets/tectonic.sh /assets/auth/kubeconfig /assets ${experimental}

@@ -1,4 +1,20 @@
 ---
+networkd:
+  units:
+    {{if .coreos_static_ip}}
+    - name: 00-tectonic.network
+      contents: |
+        [Match]
+        {{if .coreos_network_adapter}}
+        Name={{.coreos_network_adapter}}
+        {{else}}
+        MACAddress={{.coreos_mac_address}}
+        {{end}}
+        [Network]
+        DNS={{.coreos_network_dns}}
+        Address={{.coreos_network_address}}
+        Gateway={{.coreos_network_gateway}}
+    {{end}}
 systemd:
   units:
     - name: docker.service
@@ -52,7 +68,9 @@ systemd:
           --volume var-lib-cni,kind=host,source=/var/lib/cni \
           --mount volume=var-lib-cni,target=/var/lib/cni \
           --volume var-log,kind=host,source=/var/log \
-          --mount volume=var-log,target=/var/log"
+          --mount volume=var-log,target=/var/log \
+          --insecure-options={{.rkt_insecure_options}}"
+        ExecStartPre=/usr/bin/systemctl set-environment KUBELET_IMAGE_URL={{.rkt_image_protocol}}${KUBELET_IMAGE_URL}
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/cni/net.d
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/checkpoint-secrets
@@ -75,13 +93,13 @@ systemd:
           --node-labels=node-role.kubernetes.io/node \
           {{.cni_bin_dir_flag}} \
           --cluster_dns={{.k8s_dns_service_ip}} \
-          --cluster_domain=cluster.local
+          --cluster_domain=cluster.local \
+          --pod-infra-container-image={{.pod_infra_image}}
         ExecStop=-/usr/bin/rkt stop --uuid-file=/var/run/kubelet-pod.uuid
         Restart=always
         RestartSec=5
         [Install]
         WantedBy=multi-user.target
-
 storage:
   files:
     - path: /etc/kubernetes/.empty
@@ -106,3 +124,9 @@ passwd:
     - name: core
       ssh_authorized_keys:
         - {{.ssh_authorized_key}}
+{{if gt (len .append_configs) 0}}
+ignition:
+  config:
+    append: {{range .append_configs}}
+      - source: "{{.}}"
+{{end}}
