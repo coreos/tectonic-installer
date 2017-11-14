@@ -307,3 +307,7 @@ tectonic_vanilla_k8s = false
 // The number of worker nodes to be created.
 // This applies only to cloud platforms.
 tectonic_worker_count = "3"
+
+// (optional) This declares the IP range(s) allowed inbound to Security Groups created by the installer, in CIDR notation.
+// If omitted, ports 80, 443, 22, and ICMP Echo Reply will allow traffic from 0.0.0.0/0
+// custom_sg_cidrs = ["1.2.3.4/29", "5.6.7.8/20"]
