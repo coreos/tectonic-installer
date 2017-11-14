@@ -1,14 +1,18 @@
+locals {
+  domains = "${length(var.tectonc_etcd_domains) ? "${var.tectonic_metal_controller_domains}" : "${var.tectonict_etcd_domains}"}"
+}
+
 resource "null_resource" "etcd_secrets" {
   count = "${var.tectonic_etcd_tls_enabled
              && var.tectonic_self_hosted_etcd == ""
              && length(compact(var.tectonic_etcd_servers)) == 0
-             ? length(var.tectonic_metal_controller_domains)
+             ? length(local.domains)
              : 0
           }"
 
   connection {
     type    = "ssh"
-    host    = "${element(var.tectonic_metal_controller_domains, count.index)}"
+    host    = "${element(local.domains, count.index)}"
     user    = "core"
     timeout = "60m"
   }

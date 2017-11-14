@@ -165,6 +165,36 @@ Example: `["52:54:00:b2:2f:86", "52:54:00:c3:61:77"]`
 EOF
 }
 
+variable "tectonic_metal_etcd_names" {
+  type = "list"
+
+  description = <<EOF
+Ordered list of etcd host names.
+
+Example: `["etcd1", "etcd2"]`
+EOF
+}
+
+variable "tectonic_metal_etcd_domains" {
+  type = "list"
+
+  description = <<EOF
+Ordered list of etcd domain names.
+
+Example: `["etcd1.example.com", "etcd2.example.com"]`
+EOF
+}
+
+variable "tectonic_metal_etcd_macs" {
+  type = "list"
+
+  description = <<EOF
+Ordered list of etcd MAC addresses for matching machines.
+
+Example: `["52:54:00:b2:2f:86", "52:54:00:c3:61:77"]`
+EOF
+}
+
 variable "tectonic_ssh_authorized_key" {
   type = "string"
 

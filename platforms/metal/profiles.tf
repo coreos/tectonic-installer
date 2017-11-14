@@ -28,3 +28,9 @@ resource "matchbox_profile" "tectonic_worker" {
   name                   = "tectonic-worker"
   container_linux_config = "${file("${path.module}/cl/bootkube-worker.yaml.tmpl")}"
 }
+
+// Self-hosted Kubernetes Etcd profile
+resource "matchbox_profile" "tectonic_etcd" {
+  name                   = "tectonic-etcd"
+  container_linux_config = "${file("${path.module}/cl/bootkube-etcd.yaml.tmpl")}"
+}

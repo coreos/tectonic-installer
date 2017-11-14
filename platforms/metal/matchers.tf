@@ -45,6 +45,27 @@ module "ignition_masters" {
   use_metadata              = false
 }
 
+resource "matchbox_group" "etcd" {
+  count   = "${length(var.tectonic_metal_etcd_names)}"
+  name    = "${format("%s-%s", var.tectonic_cluster_name, element(var.tectonic_metal_etcd_names, count.index))}"
+  profile = "${matchbox_profile.tectonic_etcd.name}"
+
+  selector {
+    mac = "${element(var.tectonic_metal_etcd_macs, count.index)}"
+    os  = "installed"
+  }
+
+  metadata {
+    domain_name        = "${element(var.tectonic_metal_etcd_domains, count.index)}"
+    etcd_enabled       = "true"
+    ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
+
+    ign_docker_dropin_json              = "${jsonencode(module.ignition_masters.docker_dropin_rendered)}"
+    ign_etcd_dropin_json                = "${jsonencode(module.ignition_masters.etcd_dropin_rendered_list[count.index])}"
+    ign_max_user_watches_json           = "${jsonencode(module.ignition_masters.max_user_watches_rendered)}"
+  }
+}
+
 resource "matchbox_group" "controller" {
   count   = "${length(var.tectonic_metal_controller_names)}"
   name    = "${format("%s-%s", var.tectonic_cluster_name, element(var.tectonic_metal_controller_names, count.index))}"

@@ -166,9 +166,8 @@ variable "tectonic_etcd_count" {
 
   description = <<EOF
 The number of etcd nodes to be created.
-If set to zero, the count of etcd nodes will be determined automatically.
+The count of etcd nodes should always be odd numbers so there is a corum
 
-Note: This is not supported on bare metal.
 EOF
 }
 
