@@ -1,3 +1,7 @@
+variable "custom_sg_cidrs" {
+  type = "list"
+}
+
 variable "master_az_count" {
   type = "string"
 }
