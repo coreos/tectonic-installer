@@ -1,11 +1,11 @@
 locals {
-  domains = "${length(var.tectonic_metal_etcd_domains) == 0 ? "${var.tectonic_metal_controller_domains}" : "${var.tectonic_metal_etcd_domains}"}"
+  domains = "${coalescelist(var.tectonic_metal_etcd_domains, var.tectonic_metal_controller_domains)}"
 }
 
 resource "null_resource" "etcd_secrets" {
   count = "${var.tectonic_etcd_tls_enabled
              && var.tectonic_self_hosted_etcd == ""
-             && length(compact(var.tectonic_etcd_servers)) == 0
+             && length(var.tectonic_etcd_servers) == 0
              ? length(local.domains)
              : 0
           }"
