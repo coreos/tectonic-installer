@@ -108,7 +108,7 @@ data "template_file" "installer_kubelet_env" {
 
 data "ignition_file" "installer_kubelet_env" {
   filesystem = "root"
-  path       = "/etc/kubernetes/installer/kubelet.env"
+  path       = "/etc/kubernetes/kubelet.env"
   mode       = 0644
 
   content {
