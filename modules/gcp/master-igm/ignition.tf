@@ -13,7 +13,8 @@ data "ignition_config" "main" {
     var.ign_bootkube_service_id,
     var.ign_tectonic_service_id,
     var.ign_bootkube_path_unit_id,
-    var.ign_tectonic_path_unit_id
+    var.ign_tectonic_path_unit_id,
+    data.ignition_systemd_unit.move_assets.id
    ))}"]
 }
 
@@ -25,4 +26,14 @@ data "ignition_file" "kubeconfig" {
   content {
     content = "${var.kubeconfig_content}"
   }
+}
+
+data "template_file" "move_assets" {
+  template = "${file("${path.module}/resources/services/move-assets.service")}"
+}
+
+data "ignition_systemd_unit" "move_assets" {
+  name    = "move-assets.service"
+  enable  = true
+  content = "${data.template_file.move_assets.rendered}"
 }

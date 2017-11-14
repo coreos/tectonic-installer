@@ -66,19 +66,6 @@ resource "google_compute_address" "ssh-masters-ip" {
   name = "${var.cluster_name}-masters-ip"
 }
 
-resource "google_compute_forwarding_rule" "api-external-fwd-rule" {
-  load_balancing_scheme = "EXTERNAL"
-  name                  = "${var.cluster_name}-api-external-fwd-rule"
-  ip_address            = "${google_compute_address.ssh-masters-ip.address}"
-  region                = "${var.gcp_region}"
-  target                = "${google_compute_target_pool.master-targetpool.self_link}"
-  port_range            = "443"
-}
-
-resource "google_compute_address" "ingress-ip" {
-  name = "${var.cluster_name}-ingress-ip"
-}
-
 resource "google_compute_forwarding_rule" "api-external-ssh-fwd-rule" {
   load_balancing_scheme = "EXTERNAL"
   name                  = "${var.cluster_name}-api-external-ssh-fwd-rule"
@@ -86,6 +73,10 @@ resource "google_compute_forwarding_rule" "api-external-ssh-fwd-rule" {
   region                = "${var.gcp_region}"
   target                = "${google_compute_target_pool.master-targetpool.self_link}"
   port_range            = "22"
+}
+
+resource "google_compute_address" "ingress-ip" {
+  name = "${var.cluster_name}-ingress-ip"
 }
 
 resource "google_compute_forwarding_rule" "ingress-external-http-fwd-rule" {
