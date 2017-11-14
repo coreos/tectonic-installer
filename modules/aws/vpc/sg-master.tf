@@ -93,7 +93,7 @@ resource "aws_security_group_rule" "master_ingress_http" {
   security_group_id = "${aws_security_group.master.id}"
 
   protocol    = "tcp"
-  cidr_blocks = ${var.custom_sg_cidrs}"
+  cidr_blocks = "${var.custom_sg_cidrs}"
   from_port   = 80
   to_port     = 80
 }
