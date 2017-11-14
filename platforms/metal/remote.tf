@@ -1,5 +1,5 @@
 locals {
-  domains = "${length(var.tectonc_etcd_domains) ? "${var.tectonic_metal_controller_domains}" : "${var.tectonict_etcd_domains}"}"
+  domains = "${length(var.tectonic_metal_etcd_domains) == 0 ? "${var.tectonic_metal_controller_domains}" : "${var.tectonic_metal_etcd_domains}"}"
 }
 
 resource "null_resource" "etcd_secrets" {
