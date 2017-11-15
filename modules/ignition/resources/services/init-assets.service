@@ -2,6 +2,8 @@
 Description=Download Tectonic Assets
 ConditionPathExists=!/opt/init_assets.done
 Before=bootkube.service kubelet-env.service
+Wants=network-online.target network.target
+After=network-online.target
 
 [Service]
 Type=oneshot
