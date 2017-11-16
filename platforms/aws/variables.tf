@@ -1,7 +1,7 @@
 variable "custom_sg_cidrs" {
   description = "List of CIDRs to add to whitelist in security groups created by the installer."
-  type = "list"
-  default = [ "0.0.0.0/0", ]
+  type        = "list"
+  default     = ["0.0.0.0/0"]
 }
 
 variable "tectonic_aws_config_version" {
