@@ -7,12 +7,12 @@ module "container_linux" {
 
 // Install CoreOS to disk
 resource "matchbox_group" "coreos_install" {
-  count   = "${length(var.tectonic_metal_controller_names) + length(var.tectonic_metal_worker_names)}"
-  name    = "${format("coreos-install-%s", element(concat(var.tectonic_metal_controller_names, var.tectonic_metal_worker_names), count.index))}"
+  count   = "${length(var.tectonic_metal_etcd_names) + length(var.tectonic_metal_controller_names) + length(var.tectonic_metal_worker_names)}"
+  name    = "${format("coreos-install-%s", element(concat(var.tectonic_metal_etcd_names, var.tectonic_metal_controller_names, var.tectonic_metal_worker_names), count.index))}"
   profile = "${matchbox_profile.coreos_install.name}"
 
   selector {
-    mac = "${element(concat(var.tectonic_metal_controller_macs, var.tectonic_metal_worker_macs), count.index)}"
+    mac = "${element(concat(var.tectonic_metal_etcd_macs, var.tectonic_metal_controller_macs, var.tectonic_metal_worker_macs), count.index)}"
   }
 
   metadata {
@@ -32,9 +32,9 @@ module "ignition_masters" {
   bootstrap_upgrade_cl      = "${var.tectonic_bootstrap_upgrade_cl}"
   cluster_name              = "${var.tectonic_cluster_name}"
   container_images          = "${var.tectonic_container_images}"
-  etcd_advertise_name_list  = "${var.tectonic_metal_controller_domains}"
-  etcd_count                = "${length(var.tectonic_metal_controller_names)}"
-  etcd_initial_cluster_list = "${var.tectonic_metal_controller_domains}"
+  etcd_advertise_name_list  = "${coalescelist(var.tectonic_metal_etcd_domains, var.tectonic_metal_controller_domains)}"
+  etcd_count                = "${length(coalescelist(var.tectonic_metal_etcd_domains, var.tectonic_metal_controller_domains))}"
+  etcd_initial_cluster_list = "${coalescelist(var.tectonic_metal_etcd_domains, var.tectonic_metal_controller_domains)}"
   image_re                  = "${var.tectonic_image_re}"
   kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   kubelet_cni_bin_dir       = "${var.tectonic_networking == "calico" || var.tectonic_networking == "canal" ? "/var/lib/cni/bin" : "" }"
@@ -78,7 +78,7 @@ resource "matchbox_group" "controller" {
 
   metadata {
     domain_name        = "${element(var.tectonic_metal_controller_domains, count.index)}"
-    etcd_enabled       = "${var.tectonic_self_hosted_etcd != "" ? "false" : length(compact(var.tectonic_etcd_servers)) != 0 ? "false" : "true"}"
+    etcd_enabled       = "${(var.tectonic_self_hosted_etcd != "") || (length(compact(var.tectonic_etcd_servers)) != 0) || (length(compact(var.tectonic_metal_etcd_names)) != 0) ? "false" : "true"}"
     exclude_tectonic   = "${var.tectonic_vanilla_k8s}"
     ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
 

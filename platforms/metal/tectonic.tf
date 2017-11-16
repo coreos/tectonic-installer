@@ -18,7 +18,7 @@ module "etcd_certs" {
   self_signed           = "${var.tectonic_self_hosted_etcd != "" ? "true" : length(compact(var.tectonic_etcd_servers)) == 0 ? "true" : "false"}"
   service_cidr          = "${var.tectonic_service_cidr}"
 
-  etcd_cert_dns_names = "${var.tectonic_metal_controller_domains}"
+  etcd_cert_dns_names = "${coalescelist(var.tectonic_metal_etcd_domains, var.tectonic_metal_controller_domains)}"
 }
 
 module "ingress_certs" {
@@ -81,8 +81,10 @@ module "bootkube" {
   kubelet_key_pem      = "${module.kube_certs.kubelet_key_pem}"
 
   etcd_endpoints = "${split(",",
-    length(compact(var.tectonic_etcd_servers)) == 0
+    (length(compact(var.tectonic_etcd_servers)) == 0) && (length(compact(var.tectonic_metal_etcd_names)) == 0)
       ? join(",", var.tectonic_metal_controller_domains)
+      : length(compact(var.tectonic_metal_etcd_names)) != 0
+      ? join(",", var.tectonic_metal_etcd_domains)
       : join(",", var.tectonic_etcd_servers)
     )}"
 
