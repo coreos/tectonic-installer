@@ -12,6 +12,9 @@ This document gives an overview of variables used in the bare metal platform of 
 | tectonic_metal_controller_domains | Ordered list of controller domain names.<br><br>Example: `["node2.example.com", "node3.example.com"]` | list | - |
 | tectonic_metal_controller_macs | Ordered list of controller MAC addresses for matching machines.<br><br>Example: `["52:54:00:a1:9c:ae"]` | list | - |
 | tectonic_metal_controller_names | Ordered list of controller names.<br><br>Example: `["node1"]` | list | - |
+| tectonic_metal_etcd_domains | (optional) Ordered list of etcd domain names.<br><br>Example: `["etcd1.example.com", "etcd2.example.com"]` | list | `<list>` |
+| tectonic_metal_etcd_macs | (optional) Ordered list of etcd MAC addresses for matching machines.<br><br>Example: `["52:54:00:b2:2f:86", "52:54:00:c3:61:77"]` | list | `<list>` |
+| tectonic_metal_etcd_names | (optional) Ordered list of etcd host names.<br><br>Example: `["etcd1", "etcd2"]` | list | `<list>` |
 | tectonic_metal_ingress_domain | The domain name which resolves to Tectonic Ingress (i.e. worker node(s))<br><br>Example: `tectonic.example.com` | string | - |
 | tectonic_metal_matchbox_ca | The content of the Matchbox CA certificate to trust.<br><br>Example: ``` <<EOD -----BEGIN CERTIFICATE----- MIIFDTCCAvWgAwIBAgIJAIuXq10k2OFlMA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNV ... Od27a+1We/P5ey7WRlwCfuEcFV7nYS/qMykYdQ9fxHSPgTPlrGrSwKstaaIIqOkE kA== -----END CERTIFICATE----- EOD ``` | string | - |
 | tectonic_metal_matchbox_client_cert | The content of the Matchbox client TLS certificate.<br><br>Example: ``` <<EOD -----BEGIN CERTIFICATE----- MIIEYDCCAkigAwIBAgICEAEwDQYJKoZIhvcNAQELBQAwEjEQMA4GA1UEAwwHZmFr ... jyXQv9IZPMTwOndF6AVLH7l1F0E= -----END CERTIFICATE----- EOD ``` | string | - |

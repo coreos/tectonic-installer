@@ -166,19 +166,20 @@ EOF
 }
 
 variable "tectonic_metal_etcd_names" {
-  type = "list"
+  type    = "list"
   default = []
+
   description = <<EOF
 (optional) Ordered list of etcd host names.
 
 Example: `["etcd1", "etcd2"]`
 EOF
-
 }
 
 variable "tectonic_metal_etcd_domains" {
-  type = "list"
+  type    = "list"
   default = []
+
   description = <<EOF
 (optional) Ordered list of etcd domain names.
 
@@ -187,8 +188,9 @@ EOF
 }
 
 variable "tectonic_metal_etcd_macs" {
-  type = "list"
+  type    = "list"
   default = []
+
   description = <<EOF
 (optional) Ordered list of etcd MAC addresses for matching machines.
 

@@ -60,9 +60,9 @@ resource "matchbox_group" "etcd" {
     etcd_enabled       = "true"
     ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
 
-    ign_docker_dropin_json              = "${jsonencode(module.ignition_masters.docker_dropin_rendered)}"
-    ign_etcd_dropin_json                = "${jsonencode(module.ignition_masters.etcd_dropin_rendered_list[count.index])}"
-    ign_max_user_watches_json           = "${jsonencode(module.ignition_masters.max_user_watches_rendered)}"
+    ign_docker_dropin_json    = "${jsonencode(module.ignition_masters.docker_dropin_rendered)}"
+    ign_etcd_dropin_json      = "${jsonencode(module.ignition_masters.etcd_dropin_rendered_list[count.index])}"
+    ign_max_user_watches_json = "${jsonencode(module.ignition_masters.max_user_watches_rendered)}"
   }
 }
 

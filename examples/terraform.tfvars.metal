@@ -91,9 +91,7 @@ tectonic_container_linux_version = "latest"
 // tectonic_etcd_client_key_path = "/dev/null"
 
 // The number of etcd nodes to be created.
-// If set to zero, the count of etcd nodes will be determined automatically.
-// 
-// Note: This is not supported on bare metal.
+// The count of etcd nodes should always be odd numbers so there is a corum
 tectonic_etcd_count = "0"
 
 // (optional) List of external etcd v3 servers to connect with (hostnames/IPs only).
@@ -145,6 +143,21 @@ tectonic_metal_controller_macs = ""
 // 
 // Example: `["node1"]`
 tectonic_metal_controller_names = ""
+
+// (optional) Ordered list of etcd domain names.
+// 
+// Example: `["etcd1.example.com", "etcd2.example.com"]`
+// tectonic_metal_etcd_domains = ""
+
+// (optional) Ordered list of etcd MAC addresses for matching machines.
+// 
+// Example: `["52:54:00:b2:2f:86", "52:54:00:c3:61:77"]`
+// tectonic_metal_etcd_macs = ""
+
+// (optional) Ordered list of etcd host names.
+// 
+// Example: `["etcd1", "etcd2"]`
+// tectonic_metal_etcd_names = ""
 
 // The domain name which resolves to Tectonic Ingress (i.e. worker node(s))
 // 
