@@ -455,7 +455,7 @@ def runRSpecTest(testFilePath, dockerArgs, credentials) {
         throw error
       } finally {
         reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
-        archiveArtifacts allowEmptyArchive: true, artifacts: 'tests/rspec/logs/**/*.log'
+        archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
         withDockerContainer(params.builder_image) {
          withCredentials(creds) {
            sh """#!/bin/bash -xe
