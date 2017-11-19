@@ -83,6 +83,10 @@ variable "worker_count" {
   description = "Count of worker nodes to be created."
 }
 
+variable "worker_subnet" {
+  type        = "string"
+}
+
 variable "fault_domains" {
   type = "string"
 }

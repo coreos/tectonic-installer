@@ -68,10 +68,10 @@ resource "azurerm_virtual_machine_scale_set" "tectonic_masters" {
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
   upgrade_policy_mode = "Manual"
+  single_placement_group = false
 
   sku {
     name     = "${var.vm_size}"
-    tier     = "Standard"
     capacity = "${var.master_count}"
   }
 
@@ -92,9 +92,9 @@ resource "azurerm_virtual_machine_scale_set" "tectonic_masters" {
 
   os_profile {
     computer_name_prefix = "${var.cluster_name}-master-"
-    admin_username       = "core"
-    admin_password       = ""
-    custom_data          = "${base64encode("${data.ignition_config.master.rendered}")}"
+    admin_username = "core"
+    admin_password = ""
+    custom_data    = "${base64encode("${data.ignition_config.master.rendered}")}"
   }
 
   os_profile_linux_config {
@@ -118,7 +118,7 @@ resource "azurerm_virtual_machine_scale_set" "tectonic_masters" {
   }
 
   tags = "${merge(map(
-    "Name", "${var.cluster_name}-master-${count.index}",
+    "Name", "${var.cluster_name}-masters",
     "tectonicClusterID", "${var.cluster_id}"),
     var.extra_tags)}"
 }

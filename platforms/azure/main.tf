@@ -86,6 +86,8 @@ module "etcd" {
 }
 
 # Workaround for https://github.com/hashicorp/terraform/issues/4084
+# TODO: Express this differently, now that `locals` have been introduced
+# TODO: Do we need to pull out `primaryAvailabilitySetName` in the Scale Sets implementation?
 data "null_data_source" "cloud_provider" {
   inputs = {
     "cloud"                      = "${var.tectonic_azure_cloud_environment}"
@@ -98,7 +100,7 @@ data "null_data_source" "cloud_provider" {
     "subnetName"                 = "${module.vnet.worker_subnet_name}"
     "securityGroupName"          = "${module.vnet.worker_nsg_name}"
     "vnetName"                   = "${module.vnet.vnet_id}"
-    "primaryAvailabilitySetName" = "${module.workers.availability_set_name}"
+    #"primaryAvailabilitySetName" = "${module.workers.availability_set_name}"
   }
 }
 
@@ -210,6 +212,7 @@ module "workers" {
   tectonic_kube_dns_service_ip      = "${module.bootkube.kube_dns_service_ip}"
   vm_size                           = "${var.tectonic_azure_worker_vm_size}"
   worker_count                      = "${var.tectonic_worker_count}"
+  worker_subnet                     = "${module.vnet.worker_subnet}"
 }
 
 module "dns" {
