@@ -130,7 +130,7 @@ module "ignition_masters" {
 }
 
 module "masters" {
-  source = "../../modules/azure/master-as"
+  source = "../../modules/azure/master-ss"
 
   cloud_provider_config             = "${jsonencode(data.null_data_source.cloud_provider.inputs)}"
   cluster_id                        = "${module.tectonic.cluster_id}"
@@ -154,7 +154,9 @@ module "masters" {
   ign_tx_off_service_id             = "${module.ignition_masters.tx_off_service_id}"
   kubeconfig_content                = "${module.bootkube.kubeconfig}"
   location                          = "${var.tectonic_azure_location}"
+  master_backend_pool               = "${module.vnet.master_backend_pool}"
   master_count                      = "${var.tectonic_master_count}"
+  master_subnet                     = "${module.vnet.master_subnet}"
   network_interface_ids             = "${module.vnet.master_network_interface_ids}"
   public_ssh_key                    = "${var.tectonic_azure_ssh_key}"
   resource_group_name               = "${module.resource_group.name}"
@@ -180,7 +182,7 @@ module "ignition_workers" {
 }
 
 module "workers" {
-  source = "../../modules/azure/worker-as"
+  source = "../../modules/azure/worker-ss"
 
   cloud_provider_config             = "${jsonencode(data.null_data_source.cloud_provider.inputs)}"
   cluster_id                        = "${module.tectonic.cluster_id}"

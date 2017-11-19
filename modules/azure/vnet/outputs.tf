@@ -70,3 +70,16 @@ output "ingress_fqdn" {
 output "api_fqdn" {
   value = "${var.base_domain == "" ? join("", azurerm_public_ip.api_ip.*.fqdn) : "${var.cluster_name}-api.${var.base_domain}"}"
 }
+
+# TODO: This needs to be more robust, to handle instances when Azure private is used, etc.
+output "master_backend_pool" {
+  value = "${azurerm_lb_backend_address_pool.api-lb.id}"
+}
+
+# TODO: Should we implement worker backend pool as well?
+/*
+output "worker_backend_pool" {
+  value = "${azurerm_lb_backend_address_pool.api-lb.id}"
+}
+*/
+
