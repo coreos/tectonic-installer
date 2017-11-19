@@ -90,16 +90,17 @@ module "etcd" {
 # TODO: Do we need to pull out `primaryAvailabilitySetName` in the Scale Sets implementation?
 data "null_data_source" "cloud_provider" {
   inputs = {
-    "cloud"                      = "${var.tectonic_azure_cloud_environment}"
-    "tenantId"                   = "${data.azurerm_client_config.current.tenant_id}"
-    "subscriptionId"             = "${data.azurerm_client_config.current.subscription_id}"
-    "aadClientId"                = "${data.azurerm_client_config.current.client_id}"
-    "aadClientSecret"            = "${var.tectonic_azure_client_secret}"
-    "resourceGroup"              = "${module.resource_group.name}"
-    "location"                   = "${var.tectonic_azure_location}"
-    "subnetName"                 = "${module.vnet.worker_subnet_name}"
-    "securityGroupName"          = "${module.vnet.worker_nsg_name}"
-    "vnetName"                   = "${module.vnet.vnet_id}"
+    "cloud"             = "${var.tectonic_azure_cloud_environment}"
+    "tenantId"          = "${data.azurerm_client_config.current.tenant_id}"
+    "subscriptionId"    = "${data.azurerm_client_config.current.subscription_id}"
+    "aadClientId"       = "${data.azurerm_client_config.current.client_id}"
+    "aadClientSecret"   = "${var.tectonic_azure_client_secret}"
+    "resourceGroup"     = "${module.resource_group.name}"
+    "location"          = "${var.tectonic_azure_location}"
+    "subnetName"        = "${module.vnet.worker_subnet_name}"
+    "securityGroupName" = "${module.vnet.worker_nsg_name}"
+    "vnetName"          = "${module.vnet.vnet_id}"
+
     #"primaryAvailabilitySetName" = "${module.workers.availability_set_name}"
   }
 }

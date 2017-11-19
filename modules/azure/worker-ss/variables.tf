@@ -84,7 +84,7 @@ variable "worker_count" {
 }
 
 variable "worker_subnet" {
-  type        = "string"
+  type = "string"
 }
 
 variable "fault_domains" {
