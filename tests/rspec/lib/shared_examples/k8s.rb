@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'shared_examples/build_folder_setup'
 require 'smoke_test'
 require 'forensic'
 require 'cluster_factory'
@@ -12,8 +13,13 @@ require 'webdriver_helpers'
 require 'k8s_conformance_tests'
 
 RSpec.shared_examples 'withRunningCluster' do |tf_vars_path, vpn_tunnel = false|
+  include_examples('withBuildFolderSetup', tf_vars_path)
+  include_examples('withRunningClusterExistingBuildFolder', vpn_tunnel)
+end
+
+RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = false|
   before(:all) do
-    @cluster = ClusterFactory.from_tf_vars(TFVarsFile.new(tf_vars_path))
+    @cluster = ClusterFactory.from_tf_vars(@tfvars_file)
     begin
       @cluster.start
     rescue => e
@@ -39,17 +45,12 @@ RSpec.shared_examples 'withRunningCluster' do |tf_vars_path, vpn_tunnel = false|
     @cluster.master_ip_addresses.each do |ip|
       cmd = "sudo sh -c 'cat /etc/kubernetes/inactive-manifests/kube-system-kube-apiserver-*.json'"
 
-      retries = 0
-      begin
-        stdout, _, fin = ssh_exec(ip, cmd, 20)
-        raise unless fin.zero?
-        expect { JSON.parse(stdout) }.to_not raise_error
-      rescue
-        retries += 1
-        expect(retries).to be < 20
-        puts "failed to exec '#{cmd}'; retrying in 3 seconds"
-        sleep 3
-        retry
+      Retriable.with_retries(limit: 20, sleep: 3) do
+        stdout, stderr, exit_code = ssh_exec(ip, cmd, 20)
+        unless exit_code.zero? && JSON.parse(stdout)
+          raise "could not retrieve manifest checkpoints via #{cmd} on ip #{ip}, "\
+                "last try failed with:\n#{stdout}\n#{stderr}\nstatus code: #{exit_code}"
+        end
       end
     end
   end
@@ -64,16 +65,12 @@ RSpec.shared_examples 'withRunningCluster' do |tf_vars_path, vpn_tunnel = false|
             .join(' && ')
       cmd = "sudo sh -c '#{cmd}'"
 
-      retries = 0
-      begin
-        _, _, fin = ssh_exec(ip, cmd, 20)
-        raise unless fin.zero?
-      rescue
-        retries += 1
-        expect(retries).to be < 20
-        puts "failed to exec '#{cmd}'; retrying in 3 seconds"
-        sleep 3
-        retry
+      Retriable.with_retries(limit: 20, sleep: 3) do
+        stdout, stderr, exit_code = ssh_exec(ip, cmd, 20)
+        unless exit_code.zero?
+          raise "could not retrieve secret checkpoints via #{cmd} on ip #{ip}, "\
+                "last try failed with:\n#{stdout}\n#{stderr}\nstatus code: #{exit_code}"
+        end
       end
     end
   end
@@ -117,8 +114,23 @@ RSpec.shared_examples 'withRunningCluster' do |tf_vars_path, vpn_tunnel = false|
     end
   end
 
+  describe 'scale up worker cluster' do
+    before(:all) do
+      platform = @cluster.env_variables['PLATFORM']
+      # remove platform AZURE when the JIRA https://jira.prod.coreos.systems/browse/INST-619 is fixed
+      skip_platform = %w[metal azure]
+      skip "This test is not ready to run in #{platform}" if skip_platform.include?(platform)
+    end
+
+    it 'can scale up nodes by 1 worker' do
+      @cluster.tfvars_file.add_worker_node(@cluster.tfvars_file.worker_count + 1)
+
+      expect { @cluster.update_cluster }.to_not raise_error
+    end
+  end
+
   it 'passes the k8s conformance tests', :conformance_tests do
-    conformance_test = K8sConformanceTest.new(@cluster.kubeconfig, vpn_tunnel)
+    conformance_test = K8sConformanceTest.new(@cluster.kubeconfig, vpn_tunnel, @cluster.env_variables['PLATFORM'])
     expect { conformance_test.run }.to_not raise_error
   end
 end
