@@ -139,17 +139,6 @@ variable "ign_rm_assets_path_unit_id" {
   type = "string"
 }
 
-variable "ign_ca_cert_s3_list" {
-  type        = "list"
-  description = "The list of CA certificates present on S3"
-}
-
-variable "ign_ca_cert_list_count" {
-  type        = "string"
-  description = "The length of ign_ca_cert_s3_list"
-}
-
-variable "ign_ca_cert_pem_list" {
-  type        = "list"
-  description = "The actual content of CA certificates present on S3. This is only used for hash calculation, not for provisioning."
+variable "s3_bucket" {
+  type = "string"
 }
