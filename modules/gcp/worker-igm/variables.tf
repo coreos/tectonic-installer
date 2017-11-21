@@ -59,8 +59,3 @@ variable "public_ssh_key" {
 variable "kubeconfig_content" {
   type = "string"
 }
-
-variable "ign_ca_cert_id_list" {
-  type        = "list"
-  description = "The list of public CA certificate ignition file IDs."
-}
