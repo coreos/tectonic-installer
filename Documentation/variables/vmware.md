@@ -6,6 +6,10 @@ This document gives an overview of variables used in the VMware platform of the 
 
 | Name | Description | Type | Default |
 |------|-------------|:----:|:-----:|
+| tectonic_storage_metadata_name | A metadata name tag for the storage class | string | `thin` |
+| tectonic_storage_params | Set to true, if extra parameters are needed for the StorageClass definition | string | `true` |
+| tectonic_storage_params_list | A list of extra storage parameters to add to the storage class configuration (platform dependent), formatted as a list of yaml values.<br><br>Example: [ "type: gp2", "diskformat: thin" ] | list | `<list>` |
+| tectonic_storageclass_provisioner | The provisioner to use for creating the storage class | string | `kubernetes.io/vsphere-volume` |
 | tectonic_vmware_controller_domain | The domain name which resolves to controller node(s) | string | - |
 | tectonic_vmware_etcd_clusters | Terraform map of etcd node(s) vSphere Clusters, Example:   tectonic_vmware_etcd_clusters = {   "0" = "myvmwarecluster-0"   "1" = "myvmwarecluster-1"   "2" = "myvmwarecluster-2" } | map | - |
 | tectonic_vmware_etcd_datacenters | terraform map of etcd node(s) Virtual DataCenters, example:   tectonic_vmware_etcd_datacenters = {   "0" = "myvmwaredc-0"   "1" = "myvmwaredc-1"   "2" = "myvmwaredc-2" } | map | - |

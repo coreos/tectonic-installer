@@ -21,4 +21,8 @@ This document gives an overview of variables used in the Openstack/Neutron platf
 | tectonic_openstack_subnet_cidr | The subnet CIDR for the master/worker/etcd compute nodes. This CIDR will also be assigned to the created the OpenStack subnet resource. | string | `192.168.1.0/24` |
 | tectonic_openstack_worker_flavor_id | The flavor id for worker instances as given in `openstack flavor list`. Specifies the size (CPU/Memory/Drive) of the VM.<br><br>Note: Set either tectonic_openstack_worker_flavor_name or tectonic_openstack_worker_flavor_id. | string | `` |
 | tectonic_openstack_worker_flavor_name | The flavor name for worker instances as given in `openstack flavor list`. Specifies the size (CPU/Memory/Drive) of the VM.<br><br>Note: Set either tectonic_openstack_worker_flavor_name or tectonic_openstack_worker_flavor_id. | string | `` |
+| tectonic_storage_metadata_name | A metadata name tag for the storage class | string | `standard` |
+| tectonic_storage_params | Set to true, if extra parameters are needed for the StorageClass definition | string | `false` |
+| tectonic_storage_params_list | A list of extra storage parameters to add to the storage class configuration (platform dependent), formatted as a list of yaml values.<br><br>Example: [ "type: gp2", "diskformat: thin" ] | list | `<list>` |
+| tectonic_storageclass_provisioner | The provisioner to use for creating the storage class | string | `kubernetes.io/cinder` |
 

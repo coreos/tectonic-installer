@@ -136,6 +136,11 @@ module "tectonic" {
   master_count      = "${var.tectonic_master_count}"
   stats_url         = "${var.tectonic_stats_url}"
 
+  tectonic_storage_params           = "${var.tectonic_storage_params}"
+  tectonic_storage_params_list      = "${var.tectonic_storage_params_list}"
+  tectonic_storageclass_provisioner = "${var.tectonic_storageclass_provisioner}"
+  tectonic_storage_metadata_name    = "${var.tectonic_storage_metadata_name}"
+
   image_re = "${var.tectonic_image_re}"
 }
 

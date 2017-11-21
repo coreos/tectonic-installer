@@ -156,3 +156,31 @@ variable "service_cidr" {
   description = "A CIDR notation IP range from which to assign service cluster IPs"
   type        = "string"
 }
+
+variable "tectonic_storageclass_provisioner" {
+  description = "The provisioner to use for creating the storage class"
+  type        = "string"
+}
+
+variable "tectonic_storage_metadata_name" {
+  description = "A metadata name tag for the storage class"
+  type        = "string"
+}
+
+variable "tectonic_storage_params" {
+  description = "Set to true, if extra parameters are needed for the StorageClass definition"
+  default     = true
+}
+
+variable "tectonic_storage_params_list" {
+  description = <<EOF
+A list of extra storage parameters to add to the storage
+class configuration (platform dependent), formatted as a
+list of yaml values.
+
+Example:
+[ "type: gp2", "diskformat: thin" ]
+EOF
+
+  type = "list"
+}

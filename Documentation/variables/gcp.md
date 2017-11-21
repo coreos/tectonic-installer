@@ -19,4 +19,8 @@ This document gives an overview of variables used in the Google Cloud platform o
 | tectonic_gcp_worker_disk_size | The size of the disk in gigabytes for the root block device of worker nodes. | string | `30` |
 | tectonic_gcp_worker_disktype | The type of disk (pd-standard or pd-ssd) for the worker nodes. | string | `pd-standard` |
 | tectonic_gcp_worker_gce_type | Instance size for the worker node(s). Example: `n1-standard-2`. | string | `n1-standard-2` |
+| tectonic_storage_metadata_name | A metadata name tag for the storage class | string | `standard` |
+| tectonic_storage_params | Set to true, if extra parameters are needed for the StorageClass definition | string | `true` |
+| tectonic_storage_params_list | A list of extra storage parameters to add to the storage class configuration (platform dependent), formatted as a list of yaml values.<br><br>Example: [ "type: gp2", "diskformat: thin" ] | list | `<list>` |
+| tectonic_storageclass_provisioner | The provisioner to use for creating the storage class | string | `kubernetes.io/gce-pd` |
 
