@@ -27,17 +27,17 @@ data "template_file" "etcd_names" {
 
 data "template_file" "advertise_client_urls" {
   count    = "${var.etcd_count}"
-  template = "${local.scheme}://${var.etcd_advertise_name_list[count.index]}:2379"
+  template = "${locals.scheme}://${var.etcd_advertise_name_list[count.index]}:2379"
 }
 
 data "template_file" "initial_advertise_peer_urls" {
   count    = "${var.etcd_count}"
-  template = "${local.scheme}://${var.etcd_advertise_name_list[count.index]}:2380"
+  template = "${locals.scheme}://${var.etcd_advertise_name_list[count.index]}:2380"
 }
 
 data "template_file" "initial_cluster" {
   count    = "${length(var.etcd_initial_cluster_list) > 0 ? var.etcd_count : 0}"
-  template = "${data.template_file.etcd_names.*.rendered[count.index]}=${local.scheme}://${local.etcd_initial_cluster_list[count.index]}:2380"
+  template = "${data.template_file.etcd_names.*.rendered[count.index]}=${locals.scheme}://${local.etcd_initial_cluster_list[count.index]}:2380"
 }
 
 data "template_file" "etcd" {
@@ -53,7 +53,7 @@ data "template_file" "etcd" {
     metadata_deps               = "${var.use_metadata ? local.metadata_deps : ""}"
     metadata_env                = "${var.use_metadata ? local.metadata_env : ""}"
     name                        = "${data.template_file.etcd_names.*.rendered[count.index]}"
-    scheme                      = "${local.scheme}"
+    scheme                      = "${locals.scheme}"
   }
 }
 
