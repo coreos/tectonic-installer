@@ -157,17 +157,11 @@ EOF
   container_image               = "${var.tectonic_container_images["etcd"]}"
   core_public_keys              = ["${module.secrets.core_public_key_openssh}"]
   ign_coreos_metadata_dropin_id = "${module.ignition_masters.coreos_metadata_dropin_id}"
+  ign_etcd_crt_id_list          = "${module.ignition_masters.etcd_crt_id_list}"
   ign_etcd_dropin_id_list       = "${module.ignition_masters.etcd_dropin_id_list}"
   instance_count                = "${var.tectonic_etcd_count}"
   self_hosted_etcd              = "${var.tectonic_self_hosted_etcd}"
-  tls_ca_crt_pem                = "${module.etcd_certs.etcd_ca_crt_pem}"
-  tls_client_crt_pem            = "${module.etcd_certs.etcd_client_crt_pem}"
-  tls_client_key_pem            = "${module.etcd_certs.etcd_client_key_pem}"
   tls_enabled                   = "${var.tectonic_etcd_tls_enabled}"
-  tls_peer_crt_pem              = "${module.etcd_certs.etcd_peer_crt_pem}"
-  tls_peer_key_pem              = "${module.etcd_certs.etcd_peer_key_pem}"
-  tls_server_crt_pem            = "${module.etcd_certs.etcd_server_crt_pem}"
-  tls_server_key_pem            = "${module.etcd_certs.etcd_server_key_pem}"
 }
 
 module "ignition_masters" {
@@ -180,8 +174,14 @@ module "ignition_masters" {
   custom_ca_cert_pem_list   = "${var.tectonic_custom_ca_pem_list}"
   etcd_advertise_name_list  = "${data.template_file.etcd_hostname_list.*.rendered}"
   etcd_ca_cert_pem          = "${module.etcd_certs.etcd_ca_crt_pem}"
+  etcd_client_crt_pem       = "${module.etcd_certs.etcd_client_crt_pem}"
+  etcd_client_key_pem       = "${module.etcd_certs.etcd_client_key_pem}"
   etcd_count                = "${var.tectonic_etcd_count}"
   etcd_initial_cluster_list = "${data.template_file.etcd_hostname_list.*.rendered}"
+  etcd_peer_crt_pem         = "${module.etcd_certs.etcd_peer_crt_pem}"
+  etcd_peer_key_pem         = "${module.etcd_certs.etcd_peer_key_pem}"
+  etcd_server_crt_pem       = "${module.etcd_certs.etcd_server_crt_pem}"
+  etcd_server_key_pem       = "${module.etcd_certs.etcd_server_key_pem}"
   etcd_tls_enabled          = "${var.tectonic_etcd_tls_enabled}"
   image_re                  = "${var.tectonic_image_re}"
   ingress_ca_cert_pem       = "${module.ingress_certs.ca_cert_pem}"
