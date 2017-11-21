@@ -63,27 +63,3 @@ resource "aws_s3_bucket_object" "kubeconfig" {
       "tectonicClusterID", "${module.tectonic.cluster_id}"
     ), var.tectonic_aws_extra_tags)}"
 }
-
-locals {
-  ign_ca_cert_s3_list = [
-    "${formatlist("s3://%s/%s", aws_s3_bucket_object.tectonic_assets.bucket, aws_s3_bucket_object.custom_ca_cert_pem.*.key)}",
-  ]
-}
-
-# custom CA certs
-resource "aws_s3_bucket_object" "custom_ca_cert_pem" {
-  count = "${local.tectonic_ca_count}"
-
-  bucket  = "${aws_s3_bucket.tectonic.bucket}"
-  key     = "custom_ca_${count.index}.pem"
-  content = "${module.ignition_masters.ca_cert_pem_list[count.index]}"
-  acl     = "private"
-
-  server_side_encryption = "AES256"
-
-  tags = "${merge(map(
-      "Name", "${var.tectonic_cluster_name}-custom-ca-${count.index}",
-      "KubernetesCluster", "${var.tectonic_cluster_name}",
-      "tectonicClusterID", "${module.tectonic.cluster_id}"
-    ), var.tectonic_aws_extra_tags)}"
-}
