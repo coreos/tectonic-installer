@@ -86,19 +86,22 @@ module "etcd" {
 }
 
 # Workaround for https://github.com/hashicorp/terraform/issues/4084
+# TODO: Express this differently, now that `locals` have been introduced
+# TODO: Do we need to pull out `primaryAvailabilitySetName` in the Scale Sets implementation?
 data "null_data_source" "cloud_provider" {
   inputs = {
-    "cloud"                      = "${var.tectonic_azure_cloud_environment}"
-    "tenantId"                   = "${data.azurerm_client_config.current.tenant_id}"
-    "subscriptionId"             = "${data.azurerm_client_config.current.subscription_id}"
-    "aadClientId"                = "${data.azurerm_client_config.current.client_id}"
-    "aadClientSecret"            = "${var.tectonic_azure_client_secret}"
-    "resourceGroup"              = "${module.resource_group.name}"
-    "location"                   = "${var.tectonic_azure_location}"
-    "subnetName"                 = "${module.vnet.worker_subnet_name}"
-    "securityGroupName"          = "${module.vnet.worker_nsg_name}"
-    "vnetName"                   = "${module.vnet.vnet_id}"
-    "primaryAvailabilitySetName" = "${module.workers.availability_set_name}"
+    "cloud"             = "${var.tectonic_azure_cloud_environment}"
+    "tenantId"          = "${data.azurerm_client_config.current.tenant_id}"
+    "subscriptionId"    = "${data.azurerm_client_config.current.subscription_id}"
+    "aadClientId"       = "${data.azurerm_client_config.current.client_id}"
+    "aadClientSecret"   = "${var.tectonic_azure_client_secret}"
+    "resourceGroup"     = "${module.resource_group.name}"
+    "location"          = "${var.tectonic_azure_location}"
+    "subnetName"        = "${module.vnet.worker_subnet_name}"
+    "securityGroupName" = "${module.vnet.worker_nsg_name}"
+    "vnetName"          = "${module.vnet.vnet_id}"
+
+    #"primaryAvailabilitySetName" = "${module.workers.availability_set_name}"
   }
 }
 
@@ -130,7 +133,7 @@ module "ignition_masters" {
 }
 
 module "masters" {
-  source = "../../modules/azure/master-as"
+  source = "../../modules/azure/master-ss"
 
   cloud_provider_config             = "${jsonencode(data.null_data_source.cloud_provider.inputs)}"
   cluster_id                        = "${module.tectonic.cluster_id}"
@@ -154,7 +157,9 @@ module "masters" {
   ign_tx_off_service_id             = "${module.ignition_masters.tx_off_service_id}"
   kubeconfig_content                = "${module.bootkube.kubeconfig}"
   location                          = "${var.tectonic_azure_location}"
+  master_backend_pool               = "${module.vnet.master_backend_pool}"
   master_count                      = "${var.tectonic_master_count}"
+  master_subnet                     = "${module.vnet.master_subnet}"
   network_interface_ids             = "${module.vnet.master_network_interface_ids}"
   public_ssh_key                    = "${var.tectonic_azure_ssh_key}"
   resource_group_name               = "${module.resource_group.name}"
@@ -180,7 +185,7 @@ module "ignition_workers" {
 }
 
 module "workers" {
-  source = "../../modules/azure/worker-as"
+  source = "../../modules/azure/worker-ss"
 
   cloud_provider_config             = "${jsonencode(data.null_data_source.cloud_provider.inputs)}"
   cluster_id                        = "${module.tectonic.cluster_id}"
@@ -208,6 +213,7 @@ module "workers" {
   tectonic_kube_dns_service_ip      = "${module.bootkube.kube_dns_service_ip}"
   vm_size                           = "${var.tectonic_azure_worker_vm_size}"
   worker_count                      = "${var.tectonic_worker_count}"
+  worker_subnet                     = "${module.vnet.worker_subnet}"
 }
 
 module "dns" {
