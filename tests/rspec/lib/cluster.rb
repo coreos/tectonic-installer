@@ -130,6 +130,7 @@ class Cluster
   def apply
     ::Timeout.timeout(30 * 60) do # 30 minutes
       3.times do |idx|
+        print "tf_apply_attempts=#{idx}"
         env = env_variables
         env['TF_LOG'] = 'TRACE' if idx.positive?
         return true if system(env, "make -C ../.. apply | tee ../../build/#{@name}/terraform-apply.log")
@@ -141,6 +142,7 @@ class Cluster
   def destroy
     ::Timeout.timeout(30 * 60) do # 30 minutes
       3.times do |idx|
+        print "tf_destroy_attempts=#{idx}"
         env = env_variables
         env['TF_LOG'] = 'TRACE' if idx.positive?
         return true if system(env, "make -C ../.. destroy | tee ../../build/#{@name}/terraform-destroy.log")
