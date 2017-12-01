@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: isg
+  namespace: kube-system
+spec:
+  containers:
+  - name: isg
+    image: halverneus/static-file-server:1.1
+    env:
+      - name: PORT
+        value: "8888"
+      - name: FOLDER
+        value: "/ignition"
+    command:
+    - /serve
+    volumeMounts:
+    - mountPath: /ignition
+      name: ignition
+      readOnly: true
+  hostNetwork: true
+  volumes:
+  - name: ignition
+    hostPath:
+      path: /opt/tectonic

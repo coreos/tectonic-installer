@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ignition
+  namespace: kube-system
+type: Opaque
+data:
+${master_ign}
+${worker_ign}
+---
+apiVersion: apps/v1beta2
+kind: DaemonSet
+metadata:
+  name: isg
+  namespace: kube-system
+  labels:
+    tier: control-plane
+    k8s-app: isg
+    pod-anti-affinity: isg
+spec:
+  selector:
+    matchLabels:
+      tier: control-plane
+      k8s-app: isg
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        tier: control-plane
+        k8s-app: isg
+    spec:
+      containers:
+      - name: isg
+        image: halverneus/static-file-server:1.1
+        env:
+        - name: PORT
+          value: "8888"
+        - name: FOLDER
+          value: "/ignition"
+        command:
+        - /serve
+        volumeMounts:
+        - mountPath: /ignition
+          name: ignition
+          readOnly: true
+      hostNetwork: true
+      tolerations:
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      volumes:
+      - name: ignition
+        secret:
+          secretName: ignition
+      hostNetwork: true

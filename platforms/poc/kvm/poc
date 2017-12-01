@@ -1,0 +1,169 @@
+#!/bin/bash
+
+set -o pipefail
+
+BRIDGE=${BRIDGE:-metal0}
+GPG=${GPG:-/usr/bin/gpg}
+VOLUME_POOL=default
+VOLUME_DIR=/var/lib/libvirt/images
+
+CHANNEL=stable
+VERSION=1520.9.0
+BASE_URL=https://$CHANNEL.release.core-os.net/amd64-usr/$VERSION
+
+function main {
+  case "$1" in
+    "download") download;;
+    "start-bootstrap") start_bootstrap $2;;
+    "start-workload") start_workload;;
+    "add-workload") add_workload;;
+    "start-dns") start_dns;;
+    "stop-dns") stop_dns;;
+    "destroy") destroy;;
+    *)
+      exit 2
+      ;;
+  esac
+}
+
+function start_dns {
+    systemd-run --unit=poc-dnsmasq -p WorkingDirectory=$(pwd) \
+      rkt run \
+      --insecure-options=image,ondisk \
+      --stage1-path=/usr/lib/rkt/stage1-images/stage1-coreos.aci \
+      --net=metal0:IP=10.1.1.3 \
+      --dns=10.1.1.3 \
+      quay.io/coreos/dnsmasq \
+      --caps-retain=CAP_NET_ADMIN,CAP_NET_BIND_SERVICE \
+      --mount volume=config,target=/etc/dnsmasq.conf \
+      --volume config,kind=host,source=$PWD/dnsmasq/metal0.conf \
+      --mount volume=resolv,target=/etc/resolv.dnsmasq \
+      --volume resolv,kind=host,source=$PWD/dnsmasq/resolv.dnsmasq \
+      --mount volume=hosts,target=/etc/hosts.dnsmasq \
+      --volume hosts,kind=host,source=$PWD/dnsmasq/hosts.dnsmasq
+}
+
+function stop_dns {
+    systemctl stop poc-dnsmasq
+    rkt gc --grace-period=0s
+    systemctl reset-failed
+}
+
+function require_sudo {
+  if [ "$EUID" -ne 0 ]
+    then echo "Please run as root"
+    exit
+  fi
+}
+
+function require_user {
+  if [ "$EUID" -eq 0 ]
+    then echo "Please don't run as root"
+    exit
+  fi
+}
+
+function download {
+  require_sudo
+
+  if [ ! -d $VOLUME_DIR ]; then
+    echo "Creating $VOLUME_DIR"
+    mkdir -p $VOLUME_DIR
+  fi
+
+  # QEMU image
+  echo "Downloading CoreOS $CHANNEL $VERSION coreos_production_qemu_image.img.bz2..."
+  curl -# $BASE_URL/coreos_production_qemu_image.img.bz2 -o $VOLUME_DIR/coreos_production_qemu_image.img.bz2
+  echo "Downloading coreos_production_qemu_image.img.bz2.sig"
+  curl -# $BASE_URL/coreos_production_qemu_image.img.bz2.sig -o $VOLUME_DIR/coreos_production_qemu_image.img.bz2.sig
+  
+  echo "OpenPGP Verify"
+  $GPG --verify $VOLUME_DIR/coreos_production_qemu_image.img.bz2.sig
+  
+  echo "Decompressing bz2 to raw image"
+  bzip2 -d -f $VOLUME_DIR/coreos_production_qemu_image.img.bz2
+  rm $VOLUME_DIR/coreos_production_qemu_image.img.bz2.sig
+}
+
+function start_bootstrap {
+    create_disk bootstrap
+    start bootstrap $1 0a:0b:0c:0d:0e:20
+}
+
+function start_workload {
+    start_server master1 0a:0b:0c:0d:0e:10
+    start_server worker1 0a:0b:0c:0d:0e:50
+    start_server worker2 0a:0b:0c:0d:0e:51
+}
+
+function add_workload {
+    start_server worker3 0a:0b:0c:0d:0e:52
+}
+
+function start_server {
+    cat <<EOF | ct -pretty >$1.ign
+ignition:
+  config:
+    replace:
+      source: "http://api.k8s:8888/$1.ign"
+EOF
+    create_disk $1
+    start $1 $1.ign $2
+}
+
+function start {
+  require_sudo
+  mkdir -p data
+  cp $2 data/$1.ign 
+  create_disk $1
+  cp data/$1.ign $VOLUME_DIR/
+
+  NS="type='kvm' xmlns:qemu='http:\/\/libvirt.org\/schemas\/domain\/qemu\/1.0'"
+  QEMU_FW_CFG="<qemu:commandline>\n  <qemu:arg value='-fw_cfg'/>\n  <qemu:arg value='name=opt/com.coreos/config,file=$VOLUME_DIR/$NODE.ign'/>\n</qemu:commandline>"
+
+  virt-install --connect qemu:///system \
+      --name $1 \
+      --vcpus=1 \
+      --memory=2048 \
+      --disk path=$VOLUME_DIR/$NODE.qcow2,format=qcow2,bus=virtio \
+      --network=bridge:$BRIDGE,mac=$3 \
+      --boot hd \
+      --os-type=linux \
+      --os-variant=virtio26 \
+      --noautoconsole \
+      --print-xml \
+  | sed -e "s/type=\"kvm\"/$NS/" \
+  | sed "/<\/devices>/a $QEMU_FW_CFG" \
+  > data/$1.domain.xml
+
+  virsh define data/$1.domain.xml
+  virsh start $1
+}
+
+function destroy {
+    destroy_node bootstrap
+    destroy_node master1
+    destroy_node worker1
+    destroy_node worker2
+    destroy_node worker3
+}
+
+function create_disk {
+  NODE=$1
+  # create a copy-on-write image based on the CoreOS QEMU image
+  qemu-img create -f qcow2 -o backing_file=$VOLUME_DIR/coreos_production_qemu_image.img $VOLUME_DIR/$NODE.qcow2
+}
+
+function destroy_node {
+  set -x
+
+  require_sudo
+  virsh destroy $1
+  virsh undefine $1
+  virsh pool-refresh default
+
+  virsh vol-delete --pool $VOLUME_POOL $1.qcow2
+  virsh vol-delete --pool $VOLUME_POOL $1.ign
+}
+
+main $@

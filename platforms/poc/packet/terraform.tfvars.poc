@@ -1,0 +1,57 @@
+tectonic_networking = "flannel"
+
+tectonic_admin_email = "me@here.com"
+
+tectonic_admin_password = "123"
+
+tectonic_cl_channel = "stable"
+
+tectonic_cluster_cidr = "10.2.0.0/16"
+
+tectonic_cluster_name = "foo"
+
+tectonic_experimental = false
+
+tectonic_license_path = "/root/tectonic-license"
+
+tectonic_pull_secret_path = "/root/pull-secret"
+
+tectonic_metal_controller_domain = "api.k8s"
+
+// master
+
+tectonic_metal_controller_domains = ["master1.k8s"]
+
+tectonic_metal_controller_names = ["master1"]
+
+tectonic_metal_controller_macs = ["0a:0b:0c:0d:0e:10"]
+
+// worker
+
+tectonic_metal_worker_names = ["worker1", "worker2", "worker3"]
+
+tectonic_metal_worker_domains = ["worker1.k8s", "worker2.k8s", "worker3.k8s"]
+
+tectonic_metal_worker_macs = ["0a:0b:0c:0d:0e:50", "0a:0b:0c:0d:0e:51", "0a:0b:0c:0d:0e:52"]
+
+tectonic_metal_ingress_domain = "cluster.k8s"
+
+// unused
+
+tectonic_metal_matchbox_ca = ""
+
+tectonic_metal_matchbox_client_cert = ""
+
+tectonic_metal_matchbox_client_key = ""
+
+tectonic_metal_matchbox_http_url = ""
+
+tectonic_metal_matchbox_rpc_endpoint = ""
+
+tectonic_base_domain = ""
+
+tectonic_master_count = 0
+
+tectonic_worker_count = 0
+
+tectonic_etcd_count = 0

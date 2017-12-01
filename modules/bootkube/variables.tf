@@ -117,6 +117,10 @@ variable "master_count" {
   type        = "string"
 }
 
+variable "worker_count" {
+  type = "string"
+}
+
 variable "node_monitor_grace_period" {
   description = "Amount of time which we allow running Node to be unresponsive before marking it unhealthy. Must be N times more than kubelet's nodeStatusUpdateFrequency, where N means number of retries allowed for kubelet to post node status. N must be stricly > 1."
   type        = "string"
@@ -176,4 +180,14 @@ variable "service_cidr" {
 variable "versions" {
   description = "Container versions to use"
   type        = "map"
+}
+
+variable "master_ign_list" {
+  type    = "list"
+  default = []
+}
+
+variable "worker_ign_list" {
+  type    = "list"
+  default = []
 }

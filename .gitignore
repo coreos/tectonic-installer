@@ -14,3 +14,5 @@ bin/
 bin_test/
 matchbox/
 modules/update-payload/generated/
+platforms/poc/kvm/data/
+*.ign

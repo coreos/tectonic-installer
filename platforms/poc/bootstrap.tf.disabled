@@ -1,0 +1,20 @@
+provider "matchbox" {
+  endpoint    = "${var.tectonic_metal_matchbox_rpc_endpoint}"
+  client_cert = "${var.tectonic_metal_matchbox_client_cert}"
+  client_key  = "${var.tectonic_metal_matchbox_client_key}"
+  ca          = "${var.tectonic_metal_matchbox_ca}"
+}
+
+resource "matchbox_group" "master" {
+  name    = "master"
+  profile = "${matchbox_profile.master.name}"
+
+  selector {
+    type = "master"
+  }
+}
+
+resource "matchbox_profile" "master" {
+  name         = "master"
+  raw_ignition = "${data.ignition_config.master.rendered}"
+}

@@ -11,6 +11,7 @@ spec:
     command:
     - ./hyperkube
     - scheduler
+    - --v=5
     - --kubeconfig=/etc/kubernetes/kubeconfig
     - --leader-elect=true
     volumeMounts:

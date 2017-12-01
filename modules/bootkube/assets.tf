@@ -1,3 +1,17 @@
+data "template_file" "master_ign" {
+  count = "${var.master_count}"
+
+  template = <<EOF
+  master${count.index+1}.ign: ${base64encode(var.master_ign_list[count.index])}EOF
+}
+
+data "template_file" "worker_ign" {
+  count = "${var.worker_count}"
+
+  template = <<EOF
+  worker${count.index+1}.ign: ${base64encode(var.worker_ign_list[count.index])}EOF
+}
+
 # Self-hosted manifests (resources/generated/manifests/)
 resource "template_dir" "bootkube" {
   source_dir      = "${path.module}/resources/manifests"
@@ -66,6 +80,9 @@ resource "template_dir" "bootkube" {
 
     cloud_provider_profile = "${var.cloud_provider != "" ? "${var.cloud_provider}" : "metal"}"
     cloud_config_path      = "${var.cloud_config_path}"
+
+    master_ign = "${join("\n", data.template_file.master_ign.*.rendered)}"
+    worker_ign = "${join("\n", data.template_file.worker_ign.*.rendered)}"
   }
 }
 
