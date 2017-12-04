@@ -41,4 +41,8 @@ This document gives an overview of variables used in the AWS platform of the Tec
 | tectonic_aws_worker_root_volume_size | The size of the volume in gigabytes for the root block device of worker nodes. | string | `30` |
 | tectonic_aws_worker_root_volume_type | The type of volume for the root block device of worker nodes. | string | `gp2` |
 | tectonic_dns_name | (optional) DNS prefix used to construct the console and API server endpoints. | string | `` |
+| tectonic_storage_metadata_name | A metadata name tag for the storage class | string | `gp2` |
+| tectonic_storage_params | Set to true, if extra parameters are needed for the StorageClass definition | string | `true` |
+| tectonic_storage_params_list | A list of extra storage parameters to add to the storage class configuration (platform dependent), formatted as a list of yaml values.<br><br>Example: [ "type: gp2", "diskformat: thin" ] | list | `<list>` |
+| tectonic_storageclass_provisioner | The provisioner to use for creating the storage class | string | `kubernetes.io/aws-ebs` |
 

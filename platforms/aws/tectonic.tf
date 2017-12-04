@@ -127,6 +127,11 @@ module "tectonic" {
   container_base_images = "${var.tectonic_container_base_images}"
   versions              = "${var.tectonic_versions}"
 
+  tectonic_storage_params           = "${var.tectonic_storage_params}"
+  tectonic_storage_params_list      = "${var.tectonic_storage_params_list}"
+  tectonic_storageclass_provisioner = "${var.tectonic_storageclass_provisioner}"
+  tectonic_storage_metadata_name    = "${var.tectonic_storage_metadata_name}"
+
   license_path     = "${var.tectonic_vanilla_k8s ? "/dev/null" : pathexpand(var.tectonic_license_path)}"
   pull_secret_path = "${var.tectonic_vanilla_k8s ? "/dev/null" : pathexpand(var.tectonic_pull_secret_path)}"
 
@@ -150,10 +155,10 @@ module "tectonic" {
   identity_server_key_pem  = "${module.identity_certs.server_key_pem}"
 
   console_client_id = "tectonic-console"
-  kubectl_client_id = "tectonic-kubectl"
   ingress_kind      = "NodePort"
-  self_hosted_etcd  = "${var.tectonic_self_hosted_etcd}"
+  kubectl_client_id = "tectonic-kubectl"
   master_count      = "${var.tectonic_master_count}"
+  self_hosted_etcd  = "${var.tectonic_self_hosted_etcd}"
   stats_url         = "${var.tectonic_stats_url}"
 
   image_re = "${var.tectonic_image_re}"

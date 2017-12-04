@@ -224,6 +224,23 @@ tectonic_pull_secret_path = ""
 // The maximum size of this IP range is /12
 // tectonic_service_cidr = "10.3.0.0/16"
 
+// A metadata name tag for the storage class
+tectonic_storage_metadata_name = "standard"
+
+// Set to true, if extra parameters are needed for the StorageClass definition
+tectonic_storage_params = false
+
+// A list of extra storage parameters to add to the storage
+// class configuration (platform dependent), formatted as a
+// list of yaml values.
+// 
+// Example:
+// [ "type: gp2", "diskformat: thin" ]
+tectonic_storage_params_list = ""
+
+// The provisioner to use for creating the storage class
+tectonic_storageclass_provisioner = "kubernetes.io/cinder"
+
 // Validity period of the self-signed certificates (in hours).
 // Default is 3 years.
 // This setting is ignored if user provided certificates are used.

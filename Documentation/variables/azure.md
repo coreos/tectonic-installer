@@ -30,4 +30,8 @@ This document gives an overview of variables used in the Azure platform of the T
 | tectonic_azure_vnet_cidr_block | (optional) Range of IP addresses assigned to the Virtual Network in which the cluster nodes run. This should not overlap with any other networks, such as the Kubernetes cluster (pod) range, service range or a private datacenter connected via ExpressRoute." | string | `10.0.0.0/16` |
 | tectonic_azure_worker_storage_type | (optional) Storage account type for the worker node(s). Example: Premium_LRS. Using Premium storage is constrained by the of instance specified in 'tectonic_azure_worker_vm_size'. See https://docs.microsoft.com/en-us/azure/storage/storage-premium-storage#supported-vms | string | `Premium_LRS` |
 | tectonic_azure_worker_vm_size | (optional) Instance size for the worker node(s). Example: Standard_DS2_v2. | string | `Standard_DS2_v2` |
+| tectonic_storage_metadata_name | A metadata name tag for the storage class | string | `standard` |
+| tectonic_storage_params | Set to true, if extra parameters are needed for the StorageClass definition | string | `false` |
+| tectonic_storage_params_list | A list of extra storage parameters to add to the storage class configuration (platform dependent), formatted as a list of yaml values.<br><br>Example: [ "type: gp2", "diskformat: thin" ] | list | `<list>` |
+| tectonic_storageclass_provisioner | The provisioner to use for creating the storage class | string | `kubernetes.io/azure-disk` |
 

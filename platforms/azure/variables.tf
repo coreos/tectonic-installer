@@ -294,3 +294,32 @@ EOF
     usdodeast          = 2
   }
 }
+
+variable "tectonic_storageclass_provisioner" {
+  description = "The provisioner to use for creating the storage class"
+  default     = "kubernetes.io/azure-disk"
+}
+
+variable "tectonic_storage_metadata_name" {
+  description = "A metadata name tag for the storage class"
+  default     = "standard"
+}
+
+variable "tectonic_storage_params" {
+  description = "Set to true, if extra parameters are needed for the StorageClass definition"
+  default     = false
+}
+
+variable "tectonic_storage_params_list" {
+  description = <<EOF
+A list of extra storage parameters to add to the storage
+class configuration (platform dependent), formatted as a
+list of yaml values.
+
+Example:
+[ "type: gp2", "diskformat: thin" ]
+EOF
+
+  type    = "list"
+  default = []
+}

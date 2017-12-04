@@ -118,12 +118,12 @@ module "tectonic" {
   admin_email    = "${var.tectonic_admin_email}"
   admin_password = "${var.tectonic_admin_password}"
 
-  update_channel = "${var.tectonic_update_channel}"
   update_app_id  = "${var.tectonic_update_app_id}"
+  update_channel = "${var.tectonic_update_channel}"
   update_server  = "${var.tectonic_update_server}"
 
-  ca_generated = "${var.tectonic_ca_cert == "" ? false : true}"
   ca_cert      = "${module.kube_certs.ca_cert_pem}"
+  ca_generated = "${var.tectonic_ca_cert == "" ? false : true}"
 
   ingress_ca_cert_pem = "${module.ingress_certs.ca_cert_pem}"
   ingress_cert_pem    = "${module.ingress_certs.cert_pem}"
@@ -135,13 +135,18 @@ module "tectonic" {
   identity_server_key_pem  = "${module.identity_certs.server_key_pem}"
 
   console_client_id = "tectonic-console"
-  kubectl_client_id = "tectonic-kubectl"
   ingress_kind      = "NodePort"
-  self_hosted_etcd  = "${var.tectonic_self_hosted_etcd}"
+  kubectl_client_id = "tectonic-kubectl"
   master_count      = "${var.tectonic_master_count}"
+  self_hosted_etcd  = "${var.tectonic_self_hosted_etcd}"
   stats_url         = "${var.tectonic_stats_url}"
 
   image_re = "${var.tectonic_image_re}"
+
+  tectonic_storage_params           = "${var.tectonic_storage_params}"
+  tectonic_storage_params_list      = "${var.tectonic_storage_params_list}"
+  tectonic_storageclass_provisioner = "${var.tectonic_storageclass_provisioner}"
+  tectonic_storage_metadata_name    = "${var.tectonic_storage_metadata_name}"
 }
 
 module "flannel_vxlan" {

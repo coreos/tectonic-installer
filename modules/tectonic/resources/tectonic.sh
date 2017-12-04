@@ -155,6 +155,9 @@ kubectl create -f secrets/ca-cert.yaml
 kubectl create -f secrets/identity-grpc-client.yaml
 kubectl create -f secrets/identity-grpc-server.yaml
 
+echo "Creating Storage Class"
+kubectl create -f storage/storage-class.yaml
+
 echo "Creating Ingress"
 kubectl create -f ingress/default-backend/configmap.yaml
 kubectl create -f ingress/default-backend/service.yaml
