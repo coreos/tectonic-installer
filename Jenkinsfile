@@ -357,9 +357,6 @@ pipeline {
     }
 
     stage('Build docker image')  {
-      when {
-        branch 'master'
-      }
       steps {
         node('worker && ec2') {
           forcefullyCleanWorkspace()
@@ -367,9 +364,9 @@ pipeline {
             ansiColor('xterm') {
               unstash 'clean-repo'
               sh """
-                docker build -t quay.io/coreos/tectonic-installer:master -f images/tectonic-installer/Dockerfile .
+                docker build -t quay.io/coreos/tectonic-installer:f82cae02 -f images/tectonic-installer/Dockerfile .
                 docker login -u="$QUAY_ROBOT_USERNAME" -p="$QUAY_ROBOT_SECRET" quay.io
-                docker push quay.io/coreos/tectonic-installer:master
+                docker push quay.io/coreos/tectonic-installer:f82cae02
                 docker logout quay.io
               """
               cleanWs notFailBuild: true
