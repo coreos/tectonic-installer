@@ -459,7 +459,7 @@ def runRSpecTest(testFilePath, dockerArgs, credentials) {
         withDockerContainer(params.builder_image) {
          withCredentials(creds) {
            sh """#!/bin/bash -xe
-           ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs
+           ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
            """
          }
         }
