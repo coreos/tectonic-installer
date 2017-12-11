@@ -34,13 +34,16 @@ def generate_tls(path, cluster_name, domain, etcd_server_count)
     ['ingress/ingress.key', server_ingress.key_material.private_key],
     ['ingress/ingress.crt', server_ingress.to_pem]
   ].each do |cert_name, contents|
-    save_to_file(path, cert_name, contents)
+    save_tls_to_file(path, cert_name, contents)
   end
 end
 
 def generate_api_certs(cluster_name, domain)
   root_kube = certificate_authority('kube-ca', 'bootkube')
 
+  # when in bare-metal tests we have a pre defined dns name (example.com)
+  # and we need to set the correct names for the certs we are about to generate
+  # same for lines: 139, 215, 230 which is a bit different from the other platforms
   dns_main_node = if domain.include?('example.com')
                     'cluster.example.com'
                   else
@@ -195,7 +198,7 @@ def server_certificate(root, common_name, organization, signing_profile)
   server
 end
 
-def save_to_file(path, cert_name, contents)
+def save_tls_to_file(path, cert_name, contents)
   path_to_save = File.join(path, cert_name)
 
   FileUtils.mkdir_p(File.dirname(path_to_save))
