@@ -24,6 +24,8 @@ module "bootkube" {
   oidc_client_id      = "tectonic-kubectl"
   oidc_ca_cert        = "${module.ingress_certs.ca_cert_pem}"
 
+  pull_secret_path = "${var.tectonic_vanilla_k8s ? "/dev/null" : pathexpand(var.tectonic_pull_secret_path)}"
+
   apiserver_cert_pem   = "${module.kube_certs.apiserver_cert_pem}"
   apiserver_key_pem    = "${module.kube_certs.apiserver_key_pem}"
   etcd_ca_cert_pem     = "${module.etcd_certs.etcd_ca_crt_pem}"

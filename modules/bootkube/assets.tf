@@ -4,11 +4,12 @@ resource "template_dir" "bootkube" {
   destination_dir = "./generated/manifests"
 
   vars {
-    hyperkube_image        = "${var.container_images["hyperkube"]}"
-    pod_checkpointer_image = "${var.container_images["pod_checkpointer"]}"
-    kubedns_image          = "${var.container_images["kubedns"]}"
-    kubednsmasq_image      = "${var.container_images["kubednsmasq"]}"
-    kubedns_sidecar_image  = "${var.container_images["kubedns_sidecar"]}"
+    hyperkube_image                 = "${var.container_images["hyperkube"]}"
+    pod_checkpointer_image          = "${var.container_images["pod_checkpointer"]}"
+    kubedns_image                   = "${var.container_images["kubedns"]}"
+    kubednsmasq_image               = "${var.container_images["kubednsmasq"]}"
+    kubedns_sidecar_image           = "${var.container_images["kubedns_sidecar"]}"
+    tectonic_network_operator_image = "${var.container_images["tectonic_network_operator"]}"
 
     # Choose the etcd endpoints to use.
     # 1. If self-hosted etcd is enabled, then use
@@ -43,6 +44,8 @@ resource "template_dir" "bootkube" {
     oidc_username_claim = "${var.oidc_username_claim}"
     oidc_groups_claim   = "${var.oidc_groups_claim}"
     oidc_ca_cert        = "${base64encode(var.oidc_ca_cert)}"
+
+    pull_secret = "${base64encode(file(var.pull_secret_path))}"
 
     kube_ca_cert       = "${base64encode(var.kube_ca_cert_pem)}"
     apiserver_key      = "${base64encode(var.apiserver_key_pem)}"
