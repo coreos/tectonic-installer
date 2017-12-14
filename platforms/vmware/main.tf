@@ -46,14 +46,14 @@ module "ignition_masters" {
   etcd_advertise_name_list  = "${data.template_file.etcd_hostname_list.*.rendered}"
   etcd_count                = "${length(data.template_file.etcd_hostname_list.*.rendered)}"
   etcd_initial_cluster_list = "${data.template_file.etcd_hostname_list.*.rendered}"
-  etcd_tls_enabled 	    = "${var.tectonic_etcd_tls_enabled}"
+  etcd_tls_enabled          = "${var.tectonic_etcd_tls_enabled}"
   image_re                  = "${var.tectonic_image_re}"
   kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   kubelet_cni_bin_dir       = "${var.tectonic_networking == "calico" || var.tectonic_networking == "canal" ? "/var/lib/cni/bin" : "" }"
   kubelet_debug_config      = "${var.tectonic_kubelet_debug_config}"
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
-  use_metadata		    = false
+  use_metadata              = false
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
 }
 
