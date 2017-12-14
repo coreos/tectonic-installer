@@ -183,3 +183,13 @@ variable "pull_secret_path" {
   description = "Path on disk to your Tectonic pull secret. Obtain this from your Tectonic Account: https://account.coreos.com."
   default     = "/Users/coreos/Desktop/config.json"
 }
+
+variable "calico_mtu" {
+  description = "sets the MTU size for workload interfaces and the IP-in-IP tunnel device"
+  type        = "string"
+}
+
+variable "tectonic_networking" {
+  description = "configures the network to be used in the cluster"
+  type        = "string"
+}

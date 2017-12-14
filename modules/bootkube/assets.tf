@@ -69,6 +69,10 @@ resource "template_dir" "bootkube" {
 
     cloud_provider_profile = "${var.cloud_provider != "" ? "${var.cloud_provider}" : "metal"}"
     cloud_config_path      = "${var.cloud_config_path}"
+
+    cluster_cidr = "${var.cluster_cidr}"
+    tectonic_networking = "${var.tectonic_networking}"
+    calico_mtu = "${var.calico_mtu}"
   }
 }
 

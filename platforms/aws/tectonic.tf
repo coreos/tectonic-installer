@@ -71,6 +71,8 @@ module "bootkube" {
   pod_eviction_timeout = "220s"
 
   cloud_config_path = ""
+  tectonic_networking = "${var.tectonic_networking}"
+  calico_mtu          = "1480"
 }
 
 module "tectonic" {

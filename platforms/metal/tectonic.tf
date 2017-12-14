@@ -53,6 +53,8 @@ module "bootkube" {
   master_count = "${length(var.tectonic_metal_controller_names)}"
 
   cloud_config_path = ""
+  tectonic_networking = "${var.tectonic_networking}"
+  calico_mtu          = "${var.tectonic_metal_calico_mtu}"
 }
 
 module "tectonic" {
