@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: tectonic-network-operator
-        image: ${tectonic-network-operator_image}
+        image: ${tectonic_network_operator_image}
         resources:
           limits:
             cpu: 20m
