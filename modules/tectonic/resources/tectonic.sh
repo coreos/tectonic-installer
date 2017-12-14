@@ -204,12 +204,14 @@ kubectl create -f updater/operators/kube-version-operator.yaml
 kubectl create -f updater/operators/tectonic-channel-operator.yaml
 kubectl create -f updater/operators/tectonic-prometheus-operator.yaml
 kubectl create -f updater/operators/tectonic-cluo-operator.yaml
+kubectl create -f updater/operators/tectonic-alm-operator.yaml
 
 wait_for_crd tectonic-system appversions.tco.coreos.com
 kubectl create -f updater/app_versions/app-version-tectonic-cluster.yaml
 kubectl create -f updater/app_versions/app-version-kubernetes.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-monitoring.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-cluo.yaml
+kubectl create -f updater/app_versions/app-version-tectonic-alm.yaml
 
 if [ "$SELF_HOSTED_ETCD" = "true" ]; then
   echo "Creating self hosted etcd resources"
