@@ -91,13 +91,14 @@ RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = f
     end
   end
 
-  # Disabled because we are not idempotent
-  xit 'terraform plan after a terraform apply is an idempotent operation (does not suggest further changes)' do
+  # If test fail it will not count as general failure because we are not idempotent
+  it 'terraform plan after a terraform apply is an idempotent operation (does not suggest further changes)' do
+    pending('We need fix the idempotent')
     # https://www.terraform.io/docs/commands/plan.html#detailed-exitcode
     options = '-detailed-exitcode'
     stdout, stderr, exit_status = @cluster.plan(options)
     puts stdout, stderr unless exit_status.eql?(0)
-    expect(exit_status).to eq(0)
+    expect(exit_status.exitstatus).to eq(0)
   end
 
   it 'succeeds with the golang test suit', :smoke_tests do
