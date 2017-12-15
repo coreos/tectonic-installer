@@ -4,6 +4,10 @@ variable "ign_max_user_watches_id" {
   type = "string"
 }
 
+variable "ign_max_user_instances_id" {
+  type = "string"
+}
+
 variable "ign_docker_dropin_id" {
   type = "string"
 }
