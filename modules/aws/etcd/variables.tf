@@ -84,3 +84,8 @@ variable "s3_bucket" {
 variable "ign_etcd_crt_id_list" {
   type = "list"
 }
+
+variable "dns_server_ip" {
+  type    = "string"
+  default = ""
+}
