@@ -42,7 +42,7 @@ quayCreds = [
   )
 ]
 
-defaultBuilderImage = 'quay.io/coreos/tectonic-builder:v1.42'
+defaultBuilderImage = 'quay.io/cpanato/tectonic-builder:carlos-test2'
 tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.14'
 originalCommitId = 'UNKNOWN'
 
@@ -123,7 +123,7 @@ pipeline {
                 originalCommitId = sh(returnStdout: true, script: 'git rev-parse origin/"\${BRANCH_NAME}"')
                 echo "originalCommitId: ${originalCommitId}"
 
-                withDockerContainer(image: params.builder_image, args: '-u root') {
+                withDockerContainer(params.builder_image) {
                   ansiColor('xterm') {
                     sh """#!/bin/bash -ex
                     mkdir -p \$(dirname $GO_PROJECT) && ln -sf $WORKSPACE $GO_PROJECT
