@@ -42,7 +42,7 @@ quayCreds = [
   )
 ]
 
-defaultBuilderImage = 'quay.io/coreos/tectonic-builder:v1.42'
+defaultBuilderImage = 'quay.io/coreos/tectonic-builder:carlos-test'
 tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.14'
 originalCommitId = 'UNKNOWN'
 
