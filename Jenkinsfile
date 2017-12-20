@@ -34,6 +34,13 @@ creds = [
   ]
 ]
 
+govcloudCreds = creds.push(
+  [
+    $class: 'AmazonWebServicesCredentialsBinding',
+    credentialsId: 'tectonic-jenkins-installer-govcloud'
+  ]
+)
+
 quayCreds = [
   usernamePassword(
     credentialsId: 'quay-robot',
@@ -86,6 +93,11 @@ pipeline {
     )
     booleanParam(
       name: 'PLATFORM/AWS',
+      defaultValue: true,
+      description: ''
+    )
+    booleanParam(
+      name: 'PLATFORM/GOVCLOUD',
       defaultValue: true,
       description: ''
     )
@@ -278,6 +290,9 @@ pipeline {
             [file: 'exp_spec.rb', args: ''],
             [file: 'ca_spec.rb', args: '']
           ]
+          def govcloud = [
+            [file: 'vpc_internal_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root']
+          ]
           def azure = [
             [file: 'basic_spec.rb', args: ''],
             [file: 'private_external_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'],
@@ -299,6 +314,13 @@ pipeline {
             aws.each { build ->
               filepath = 'spec/aws/' + build.file
               builds['aws/' + build.file] = runRSpecTest(filepath, build.args)
+            }
+          }
+
+          if (params."PLATFORM/GOVCLOUD") {
+            govcloud.each { build ->
+              filepath = 'spec/govcloud/' + build.file
+              builds['govcloud/' + build.file] = runRSpecTest(filepath, build.args, govcloudCreds)
             }
           }
 
@@ -414,7 +436,7 @@ def forcefullyCleanWorkspace() {
   }
 }
 
-def runRSpecTest(testFilePath, dockerArgs) {
+def runRSpecTest(testFilePath, dockerArgs, creds = creds) {
   return {
     node('worker && ec2') {
       def err = null
