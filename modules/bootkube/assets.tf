@@ -4,12 +4,13 @@ resource "template_dir" "bootkube" {
   destination_dir = "./generated/manifests"
 
   vars {
-    hyperkube_image                 = "${var.container_images["hyperkube"]}"
-    pod_checkpointer_image          = "${var.container_images["pod_checkpointer"]}"
-    kubedns_image                   = "${var.container_images["kubedns"]}"
-    kubednsmasq_image               = "${var.container_images["kubednsmasq"]}"
-    kubedns_sidecar_image           = "${var.container_images["kubedns_sidecar"]}"
-    tectonic_network_operator_image = "${var.container_images["tectonic_network_operator"]}"
+    hyperkube_image                   = "${var.container_images["hyperkube"]}"
+    pod_checkpointer_image            = "${var.container_images["pod_checkpointer"]}"
+    kubedns_image                     = "${var.container_images["kubedns"]}"
+    kubednsmasq_image                 = "${var.container_images["kubednsmasq"]}"
+    kubedns_sidecar_image             = "${var.container_images["kubedns_sidecar"]}"
+    tectonic_network_operator_image   = "${var.container_images["tectonic_network_operator"]}"
+    tectonic_network_operator_version = "${var.tectonic_versions["tno"]}"
 
     # Choose the etcd endpoints to use.
     # 1. If self-hosted etcd is enabled, then use
