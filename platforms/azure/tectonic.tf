@@ -106,27 +106,3 @@ module "tectonic" {
   calico_mtu          = "1480"
   cluster_cidr        = "${var.tectonic_cluster_cidr}"
 }
-
-module "flannel_vxlan" {
-  source = "../../modules/net/flannel_vxlan"
-
-  cluster_cidr     = "${var.tectonic_cluster_cidr}"
-  enabled          = "${var.tectonic_networking == "flannel"}"
-  container_images = "${var.tectonic_container_images}"
-}
-
-module "calico" {
-  source = "../../modules/net/calico"
-
-  container_images = "${var.tectonic_container_images}"
-  cluster_cidr     = "${var.tectonic_cluster_cidr}"
-  enabled          = "${var.tectonic_networking == "calico"}"
-}
-
-module "canal" {
-  source = "../../modules/net/canal"
-
-  container_images = "${var.tectonic_container_images}"
-  cluster_cidr     = "${var.tectonic_cluster_cidr}"
-  enabled          = "${var.tectonic_networking == "canal"}"
-}
