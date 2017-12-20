@@ -95,7 +95,7 @@ export BUILD_ID=1
 export TF_VAR_tectonic_pull_secret_path=/root/pull-secret
 export TF_VAR_tectonic_license_path=/root/tectonic-license
 
-export KUBECONFIG=/root/go/src/github.com/coreos/tectonic-installer/build/tf-metal-master-1/generated/auth/kubeconfig
+export KUBECONFIG=/root/go/src/github.com/coreos/tectonic-installer/builds/tf-metal-master-1/generated/auth/kubeconfig
 
 export PATH=$PATH:/root/go/src/github.com/coreos/tectonic-installer/bin_test
 which kubectl >/dev/null && source <(kubectl completion bash)

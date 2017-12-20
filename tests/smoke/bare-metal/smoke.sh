@@ -158,12 +158,12 @@ configure() {
 
   CONFIG=${DIR}/$1
   make localconfig
-  ln -sf ${CONFIG} ${ROOT}/build/${CLUSTER}/terraform.tfvars
+  ln -sf ${CONFIG} ${ROOT}/builds/${CLUSTER}/terraform.tfvars
 
   COREOS_CHANNEL=$(awk -F "=" '/^tectonic_container_linux_channel/ {gsub(/[ \t"]/, "", $2); print $2}' ${CONFIG})
   COREOS_VERSION=$(awk -F "=" '/^tectonic_container_linux_version/ {gsub(/[ \t"]/, "", $2); print $2}' ${CONFIG})
 
-  export SMOKE_KUBECONFIG=${ROOT}/build/${CLUSTER}/generated/auth/kubeconfig
+  export SMOKE_KUBECONFIG=${ROOT}/builds/${CLUSTER}/generated/auth/kubeconfig
 }
 
 cleanup() {
@@ -277,7 +277,7 @@ test_cluster() {
   MASTER_COUNT=$(grep tectonic_master_count "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}')
   WORKER_COUNT=$(grep tectonic_worker_count "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}')
   export SMOKE_NODE_COUNT=$(( MASTER_COUNT + WORKER_COUNT ))
-  export SMOKE_MANIFEST_PATHS=${ROOT}/build/${CLUSTER}/generated/
+  export SMOKE_MANIFEST_PATHS=${ROOT}/builds/${CLUSTER}/generated/
   # shellcheck disable=SC2155
   export SMOKE_NETWORKING=$(grep tectonic_networking "$CONFIG" | awk -F "=" '{gsub(/"/, "", $2); print $2}' | tr -d ' ')
   bin/smoke -test.v -test.parallel=1 --cluster

@@ -61,7 +61,7 @@ export TEST_VARS=vars/aws-exp.tfvars
 ./smoke.sh plan $TEST_VARS
 ```
 
-This will create a terraform state directory in the project's top-level build directory, i.e. `/build/aws-exp-master-1012345678901`.
+This will create a terraform state directory in the project's top-level build directory, i.e. `/builds/aws-exp-master-1012345678901`.
 
 Continue by actually creating the cluster:
 ```sh

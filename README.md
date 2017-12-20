@@ -67,7 +67,7 @@ First, set the `PLATFORM=` environment variable. This example will use `PLATFORM
 
 **Initiate the Cluster Configuration**
 
-Use `make` to create a new directory `build/<cluster-name>` to hold all module references, Terraform state files, and custom variable files.
+Use `make` to create a new directory `builds/<cluster-name>` to hold all module references, Terraform state files, and custom variable files.
 
 ```
 PLATFORM=azure CLUSTER=my-cluster make localconfig
@@ -75,7 +75,7 @@ PLATFORM=azure CLUSTER=my-cluster make localconfig
 
 **Configure Cluster**
 
-Set variables in the `build/<cluster-name>/terraform.tfvars` file as needed. Available variables are found in the `platforms/<PLATFORM>/config.tf` and `platforms/<PLATFORM>/variables.tf` files.
+Set variables in the `builds/<cluster-name>/terraform.tfvars` file as needed. Available variables are found in the `platforms/<PLATFORM>/config.tf` and `platforms/<PLATFORM>/variables.tf` files.
 
 Examples for each platform can be found in [the examples directory](examples/).
 
