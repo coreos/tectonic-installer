@@ -14,8 +14,8 @@ cd ${logfile_location}
 
 if [ "$action" = "smoke-test-logs" ]; then
   # Checks whether there are any log files
-  if ls ../build/*/*.log 1> /dev/null 2>&1; then
-    cp ../build/*/*.log .
+  if ls ../builds/*/*.log 1> /dev/null 2>&1; then
+    cp ../builds/*/*.log .
   else
     exit 0
   fi

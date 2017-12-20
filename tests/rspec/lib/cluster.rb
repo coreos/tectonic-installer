@@ -28,7 +28,7 @@ class Cluster
     @tectonic_admin_email = ENV['TF_VAR_tectonic_admin_email'] || NameGenerator.generate_fake_email
     @tectonic_admin_password = ENV['TF_VAR_tectonic_admin_password'] || PasswordGenerator.generate_password
 
-    @build_path = File.join(File.realpath('../../'), "build/#{@name}")
+    @build_path = File.join(File.realpath('../../'), "builds/#{@name}")
     @manifest_path = File.join(@build_path, 'generated')
     @kubeconfig = File.join(manifest_path, 'auth/kubeconfig')
     @tfstate_file = TFStateFile.new(@build_path)
@@ -160,7 +160,7 @@ class Cluster
         env['TF_LOG'] = 'TRACE' if idx.positive?
         env['TF_APPLY_OPTIONS'] = '-no-color'
         env['TF_INIT_OPTIONS'] = '-no-color'
-        return true if system(env, "make -C ../.. apply | tee ../../build/#{@name}/terraform-apply.log")
+        return true if system(env, "make -C ../.. apply | tee ../../builds/#{@name}/terraform-apply.log")
       end
     end
     raise 'Applying cluster failed'
@@ -173,7 +173,7 @@ class Cluster
         env['TF_LOG'] = 'TRACE' if idx.positive?
         env['TF_DESTROY_OPTIONS'] = '-no-color'
         env['TF_INIT_OPTIONS'] = '-no-color'
-        return true if system(env, "make -C ../.. destroy | tee ../../build/#{@name}/terraform-destroy.log")
+        return true if system(env, "make -C ../.. destroy | tee ../../builds/#{@name}/terraform-destroy.log")
       end
     end
 

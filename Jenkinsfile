@@ -421,7 +421,7 @@ def runRSpecTest(testFilePath, dockerArgs) {
         throw error
       } finally {
         reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
-        archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
+        archiveArtifacts allowEmptyArchive: true, artifacts: 'builds/**/logs/**'
         withDockerContainer(params.builder_image) {
          withCredentials(creds) {
            sh """#!/bin/bash -xe
@@ -465,7 +465,7 @@ def runRSpecTestBareMetal(testFilePath) {
         throw error
       } finally {
         reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
-        archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
+        archiveArtifacts allowEmptyArchive: true, artifacts: 'builds/**/logs/**'
         cleanWs notFailBuild: true
       }
     }

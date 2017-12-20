@@ -58,7 +58,7 @@ $ export CLUSTER=my-cluster
 Create a build directory to hold your customizations and copy the example file into it:
 
 ```
-$ mkdir -p build/${CLUSTER}
+$ mkdir -p builds/${CLUSTER}
 $ cp examples/terraform.tfvars.gcp build/${CLUSTER}/terraform.tfvars
 ```
 
@@ -69,13 +69,13 @@ Edit the parameters with your GCP details: dns managed zone, domain name, licens
 Test out the plan before deploying everything:
 
 ```
-$ terraform plan -var-file=build/${CLUSTER}/terraform.tfvars platforms/gcp
+$ terraform plan -var-file=builds/${CLUSTER}/terraform.tfvars platforms/gcp
 ```
 
 Next, deploy the cluster:
 
 ```
-$ terraform apply -var-file=build/${CLUSTER}/terraform.tfvars platforms/gcp
+$ terraform apply -var-file=builds/${CLUSTER}/terraform.tfvars platforms/gcp
 ```
 
 This should run for a little bit, and when complete, your Tectonic cluster should be ready.
@@ -93,7 +93,7 @@ $ kubectl cluster-info
 ### Delete the cluster
 
 ```
-$ terraform destroy -var-file=build/${CLUSTER}/terraform.tfvars platforms/gcp
+$ terraform destroy -var-file=builds/${CLUSTER}/terraform.tfvars platforms/gcp
 ```
 
 ## Design

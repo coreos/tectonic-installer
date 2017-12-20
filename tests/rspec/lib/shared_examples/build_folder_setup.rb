@@ -8,7 +8,7 @@ RSpec.shared_examples 'withBuildFolderSetup' do |tf_vars_path|
     temp_tfvars_file = TFVarsFile.new(tf_vars_path)
     @name = ENV['CLUSTER'] || NameGenerator.generate(temp_tfvars_file.prefix)
     ENV['CLUSTER'] = @name
-    file_path = "../../build/#{@name}"
+    file_path = "../../builds/#{@name}"
     FileUtils.mkdir_p file_path
 
     FileUtils.cp(
