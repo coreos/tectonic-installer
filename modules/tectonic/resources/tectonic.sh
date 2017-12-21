@@ -210,6 +210,7 @@ kubectl create -f updater/app_versions/app-version-kubernetes.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-monitoring.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-cluo.yaml
 kubectl create -f updater/app_versions/app-version-kubernetes-addon.yaml
+kubectl create -f updater/app_versions/app-version-tectonic-tno.yaml
 
 if [ "$SELF_HOSTED_ETCD" = "true" ]; then
   echo "Creating self hosted etcd resources"
