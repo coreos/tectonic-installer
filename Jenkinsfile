@@ -114,7 +114,7 @@ pipeline {
     )
     booleanParam(
       name: 'PLATFORM/GCP',
-      defaultValue: true,
+      defaultValue: false,
       description: ''
     )
     booleanParam(
@@ -314,9 +314,11 @@ pipeline {
             [file: 'custom_tls_spec.rb', args: '']
           ]
           def gcp = [
-            [file: 'basic_spec.rb', args: ''],
+          /* Disabled until we start the work again on gcp
+           *  [file: 'basic_spec.rb', args: ''],
             [file: 'ha_spec.rb', args: ''],
             [file: 'custom_tls_spec.rb', args: '']
+           */
           ]
 
           def metal = [
