@@ -520,3 +520,14 @@ variable "tectonic_custom_ca_pem_list" {
 (optional) A list of PEM encoded CA files that will be installed in /etc/ssl/certs on etcd, master, and worker nodes.
 EOF
 }
+
+variable "tectonic_ntp_servers" {
+  type    = "list"
+  default = []
+
+  description = <<EOF
+(optional) If left blank, the default Container Linux NTP servers will be used.
+
+A list of NTP servers to be used for time synchronization on the cluster nodes.
+EOF
+}
