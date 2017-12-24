@@ -7,6 +7,7 @@ data "ignition_config" "node" {
 
   files = [
     "${var.ign_max_user_watches_id}",
+    "${var.ign_max_user_instances_id}",
     "${data.ignition_file.node_hostname.*.id[count.index]}",
     "${var.ign_installer_kubelet_env_id}",
   ]

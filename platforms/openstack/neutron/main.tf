@@ -210,6 +210,7 @@ EOF
   ign_kubelet_service_id            = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id         = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id           = "${module.ignition_masters.max_user_watches_id}"
+  ign_max_user_instances_id         = "${module.ignition_masters.max_user_instances_id}"
   ign_tectonic_path_unit_id         = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
   ign_tectonic_service_id           = "${module.tectonic.systemd_service_id}"
 }
@@ -247,6 +248,7 @@ EOF
   ign_kubelet_service_id            = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id         = "${module.ignition_workers.locksmithd_service_id}"
   ign_max_user_watches_id           = "${module.ignition_workers.max_user_watches_id}"
+  ign_max_user_instances_id         = "${module.ignition_workers.max_user_instances_id}"
 }
 
 module "secrets" {

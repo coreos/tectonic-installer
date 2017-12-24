@@ -4,6 +4,7 @@ data "ignition_config" "master" {
     "${var.ign_installer_kubelet_env_id}",
     "${var.ign_azure_udev_rules_id}",
     "${var.ign_max_user_watches_id}",
+    "${var.ign_max_user_instances_id}",
     "${data.ignition_file.cloud_provider_config.id}",
   ]
 

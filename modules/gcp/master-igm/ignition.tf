@@ -1,6 +1,7 @@
 data "ignition_config" "main" {
   files = [
     "${var.ign_max_user_watches_id}",
+    "${var.ign_max_user_instances_id}",
     "${var.ign_gcs_puller_id}",
     "${data.ignition_file.init_assets.id}",
     "${var.ign_installer_kubelet_env_id}",
