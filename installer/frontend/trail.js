@@ -6,6 +6,7 @@ import { commitPhases } from './actions';
 import { PLATFORM_TYPE, DRY_RUN } from './cluster-config';
 
 import { CertificateAuthority } from './components/certificate-authority';
+import { ClusterInfo } from './components/cluster-info';
 import { ClusterType } from './components/cluster-type';
 import { DryRun } from './components/dry-run';
 import { Etcd } from './components/etcd';
@@ -14,12 +15,11 @@ import { Success } from './components/success';
 import { TF_PowerOn } from './components/tf-poweron';
 import { Users } from './components/users';
 
-import { BM_ClusterInfo } from './components/bm-cluster-info';
 import { BM_Controllers, BM_Workers } from './components/bm-nodeforms';
 import { BM_Credentials } from './components/bm-credentials';
 import { BM_Hostname } from './components/bm-hostname';
 import { BM_Matchbox } from './components/bm-matchbox';
-import { BM_NetworkConfig } from './components/bm-network-config';
+import { KubernetesCIDRs } from './components/k8s-cidrs';
 import { BM_SSHKeys } from './components/bm-sshkeys';
 
 import { AWS_CloudCredentials } from './components/aws-cloud-credentials';
@@ -45,8 +45,6 @@ const clusterTypePage = {
   path: '/define/cluster-type',
   component: ClusterType,
   title: 'Platform',
-  hideSave: true,
-  showRestore: true,
 };
 
 const dryRunPage = {
@@ -74,7 +72,6 @@ const successPage = {
   component: Success,
   title: 'Installation Complete',
   hidePager: true,
-  hideSave: true,
 };
 
 const TFPowerOnPage = {
@@ -90,11 +87,10 @@ const usersPage = {
   title: 'Console Login',
 };
 
-
 // Baremetal pages
 const bmClusterInfoPage = {
   path: '/define/cluster-info',
-  component: BM_ClusterInfo,
+  component: ClusterInfo,
   title: 'Cluster Info',
 };
 
@@ -124,7 +120,7 @@ const bmMatchboxPage = {
 
 const bmNetworkConfigPage = {
   path: '/define/network-config',
-  component: BM_NetworkConfig,
+  component: KubernetesCIDRs,
   title: 'Network Configuration',
 };
 
@@ -139,7 +135,6 @@ const bmWorkersPage = {
   component: BM_Workers,
   title: 'Define Workers',
 };
-
 
 // AWS pages
 const awsClusterInfoPage = {

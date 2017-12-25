@@ -22,12 +22,8 @@ describe TFVarsFile do
     expect(subject.node_count).to eq(4)
   end
 
-  it '#experimental? returns false if not set' do
-    expect(subject.experimental?).to eq(false)
-  end
-
-  it '#calico? returns false if not set' do
-    expect(subject.calico?).to eq(false)
+  it '#networking? returns empty string if not set' do
+    expect(subject.networking).to eq('')
   end
 
   it 'returns raw variable values via reflection' do

@@ -7,14 +7,20 @@ import path from 'path';
 import { reducer } from '../reducer';
 import { restoreActionTypes } from '../actions';
 import { commitToServer } from '../server';
+import '../components/aws-cloud-credentials';
 import '../components/aws-cluster-info';
 import '../components/aws-define-nodes';
+import '../components/aws-submit-keys';
 import '../components/aws-vpc';
-import '../components/etcd';
-import '../components/bm-sshkeys';
-import '../components/bm-nodeforms';
+import '../components/bm-credentials';
 import '../components/bm-hostname';
+import '../components/bm-matchbox';
+import '../components/bm-nodeforms';
+import '../components/bm-sshkeys';
+import '../components/certificate-authority';
 import '../components/cluster-type';
+import '../components/etcd';
+import '../components/users';
 
 const structureOnly = (obj) => {
   const toString = Object.prototype.toString;
@@ -40,17 +46,17 @@ const tests = [
   {
     description: 'works with baremetal',
     jsonPath: 'metal.json',
-    progressPath: 'tectonic-baremetal.progress',
+    progressPath: 'metal.progress',
   },
   {
     description: 'works with aws',
     jsonPath: 'aws.json',
-    progressPath: 'tectonic-aws.progress',
+    progressPath: 'aws-custom-vpc.progress',
   },
   {
-    description: 'works with aws (existing subnets)',
+    description: 'works with aws (existing VPC)',
     jsonPath: 'aws-vpc.json',
-    progressPath: 'tectonic-aws-vpc.progress',
+    progressPath: 'aws-existing-vpc.progress',
   },
 ];
 
@@ -59,7 +65,6 @@ let dispatch;
 beforeEach(() => {
   dispatch = jest.fn();
 });
-
 
 const readExample = example => {
   let json;
@@ -71,7 +76,6 @@ const readExample = example => {
   }
   return json;
 };
-
 
 /* eslint-disable max-nested-callbacks */
 describe('progress file example', () => {
@@ -92,7 +96,7 @@ describe('progress file example', () => {
       }));
 
       // TODO: wait for this action to finish & then check expected state
-      commitToServer(false, false, {salt: '$2a$12$96LR7NxL/T7LaijR0fxl3.'})(dispatch, () => restored);
+      commitToServer(false, false)(dispatch, () => restored);
 
       expect(fetch.mock.calls.length).toBe(1);
       const body = JSON.parse(fetch.mock.calls[0][1].body);

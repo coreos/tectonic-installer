@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Deselect, Input, WithClusterConfig } from './ui';
+import { CIDR, Connect, Deselect } from './ui';
 import { validate } from '../validate';
 import { DESELECTED_FIELDS } from '../cluster-config.js';
 
@@ -17,7 +17,7 @@ export const cidrSize = cidr => {
 };
 
 const CIDRTooltip = connect(
-  ({clusterConfig}, {field}) => ({clusterConfig: clusterConfig, value: _.get(clusterConfig, field)})
+  ({clusterConfig}, {field}) => ({clusterConfig, value: _.get(clusterConfig, field)})
 )(({value}) => {
   const addresses = cidrSize(value);
   if (!_.isInteger(addresses)) {
@@ -26,18 +26,18 @@ const CIDRTooltip = connect(
   return <div className="tooltip">{addresses.toLocaleString('en', {useGrouping: true})} IP address{addresses > 1 && 'es'}</div>;
 });
 
-export const CIDR = ({field, name, disabled, placeholder, autoFocus, validator, selectable, fieldName}) => {
+export const CIDRRow = ({field, name, disabled, placeholder, autoFocus, selectable, fieldName, validator}) => {
   fieldName = fieldName || field;
   return <div className="row form-group">
-    <div className="col-xs-3">
+    <div className="col-xs-4">
       {selectable && <Deselect field={fieldName} />}
       <label htmlFor={(selectable ? `${DESELECTED_FIELDS}.` : '') + fieldName}>{name}</label>
     </div>
     <div className="col-xs-5">
       <div className="withtooltip">
-        <WithClusterConfig field={field} validator={validator || validate.CIDR}>
-          <Input placeholder={placeholder} id={field} disabled={disabled} autoFocus={autoFocus} />
-        </WithClusterConfig>
+        <Connect field={field}>
+          <CIDR autoFocus={autoFocus} disabled={disabled} id={field} placeholder={placeholder} validator={validator} />
+        </Connect>
         <CIDRTooltip field={field} />
       </div>
     </div>

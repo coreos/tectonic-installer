@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+set -o pipefail
 
 # Wait for the ASG to run at the expected scale.
 while true; do
@@ -23,7 +25,8 @@ while true; do
   sleep 15
 done
 
-API_HEALTHY=$(aws elb describe-instance-health --region="$REGION" --load-balancer-name "$CLUSTER_NAME-int" | jq -r '[ .InstanceStates[] | select(.State | contains("InService")) ] | length > 1')
+# shellcheck disable=SC2154,SC2086
+API_HEALTHY=$(aws elb describe-instance-health --region="$REGION" --load-balancer-name ${load_balancer_name} | jq -r '[ .InstanceStates[] | select(.State | contains("InService")) ] | length > 1')
 
 if [ "$API_HEALTHY" == "true" ]; then
     echo "Healthy API instances found, cluster is already installed."

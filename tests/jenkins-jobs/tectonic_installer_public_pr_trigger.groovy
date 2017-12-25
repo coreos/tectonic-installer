@@ -10,6 +10,10 @@ job("triggers/tectonic-installer-pr-trigger") {
   logRotator(30, 100)
   label("worker && ec2")
 
+  parameters {
+    stringParam('ghprbPullId', '', 'PR number')
+  }
+
   properties {
     githubProjectUrl('https://github.com/coreos/tectonic-installer')
   }
@@ -19,6 +23,9 @@ job("triggers/tectonic-installer-pr-trigger") {
     timestamps()
     buildInDocker {
       image('quay.io/coreos/tectonic-smoke-test-env:v5.6')
+    }
+    timeout {
+        absolute(30)
     }
   }
 
@@ -41,7 +48,7 @@ job("triggers/tectonic-installer-pr-trigger") {
       allowMembersOfWhitelistedOrgsAsAdmin(true)
       msgSuccess("")
       msgFailure("")
-      commitStatusContext("Jenkins-Tectonic-Installer")
+      commitStatusContext("pr-trigger")
       buildDescTemplate("#\$pullId: \$abbrTitle")
       blackListLabels("")
       whiteListLabels("")
@@ -52,7 +59,7 @@ job("triggers/tectonic-installer-pr-trigger") {
 
   steps {
     shell """#!/bin/bash -ex
-      curl "https://api.github.com/repos/coreos/tectonic-installer/labels" > repoLabels
+      curl "https://api.github.com/repos/coreos/tectonic-installer/labels?per_page=100" > repoLabels
       repoLabels=\$(jq ".[] | .name" repoLabels)
       repoLabels=\$(echo \$repoLabels | tr -d "\\"" | tr [a-z] [A-Z] | tr - _)
       for label in \$repoLabels
@@ -61,7 +68,7 @@ job("triggers/tectonic-installer-pr-trigger") {
       done
 
 
-      curl "https://api.github.com/repos/coreos/tectonic-installer/issues/1839" > pr
+      curl "https://api.github.com/repos/coreos/tectonic-installer/issues/\${ghprbPullId}" > pr
       labels=\$(jq ".labels | .[] | .name" pr)
       labels=\$(echo \$labels | tr -d "\\"" | tr [a-z] [A-Z] | tr - _)
       for label in \$labels
@@ -77,6 +84,7 @@ job("triggers/tectonic-installer-pr-trigger") {
         }
       }
     }
+    shell "sleep 10"
   }
 
   publishers {
@@ -90,6 +98,80 @@ job("triggers/tectonic-installer-pr-trigger") {
       notifyRepeatedFailure(true)
       room('#tectonic-installer-ci')
       teamDomain('coreos')
+    }
+    publishers {
+        groovyPostBuild("""
+import jenkins.model.Jenkins
+import hudson.model.*
+import org.jenkinsci.plugins.workflow.job.WorkflowRun
+import org.jenkinsci.plugins.workflow.support.steps.StageStepExecution
+import org.jenkinsci.plugins.workflow.job.WorkflowJob
+
+//Get the PR Number
+def thr = Thread.currentThread()
+def currentBuild = thr?.executable
+def resolver = currentBuild.buildVariableResolver
+def PRNum = resolver.resolve("ghprbPullId")
+
+
+// sleep a bit to wait jenkins refresh the jobs
+sleep(10000);
+
+def params = [ ];
+
+// Get the PR Job
+def job = Jenkins.instance.getItemByFullName("tectonic-installer/PR-" + PRNum)
+manager.listener.logger.println("Jobs: " + job);
+manager.listener.logger.println("PR Num: " + PRNum);
+// If job is in the queue wait for that
+manager.listener.logger.println("Job is in queue?: " + job.isInQueue());
+while(job.isInQueue()) {
+  manager.listener.logger.println("Job in the queue, waiting....");
+  sleep(1000);
+}
+manager.listener.logger.println(job.builds);
+for (prBuild in job.builds) {
+manager.listener.logger.println("Job Num: " + prBuild.getNumber().toInteger());
+manager.listener.logger.println("Job is building?: " + prBuild.isBuilding());
+  if (prBuild.getNumber().toInteger() == 1 && prBuild.isBuilding()) {
+    manager.listener.logger.println("Build 1 is running, will try to kill...");
+
+    // giving some time to job run and after that kill
+    // we add this because we saw if kill right away sometime jenkins did not refresh
+    // the build parameters status.
+    sleep(60000);
+
+    WorkflowRun run = (WorkflowRun) prBuild;
+    //hard kill
+    run.doKill();
+
+    while(prBuild.isBuilding()) {
+      manager.listener.logger.println("Trying to kill the job....");
+      run.doKill();
+      sleep(1000);
+    }
+
+    manager.listener.logger.println("Job Killed");
+    //release pipeline concurrency locks
+    StageStepExecution.exit(run);
+
+    sleep(1000);
+    def parameters = currentBuild?.actions.find{ it instanceof ParametersAction }?.parameters
+
+    def cause = new Cause.UpstreamCause(currentBuild)
+    def causeAction = new hudson.model.CauseAction(cause)
+
+    def pr_trigger_job = Jenkins.instance.getItemByFullName("triggers/tectonic-installer-pr-trigger")
+    def paramsAction = new ParametersAction(parameters)
+    manager.listener.logger.println(parameters);
+
+    hudson.model.Hudson.instance.queue.schedule(pr_trigger_job, 0, causeAction, paramsAction)
+    break;
+  }
+}
+manager.listener.logger.println("Done");
+"""
+    ,Behavior.MarkFailed)
     }
   }
 }

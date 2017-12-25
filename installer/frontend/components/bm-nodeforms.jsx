@@ -5,7 +5,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { configActions } from '../actions';
+import { configActions, dirtyActions } from '../actions';
 import { Alert } from './alert';
 import { validate } from '../validate';
 import { readFile } from '../readfile';
@@ -16,18 +16,14 @@ import {
   BM_WORKERS,
 } from '../cluster-config';
 
-import {
-  Input,
-  Connect,
-  markIDDirty,
-} from './ui';
+import { Input, Connect } from './ui';
 
 const BulkUpload = connect(null, dispatch => ({
   updateNodes: (fieldID, payload) => {
     dispatch(configActions.updateField(fieldID, payload));
     _.each(payload, (row, i) => {
       _.each(row, (ignore, key) => {
-        markIDDirty(dispatch, [fieldID, i, key].join('.'));
+        dispatch(dirtyActions.add(`${fieldID}.${i}.${key}`));
       });
     });
     dispatch(configActions.updateField(fieldID, payload));
@@ -94,7 +90,6 @@ const BulkUpload = connect(null, dispatch => ({
       this.props.close();
     }
 
-
     render () {
       const { csv, name, nameCol, macCol } = this.state;
 
@@ -102,7 +97,7 @@ const BulkUpload = connect(null, dispatch => ({
       if (!csv) {
         body = <div>
           <div>
-          Select a CSV file to populate the node addresses
+            Select a CSV file to populate the node addresses
           </div>
           <div className="wiz-minimodal__body">
             <input type="file" onChange={e => this.handleUpload(e)} />
@@ -113,7 +108,7 @@ const BulkUpload = connect(null, dispatch => ({
         </div>;
       } else if (csv.errors.length) {
         body = <Alert severity="error">
-        Error parsing CSV:
+          Error parsing CSV:
           <ul>
             {csv.errors.map((e, i) => <li key={i}>{e.message} on line {e.row}.</li>)}
           </ul>
@@ -179,7 +174,8 @@ const BulkUpload = connect(null, dispatch => ({
         </div>
       );
     }
-  });
+  }
+);
 
 const generateField = (id, name, maxNodes) => new FieldList(id, {
   fields: {
@@ -304,7 +300,7 @@ class NodeForm extends React.Component {
 }
 
 const mastersFields = generateField(BM_MASTERS, 'Master', 9);
-export const mastersForm = new Form('MASTERSFORM', [mastersFields]);
+const mastersForm = new Form('MASTERSFORM', [mastersFields]);
 
 export const BM_Controllers = () => <NodeForm
   name="Master"
@@ -316,7 +312,8 @@ export const BM_Controllers = () => <NodeForm
 BM_Controllers.canNavigateForward = mastersForm.canNavigateForward;
 
 const workerFields = generateField(BM_WORKERS, 'Worker', 1000);
-export const workersForm = new Form('WORKERS_FORM', [workerFields]);
+const workersForm = new Form('WORKERS_FORM', [workerFields]);
+
 export const BM_Workers = () => <NodeForm
   name="Worker"
   docs={`Worker nodes run end-user apps. The cluster software automatically shares load

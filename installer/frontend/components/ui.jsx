@@ -7,24 +7,12 @@ import { connect } from 'react-redux';
 import { withNav } from '../nav';
 import { validate } from '../validate';
 import { readFile } from '../readfile';
-import { toError, toAsyncError, toExtraData, toInFly, toExtraDataInFly, toExtraDataError } from '../utils';
+import { toError, toExtraData, toInFly, toExtraDataInFly, toExtraDataError } from '../utils';
 
-import { configActionTypes, dirtyActionTypes, configActions } from '../actions';
+import { dirtyActions, configActions } from '../actions';
 import { DESELECTED_FIELDS } from '../cluster-config.js';
 
 import { Alert } from './alert';
-
-// Use this function to dirty a field due to
-// non-user interaction (like uploading a config file)
-export const markIDDirty = (dispatch, id) => {
-  if (!id) {
-    throw new Error('ID required!');
-  }
-  dispatch({
-    type: dirtyActionTypes.ADD,
-    payload: id,
-  });
-};
 
 // Taken more-or-less from https://www.w3.org/TR/html5/forms.html#the-input-element
 const FIELD_PROPS = ImmutableSet([
@@ -83,76 +71,60 @@ export const ErrorComponent = props => {
 
 const Field = withNav(connect(
   (state, {id}) => ({isDirty: _.get(state.dirty, id)}),
-  dispatch => ({
-    markDirty: id => markIDDirty(dispatch, id),
-    markClean: id => dispatch({type: dirtyActionTypes.CLEAN, payload: id }),
-  })
-)(class Field extends React.Component {
-  componentWillUnmount() {
-    if (this.props.autoClean) {
-      this.props.markClean(this.props.id);
+  (dispatch, {id}) => ({makeDirty: () => dispatch(dirtyActions.add(id))}),
+)(props => {
+  const tag = props.tag || 'input';
+  const isInvalid = props.invalid && (props.forceDirty || props.isDirty);
+  const fieldClasses = classNames(props.className, {'wiz-invalid': isInvalid});
+  const errorClasses = classNames('wiz-error-message', {hidden: !isInvalid});
+
+  const elementProps = {};
+  Object.keys(props).filter(k => FIELD_PROPS.has(k)).forEach(k => {
+    elementProps[k] = props[k];
+  });
+
+  const onEnterKeyNavigateNext = e => {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      props.navNext();
     }
-  }
-  render () {
-    const props = this.props;
-    const tag = props.tag || 'input';
-    const dirty = props.forceDirty || props.isDirty;
-    const fieldClasses = classNames(props.className, {
-      'wiz-dirty': dirty,
-      'wiz-invalid': props.invalid,
-    });
-    const errorClasses = classNames('wiz-error-message', {
-      hidden: !(dirty && props.invalid),
-    });
+  };
 
-    const elementProps = {};
-    Object.keys(props).filter(k => FIELD_PROPS.has(k)).forEach(k => {
-      elementProps[k] = props[k];
-    });
-
-    const onEnterKeyNavigateNext = e => {
-      if (e.keyCode === 13) {
-        e.preventDefault();
-        props.navNext();
+  const nextProps = Object.assign({
+    className: fieldClasses,
+    value: props.value || '',
+    autoCorrect: 'off',
+    autoComplete: 'off',
+    spellCheck: 'false',
+    children: undefined,
+    onPaste: props.makeDirty,
+    onChange: e => {
+      if (props.onValue) {
+        props.onValue(e.target.value);
       }
-    };
+    },
+    onBlur: e => {
+      if (props.blurry || e.target.value) {
+        props.makeDirty();
+      }
+    },
+    onKeyDown: ['number', 'password', 'text'].includes(props.type) ? onEnterKeyNavigateNext : undefined,
+  }, elementProps);
 
-    const nextProps = Object.assign({
-      className: fieldClasses,
-      value: props.value || '',
-      autoCorrect: 'off',
-      autoComplete: 'off',
-      spellCheck: 'false',
-      children: undefined,
-      onPaste: () => props.markDirty(props.id),
-      onChange: e => {
-        if (props.onValue) {
-          props.onValue(e.target.value);
-        }
-      },
-      onBlur: e => {
-        if (props.blurry || e.target.value) {
-          props.markDirty(props.id);
-        }
-      },
-      onKeyDown: ['number', 'password', 'text'].includes(props.type) ? onEnterKeyNavigateNext : undefined,
-    }, elementProps);
-
-    return (
-      <div>
-        {props.prefix}
-        {props.renderField
-          ? props.renderField(props, elementProps, fieldClasses)
-          : React.createElement(tag, nextProps)
-        }
-        {props.suffix && <span>&nbsp;&nbsp;{props.suffix}</span>}
-        {props.children}
-        <div className={errorClasses}>
-          {props.invalid}
-        </div>
+  return (
+    <div>
+      {props.prefix}
+      {props.renderField
+        ? props.renderField(props, elementProps, fieldClasses)
+        : React.createElement(tag, nextProps)
+      }
+      {props.suffix}
+      {props.children}
+      <div className={errorClasses}>
+        {props.invalid}
       </div>
-    );
-  }
+    </div>
+  );
 }));
 
 const makeBooleanField = type => {
@@ -166,7 +138,7 @@ const makeBooleanField = type => {
             props.onChange(value);
           }
         }}
-        onBlur={() => injectedProps.markDirty(injectedProps.id)}
+        onBlur={injectedProps.makeDirty}
       />;
     };
     return <Field {...props} renderField={renderField} />;
@@ -177,12 +149,21 @@ const makeBooleanField = type => {
 // Handles error displays and boilerplate attributes.
 // <Input id:REQUIRED invalid="error message" placeholder value onValue />
 export const Input = props => <Field tag="input" type="text" {...props}>{props.children}</Field>;
+
+// If props.validator is specified, use it to override any existing props.invalid error
+export const CIDR = props => props.validator
+  ? <Input {...props} invalid={props.validator(props.value)} />
+  : <Input {...props} />;
+
 export const NumberInput = props => <Field tag="input" type="number" onChange={e => {
   const number = parseInt(e.target.value, 10);
   props.onValue(isNaN(number) ? 0 : number);
 }} {...props} />;
+
 export const Password = props => <Field tag="input" type="password" {...props} />;
+
 export const RadioBoolean = makeBooleanField('radio');
+
 export const Radio = props => {
   const renderField = (injectedProps, cleanedProps, classes) => {
     return <input type="radio" className={classes} {...cleanedProps}
@@ -192,12 +173,14 @@ export const Radio = props => {
           props.onChange(props.value);
         }
       }}
-      onBlur={() => injectedProps.markDirty(injectedProps.id)}
+      onBlur={injectedProps.makeDirty}
     />;
   };
   return <Field {...props} renderField={renderField} />;
 };
+
 export const CheckBox = makeBooleanField('checkbox');
+
 export const ToggleButton = props => <button className={props.className} style={props.style} onClick={() => props.onValue(!props.value)}>
   {props.value ? 'Hide' : 'Show'}&nbsp;{props.children}
   <i style={{marginLeft: 7}} className={classNames('fa', {'fa-chevron-up': props.value, 'fa-chevron-down': !props.value})}></i>
@@ -206,20 +189,10 @@ export const ToggleButton = props => <button className={props.className} style={
 // A textarea/file-upload combo
 // <FileArea id:REQUIRED invalid="error message" placeholder value onValue>
 export const FileArea = connect(
-  () => {
-    return {
-      tag: 'textarea',
-    };
-  },
-  (dispatch) => {
-    return {
-      markDirtyUpload: (id) => {
-        markIDDirty(dispatch, id);
-      },
-    };
-  }
+  () => ({tag: 'textarea'}),
+  (dispatch, {id}) => ({makeDirty: () => dispatch(dirtyActions.add(id))}),
 )((props) => {
-  const {id, onValue, markDirtyUpload, uploadButtonLabel} = props;
+  const {onValue, makeDirty, uploadButtonLabel} = props;
   const handleUpload = (e) => {
     readFile(e.target.files.item(0))
       .then((value) => {
@@ -229,7 +202,7 @@ export const FileArea = connect(
         console.error(msg);
       })
       .then(() => {
-        markDirtyUpload(id);
+        makeDirty();
       });
     // Reset value so that onChange fires if you pick the same file again.
     e.target.value = null;
@@ -256,7 +229,7 @@ export const Select = ({id, children, value, onValue, invalid, isDirty, makeDirt
   if (availableValues) {
     let options = availableValues.value;
     if (value && !options.map(r => r.value).includes(value)) {
-      options = [{label: value, value: value}].concat(options);
+      options = [{label: value, value}].concat(options);
     }
 
     const optgroups = new Map();
@@ -326,18 +299,15 @@ export const Selector = props => {
 
 const stateToProps = ({clusterConfig, dirty}, {field}) => ({
   value: _.get(clusterConfig, field),
-  invalid: _.get(clusterConfig, toError(field))
-    || _.get(clusterConfig, toAsyncError(field))
-    || _.get(clusterConfig, toExtraDataError(field)),
+  invalid: _.get(clusterConfig, toError(field)) || _.get(clusterConfig, toExtraDataError(field)),
   isDirty: _.get(dirty, field),
   extraData: _.get(clusterConfig, toExtraData(field)),
   inFly: _.get(clusterConfig, toInFly(field)) || _.get(clusterConfig, toExtraDataInFly(field)),
 });
 
 const dispatchToProps = (dispatch, {field}) => ({
-  setField: (path, value, invalid) => dispatch(configActions.updateField(path, value, invalid)),
-  makeDirty: () => markIDDirty(dispatch, field),
-  makeClean: () => dispatch({type: dirtyActionTypes.CLEAN, payload: field }),
+  updateField: (path, value) => dispatch(configActions.updateField(path, value)),
+  makeDirty: () => dispatch(dirtyActions.add(field)),
   refreshExtraData: () => dispatch(configActions.refreshExtraData(field)),
   removeField: (i) => dispatch(configActions.removeField(field, i)),
   appendField: () => dispatch(configActions.appendField(field)),
@@ -345,10 +315,10 @@ const dispatchToProps = (dispatch, {field}) => ({
 
 class Connect_ extends React.Component {
   handleValue (v) {
-    const { children, field, setField } = this.props;
+    const { children, field, updateField } = this.props;
     const child = React.Children.only(children);
 
-    setField(field, v);
+    updateField(field, v);
     if (child.props.onValue) {
       child.props.onValue(v);
     }
@@ -363,7 +333,7 @@ class Connect_ extends React.Component {
   }
 
   render () {
-    const { field, value, invalid, children, isDirty, makeDirty, makeClean,
+    const { field, value, invalid, children, isDirty, makeDirty,
       extraData, refreshExtraData, inFly, removeField, appendField,
     } = this.props;
 
@@ -376,7 +346,6 @@ class Connect_ extends React.Component {
       inFly,
       invalid,
       isDirty,
-      makeClean,
       makeDirty,
       refreshExtraData,
       removeField,
@@ -403,173 +372,26 @@ class Connect_ extends React.Component {
 
 export const Connect = connect(stateToProps, dispatchToProps)(Connect_);
 
-// <WithClusterConfig field="banana" validator={isBanana}>
-//     <Input id="jones" placeholder="Enter your banana" />
-// </WithClusterConfig>
-//
-//
-export const WithClusterConfig = connect(
-  ({clusterConfig, dirty}, {field}) => {
-    return {
-      value: _.get(clusterConfig, field),
-      invalid: _.get(clusterConfig, toError(field)),
-      isDirty: _.get(dirty, field),
-    };
-  },
-  (dispatch, {field}) => {
-    return {
-      setField: (k, v) => {
-        dispatch({
-          type: configActionTypes.SET_IN,
-          payload: {value: v, path: k},
-        });
-      },
-      makeDirty: () => markIDDirty(dispatch, field),
-      makeClean: () => dispatch({type: dirtyActionTypes.CLEAN, payload: field }),
-    };
-  }
-)(class WithClusterConfig extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      inFly: false,
-      syncInvalid: undefined,
-      asyncInvalid: undefined,
-    };
-    const field = props.field;
-    this.fieldName = _.isArray(field) ? field.join('.') : field;
-    this.isMounted_ = false;
-    this.safeSetState = (...args) => {
-      if (!this.isMounted_) {
-        return;
-      }
-      return this.setState(...args);
-    };
-  }
-
-  get invalidKey () {
-    return toError(this.fieldName);
-  }
-
-  componentDidMount () {
-    this.isMounted_ = true;
-    this.asyncValidate(this.props);
-  }
-
-  componentWillMount() {
-    if (!this.props.default) {
-      return;
-    }
-    const { field, setField, value } = this.props;
-    if (value) {
-      return;
-    }
-    setField(field, this.props.default);
-  }
-
-  componentWillUnmount() {
-    this.isMounted_ = false;
-  }
-
-  setValidation () {
-    const { syncInvalid, asyncInvalid } = this.state;
-    this.props.setField(this.invalidKey, syncInvalid || asyncInvalid);
-  }
-
-  syncValidate ({value, validator}) {
-    if (!validator) {
-      return;
-    }
-    const syncInvalid = validator(value);
-    this.safeSetState({syncInvalid}, () => this.setValidation());
-    return syncInvalid;
-  }
-
-  asyncValidate ({value, asyncValidator}) {
-    if (!asyncValidator) {
-      return;
-    }
-    if (this.state.syncInvalid) {
-      return;
-    }
-    this.safeSetState({inFly: true});
-    asyncValidator(value)
-      .then(() => {
-        this.safeSetState({asyncInvalid: undefined}, () => this.setValidation());
-      })
-      .catch(err => {
-        this.safeSetState({asyncInvalid: err}, () => this.setValidation());
-      })
-      .then(() => this.safeSetState({inFly: false}));
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.value === this.props.value && nextProps.invalid === this.props.invalid) {
-      return;
-    }
-    this.syncValidate(nextProps);
-    this.asyncValidate(nextProps);
-  }
-
-  render() {
-    const { field, setField, invalid, isDirty, makeDirty, makeClean, value } = this.props;
-    const child = React.Children.only(this.props.children);
-    const id = child.props.id || this.fieldName;
-
-    const props = {
-      id,
-      invalid,
-      isDirty,
-      makeClean,
-      makeDirty,
-      onValue: (v) => {
-        setField(field, v);
-        if (child.props.onValue) {
-          child.props.onValue(v);
-        }
-      },
-    };
-
-    switch (child.type) {
-    case Radio:
-      props.checked = child.props.value === value;
-      break;
-    case Select:
-      props.value = value || '';
-      break;
-    default:
-      props.value = value;
-      break;
-    }
-
-    return React.cloneElement(child, props);
-  }
-});
-
 // if undefined, default to true
 const stateToIsDeselected = ({clusterConfig}, {field}) => {
   field = `${DESELECTED_FIELDS}.${field}`;
   return {
-    field: field,
+    field,
     isDeselected: !!_.get(clusterConfig, field),
   };
 };
 
 export const Deselect = connect(
   stateToIsDeselected,
-  dispatch => ({
-    setField: (k, v) => {
-      dispatch({
-        type: configActionTypes.SET_IN,
-        payload: {value: v, path: k},
-      });
-    },
-  })
-)(({field, isDeselected, setField}) => <span className="deselect">
-  <CheckBox id={field} value={!isDeselected} onValue={v => setField(field, !v)} />
+  {updateField: configActions.updateField}
+)(({field, isDeselected, updateField}) => <span className="deselect">
+  <CheckBox id={field} value={!isDeselected} onValue={v => updateField(field, !v)} />
 </span>);
 
-export const DeselectField = connect(stateToIsDeselected)(({children, isDeselected}) => React.cloneElement(React.Children.only(children), {disabled: isDeselected, selectable: true}));
+export const DeselectField = connect(stateToIsDeselected)(({children, isDeselected}) => React.cloneElement(
+  React.Children.only(children),
+  {disabled: isDeselected, selectable: true}
+));
 
 const certPlaceholder = `Paste your certificate here. It should start with:
 
@@ -579,15 +401,12 @@ It should end with:
 
 -----END CERTIFICATE-----`;
 
-export const CertArea = (props) => {
-  const invalid = validate.certificate(props.value);
-  const areaProps = Object.assign({}, props, {
-    className: props.className + ' wiz-tls-asset-field',
-    invalid: invalid,
-    placeholder: certPlaceholder,
-  });
-  return <FileArea {...areaProps} />;
-};
+export const CertArea = (props) => <FileArea
+  {...props}
+  className="wiz-tls-asset-field"
+  invalid={validate.certificate(props.value)}
+  placeholder={certPlaceholder}
+/>;
 
 const privateKeyPlaceholder = `Paste your private key here. It should start with:
 
@@ -597,15 +416,12 @@ It should end with:
 
 -----END RSA PRIVATE KEY-----`;
 
-export const PrivateKeyArea = (props) => {
-  const invalid = validate.privateKey(props.value);
-  const areaProps = Object.assign({}, props, {
-    className: props.className + ' wiz-tls-asset-field',
-    invalid: invalid,
-    placeholder: privateKeyPlaceholder,
-  });
-  return <FileArea {...areaProps} />;
-};
+export const PrivateKeyArea = (props) => <FileArea
+  {...props}
+  className="wiz-tls-asset-field"
+  invalid={validate.privateKey(props.value)}
+  placeholder={privateKeyPlaceholder}
+/>;
 
 export class AsyncSelect extends React.Component {
   componentDidMount () {
@@ -622,7 +438,7 @@ export class AsyncSelect extends React.Component {
 
     let options = availableValues.value;
     if (value && !options.map(r => r.value).includes(value)) {
-      options = [{label: value, value: value}].concat(options);
+      options = [{label: value, value}].concat(options);
     }
     const style = {};
     if (!onRefresh) {
@@ -704,7 +520,6 @@ export const ConnectedFieldList = connect(
   (dispatch) => ({removeField: (id, i) => dispatch(configActions.removeField(id, i))})
 )((props) => <InnerFieldList_ {...props} />);
 
-
 export class DropdownMixin extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -753,20 +568,18 @@ export class Dropdown extends DropdownMixin {
     const {active} = this.state;
     const {items, header} = this.props;
 
-    const children = _.map(items, (href, key) => {
-      return <li className="tectonic-dropdown-menu-item" key={key}>
-        <a className="tectonic-dropdown-menu-item__link" href={href} key={key} rel="noopener" target="_blank">
-          {key}
-        </a>
+    const children = _.map(items, (href, title) => {
+      return <li className="tectonic-dropdown-menu-item" key={title}>
+        <a className="tectonic-dropdown-menu-item__link" href={href} rel="noopener" target="_blank">{title}</a>
       </li>;
     });
 
     return (
-      <div ref={el => this.dropdownElement = el}>
-        <div className="dropdown" onClick={this.toggle}>
-          <a className="tectonic-dropdown-menu-title">{header}&nbsp;&nbsp;<i className="fa fa-angle-down" aria-hidden="true"></i></a>
-          <ul className="dropdown-menu tectonic-dropdown-menu" style={{display: active ? 'block' : 'none'}}>{children}</ul>
-        </div>
+      <div ref={el => this.dropdownElement = el} className="dropdown" onClick={this.toggle}>
+        <a className="tectonic-dropdown-menu-title">{header}&nbsp;&nbsp;<i className="fa fa-angle-down"></i></a>
+        <ul className="dropdown-menu tectonic-dropdown-menu" style={{display: active ? 'block' : 'none'}}>
+          {children}
+        </ul>
       </div>
     );
   }

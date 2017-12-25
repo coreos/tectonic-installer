@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cluster-config
+  name: cluster-config-v1
   namespace: tectonic-system
 data:
-  tuo-config: |
+  utility-config: |
     apiVersion: v1
-    kind: ClusterConfig
+    kind: UtilityConfig
     identityConfig:
       adminEmail: ${admin_email}
       adminPasswordHash: ${admin_password_hash}
@@ -35,3 +35,8 @@ data:
       heapsterConfig:
       dnsConfig:
           clusterIP: ${kube_dns_service_ip}
+      cloudProvider: ${platform}
+  network-config: |
+      apiVersion: v1
+      kind: NetworkConfig
+      ${network_config}

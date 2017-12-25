@@ -2,6 +2,7 @@
 
 require 'cluster'
 require 'azure_support'
+require 'json'
 
 # AzureCluster represents a k8s cluster on Azure cloud provider
 #
@@ -14,10 +15,28 @@ class AzureCluster < Cluster
     super(tfvars_file)
   end
 
-  def master_ip_address
+  def master_ip_addresses
     Dir.chdir(@build_path) do
-      `echo 'module.vnet.api_ip_addresses[0]' | terraform console ../../platforms/azure`.chomp
+      ips_raw = `echo 'jsonencode(module.vnet.api_ip_addresses)' | terraform console ../../platforms/azure`.chomp
+      JSON.parse(ips_raw)
     end
+  end
+
+  def master_ip_address
+    master_ip_addresses[0]
+  end
+
+  def worker_ip_addresses
+    Dir.chdir(@build_path) do
+      ips_raw = `echo 'jsonencode(module.vnet.worker_private_ip_addresses)' \
+         | terraform console ../../platforms/azure`.chomp
+      JSON.parse(ips_raw)
+    end
+  end
+
+  def etcd_ip_addresses
+    out = @tfstate_file.output('etcd', 'etcd_vm_ids')
+    out.map { |etcd_name| etcd_name.split('/').last }
   end
 
   def env_variables
@@ -25,6 +44,12 @@ class AzureCluster < Cluster
     variables['PLATFORM'] = 'azure'
     variables['TF_VAR_tectonic_azure_location'] = @random_location
     variables['TF_VAR_tectonic_azure_client_secret'] = ENV['ARM_CLIENT_SECRET']
+
+    # To use Azure-provided DNS, `tectonic_base_domain` should be set to `""`
+    unless ENV.key?('TF_VAR_tectonic_base_domain')
+      variables['TF_VAR_tectonic_base_domain'] = ''
+    end
+
     variables
   end
 
@@ -50,7 +75,7 @@ class AzureCluster < Cluster
     Dir.chdir(@build_path) do
       console_url = `echo module.vnet.ingress_fqdn | terraform console ../../platforms/azure`.chomp
       if console_url.empty?
-        raise 'should get the console url to use in the UI tests.'
+        raise 'failed to get the console url to use in the UI tests.'
       end
       console_url
     end

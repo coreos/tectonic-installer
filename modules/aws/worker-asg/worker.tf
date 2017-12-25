@@ -1,9 +1,7 @@
 data "aws_ami" "coreos_ami" {
-  most_recent = true
-
   filter {
     name   = "name"
-    values = ["CoreOS-${var.cl_channel}-*"]
+    values = ["CoreOS-${var.container_linux_channel}-${var.container_linux_version}-*"]
   }
 
   filter {
@@ -29,7 +27,7 @@ resource "aws_launch_configuration" "worker_conf" {
   key_name             = "${var.ssh_key}"
   security_groups      = ["${var.sg_ids}"]
   iam_instance_profile = "${aws_iam_instance_profile.worker_profile.arn}"
-  user_data            = "${data.ignition_config.main.rendered}"
+  user_data            = "${data.ignition_config.s3.rendered}"
 
   lifecycle {
     create_before_destroy = true

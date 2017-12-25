@@ -6,7 +6,11 @@ variable "vpc_id" {
   type = "string"
 }
 
-variable "cl_channel" {
+variable "container_linux_channel" {
+  type = "string"
+}
+
+variable "container_linux_version" {
   type = "string"
 }
 
@@ -76,5 +80,9 @@ variable "worker_iam_role" {
 }
 
 variable "ign_s3_puller_id" {
+  type = "string"
+}
+
+variable "s3_bucket" {
   type = "string"
 }

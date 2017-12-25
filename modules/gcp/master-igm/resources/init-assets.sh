@@ -1,19 +1,31 @@
 #!/bin/bash
+# shellcheck disable=SC2086,SC2154
 set -e
 
+detect_master() {
+  mkdir -p /run/metadata
+  /usr/bin/docker run \
+      --volume /run/metadata:/run/metadata \
+      --volume /opt/detect-master.sh:/detect-master.sh:ro \
+      --network=host \
+      --entrypoint=/detect-master.sh \
+      ${gcloudsdk_image}
+}
+
+until detect_master; do
+  echo "failed to detect master; retrying in 5 seconds"
+  sleep 5
+done
+
+MASTER=$(cat /run/metadata/master)
+if [ "$MASTER" != "true" ]; then
+    exit 0
+fi
 # Download the assets from GCS
-# shellcheck disable=SC2086,SC2154
 /usr/bin/bash /opt/gcs-puller.sh ${assets_gcs_location} /var/tmp/tectonic.zip
 unzip -o -d /var/tmp/tectonic/ /var/tmp/tectonic.zip
 rm /var/tmp/tectonic.zip
 # make files in /opt/tectonic available atomically
 mv /var/tmp/tectonic /opt/tectonic
-
-# Populate the kubelet.env file.
-mkdir -p /etc/kubernetes
-# shellcheck disable=SC2154
-echo "KUBELET_IMAGE_URL=${kubelet_image_url}" > /etc/kubernetes/kubelet.env
-# shellcheck disable=SC2154
-echo "KUBELET_IMAGE_TAG=${kubelet_image_tag}" >> /etc/kubernetes/kubelet.env
 
 exit 0

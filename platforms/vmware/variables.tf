@@ -25,19 +25,10 @@ variable "tectonic_vmware_folder" {
   description = "vSphere Folder to create and add the Tectonic nodes"
 }
 
-variable "tectonic_vmware_network" {
+variable "tectonic_vmware_type" {
   type        = "string"
-  description = "Portgroup to attach the cluster nodes"
-}
-
-variable "tectonic_vmware_datacenter" {
-  type        = "string"
-  description = "Virtual DataCenter to deploy VMs"
-}
-
-variable "tectonic_vmware_cluster" {
-  type        = "string"
-  description = "vCenter Cluster used to create VMs under"
+  description = "The type of folder to create. Allowed options: datacenter, host, vm, datastore, and network."
+  default     = "vm"
 }
 
 // # Global
@@ -97,6 +88,58 @@ variable "tectonic_vmware_etcd_hostnames" {
 EOF
 }
 
+variable "tectonic_vmware_etcd_clusters" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of etcd node(s) vSphere Clusters, Example:
+  tectonic_vmware_etcd_clusters = {
+  "0" = "myvmwarecluster-0"
+  "1" = "myvmwarecluster-1"
+  "2" = "myvmwarecluster-2"
+}
+EOF
+}
+
+variable "tectonic_vmware_etcd_datacenters" {
+  type = "map"
+
+  description = <<EOF
+  terraform map of etcd node(s) Virtual DataCenters, example:
+  tectonic_vmware_etcd_datacenters = {
+  "0" = "myvmwaredc-0"
+  "1" = "myvmwaredc-1"
+  "2" = "myvmwaredc-2"
+}
+EOF
+}
+
+variable "tectonic_vmware_etcd_resource_pool" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of etcd node(s) vSphere Resource Pools, Example:
+  tectonic_vmware_etcd_resource_pool = {
+  "0" = "myresourcepool-0"
+  "1" = "myresourcepool-1"
+  "2" = "myresourcepool-2"
+}
+EOF
+}
+
+variable "tectonic_vmware_etcd_gateways" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of etcd node(s) network gateway IP, Example:
+  tectonic_vmware_etcd_gateways = {
+  "0" = "192.168.246.99"
+  "1" = "192.168.246.99"
+  "2" = "192.168.246.99"
+}
+EOF
+}
+
 variable "tectonic_vmware_etcd_ip" {
   type = "map"
 
@@ -110,15 +153,23 @@ variable "tectonic_vmware_etcd_ip" {
 EOF
 }
 
-variable "tectonic_vmware_etcd_gateway" {
-  type        = "string"
-  description = "Default Gateway IP address for etcd nodes(s)"
-}
-
 variable "tectonic_vmware_etcd_datastore" {
   type        = "string"
   default     = ""
   description = "The storage LUN used by etcd nodes. In order to use vSphere Datastore Cluster use the syntax DatastoreClusterName/datastore."
+}
+
+variable "tectonic_vmware_etcd_networks" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of etcd node(s) vSphere network portgroups, Example:
+  tectonic_vmware_etcd_networks = {
+  "0" = "mynet-0"
+  "1" = "mynet-1"
+  "2" = "mynet-2"
+}
+EOF
 }
 
 // ## Masters
@@ -147,6 +198,55 @@ variable "tectonic_vmware_master_hostnames" {
 EOF
 }
 
+variable "tectonic_vmware_master_clusters" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of master node(s) vSphere Clusters, Example:
+  tectonic_vmware_master_clusters = {
+  "0" = "myvmwarecluster-0"
+  "1" = "myvmwarecluster-1"
+}
+EOF
+}
+
+variable "tectonic_vmware_master_datacenters" {
+  type = "map"
+
+  description = <<EOF
+  terraform map of master node(s) Virtual DataCenters, example:
+  tectonic_vmware_master_datacenters = {
+  "0" = "myvmwaredc-0"
+  "1" = "myvmwaredc-1"
+  "2" = "myvmwaredc-2"
+}
+EOF
+}
+
+variable "tectonic_vmware_master_resource_pool" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of master node(s) vSphere Resource pools, Example:
+  tectonic_vmware_master_resource_pool = {
+  "0" = "myresourcepool-0"
+  "1" = "myresourcepool-1"
+}
+EOF
+}
+
+variable "tectonic_vmware_master_gateways" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of master node(s) network gateway IP, Example:
+  tectonic_vmware_master_gateways = {
+  "0" = "192.168.246.99"
+  "1" = "192.168.246.99"
+}
+EOF
+}
+
 variable "tectonic_vmware_master_ip" {
   type = "map"
 
@@ -159,15 +259,22 @@ variable "tectonic_vmware_master_ip" {
 EOF
 }
 
-variable "tectonic_vmware_master_gateway" {
-  type        = "string"
-  description = "Default Gateway IP address for Master nodes(s)"
-}
-
 variable "tectonic_vmware_master_datastore" {
   type        = "string"
   default     = ""
   description = "The storage LUN used by master nodes. In order to use vSphere Datastore Cluster use the syntax DatastoreClusterName/datastore."
+}
+
+variable "tectonic_vmware_master_networks" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of master node(s) vSphere network portgroups, Example:
+  tectonic_vmware_master_networks = {
+  "0" = "mynet-0"
+  "1" = "mynet-1"
+}
+EOF
 }
 
 // ## Workers
@@ -196,6 +303,54 @@ variable "tectonic_vmware_worker_hostnames" {
 EOF
 }
 
+variable "tectonic_vmware_worker_clusters" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of worker node(s) vSphere Clusters, Example:
+  tectonic_vmware_worker_clusters = {
+  "0" = "myvmwarecluster-0"
+  "1" = "myvmwarecluster-1"
+}
+EOF
+}
+
+variable "tectonic_vmware_worker_datacenters" {
+  type = "map"
+
+  description = <<EOF
+  terraform map of worker node(s) Virtual DataCenters, example:
+  tectonic_vmware_worker_datacenters = {
+  "0" = "myvmwaredc-0"
+  "1" = "myvmwaredc-1"
+}
+EOF
+}
+
+variable "tectonic_vmware_worker_resource_pool" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of worker node(s) vSphere Resource Pools, Example:
+  tectonic_vmware_worker_resource_pool = {
+  "0" = "myresourcepool-0"
+  "1" = "myresourcepool-1"
+}
+EOF
+}
+
+variable "tectonic_vmware_worker_gateways" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of worker node(s) network gateway IP, Example:
+  tectonic_vmware_worker_gateways = {
+  "0" = "192.168.246.99"
+  "1" = "192.168.246.99"
+}
+EOF
+}
+
 variable "tectonic_vmware_worker_ip" {
   type = "map"
 
@@ -208,9 +363,16 @@ variable "tectonic_vmware_worker_ip" {
 EOF
 }
 
-variable "tectonic_vmware_worker_gateway" {
-  type        = "string"
-  description = "Default Gateway IP address for Master nodes(s)"
+variable "tectonic_vmware_worker_networks" {
+  type = "map"
+
+  description = <<EOF
+  Terraform map of worker node(s) vSphere network portgroups, Example:
+  tectonic_vmware_worker_networks = {
+  "0" = "mynet-0"
+  "1" = "mynet-1"
+}
+EOF
 }
 
 variable "tectonic_vmware_worker_datastore" {

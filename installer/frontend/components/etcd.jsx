@@ -9,7 +9,7 @@ import {
   ETCD_OPTIONS,
   PLATFORM_TYPE,
 } from '../cluster-config';
-import { validate } from '../validate';
+import { compose, validate } from '../validate';
 import { Connect, Input, Radio } from './ui';
 import { DefineNode } from './aws-define-nodes';
 import { makeNodeForm } from './make-node-form';
@@ -17,19 +17,18 @@ import { Field, Form } from '../form';
 import { AWS_TF } from '../platforms';
 
 const EtcdForm = 'EtcdForm';
-const one2Nine = validate.int({min: 1, max: 9});
 
 const fields = [
   new Field(ETCD_OPTION, {
     default: ETCD_OPTIONS.PROVISIONED,
   }),
-  makeNodeForm(AWS_ETCDS, false, value => one2Nine(value) || validate.isOdd(value), {
+  makeNodeForm(AWS_ETCDS, compose(validate.int({min: 1, max: 9}), validate.isOdd), false, {
     dependencies: [ETCD_OPTION],
     ignoreWhen: cc => cc[ETCD_OPTION] !== ETCD_OPTIONS.PROVISIONED,
   }),
   new Field(EXTERNAL_ETCD_CLIENT, {
     default: '',
-    validator: validate.hostPort,
+    validator: validate.url,
     dependencies: [ETCD_OPTION],
     ignoreWhen: cc => cc[ETCD_OPTION] !== ETCD_OPTIONS.EXTERNAL,
   }),
@@ -94,12 +93,12 @@ export const Etcd = connect(({clusterConfig}) => ({
           <div className="col-xs-8">
             <Connect field={EXTERNAL_ETCD_CLIENT}>
               <Input id={EXTERNAL_ETCD_CLIENT}
-                autoFocus
-                className="wiz-inline-field wiz-inline-field--protocol"
-                prefix={<span className="input__prefix--protocol">http://</span>}
-                placeholder="etcd.example.com:2379" />
+                autoFocus={true}
+                className="wiz-inline-field wiz-inline-field--suffix"
+                suffix={<span className="input__suffix">:2379</span>}
+                placeholder="https://etcd.example.com" />
             </Connect>
-            <p className="text-muted">Hostname and port of etcd client endpoint</p>
+            <p className="text-muted">Address of etcd client endpoint</p>
           </div>
         </div>
       </div>

@@ -1,11 +1,19 @@
 import _ from 'lodash';
 
-import { getTectonicDomain, toAWS_TF, toBaremetal_TF, DRY_RUN, RETRY } from './cluster-config';
+import {
+  DRY_RUN,
+  PLATFORM_TYPE,
+  PULL_SECRET,
+  RETRY,
+  TECTONIC_LICENSE,
+  getTectonicDomain,
+  toAWS_TF,
+  toBaremetal_TF,
+} from './cluster-config';
 import { clusterReadyActionTypes, configActions, loadFactsActionTypes, serverActionTypes, FORMS } from './actions';
-import { savable } from './reducer';
 import { AWS_TF, BARE_METAL_TF } from './platforms';
 
-const { setIn } = configActions;
+const { addIn, setIn } = configActions;
 
 // Either return parsable JSON, or fail (and assume returned text is an error message)
 const fetchJSON = (url, opts, ...args) => {
@@ -60,18 +68,14 @@ export const observeClusterStatus = (dispatch, getState) => {
 };
 
 const platformToFunc = {
-  [AWS_TF]: {
-    f: toAWS_TF,
-  },
-  [BARE_METAL_TF]: {
-    f: toBaremetal_TF,
-  },
+  [AWS_TF]: toAWS_TF,
+  [BARE_METAL_TF]: toBaremetal_TF,
 };
 
 let observeInterval;
 
 // An action creator that builds a server message, calls fetch on that message, fires the appropriate actions
-export const commitToServer = (dryRun = false, retry = false, opts = {}) => (dispatch, getState) => {
+export const commitToServer = (dryRun = false, retry = false) => (dispatch, getState) => {
   setIn(DRY_RUN, dryRun, dispatch);
   setIn(RETRY, retry, dispatch);
 
@@ -80,14 +84,13 @@ export const commitToServer = (dryRun = false, retry = false, opts = {}) => (dis
   dispatch({type: COMMIT_REQUESTED});
 
   const state = getState();
-  const request = Object.assign({}, state.clusterConfig, {progress: savable(state)});
 
-  const obj = _.get(platformToFunc, request.platformType);
-  if (!_.isFunction(obj.f)) {
-    throw Error(`unknown platform type "${request.platformType}"`);
+  const f = platformToFunc[state.clusterConfig[PLATFORM_TYPE]];
+  if (!_.isFunction(f)) {
+    throw Error(`unknown platform type "${state.clusterConfig[PLATFORM_TYPE]}"`);
   }
 
-  const body = obj.f(request, FORMS, opts);
+  const body = f(state, FORMS);
   fetch('/terraform/apply', {
     credentials: 'same-origin',
     method: 'POST',
@@ -112,18 +115,16 @@ export const commitToServer = (dryRun = false, retry = false, opts = {}) => (dis
   });
 };
 
-
-// One-time fetch of AMIs from server, followed by firing appropriate actions
+// One-time fetch of initial data from server, followed by firing appropriate actions
 // Guaranteed not to reject.
-const getAMIs = (dispatch) => {
-  return fetchJSON('/containerlinux/images/amis', { retries: 5 })
+export const loadFacts = (dispatch) => {
+  return fetchJSON('/tectonic/facts', {retries: 5})
     .then(m => {
-      const awsRegions = m.map(({name}) => {
-        return {label: name, value: name};
-      });
+      addIn(TECTONIC_LICENSE, m.license, dispatch);
+      addIn(PULL_SECRET, m.pullSecret, dispatch);
       dispatch({
         type: loadFactsActionTypes.LOADED,
-        payload: {awsRegions},
+        payload: {awsRegions: _.map(m.amis, 'name')},
       });
     },
     err => {
@@ -131,15 +132,6 @@ const getAMIs = (dispatch) => {
         type: loadFactsActionTypes.ERROR,
         payload: err,
       });
-    }).catch(err => console.error(err));
-};
-
-// One-time fetch of facts from server. Abstracts getAMIs.
-// Guaranteed not to reject.
-export const loadFacts = (dispatch) => {
-  if (_.includes(window.config.platforms, AWS_TF)) {
-    return getAMIs(dispatch);
-  }
-  dispatch({type: loadFactsActionTypes.LOADED, payload: {}});
-  return Promise.resolve();
+    })
+    .catch(err => console.error(err));
 };

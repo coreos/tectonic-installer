@@ -34,11 +34,6 @@ variable "tectonic_gcp_region" {
   description = "The GCP region to use. Some regions only have 2 zones."
 }
 
-variable "tectonic_gcp_zones" {
-  type        = "list"
-  description = "List of two or more zones to use from specified GCP region."
-}
-
 variable "tectonic_gcp_master_gce_type" {
   type        = "string"
   description = "Instance size for the master node(s). Example: `n1-standard-2`."
@@ -91,4 +86,9 @@ variable "tectonic_gcp_etcd_disk_size" {
   type        = "string"
   default     = "30"
   description = "The size of the disk in gigabytes for the root block device of etcd nodes."
+}
+
+variable "tectonic_gcp_ssh_key" {
+  type        = "string"
+  description = "(required) Path to an SSH public key file to be provisioned as the SSH key for the 'core' user."
 }

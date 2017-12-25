@@ -1,24 +1,23 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
-# Defer cleanup rkt containers and images.
-trap "{ /usr/bin/rkt gc --grace-period=0; /usr/bin/rkt image gc --grace-period 0; } &> /dev/null" EXIT
+detect_master() {
+    mkdir -p /run/metadata
+    # shellcheck disable=SC2086,SC2154
+    /usr/bin/docker run \
+        --volume /run/metadata:/run/metadata \
+        --volume /opt/detect-master.sh:/detect-master.sh:ro \
+        --network=host \
+        --env CLUSTER_NAME=${cluster_name} \
+        --entrypoint=/detect-master.sh \
+        ${awscli_image}
+}
 
-mkdir -p /run/metadata
-# shellcheck disable=SC2086,SC2154
-/usr/bin/rkt run \
-    --dns=host --net=host --trust-keys-from-https --interactive \
-    \
-    --set-env=CLUSTER_NAME=${cluster_name} \
-    \
-    --volume=metadata,kind=host,source=/run/metadata,readOnly=false \
-    --mount=volume=metadata,target=/run/metadata \
-    \
-    --volume=detect-master,kind=host,source=/opt/detect-master.sh,readOnly=true \
-    --mount=volume=detect-master,target=/detect-master.sh \
-    \
-    ${awscli_image} \
-    --exec=/detect-master.sh
+until detect_master; do
+    echo "failed to detect master; retrying in 5 seconds"
+    sleep 5
+done
 
 MASTER=$(cat /run/metadata/master)
 if [ "$MASTER" != "true" ]; then

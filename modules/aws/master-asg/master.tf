@@ -1,9 +1,7 @@
 data "aws_ami" "coreos_ami" {
-  most_recent = true
-
   filter {
     name   = "name"
-    values = ["CoreOS-${var.cl_channel}-*"]
+    values = ["CoreOS-${var.container_linux_channel}-${var.container_linux_version}-*"]
   }
 
   filter {
@@ -30,7 +28,7 @@ resource "aws_autoscaling_group" "masters" {
   launch_configuration = "${aws_launch_configuration.master_conf.id}"
   vpc_zone_identifier  = ["${var.subnet_ids}"]
 
-  load_balancers = ["${compact(concat(aws_elb.api_internal.*.id, list(aws_elb.console.id), aws_elb.api_external.*.id))}"]
+  load_balancers = ["${var.aws_lbs}"]
 
   tags = [
     {
@@ -64,7 +62,7 @@ resource "aws_launch_configuration" "master_conf" {
   security_groups             = ["${var.master_sg_ids}"]
   iam_instance_profile        = "${aws_iam_instance_profile.master_profile.arn}"
   associate_public_ip_address = "${var.public_endpoints}"
-  user_data                   = "${data.ignition_config.main.rendered}"
+  user_data                   = "${data.ignition_config.s3.rendered}"
 
   lifecycle {
     create_before_destroy = true
@@ -154,7 +152,8 @@ resource "aws_iam_role_policy" "master_policy" {
       "Action" : [
         "s3:GetObject",
         "s3:HeadObject",
-        "s3:ListBucket"
+        "s3:ListBucket",
+        "s3:PutObject"
       ],
       "Resource": "arn:aws:s3:::*",
       "Effect": "Allow"

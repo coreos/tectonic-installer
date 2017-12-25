@@ -1,8 +1,9 @@
 resource "azurerm_availability_set" "tectonic_workers" {
-  name                = "${var.cluster_name}-workers"
-  location            = "${var.location}"
-  resource_group_name = "${var.resource_group_name}"
-  managed             = true
+  name                        = "${var.cluster_name}-workers"
+  location                    = "${var.location}"
+  resource_group_name         = "${var.resource_group_name}"
+  managed                     = true
+  platform_fault_domain_count = "${var.fault_domains}"
 
   tags = "${merge(map(
     "Name", "${var.cluster_name}-workers",
@@ -24,8 +25,8 @@ resource "azurerm_virtual_machine" "tectonic_worker" {
   storage_image_reference {
     publisher = "CoreOS"
     offer     = "CoreOS"
-    sku       = "${var.cl_channel}"
-    version   = "latest"
+    sku       = "${var.container_linux_channel}"
+    version   = "${var.container_linux_version}"
   }
 
   storage_os_disk {

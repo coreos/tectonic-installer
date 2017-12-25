@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-resource "google_compute_instance_template" "tectonic-worker-it" {
-  name           = "tectonic-worker-it"
+resource "google_compute_instance_template" "worker-it" {
+  name           = "${var.cluster_name}-worker-it"
   region         = "${var.region}"
   machine_type   = "${var.machine_type}"
   can_ip_forward = false
@@ -39,19 +39,21 @@ resource "google_compute_instance_template" "tectonic-worker-it" {
 
   metadata = {
     user-data = "${data.ignition_config.main.rendered}"
+    sshKeys   = "core:${file(var.public_ssh_key)}"
   }
 
   service_account {
+    email  = "${google_service_account.worker-node-sa.email}"
     scopes = ["cloud-platform"]
   }
 }
 
-resource "google_compute_instance_group_manager" "tectonic-worker-igm" {
-  count              = "${var.instance_count}"
-  target_size        = 1
-  name               = "tectonic-worker-igm-${count.index}"
-  zone               = "${element(var.zone_list, count.index)}"
-  instance_template  = "${google_compute_instance_template.tectonic-worker-it.self_link}"
+resource "google_compute_region_instance_group_manager" "worker-igm" {
+  count              = 1
+  region             = "${var.region}"
+  target_size        = "${var.instance_count}"
+  name               = "${var.cluster_name}-worker-igm-${count.index}"
+  instance_template  = "${google_compute_instance_template.worker-it.self_link}"
   target_pools       = ["${var.worker_targetpool_self_link}"]
-  base_instance_name = "wrkr"
+  base_instance_name = "${var.cluster_name}-worker"
 }

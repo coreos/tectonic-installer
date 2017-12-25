@@ -1,4 +1,8 @@
-variable "cl_channel" {
+variable "container_linux_channel" {
+  type = "string"
+}
+
+variable "container_linux_version" {
   type = "string"
 }
 
@@ -77,4 +81,8 @@ variable "vm_size" {
 variable "worker_count" {
   type        = "string"
   description = "Count of worker nodes to be created."
+}
+
+variable "fault_domains" {
+  type = "string"
 }

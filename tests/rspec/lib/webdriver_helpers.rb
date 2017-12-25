@@ -3,7 +3,7 @@
 require 'selenium-webdriver'
 require 'headless'
 
-# PasswordGenerator contains helper functions to generate test passwords and also the bcrypted hash
+# WebdriverHelpers contains helper functions to create the browser to use in the UI tests.
 module WebdriverHelpers
   def self.start_webdriver
     @headless = Headless.new
@@ -19,7 +19,7 @@ module WebdriverHelpers
     target_size = Selenium::WebDriver::Dimension.new(1920, 1080)
     driver.manage.window.size = target_size
     driver.manage.timeouts.implicit_wait = 20 # seconds
-    driver.manage.timeouts.page_load = 300 # seconds
+    driver.manage.timeouts.page_load = 60 # seconds
     driver
   end
 

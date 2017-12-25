@@ -2,10 +2,12 @@ import React from 'react';
 import semver from 'semver';
 import { Dropdown } from './ui';
 
-
 const fetchLatestRelease = () => {
-  return fetch('/releases/latest',
-    { method: 'GET' }).then((response) => {
+  const opts = {
+    credentials: 'same-origin',
+    method: 'GET',
+  };
+  return fetch('/releases/latest', opts).then((response) => {
     if (response.ok) {
       return response.text();
     }

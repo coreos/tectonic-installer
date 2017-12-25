@@ -1,8 +1,9 @@
+import _ from 'lodash';
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
-import { configActionTypes, eventErrorsActionTypes } from '../actions';
+import { configActions, eventErrorsActionTypes } from '../actions';
 import { Field, Form } from '../form';
 import { compareVersions } from '../utils';
 import { validate } from '../validate';
@@ -26,8 +27,6 @@ const stateToProps = ({eventErrors, clusterConfig}) => ({
   http: clusterConfig[BM_MATCHBOX_HTTP],
   osToUse: clusterConfig[BM_OS_TO_USE],
   versionError: eventErrors[COREOS_VERSIONS_ERROR_NAME],
-  // TODO: (ggreer) total hack
-  bootCfgInfly: clusterConfig.bootCfgInfly,
 });
 
 const dispatchToProps = dispatch => ({
@@ -39,20 +38,16 @@ const dispatchToProps = dispatch => ({
         error: null,
       },
     });
-    dispatch({
-      type: configActionTypes.SET,
-      payload: {matchboxHTTP: value},
-    });
+    const payload = {
+      [BM_OS_TO_USE]: DEFAULT_CLUSTER_CONFIG[BM_OS_TO_USE],
+      matchboxHTTP: value,
+    };
+    configActions.set(payload, dispatch);
   },
   getOsToUse: matchboxHTTP => {
     if (validate.hostPort(matchboxHTTP)) {
       return;
     }
-
-    dispatch({
-      type: configActionTypes.SET,
-      payload: {bootCfgInfly: true},
-    });
 
     const endpointURL = `http://${matchboxHTTP}/assets/coreos`;
     return fetch(`/containerlinux/images/matchbox?endpoint=${encodeURIComponent(endpointURL)}`)
@@ -70,11 +65,7 @@ const dispatchToProps = dispatch => ({
         }
 
         const useVersion = available.map(v => v.version).sort(compareVersions).pop();
-
-        dispatch({
-          type: configActionTypes.SET,
-          payload: {[BM_OS_TO_USE]: useVersion},
-        });
+        configActions.set({[BM_OS_TO_USE]: useVersion}, dispatch);
 
         return Promise.resolve(true);
       })
@@ -86,12 +77,7 @@ const dispatchToProps = dispatch => ({
             error: err,
           },
         });
-        dispatch({
-          type: configActionTypes.SET,
-          payload: {[BM_OS_TO_USE]: DEFAULT_CLUSTER_CONFIG[BM_OS_TO_USE]},
-        });
-      })
-      .then(() => dispatch({type: configActionTypes.SET, payload: {bootCfgInfly: false}}));
+      });
   },
 });
 
@@ -116,10 +102,11 @@ export const BM_Matchbox = connect(stateToProps, dispatchToProps)(
     }
 
     render () {
-      const {http, osToUse, versionError, bootCfgInfly} = this.props;
+      const {http, osToUse, versionError} = this.props;
       const osError = osToUse ? false : versionError;
+      const httpError = validate.hostPort(http);
       const iClassNames = classNames('fa', 'fa-refresh', {
-        'fa-spin': bootCfgInfly,
+        'fa-spin': !httpError && _.isEmpty(osToUse) && _.isEmpty(versionError),
       });
 
       return <div className="row form-group">
@@ -135,19 +122,19 @@ export const BM_Matchbox = connect(stateToProps, dispatchToProps)(
           <div className="form-group">
             <div className="row">
               <div className="col-xs-3">
-                <label htmlFor={BM_MATCHBOX_HTTP}>HTTP address</label>
+                <label htmlFor={BM_MATCHBOX_HTTP}>HTTP Address</label>
               </div>
               <div className="col-xs-9">
                 <Input id={BM_MATCHBOX_HTTP}
-                  className="wiz-inline-field wiz-inline-field--protocol"
-                  autoFocus="true"
-                  prefix={<span className="input__prefix--protocol">http://</span>}
+                  className="wiz-inline-field wiz-inline-field--prefix"
+                  autoFocus={true}
+                  prefix={<span className="input__prefix">http://</span>}
                   placeholder="matchbox.example.com:8080"
                   forceDirty={!!osError}
-                  invalid={osError || validate.hostPort(http)}
+                  invalid={osError || httpError}
                   value={http}
                   onValue={v => this.onBootCfg(v)}>
-                  <button className="btn btn-default" disabled={!!validate.hostPort(http)} onClick={() => this.onBootCfg(http, 0)}>
+                  <button className="btn btn-default" disabled={!!httpError} onClick={() => this.onBootCfg(http, 0)}>
                     <i className={iClassNames}></i>
                   </button>
                 </Input>
@@ -156,14 +143,14 @@ export const BM_Matchbox = connect(stateToProps, dispatchToProps)(
             </div>
             <div className="row">
               <div className="col-xs-3">
-                <label htmlFor={BM_MATCHBOX_RPC}>API address</label>
+                <label htmlFor={BM_MATCHBOX_RPC}>API Address</label>
               </div>
               <div className="col-xs-9">
                 <Connect field={BM_MATCHBOX_RPC}>
                   <Input
                     id={BM_MATCHBOX_RPC}
-                    className="wiz-inline-field wiz-inline-field--protocol"
-                    prefix={<span className="input__prefix--protocol">https://</span>}
+                    className="wiz-inline-field wiz-inline-field--prefix"
+                    prefix={<span className="input__prefix">https://</span>}
                     placeholder="matchbox.example.com:8081" />
                 </Connect>
                 <p className="text-muted">Hostname and port of matchbox API endpoint</p>

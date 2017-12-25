@@ -26,10 +26,6 @@ variable "region" {
   type = "string"
 }
 
-variable "zone_list" {
-  type = "list"
-}
-
 variable "machine_type" {
   type = "string"
 }
@@ -74,6 +70,24 @@ variable "ign_tectonic_path_unit_id" {
   type = "string"
 }
 
+variable "container_images" {
+  description = "Container images to use"
+  type        = "map"
+}
+
+variable "image_re" {
+  description = "(internal) Regular expression used to extract repo and tag components from image strings"
+  type        = "string"
+}
+
+variable "public_ssh_key" {
+  default = ""
+}
+
+variable "kubeconfig_content" {
+  type = "string"
+}
+
 variable "ign_gcs_puller_id" {
   type = "string"
 }
@@ -85,14 +99,4 @@ variable "ign_init_assets_service_id" {
 variable "assets_gcs_location" {
   type        = "string"
   description = "Location on gcs of the Bootkube/Tectonic assets to use (bucket/key)"
-}
-
-variable "container_images" {
-  description = "Container images to use"
-  type        = "map"
-}
-
-variable "image_re" {
-  description = "(internal) Regular expression used to extract repo and tag components from image strings"
-  type        = "string"
 }

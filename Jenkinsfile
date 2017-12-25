@@ -9,6 +9,12 @@
 creds = [
   file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_license_path'),
   file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'),
+  file(credentialsId: 'GCP-APPLICATION', variable: 'GOOGLE_APPLICATION_CREDENTIALS'),
+  usernamePassword(
+    credentialsId: 'jenkins-log-analyzer-user',
+    passwordVariable: 'LOG_ANALYZER_PASSWORD',
+    usernameVariable: 'LOG_ANALYZER_USER'
+  ),
   [
     $class: 'AmazonWebServicesCredentialsBinding',
     credentialsId: 'tectonic-jenkins-installer'
@@ -20,10 +26,15 @@ creds = [
     clientIdVariable: 'ARM_CLIENT_ID',
     clientSecretVariable: 'ARM_CLIENT_SECRET',
     tenantIdVariable: 'ARM_TENANT_ID'
+  ],
+  [
+    $class: 'StringBinding',
+    credentialsId: 'github-coreosbot',
+    variable: 'GITHUB_CREDENTIALS'
   ]
 ]
 
-quay_creds = [
+quayCreds = [
   usernamePassword(
     credentialsId: 'quay-robot',
     passwordVariable: 'QUAY_ROBOT_SECRET',
@@ -31,20 +42,26 @@ quay_creds = [
   )
 ]
 
-default_builder_image = 'quay.io/coreos/tectonic-builder:v1.40-upstream-terraform'
-tectonic_smoke_test_env_image = 'quay.io/coreos/tectonic-smoke-test-env:v5.6'
+defaultBuilderImage = 'quay.io/coreos/tectonic-builder:v1.41'
+tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.13'
+originalCommitId = 'UNKNOWN'
 
 pipeline {
   agent none
+  environment {
+    KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.2_coreos.0'
+    LOGSTASH_BUCKET = 'log-analyzer-tectonic-installer'
+  }
   options {
-    timeout(time:120, unit:'MINUTES')
+    // Individual steps have stricter timeouts. 360 minutes should be never reached.
+    timeout(time:6, unit:'HOURS')
     timestamps()
-    buildDiscarder(logRotator(numToKeepStr:'100'))
+    buildDiscarder(logRotator(numToKeepStr:'20', artifactNumToKeepStr: '20'))
   }
   parameters {
     string(
       name: 'builder_image',
-      defaultValue: default_builder_image,
+      defaultValue: defaultBuilderImage,
       description: 'tectonic-builder docker image to use for builds'
     )
     string(
@@ -53,9 +70,24 @@ pipeline {
       description: 'Hyperkube image. Please define the param like: {hyperkube="<HYPERKUBE_IMAGE>"}'
     )
     booleanParam(
+      name: 'RUN_CONFORMANCE_TESTS',
+      defaultValue: false,
+      description: ''
+    )
+    booleanParam(
       name: 'RUN_SMOKE_TESTS',
       defaultValue: true,
       description: ''
+    )
+    booleanParam(
+      name: 'RUN_GUI_TESTS',
+      defaultValue: true,
+      description: ''
+    )
+    string(
+      name: 'COMPONENT_TEST_IMAGES',
+      defaultValue: '',
+      description: 'List of container images for component tests to run (comma-separated)'
     )
     booleanParam(
       name: 'PLATFORM/AWS',
@@ -65,6 +97,11 @@ pipeline {
     booleanParam(
       name: 'PLATFORM/AZURE',
       defaultValue: true,
+      description: ''
+    )
+    booleanParam(
+      name: 'PLATFORM/GCP',
+      defaultValue: false,
       description: ''
     )
     booleanParam(
@@ -82,105 +119,63 @@ pipeline {
       }
       steps {
         node('worker && ec2') {
-          withDockerContainer(params.builder_image) {
-            ansiColor('xterm') {
-              checkout scm
-              sh """#!/bin/bash -ex
-              mkdir -p \$(dirname $GO_PROJECT) && ln -sf $WORKSPACE $GO_PROJECT
+          script {
+            def err = null
+            try {
+              timeout(time: 20, unit: 'MINUTES') {
+                forcefullyCleanWorkspace()
+                checkout scm
+                stash name: 'clean-repo', excludes: 'installer/vendor/**,tests/smoke/vendor/**,images/tectonic-stats-extender/vendor/**'
+                originalCommitId = sh(returnStdout: true, script: 'git rev-parse origin/"\${BRANCH_NAME}"')
+                echo "originalCommitId: ${originalCommitId}"
 
-              cd $GO_PROJECT/
-              make structure-check
-              make bin/smoke
+                withDockerContainer(params.builder_image) {
+                  ansiColor('xterm') {
+                    sh """#!/bin/bash -ex
+                    mkdir -p \$(dirname $GO_PROJECT) && ln -sf $WORKSPACE $GO_PROJECT
 
-              cd $GO_PROJECT/installer
-              make clean
-              make tools
-              make build
+                    cd $GO_PROJECT/
+                    make structure-check
+                    make bin/smoke
 
-              make dirtycheck
-              make lint
-              make test
-              rm -fr frontend/tests_output
-              """
-              stash name: 'repository'
+                    cd $GO_PROJECT/installer
+                    make clean
+                    make tools
+                    make build
+
+                    make dirtycheck
+                    make lint
+                    make test
+                    rm -fr frontend/tests_output
+                    """
+                    stash name: 'installer-binary', includes: 'installer/bin/linux/installer'
+                    stash name: 'node-modules', includes: 'installer/frontend/node_modules/**'
+                    stash name: 'smoke-test-binary', includes: 'bin/smoke'
+                  }
+                }
+                withDockerContainer(tectonicSmokeTestEnvImage) {
+                  sh"""#!/bin/bash -ex
+                    cd tests/rspec
+                    rubocop --cache false spec lib
+                  """
+                }
+              }
+            } catch (error) {
+              err = error
+              throw error
+            } finally {
+              reportStatusToGithub((err == null) ? 'success' : 'failure', 'basic-tests', originalCommitId)
               cleanWs notFailBuild: true
             }
-          }
-          withDockerContainer(tectonic_smoke_test_env_image) {
-            unstash 'repository'
-            sh"""#!/bin/bash -ex
-              cd tests/rspec
-              bundler exec rubocop --cache false spec lib
-            """
-            cleanWs notFailBuild: true
           }
         }
       }
     }
 
     stage('GUI Tests') {
-      environment {
-        TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
-        GRAFITI_DELETER_ROLE = 'grafiti-deleter'
-        TF_VAR_tectonic_container_images = "${params.hyperkube_image}"
-      }
-      steps {
-        parallel (
-          "IntegrationTest AWS Installer Gui": {
-            node('worker && ec2') {
-              withCredentials(creds) {
-                withDockerContainer(params.builder_image) {
-                  ansiColor('xterm') {
-                    unstash 'repository'
-                    sh """#!/bin/bash -ex
-                    cd installer
-                    make launch-aws-installer-guitests
-                    make gui-aws-tests-cleanup
-                    """
-                    cleanWs notFailBuild: true
-                  }
-                }
-              }
-            }
-          },
-          "IntegrationTest Baremetal Installer Gui": {
-            node('worker && ec2') {
-              withCredentials(creds) {
-                withDockerContainer(image: params.builder_image, args: '-u root') {
-                  ansiColor('xterm') {
-                    unstash 'repository'
-                    script {
-                      try {
-                        sh """#!/bin/bash -ex
-                        cd installer
-                        make launch-baremetal-installer-guitests
-                        """
-                      }
-                      catch (error) {
-                        throw error
-                      }
-                      finally {
-                        sh """#!/bin/bash -x
-                        cd installer
-                        make gui-baremetal-tests-cleanup
-                        make clean
-                        """
-                        cleanWs notFailBuild: true
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        )
-      }
-    }
-
-    stage("Smoke Tests") {
       when {
         expression {
-          return params.RUN_SMOKE_TESTS
+          return params.RUN_GUI_TESTS
         }
       }
       environment {
@@ -190,54 +185,155 @@ pipeline {
       }
       steps {
         script {
-          def builds = [:]
-
-          if (params."PLATFORM/AWS") {
-            builds['aws'] = runRSpecTest('spec/aws_spec.rb', '')
-            builds['aws_vpc_internal'] = runRSpecTest(
-                'spec/aws_vpc_internal_spec.rb',
-                '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'
-                )
-            builds['aws_network_policy'] = runRSpecTest('spec/aws_network_policy_spec.rb', '')
-            builds['aws_exp'] = runRSpecTest('spec/aws_exp_spec.rb', '')
-            builds['aws_ca'] = runRSpecTest('spec/aws_ca_spec.rb', '')
-          }
-
-          if (params."PLATFORM/AZURE") {
-            builds['azure_basic'] = runRSpecTest('spec/azure_basic_spec.rb', '')
-            builds['azure_experimental'] = runRSpecTest('spec/azure_experimental_spec.rb', '')
-            builds['azure_private_external'] = runRSpecTest('spec/azure_private_external_spec.rb', '--device=/dev/net/tun --cap-add=NET_ADMIN -u root')
-            /*
-            * Test temporarily disabled
-            builds['azure_dns'] = runRSpecTest('spec/azure_dns_spec.rb', '')
-            */
-            builds['azure_external'] = runRSpecTest('spec/azure_external_spec.rb', '')
-            builds['azure_external_experimental'] = runRSpecTest('spec/azure_external_experimental_spec.rb', '')
-            builds['azure_example'] = runRSpecTest('spec/azure_example_spec.rb', '')
-          }
-
-          if (params."PLATFORM/BARE_METAL") {
-            /* Temporarily disabled for consolidation
-            * Fails very often due to Packet flakiness
-            *
-            builds['bare_metal'] = {
-              node('worker && bare-metal') {
-                ansiColor('xterm') {
-                  unstash 'repository'
-                  withCredentials(creds) {
-                    timeout(35) {
-                      sh """#!/bin/bash -ex
-                      ${WORKSPACE}/tests/smoke/bare-metal/smoke.sh vars/metal.tfvars
-                      """
+          def err = null
+          try {
+            parallel (
+              "IntegrationTest AWS Installer Gui": {
+                node('worker && ec2') {
+                  timeout(time: 10, unit: 'MINUTES') {
+                    forcefullyCleanWorkspace()
+                    withCredentials(creds) {
+                      withDockerContainer(params.builder_image) {
+                        ansiColor('xterm') {
+                          unstash 'clean-repo'
+                          unstash 'installer-binary'
+                          unstash 'node-modules'
+                          sh """#!/bin/bash -ex
+                          cd installer
+                          make launch-aws-installer-guitests
+                          make gui-aws-tests-cleanup
+                          """
+                          cleanWs notFailBuild: true
+                        }
+                      }
                     }
-                    cleanWs notFailBuild: true
+                  }
+                }
+              },
+              "IntegrationTest Baremetal Installer Gui": {
+                node('worker && ec2') {
+                  timeout(time: 10, unit: 'MINUTES') {
+                    forcefullyCleanWorkspace()
+                    withCredentials(creds) {
+                      withDockerContainer(image: params.builder_image, args: '-u root') {
+                        ansiColor('xterm') {
+                          unstash 'clean-repo'
+                          unstash 'installer-binary'
+                          unstash 'node-modules'
+                          script {
+                            try {
+                              sh """#!/bin/bash -ex
+                              cd installer
+                              make launch-baremetal-installer-guitests
+                              """
+                            }
+                            catch (error) {
+                              throw error
+                            }
+                            finally {
+                              sh """#!/bin/bash -x
+                              cd installer
+                              make gui-baremetal-tests-cleanup
+                              make clean
+                              """
+                              cleanWs notFailBuild: true
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
+            )
+          } catch (error) {
+            err = error
+            throw error
+          } finally {
+            node('worker && ec2') {
+              unstash 'clean-repo'
+              reportStatusToGithub((err == null) ? 'success' : 'failure', 'gui-tests', originalCommitId)
             }
+          }
+        }
+      }
+    }
+
+    stage("Smoke Tests") {
+      when {
+        expression {
+          return params.RUN_SMOKE_TESTS || params.RUN_CONFORMANCE_TESTS || params.COMPONENT_TEST_IMAGES != ''
+        }
+      }
+      environment {
+        TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
+        GRAFITI_DELETER_ROLE = 'grafiti-deleter'
+        TF_VAR_tectonic_container_images = "${params.hyperkube_image}"
+        TF_VAR_tectonic_kubelet_debug_config = "--minimum-container-ttl-duration=8h --maximum-dead-containers-per-container=9999 --maximum-dead-containers=9999"
+        GOOGLE_PROJECT = "tectonic-installer"
+      }
+      steps {
+        script {
+          def builds = [:]
+          def aws = [
+            [file: 'basic_spec.rb', args: ''],
+            [file: 'vpc_internal_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'],
+            [file: 'network_canal_spec.rb', args: ''],
+            [file: 'exp_spec.rb', args: ''],
+            [file: 'ca_spec.rb', args: ''],
+            [file: 'custom_tls_spec.rb', args: '']
+          ]
+          def azure = [
+            [file: 'basic_spec.rb', args: ''],
+            [file: 'private_external_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'],
+            /*
+            * Test temporarily disabled
+            [file: 'spec/azure_dns_spec.rb', args: ''],
             */
+            [file: 'external_spec.rb', args: ''],
+            [file: 'example_spec.rb', args: ''],
+            [file: 'custom_tls_spec.rb', args: '']
+          ]
+          def gcp = [
+          /* Disabled until we start the work again on gcp
+           *  [file: 'basic_spec.rb', args: ''],
+            [file: 'ha_spec.rb', args: ''],
+            [file: 'custom_tls_spec.rb', args: '']
+           */
+          ]
+
+          def metal = [
+            [file: 'basic_spec.rb', args: ''],
+            [file: 'custom_tls_spec.rb', args: '']
+          ]
+
+          if (params."PLATFORM/AWS") {
+            aws.each { build ->
+              filepath = 'spec/aws/' + build.file
+              builds['aws/' + build.file] = runRSpecTest(filepath, build.args)
+            }
           }
 
+          if (params."PLATFORM/AZURE") {
+            azure.each { build ->
+              filepath = 'spec/azure/' + build.file
+              builds['azure/' + build.file] = runRSpecTest(filepath, build.args)
+            }
+          }
+
+          if (params."PLATFORM/GCP") {
+            gcp.each { build ->
+              filepath = 'spec/gcp/' + build.file
+              builds['gcp/' + build.file] = runRSpecTest(filepath, build.args)
+            }
+          }
+
+          if (params."PLATFORM/BARE_METAL") {
+            metal.each { build ->
+              filepath = 'spec/metal/' + build.file
+              builds['metal/' + build.file] = runRSpecTestBareMetal(filepath)
+            }
+          }
           parallel builds
         }
       }
@@ -249,9 +345,10 @@ pipeline {
       }
       steps {
         node('worker && ec2') {
-          withCredentials(quay_creds) {
+          forcefullyCleanWorkspace()
+          withCredentials(quayCreds) {
             ansiColor('xterm') {
-              unstash 'repository'
+              unstash 'clean-repo'
               sh """
                 docker build -t quay.io/coreos/tectonic-installer:master -f images/tectonic-installer/Dockerfile .
                 docker login -u="$QUAY_ROBOT_USERNAME" -p="$QUAY_ROBOT_SECRET" quay.io
@@ -264,28 +361,134 @@ pipeline {
         }
       }
     }
+
   }
-}
-
-
-def runRSpecTest(testFilePath, dockerArgs) {
-  return {
-    node('worker && ec2') {
-      withCredentials(creds) {
-        withDockerContainer(
-            image: tectonic_smoke_test_env_image,
-            args: dockerArgs
-        ) {
-          ansiColor('xterm') {
-            unstash 'repository'
-            sh """#!/bin/bash -ex
-              cd tests/rspec
-              bundler exec rspec ${testFilePath}
+  post {
+    always {
+      node('worker && ec2') {
+        forcefullyCleanWorkspace()
+        echo "Starting with streaming the logfile to the S3 bucket"
+        withDockerContainer(params.builder_image) {
+          withCredentials(creds) {
+            unstash 'clean-repo'
+            sh """#!/bin/bash -xe
+            export BUILD_RESULT=${currentBuild.currentResult}
+            ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh jenkins-logs
             """
-            cleanWs notFailBuild: true
           }
         }
       }
     }
+  }
+}
+
+def forcefullyCleanWorkspace() {
+  return withDockerContainer(
+    image: tectonicSmokeTestEnvImage,
+    args: '-u root'
+  ) {
+    ansiColor('xterm') {
+      sh """#!/bin/bash -e
+        if [ -d "\$WORKSPACE" ]
+        then
+          rm -rfv \$WORKSPACE/*
+        fi
+      """
+    }
+  }
+}
+
+def runRSpecTest(testFilePath, dockerArgs) {
+  return {
+    node('worker && ec2') {
+      def err = null
+      try {
+        timeout(time: 5, unit: 'HOURS') {
+          forcefullyCleanWorkspace()
+          ansiColor('xterm') {
+            withCredentials(creds + quayCreds) {
+              withDockerContainer(
+                image: tectonicSmokeTestEnvImage,
+                args: '-u root -v /var/run/docker.sock:/var/run/docker.sock ' + dockerArgs
+              ) {
+                unstash 'clean-repo'
+                unstash 'smoke-test-binary'
+                sh """#!/bin/bash -ex
+                  mkdir -p templogfiles && chmod 777 templogfiles
+                  cd tests/rspec
+                  docker login -u="$QUAY_ROBOT_USERNAME" -p="$QUAY_ROBOT_SECRET" quay.io
+
+                  # Directing test output both to stdout as well as a log file
+                  rspec ${testFilePath} --format RspecTap::Formatter --format RspecTap::Formatter --out ../../templogfiles/format=tap.log
+
+                  docker logout quay.io
+                """
+              }
+            }
+          }
+        }
+      } catch (error) {
+        err = error
+        throw error
+      } finally {
+        reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
+        archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
+        withDockerContainer(params.builder_image) {
+         withCredentials(creds) {
+           sh """#!/bin/bash -xe
+           ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
+           """
+         }
+        }
+
+        cleanWs notFailBuild: true
+      }
+
+    }
+  }
+}
+
+def runRSpecTestBareMetal(testFilePath) {
+  return {
+    node('worker && bare-metal') {
+      def err = null
+      try {
+        timeout(time: 5, unit: 'HOURS') {
+          ansiColor('xterm') {
+            unstash 'clean-repo'
+            unstash 'smoke-test-binary'
+            withCredentials(creds + quayCreds) {
+              sh """#!/bin/bash -ex
+              cd tests/rspec
+              docker login -u="$QUAY_ROBOT_USERNAME" -p="$QUAY_ROBOT_SECRET" quay.io
+              export RBENV_ROOT=/usr/local/rbenv
+              export PATH="/usr/local/rbenv/bin:$PATH"
+              eval \"\$(rbenv init -)\"
+              rbenv install -s
+              gem install bundler
+              bundler install
+              bundler exec rspec ${testFilePath} --format RspecTap::Formatter
+              docker logout quay.io
+              """
+            }
+          }
+        }
+      } catch (error) {
+        err = error
+        throw error
+      } finally {
+        reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
+        archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
+        cleanWs notFailBuild: true
+      }
+    }
+  }
+}
+
+def reportStatusToGithub(status, context, commitId) {
+  withCredentials(creds) {
+    sh """#!/bin/bash -ex
+      ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context} ${commitId}
+    """
   }
 }

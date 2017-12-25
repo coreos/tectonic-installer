@@ -26,8 +26,8 @@ export const Users = () => <div>
       <label htmlFor={ADMIN_EMAIL}>Email Address</label>
     </div>
     <div className="col-sm-8">
-      <Connect field={ADMIN_EMAIL} validator={validate.email}>
-        <Input type="email" placeholder="admin@example.com" />
+      <Connect field={ADMIN_EMAIL}>
+        <Input autoFocus={true} type="email" placeholder="admin@example.com" />
       </Connect>
     </div>
   </div>
@@ -36,7 +36,7 @@ export const Users = () => <div>
       <label htmlFor={ADMIN_PASSWORD}>Password</label>
     </div>
     <div className="col-sm-8">
-      <Connect field={ADMIN_PASSWORD} validator={validate.nonEmpty}>
+      <Connect field={ADMIN_PASSWORD}>
         <Password />
       </Connect>
     </div>
@@ -46,7 +46,7 @@ export const Users = () => <div>
       <label htmlFor={ADMIN_PASSWORD2}>Confirm Password</label>
     </div>
     <div className="col-sm-8">
-      <Connect field={ADMIN_PASSWORD2} validator={validate.nonEmpty}>
+      <Connect field={ADMIN_PASSWORD2}>
         <Password />
       </Connect>
     </div>

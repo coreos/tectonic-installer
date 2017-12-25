@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: tectonic-cluo-operator
@@ -28,7 +28,7 @@ spec:
         resources:
           limits:
             cpu: 20m
-            memory: 50Mi
+            memory: 100Mi
           requests:
             cpu: 20m
             memory: 50Mi

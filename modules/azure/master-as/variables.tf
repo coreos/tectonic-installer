@@ -1,4 +1,8 @@
-variable "cl_channel" {
+variable "container_linux_channel" {
+  type = "string"
+}
+
+variable "container_linux_version" {
   type = "string"
 }
 
@@ -83,5 +87,9 @@ variable "ign_tectonic_service_id" {
 }
 
 variable "ign_tectonic_path_unit_id" {
+  type = "string"
+}
+
+variable "fault_domains" {
   type = "string"
 }

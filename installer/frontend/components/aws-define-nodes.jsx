@@ -15,13 +15,12 @@ import {
 } from '../cluster-config';
 
 import { Form } from '../form';
-import { toError, toAsyncError } from '../utils';
+import { toError } from '../utils';
+import { validate } from '../validate';
 import { AWS_INSTANCE_TYPES } from '../facts';
 import { NumberInput, Connect, Select } from './ui';
-import { makeNodeForm } from './make-node-form';
+import { makeNodeForm, toKey } from './make-node-form';
 import { Etcd } from './etcd';
-
-const toKey = (name, field) => `${name}-${field}`;
 
 const Row = ({label, htmlFor, children}) => <div className="row form-group">
   <div className="col-xs-4">
@@ -37,7 +36,7 @@ const IOPs = connect(
 )(
   ({type, fieldName}) => type !== 'io1' ? null : <Row htmlFor={`${fieldName}--storage-iops`} label="Storage Speed">
     <Connect field={toKey(fieldName, STORAGE_IOPS)}>
-      <NumberInput id={`${fieldName}--storage-iops`} className="wiz-super-short-input" suffix="IOPS" />
+      <NumberInput id={`${fieldName}--storage-iops`} className="wiz-super-short-input" suffix="&nbsp;&nbsp;IOPS" />
     </Connect>
   </Row>
 );
@@ -49,16 +48,15 @@ const IamRoles = connect(
     <Connect field={toKey(type, IAM_ROLE)}>
       <Select id={`${type}--iam-role`}>
         <option value={IAM_ROLE_CREATE_OPTION}>Create an IAM role for me (default)</option>
-        {roles.map(r => <option value={r} key={r}>{r}</option>)}
+        {_.isArray(roles) && roles.map(r => <option value={r} key={r}>{r}</option>)}
       </Select>
     </Connect>
+    {!_.isArray(roles) && <div className="wiz-error-message">Could not load IAM role list</div>}
   </Row>
 );
 
 const Errors = connect(
-  ({clusterConfig}, {type}) => ({
-    error: _.get(clusterConfig, toError(type)) || _.get(clusterConfig, toAsyncError(type)),
-  })
+  ({clusterConfig}, {type}) => ({error: _.get(clusterConfig, toError(type))})
 )(props => props.error ? <div className="wiz-error-message">{props.error}</div> : <span />);
 
 export const DefineNode = ({type, max, withIamRole = true}) => <div>
@@ -83,7 +81,7 @@ export const DefineNode = ({type, max, withIamRole = true}) => <div>
   </Row>
   <Row htmlFor={`${type}--storage-size`} label="Storage Size">
     <Connect field={toKey(type, STORAGE_SIZE_IN_GIB)}>
-      <NumberInput id={`${type}--storage-size`} className="wiz-super-short-input" suffix="GiB" />
+      <NumberInput id={`${type}--storage-size`} className="wiz-super-short-input" suffix="&nbsp;&nbsp;GiB" />
     </Connect>
   </Row>
   <Row htmlFor={`${type}--storage-type`} label="Storage Type">
@@ -102,10 +100,13 @@ export const DefineNode = ({type, max, withIamRole = true}) => <div>
   <Errors type={type} />
 </div>;
 
+const MAX_MASTERS = 10;
+const MAX_WORKERS = 1000;
+
 // TODO (kans): add ectdForm here
 const fields = [
-  makeNodeForm(AWS_CONTROLLERS),
-  makeNodeForm(AWS_WORKERS),
+  makeNodeForm(AWS_CONTROLLERS, validate.int({min: 1, max: MAX_MASTERS})),
+  makeNodeForm(AWS_WORKERS, validate.int({min: 1, max: MAX_WORKERS})),
 ];
 
 const form = new Form('DefineNodesForm', fields);
@@ -113,11 +114,11 @@ const form = new Form('DefineNodesForm', fields);
 export const AWS_DefineNodes = () => <div>
   <h3>Master Nodes</h3>
   <br />
-  <DefineNode type={AWS_CONTROLLERS} max={10} />
+  <DefineNode type={AWS_CONTROLLERS} max={MAX_MASTERS} />
   <hr />
   <h3>Worker Nodes</h3>
   <br />
-  <DefineNode type={AWS_WORKERS} max={1000} />
+  <DefineNode type={AWS_WORKERS} max={MAX_WORKERS} />
   <form.Errors />
   <hr />
   <h3>etcd Nodes</h3>

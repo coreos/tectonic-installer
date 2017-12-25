@@ -85,17 +85,6 @@ EOD
 EOF
 }
 
-variable "tectonic_metal_cl_version" {
-  type = "string"
-
-  description = <<EOF
-CoreOS kernel/initrd version to PXE boot.
-Must be present in Matchbox assets and correspond to `tectonic_cl_channel`.
-
-Example: `1298.7.0`
-EOF
-}
-
 variable "tectonic_metal_controller_domain" {
   type = "string"
 
@@ -183,5 +172,15 @@ variable "tectonic_ssh_authorized_key" {
 SSH public key to use as an authorized key.
 
 Example: `ssh-rsa AAAB3N...`
+EOF
+}
+
+variable "tectonic_metal_calico_mtu" {
+  default = "1480"
+
+  description = <<EOF
+(optional) Sets the MTU size for workload interfaces and the IP-in-IP tunnel device.
+
+Note: This setting is only effective, if tectonic_networking is set to `calico`.
 EOF
 }

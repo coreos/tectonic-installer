@@ -13,52 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-module "kube_certs" {
-  source = "../../modules/tls/kube/self-signed"
-
-  ca_cert_pem        = "${var.tectonic_ca_cert}"
-  ca_key_alg         = "${var.tectonic_ca_key_alg}"
-  ca_key_pem         = "${var.tectonic_ca_key}"
-  kube_apiserver_url = "https://${module.dns.kube_apiserver_fqdn}:443"
-  service_cidr       = "${var.tectonic_service_cidr}"
-}
-
-module "etcd_certs" {
-  source = "../../modules/tls/etcd"
-
-  etcd_ca_cert_path     = "${var.tectonic_etcd_ca_cert_path}"
-  etcd_client_cert_path = "${var.tectonic_etcd_client_cert_path}"
-  etcd_client_key_path  = "${var.tectonic_etcd_client_key_path}"
-  self_signed           = "${var.tectonic_experimental || var.tectonic_etcd_tls_enabled}"
-  service_cidr          = "${var.tectonic_service_cidr}"
-
-  etcd_cert_dns_names = [
-    "${var.tectonic_cluster_name}-etcd-0.${var.tectonic_base_domain}",
-    "${var.tectonic_cluster_name}-etcd-1.${var.tectonic_base_domain}",
-    "${var.tectonic_cluster_name}-etcd-2.${var.tectonic_base_domain}",
-    "${var.tectonic_cluster_name}-etcd-3.${var.tectonic_base_domain}",
-    "${var.tectonic_cluster_name}-etcd-4.${var.tectonic_base_domain}",
-    "${var.tectonic_cluster_name}-etcd-5.${var.tectonic_base_domain}",
-    "${var.tectonic_cluster_name}-etcd-6.${var.tectonic_base_domain}",
-  ]
-}
-
-module "ingress_certs" {
-  source = "../../modules/tls/ingress/self-signed"
-
-  base_address = "${module.dns.kube_ingress_fqdn}"
-  ca_cert_pem  = "${module.kube_certs.ca_cert_pem}"
-  ca_key_alg   = "${module.kube_certs.ca_key_alg}"
-  ca_key_pem   = "${module.kube_certs.ca_key_pem}"
-}
-
-module "identity_certs" {
-  source = "../../modules/tls/identity/self-signed"
-
-  ca_cert_pem = "${module.kube_certs.ca_cert_pem}"
-  ca_key_alg  = "${module.kube_certs.ca_key_alg}"
-  ca_key_pem  = "${module.kube_certs.ca_key_pem}"
+data "template_file" "etcd_hostname_list" {
+  count    = "${var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(data.google_compute_zones.available.names) == 5 ? 5 : 3}"
+  template = "${var.tectonic_cluster_name}-etcd-${count.index}.${var.tectonic_base_domain}"
 }
 
 module "bootkube" {
@@ -79,15 +36,10 @@ module "bootkube" {
   advertise_address = "0.0.0.0"
   anonymous_auth    = "false"
 
-  oidc_username_claim = "email"
-  oidc_groups_claim   = "groups"
-  oidc_client_id      = "tectonic-kubectl"
-
-  etcd_endpoints      = ["${module.dns.etcd_ip_fqdn_list}"]
-  oidc_username_claim = "email"
-  oidc_groups_claim   = "groups"
-  oidc_client_id      = "tectonic-kubectl"
   oidc_ca_cert        = "${module.ingress_certs.ca_cert_pem}"
+  oidc_client_id      = "tectonic-kubectl"
+  oidc_groups_claim   = "groups"
+  oidc_username_claim = "email"
 
   apiserver_cert_pem   = "${module.kube_certs.apiserver_cert_pem}"
   apiserver_key_pem    = "${module.kube_certs.apiserver_key_pem}"
@@ -102,9 +54,12 @@ module "bootkube" {
   kubelet_cert_pem     = "${module.kube_certs.kubelet_cert_pem}"
   kubelet_key_pem      = "${module.kube_certs.kubelet_key_pem}"
 
-  experimental_enabled = "${var.tectonic_experimental}"
-  master_count         = "${var.tectonic_master_count}"
-  cloud_config_path    = ""
+  cloud_config_path         = ""
+  etcd_backup_size          = "${var.tectonic_etcd_backup_size}"
+  etcd_backup_storage_class = "${var.tectonic_etcd_backup_storage_class}"
+  etcd_endpoints            = "${data.template_file.etcd_hostname_list.*.rendered}"
+  master_count              = "${var.tectonic_master_count}"
+  self_hosted_etcd          = ""
 }
 
 module "tectonic" {
@@ -147,29 +102,39 @@ module "tectonic" {
   console_client_id = "tectonic-console"
   kubectl_client_id = "tectonic-kubectl"
   ingress_kind      = "HostPort"
-  experimental      = "${var.tectonic_experimental}"
+  self_hosted_etcd  = ""
   master_count      = "${var.tectonic_master_count}"
   stats_url         = "${var.tectonic_stats_url}"
 
   image_re = "${var.tectonic_image_re}"
+
+  tectonic_networking = "${var.tectonic_networking}"
+  calico_mtu          = "1440"
+  cluster_cidr        = "${var.tectonic_cluster_cidr}"
 }
 
-module "flannel-vxlan" {
-  source = "../../modules/net/flannel-vxlan"
+module "flannel_vxlan" {
+  source = "../../modules/net/flannel_vxlan"
 
-  flannel_image     = "${var.tectonic_container_images["flannel"]}"
-  flannel_cni_image = "${var.tectonic_container_images["flannel_cni"]}"
-  cluster_cidr      = "${var.tectonic_cluster_cidr}"
+  cluster_cidr     = "${var.tectonic_cluster_cidr}"
+  enabled          = "${var.tectonic_networking == "flannel"}"
+  container_images = "${var.tectonic_container_images}"
 }
 
-module "calico-network-policy" {
-  source = "../../modules/net/calico-network-policy"
+module "calico" {
+  source = "../../modules/net/calico"
 
-  kube_apiserver_url = "https://${module.dns.kube_apiserver_fqdn}:443"
-  calico_image       = "${var.tectonic_container_images["calico"]}"
-  calico_cni_image   = "${var.tectonic_container_images["calico_cni"]}"
-  cluster_cidr       = "${var.tectonic_cluster_cidr}"
-  enabled            = "${var.tectonic_calico_network_policy}"
+  container_images = "${var.tectonic_container_images}"
+  cluster_cidr     = "${var.tectonic_cluster_cidr}"
+  enabled          = "${var.tectonic_networking == "calico"}"
+}
+
+module "canal" {
+  source = "../../modules/net/canal"
+
+  container_images = "${var.tectonic_container_images}"
+  cluster_cidr     = "${var.tectonic_cluster_cidr}"
+  enabled          = "${var.tectonic_networking == "canal"}"
 }
 
 data "archive_file" "assets" {
@@ -186,5 +151,5 @@ data "archive_file" "assets" {
   # Additionally, data sources do not support managing any lifecycle whatsoever,
   # and therefore, the archive is never deleted. To avoid cluttering the module
   # folder, we write it in the TerraForm managed hidden folder `.terraform`.
-  output_path = "./.terraform/generated_${sha1("${module.etcd_certs.id} ${module.tectonic.id} ${module.bootkube.id} ${module.flannel-vxlan.id} ${module.calico-network-policy.id}")}.zip"
+  output_path = "./.terraform/generated_${sha1("${module.etcd_certs.id} ${module.tectonic.id} ${module.bootkube.id} ${module.flannel_vxlan.id} ${module.calico.id} ${module.canal.id}")}.zip"
 }

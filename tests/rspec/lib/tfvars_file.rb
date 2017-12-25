@@ -14,19 +14,51 @@ class TFVarsFile
     @data = JSON.parse(File.read(path))
   end
 
-  def experimental?
-    data['tectonic_experimental'] == 'true'
-  end
-
-  def calico?
-    data['tectonic_calico_network_policy'] == 'true'
+  def networking
+    data['tectonic_networking']
   end
 
   def node_count
     master_count + worker_count
   end
 
-  # TODO: Randomize region on AWS
+  def master_count
+    count = if platform.eql?('metal')
+              data['tectonic_metal_controller_names'].count
+            else
+              data['tectonic_master_count'].to_i
+            end
+    count
+  end
+
+  def worker_count
+    count = if platform.eql?('metal')
+              data['tectonic_metal_worker_names'].count
+            else
+              data['tectonic_worker_count'].to_i
+            end
+    count
+  end
+
+  def etcd_count
+    data['tectonic_etcd_count'].to_i
+  end
+
+  def add_worker_node(node_count)
+    data['tectonic_worker_count'] = node_count.to_s
+    save
+  end
+
+  def change_cluster_name(cluster_name)
+    data['tectonic_cluster_name'] = cluster_name
+    save
+  end
+
+  def change_dns_name(dns_name)
+    data['tectonic_dns_name'] = dns_name
+    save
+  end
+
   def region
     data['tectonic_aws_region']
   end
@@ -58,15 +90,13 @@ class TFVarsFile
     data.keys.any? { |k| k == method_name.to_s } || super
   end
 
-  def master_count
-    data['tectonic_master_count'].to_i
-  end
-
-  def worker_count
-    data['tectonic_worker_count'].to_i
-  end
-
   def file_exists?
     File.exist? path
+  end
+
+  def save
+    File.open(path, 'w+') do |f|
+      f << data.to_json
+    end
   end
 end

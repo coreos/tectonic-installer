@@ -101,9 +101,9 @@ variable "identity_api_service" {
   default     = "tectonic-identity-api.tectonic-system.svc.cluster.local"
 }
 
-variable "experimental" {
-  description = "If set to true, experimental Tectonic assets are being deployed."
-  default     = false
+variable "self_hosted_etcd" {
+  type        = "string"
+  description = "See tectonic_self_hosted_etcd in config.tf"
 }
 
 variable "master_count" {
@@ -154,5 +154,20 @@ variable "identity_client_key_pem" {
 
 variable "service_cidr" {
   description = "A CIDR notation IP range from which to assign service cluster IPs"
+  type        = "string"
+}
+
+variable "cluster_cidr" {
+  description = "A CIDR notation IP range from which to assign pod IPs"
+  type        = "string"
+}
+
+variable "calico_mtu" {
+  description = "sets the MTU size for workload interfaces and the IP-in-IP tunnel device"
+  type        = "string"
+}
+
+variable "tectonic_networking" {
+  description = "configures the network to be used in the cluster"
   type        = "string"
 }

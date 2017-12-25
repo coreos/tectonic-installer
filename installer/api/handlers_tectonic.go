@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
+
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/tools/clientcmd"
@@ -20,6 +22,7 @@ import (
 
 	"os"
 
+	"github.com/coreos/tectonic-installer/installer/pkg/containerlinux"
 	"github.com/coreos/tectonic-installer/installer/pkg/terraform"
 	"github.com/dghubble/sessions"
 )
@@ -35,31 +38,11 @@ type Status struct {
 
 // Services represents whether several Tectonic components have yet booted (or failed)
 type Services struct {
-	Kubernetes       Status `json:"kubernetes"`
-	IsEtcdSelfHosted bool   `json:"isEtcdSelfHosted"`
-	Etcd             Status `json:"etcd"`
-	Identity         Status `json:"identity"`
-	Ingress          Status `json:"ingress"`
-	Console          Status `json:"console"`
-	TectonicSystem   Status `json:"tectonicSystem"` // All other services in tectonic-system namespace
-}
-
-// isEtcdSelfHosted determines if the etcd service will be hosted on the cluster
-// being terraformed; if it is, its status will be tracked like the other services
-func isEtcdSelfHosted(ex terraform.Executor) (bool, error) {
-	data, err := ex.LoadVars()
-	if err != nil {
-		return false, err
-	}
-	val, ok := data["tectonic_experimental"]
-	if !ok {
-		return false, nil
-	}
-	etcd, ok := val.(bool)
-	if !ok {
-		return false, errors.New("Could not parse experimental flag as bool")
-	}
-	return etcd, nil
+	Kubernetes     Status `json:"kubernetes"`
+	Identity       Status `json:"identity"`
+	Ingress        Status `json:"ingress"`
+	Console        Status `json:"console"`
+	TectonicSystem Status `json:"tectonicSystem"` // All other services in tectonic-system namespace
 }
 
 // kubeconfigLocation is the location of the kubeconfig file, relative to the
@@ -166,11 +149,10 @@ func consoleHealth(endpoint string) Status {
 }
 
 // tectonicStatus returns the current status (starting, running, or failed) of
-// the tectonic cluster services (etcd, Tectonic Identity, Tectonic Console), etc.
+// the tectonic cluster services (Tectonic Identity, Tectonic Console), etc.
 func tectonicStatus(ex *terraform.Executor, input Input) (Services, error) {
 	services := Services{
 		Kubernetes:     Status{Success: false, Failed: false},
-		Etcd:           Status{Success: false, Failed: false},
 		Identity:       Status{Success: false, Failed: false},
 		Ingress:        Status{Success: false, Failed: false},
 		Console:        Status{Success: false, Failed: false},
@@ -194,19 +176,7 @@ func tectonicStatus(ex *terraform.Executor, input Input) (Services, error) {
 		return services, errors.New("API server has not started")
 	}
 
-	etcd, err := isEtcdSelfHosted(*ex)
-	if err != nil {
-		services.Etcd.Message = err.Error()
-		return services, newInternalServerError("Failed to determine if etcd is self-hosted: %s", err)
-	}
-
-	services.IsEtcdSelfHosted = etcd
-
-	var kubePods []v1.Pod
-	var tectPods []v1.Pod
-	var identiPods []v1.Pod
-	var ingressPods []v1.Pod
-	var etcdPods []v1.Pod
+	var kubePods, tectPods, identiPods, ingressPods []v1.Pod
 
 	for _, p := range pods.Items {
 		name := p.ObjectMeta.Name
@@ -216,8 +186,6 @@ func tectonicStatus(ex *terraform.Executor, input Input) (Services, error) {
 			identiPods = append(identiPods, p)
 		case strings.Contains(name, "tectonic-ingress-controller"):
 			ingressPods = append(ingressPods, p)
-		case etcd && strings.Contains(name, "kube-etcd"):
-			etcdPods = append(etcdPods, p)
 		case namespace == "kube-system":
 			kubePods = append(kubePods, p)
 		case namespace == "tectonic-system":
@@ -227,7 +195,6 @@ func tectonicStatus(ex *terraform.Executor, input Input) (Services, error) {
 
 	services.Kubernetes = statusFromPods(kubePods)
 	services.TectonicSystem = statusFromPods(tectPods)
-	services.Etcd = statusFromPods(etcdPods)
 	services.Identity = statusFromPods(identiPods)
 	services.Ingress = statusFromPods(ingressPods)
 
@@ -341,4 +308,51 @@ func tectonicKubeconfigHandler(w http.ResponseWriter, req *http.Request, ctx *Co
 	w.Header().Set("Content-Type", "text/plain")
 	io.Copy(w, cfg)
 	return nil
+}
+
+// tectonicFactsHandler gets a list of available Container Linux AMIs as well
+// as the Tectonic license and pull secret if they exist.
+func tectonicFactsHandler(w http.ResponseWriter, req *http.Request, ctx *Context) error {
+	var amis []containerlinux.AMI
+	var err error
+
+	// We only need the AMIs list if AWS is enabled
+	for _, platform := range ctx.Config.Platforms {
+		if platform == "aws-tf" {
+			amis, err = containerlinux.ListAMIImages(containerLinuxListTimeout)
+			if err != nil {
+				return newInternalServerError("Failed to query available images: %s", err)
+			}
+			break
+		}
+	}
+
+	dir := ctx.Config.SecretsDir
+	if dir == "" {
+		// Default to the installer executable directory
+		ex, err := os.Executable()
+		if err != nil {
+			return newInternalServerError("Could not retrieve Tectonic facts")
+		}
+		dir = filepath.Dir(ex)
+	}
+
+	license, err := ioutil.ReadFile(filepath.Join(dir, "license.txt"))
+	if err != nil {
+		license = nil
+		log.Warningf("Tectonic license not found in %s", dir)
+	}
+
+	pullSecret, err := ioutil.ReadFile(filepath.Join(dir, "pull_secret.json"))
+	if err != nil {
+		pullSecret = nil
+		log.Warningf("Pull secret not found in %s", dir)
+	}
+
+	type response struct {
+		AMIs       []containerlinux.AMI `json:"amis"`
+		License    string               `json:"license"`
+		PullSecret string               `json:"pullSecret"`
+	}
+	return writeJSONResponse(w, req, http.StatusOK, response{amis, string(license), string(pullSecret)})
 }
