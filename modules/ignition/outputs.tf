@@ -143,3 +143,11 @@ output "etcd_crt_id_list" {
     "${data.ignition_file.etcd_peer_crt.*.id}",
   ]
 }
+
+output "profile_env_id" {
+  value = "${data.ignition_file.profile_env.id}"
+}
+
+output "systemd_default_env_id" {
+  value = "${data.ignition_file.systemd_default_env.id}"
+}

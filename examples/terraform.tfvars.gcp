@@ -152,6 +152,16 @@ tectonic_gcp_worker_disktype = "pd-standard"
 // Instance size for the worker node(s). Example: `n1-standard-2`.
 tectonic_gcp_worker_gce_type = "n1-standard-2"
 
+// (optional) HTTP proxy address.
+// 
+// Example: `http://myproxy.example.com`
+// tectonic_http_proxy_address = ""
+
+// (optional) HTTPS proxy address.
+// 
+// Example: `http://myproxy.example.com`
+// tectonic_https_proxy_address = ""
+
 // The path to the tectonic licence file.
 // You can download the Tectonic license file from your Account overview page at [1].
 // 
@@ -172,6 +182,11 @@ tectonic_master_count = "1"
 // 
 // - "calico": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
 // tectonic_networking = "flannel"
+
+// (optional) List of local endpoints that will not use HTTP proxy.
+// 
+// Example: `["127.0.0.1","localhost",".example.com","10.3.0.1"]`
+// tectonic_no_proxy = ""
 
 // The path the pull secret file in JSON format.
 // This is known to be a "Docker pull secret" as produced by the docker login [1] command.
