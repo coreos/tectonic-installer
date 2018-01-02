@@ -164,6 +164,8 @@ EOF
   instance_count                = "${var.tectonic_etcd_count}"
   self_hosted_etcd              = "${var.tectonic_self_hosted_etcd}"
   tls_enabled                   = "${var.tectonic_etcd_tls_enabled}"
+  ign_profile_env_id            = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
+  ign_systemd_default_env_id    = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 module "ignition_masters" {
@@ -199,6 +201,9 @@ module "ignition_masters" {
   metadata_provider         = "openstack-metadata"
   no_proxy                  = "${var.tectonic_no_proxy}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
+  http_proxy                = "${var.tectonic_http_proxy_address}"
+  https_proxy               = "${var.tectonic_https_proxy_address}"
+  no_proxy                  = "${var.tectonic_no_proxy}"
 }
 
 module "master_nodes" {
@@ -230,6 +235,8 @@ EOF
   ign_update_ca_certificates_dropin_id = "${module.ignition_masters.update_ca_certificates_dropin_id}"
   instance_count                       = "${var.tectonic_master_count}"
   kubeconfig_content                   = "${module.bootkube.kubeconfig}"
+  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
+  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 module "ignition_workers" {
@@ -252,6 +259,9 @@ module "ignition_workers" {
   kubelet_node_taints     = ""
   no_proxy                = "${var.tectonic_no_proxy}"
   tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
+  http_proxy              = "${var.tectonic_http_proxy_address}"
+  https_proxy             = "${var.tectonic_https_proxy_address}"
+  no_proxy                = "${var.tectonic_no_proxy}"
 }
 
 module "worker_nodes" {
@@ -279,6 +289,8 @@ EOF
   ign_update_ca_certificates_dropin_id = "${module.ignition_workers.update_ca_certificates_dropin_id}"
   instance_count                       = "${var.tectonic_worker_count}"
   kubeconfig_content                   = "${module.bootkube.kubeconfig}"
+  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
+  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.systemd_default_env_id : ""}"
 }
 
 module "secrets" {

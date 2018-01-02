@@ -537,3 +537,30 @@ variable "tectonic_iscsi_enabled" {
   default     = "false"
   description = "(optional) Start iscsid.service to enable iscsi volume attachment."
 }
+
+variable "tectonic_http_proxy_address" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+"(optional) The HTTP proxy address to set in the environment variables of installed ContainerLinux instances."
+EOF
+}
+
+variable "tectonic_https_proxy_address" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+"(optional) The HTTPS proxy address to set in the environment variables of installed ContainerLinux instances."
+EOF
+}
+
+variable "tectonic_no_proxy" {
+  default = []
+  type    = "list"
+
+  description = <<EOF
+"(optional) This variable should contain a comma-separated list of domain extensions proxy should not be used for. For instance, if the value of no_proxy is ‘.mit.edu’, proxy will not be used to retrieve documents from MIT."
+EOF
+}

@@ -10,7 +10,7 @@ This document gives an overview of variables used in the GovCloud AWS platform o
 | tectonic_dns_name | (optional) DNS prefix used to construct the console and API server endpoints. | string | `` |
 | tectonic_govcloud_assets_s3_bucket_name | (optional) Unique name under which the Amazon S3 bucket will be created. Bucket name must start with a lower case name and is limited to 63 characters. The Tectonic Installer uses the bucket to store tectonic assets and kubeconfig. If name is not provided the installer will construct the name using "tectonic_cluster_name", current AWS region and "tectonic_base_domain" | string | `` |
 | tectonic_govcloud_config_version | (internal) This declares the version of the AWS configuration variables. It has no impact on generated assets but declares the version contract of the configuration. | string | `1.0` |
-| tectonic_govcloud_dns_server_ip |  | string | - |
+| tectonic_govcloud_dns_server_ip |  | string | `` |
 | tectonic_govcloud_etcd_ec2_type | Instance size for the etcd node(s). Example: `t2.medium`. Read the [etcd recommended hardware](https://coreos.com/etcd/docs/latest/op-guide/hardware.html) guide for best performance | string | `t2.medium` |
 | tectonic_govcloud_etcd_extra_sg_ids | (optional) List of additional security group IDs for etcd nodes.<br><br>Example: `["sg-51530134", "sg-b253d7cc"]` | list | `<list>` |
 | tectonic_govcloud_etcd_root_volume_iops | The amount of provisioned IOPS for the root block device of etcd nodes. Ignored if the volume type is not io1. | string | `100` |

@@ -61,6 +61,8 @@ module "etcd" {
   public_ssh_key             = "${var.tectonic_gcp_ssh_key}"
   tls_enabled                = "${var.tectonic_etcd_tls_enabled}"
   zone_list                  = "${data.google_compute_zones.available.names}"
+  ign_profile_env_id         = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
+  ign_systemd_default_env_id = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 module "masters" {
@@ -111,6 +113,8 @@ module "masters" {
   master_targetpool_self_link          = "${module.network.master_targetpool_self_link}"
   public_ssh_key                       = "${var.tectonic_gcp_ssh_key}"
   region                               = "${var.tectonic_gcp_region}"
+  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
+  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 module "workers" {
@@ -140,6 +144,8 @@ module "workers" {
   region                               = "${var.tectonic_gcp_region}"
   worker_subnetwork_name               = "${module.network.worker_subnetwork_name}"
   worker_targetpool_self_link          = "${module.network.worker_targetpool_self_link}"
+  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
+  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.systemd_default_env_id : ""}"
 }
 
 module "ignition_masters" {
@@ -174,6 +180,9 @@ module "ignition_masters" {
   custom_ca_cert_pem_list   = "${var.tectonic_custom_ca_pem_list}"
   etcd_ca_cert_pem          = "${module.etcd_certs.etcd_ca_crt_pem}"
   ingress_ca_cert_pem       = "${module.ingress_certs.ca_cert_pem}"
+  http_proxy                = "${var.tectonic_http_proxy_address}"
+  https_proxy               = "${var.tectonic_https_proxy_address}"
+  no_proxy                  = "${var.tectonic_no_proxy}"
 }
 
 module "ignition_workers" {
@@ -197,6 +206,9 @@ module "ignition_workers" {
   custom_ca_cert_pem_list = "${var.tectonic_custom_ca_pem_list}"
   etcd_ca_cert_pem        = "${module.etcd_certs.etcd_ca_crt_pem}"
   ingress_ca_cert_pem     = "${module.ingress_certs.ca_cert_pem}"
+  http_proxy              = "${var.tectonic_http_proxy_address}"
+  https_proxy             = "${var.tectonic_https_proxy_address}"
+  no_proxy                = "${var.tectonic_no_proxy}"
 }
 
 module "dns" {

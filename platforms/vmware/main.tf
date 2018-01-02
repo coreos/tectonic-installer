@@ -15,7 +15,7 @@ module "etcd" {
   ign_systemd_default_env_id = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
   instance_count             = "${var.tectonic_self_hosted_etcd != "" ? 0 : var.tectonic_etcd_count }"
   ip_address                 = "${var.tectonic_vmware_etcd_ip}"
-  vm_disk_datastores         = "${var.tectonic_vmware_etcd_datastore}"
+  vm_disk_datastores         = "${var.tectonic_vmware_etcd_datastores}"
   vm_disk_template           = "${var.tectonic_vmware_vm_template}"
   vm_disk_template_folder    = "${var.tectonic_vmware_vm_template_folder}"
   vm_memory                  = "${var.tectonic_vmware_etcd_memory}"

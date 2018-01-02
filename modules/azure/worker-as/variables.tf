@@ -86,3 +86,11 @@ variable "worker_count" {
 variable "fault_domains" {
   type = "string"
 }
+
+variable "ign_profile_env_id" {
+  type = "string"
+}
+
+variable "ign_systemd_default_env_id" {
+  type = "string"
+}

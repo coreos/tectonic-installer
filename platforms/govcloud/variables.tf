@@ -321,5 +321,6 @@ EOF
 }
 
 variable "tectonic_govcloud_dns_server_ip" {
-  type = "string"
+  type    = "string"
+  default = ""
 }

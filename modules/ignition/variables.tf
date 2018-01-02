@@ -166,3 +166,17 @@ variable "iscsi_enabled" {
   type    = "string"
   default = "false"
 }
+
+variable "http_proxy" {
+  default = ""
+  type    = "string"
+}
+
+variable "https_proxy" {
+  default = ""
+  type    = "string"
+}
+
+variable "no_proxy" {
+  type = "list"
+}

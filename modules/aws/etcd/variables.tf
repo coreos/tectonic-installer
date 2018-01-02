@@ -91,7 +91,12 @@ variable "etcd_iam_role" {
   description = "IAM role to use for the instance profiles of etcd nodes."
 }
 
-variable "dns_server_ip" {
+variable "ign_profile_env_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "ign_systemd_default_env_id" {
   type    = "string"
   default = ""
 }
