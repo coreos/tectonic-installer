@@ -18,6 +18,12 @@ variable "apiserver_key_pem" {
   description = "The API server key in PEM format."
 }
 
+variable "apiserver_secure_port" {
+  type        = "string"
+  description = "The secure port of the API server."
+  default     = 6443
+}
+
 variable "cloud_provider" {
   description = "The provider for cloud services (empty string for no provider)"
   type        = "string"
