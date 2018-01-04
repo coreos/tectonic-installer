@@ -75,6 +75,7 @@ resource "matchbox_group" "controller" {
     ign_k8s_node_bootstrap_service_json    = "${jsonencode(module.ignition_masters.k8s_node_bootstrap_service_rendered)}"
     ign_kubelet_service_json               = "${jsonencode(module.ignition_masters.kubelet_service_rendered)}"
     ign_max_user_watches_json              = "${jsonencode(module.ignition_masters.max_user_watches_rendered)}"
+    ign_max_user_instances_json            = "${jsonencode(module.ignition_masters.max_user_instances_rendered)}"
     ign_tectonic_path_unit_json            = "${jsonencode(module.tectonic.systemd_path_unit_rendered)}"
     ign_tectonic_service_json              = "${jsonencode(module.tectonic.systemd_service_rendered)}"
     ign_update_ca_certificates_dropin_json = "${jsonencode(module.ignition_masters.update_ca_certificates_dropin_rendered)}"
@@ -125,6 +126,7 @@ resource "matchbox_group" "worker" {
     ign_k8s_node_bootstrap_service_json    = "${jsonencode(module.ignition_workers.k8s_node_bootstrap_service_rendered)}"
     ign_kubelet_service_json               = "${jsonencode(module.ignition_workers.kubelet_service_rendered)}"
     ign_max_user_watches_json              = "${jsonencode(module.ignition_workers.max_user_watches_rendered)}"
+    ign_max_user_instances_json            = "${jsonencode(module.ignition_workers.max_user_instances_rendered)}"
     ign_update_ca_certificates_dropin_json = "${jsonencode(module.ignition_workers.update_ca_certificates_dropin_rendered)}"
   }
 }

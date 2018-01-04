@@ -12,6 +12,20 @@ data "ignition_file" "max_user_watches" {
   }
 }
 
+data "template_file" "max_user_instances" {
+  template = "${file("${path.module}/resources/sysctl.d/max-user-instances.conf")}"
+}
+
+data "ignition_file" "max_user_instances" {
+  filesystem = "root"
+  path       = "/etc/sysctl.d/11-max-user-instances.conf"
+  mode       = 0644
+
+  content {
+    content = "${data.template_file.max_user_instances.rendered}"
+  }
+}
+
 data "template_file" "docker_dropin" {
   template = "${file("${path.module}/resources/dropins/10-dockeropts.conf")}"
 }

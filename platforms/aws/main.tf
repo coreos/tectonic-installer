@@ -146,6 +146,7 @@ module "masters" {
   ign_kubelet_service_id               = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id            = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id              = "${module.ignition_masters.max_user_watches_id}"
+  ign_max_user_instances_id            = "${module.ignition_masters.max_user_instances_id}"
   ign_rm_assets_path_unit_id           = "${module.ignition_masters.rm_assets_path_unit_id}"
   ign_rm_assets_service_id             = "${module.ignition_masters.rm_assets_service_id}"
   ign_s3_puller_id                     = "${module.ignition_masters.s3_puller_id}"
@@ -204,6 +205,7 @@ module "workers" {
   ign_kubelet_service_id               = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id            = "${module.ignition_workers.locksmithd_service_id}"
   ign_max_user_watches_id              = "${module.ignition_workers.max_user_watches_id}"
+  ign_max_user_instances_id            = "${module.ignition_workers.max_user_instances_id}"
   ign_s3_puller_id                     = "${module.ignition_workers.s3_puller_id}"
   ign_update_ca_certificates_dropin_id = "${module.ignition_workers.update_ca_certificates_dropin_id}"
   instance_count                       = "${var.tectonic_worker_count}"
@@ -244,4 +246,5 @@ module "dns" {
   tectonic_private_endpoints     = "${var.tectonic_aws_private_endpoints}"
   tectonic_public_endpoints      = "${var.tectonic_aws_public_endpoints}"
   tectonic_vanilla_k8s           = "${var.tectonic_vanilla_k8s}"
+>>>>>>> 29407817a7e5e72a09b5faf74d66560b71125f26
 }
