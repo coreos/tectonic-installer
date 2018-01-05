@@ -207,3 +207,21 @@ data "ignition_systemd_unit" "iscsi" {
   name    = "iscsid.service"
   enabled = "${var.iscsi_enabled ? true : false}"
 }
+
+data "template_file" "nfs_config" {
+  vars {
+    nfs_config = "${var.nfs_config}"
+  }
+
+  template = "${file("${path.module}/resources/conf.d/nfs")}"
+}
+
+data "ignition_file" "nfs_config" {
+  path       = "/etc/conf.d/nfs"
+  mode       = 0644
+  filesystem = "root"
+
+  content {
+    content = "${data.template_file.nfs_config.rendered}"
+  }
+}

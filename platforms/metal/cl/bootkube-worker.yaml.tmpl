@@ -63,6 +63,11 @@ storage:
       mode: 0400
       contents:
         inline: {{.ign_custom_ca_certs_json}}
+    - path: /etc/conf.d/nfs
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: {{.ign_nfs_config_json}}
 passwd:
   users:
     - name: core

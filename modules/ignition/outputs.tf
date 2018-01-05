@@ -147,3 +147,11 @@ output "etcd_crt_id_list" {
 output "iscsi_service_id" {
   value = "${data.ignition_systemd_unit.iscsi.id}"
 }
+
+output "nfs_config_id" {
+  value = "${data.ignition_file.nfs_config.id}"
+}
+
+output "nfs_config_rendered" {
+  value = "{data.template_file.nfs_config.rendered}"
+}
