@@ -142,6 +142,10 @@ tectonic_master_count = "1"
 // - "calico": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
 // tectonic_networking = "flannel"
 
+// (optional) Content of NFS configuration file.
+// Example: "OPTS_RPC_MOUNTD=\"8 -N 2 -N 3 -V 4 -V 4.1\""
+// tectonic_nfs_config = ""
+
 // "(optional) This variable should contain a comma-separated list of domain extensions proxy should not be used for. For instance, if the value of no_proxy is ‘.mit.edu’, proxy will not be used to retrieve documents from MIT."
 tectonic_no_proxy = ""
 

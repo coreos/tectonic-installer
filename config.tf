@@ -567,3 +567,13 @@ variable "tectonic_no_proxy" {
 "(optional) This variable should contain a comma-separated list of domain extensions proxy should not be used for. For instance, if the value of no_proxy is ‘.mit.edu’, proxy will not be used to retrieve documents from MIT."
 EOF
 }
+
+variable "tectonic_nfs_config" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) Content of NFS configuration file.
+Example: "OPTS_RPC_MOUNTD=\"8 -N 2 -N 3 -V 4 -V 4.1\""
+EOF
+}
