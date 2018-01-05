@@ -63,7 +63,7 @@ class AzureVpn
       end
       MAX_RETRIES.times do |count|
         raise 'Private vnet: apply failed too many times' unless MAX_RETRIES > count
-        break if system(env_config, 'terraform apply')
+        break if system(env_config, 'terraform apply -auto-approve')
       end
     end
   end

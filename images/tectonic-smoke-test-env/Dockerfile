@@ -1,6 +1,6 @@
 FROM debian:stretch
 
-ENV TERRAFORM_VERSION="0.10.7"
+ENV TERRAFORM_VERSION="0.11.1"
 ENV DOCKER_VERSION 1.13.1
 
 COPY ./tests/rspec/Gemfile* /tmp/app/
