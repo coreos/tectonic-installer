@@ -49,7 +49,7 @@ originalCommitId = 'UNKNOWN'
 pipeline {
   agent none
   environment {
-    KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.2_coreos.0'
+    KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.4_coreos.0'
     LOGSTASH_BUCKET = 'log-analyzer-tectonic-installer'
   }
   options {
@@ -429,7 +429,7 @@ def runRSpecTest(testFilePath, dockerArgs) {
   }
 }
 
-def runRSpecTestBareMetal(testFilePath) {
+def runRSpecTestBareMetal(testFilePath, credentials) {
   return {
     node('worker && bare-metal') {
       def err = null
@@ -438,7 +438,7 @@ def runRSpecTestBareMetal(testFilePath) {
           ansiColor('xterm') {
             unstash 'clean-repo'
             unstash 'smoke-test-binary'
-            withCredentials(creds) {
+            withCredentials(credentials + quayCreds) {
               sh """#!/bin/bash -ex
               cd tests/rspec
               export RBENV_ROOT=/usr/local/rbenv
