@@ -132,7 +132,10 @@ class Cluster
       3.times do |idx|
         env = env_variables
         env['TF_LOG'] = 'TRACE' if idx.positive?
-        return true if system(env, 'make -C ../.. apply')
+        env['TF_APPLY_OPTIONS'] = '-no-color'
+        env['TF_INIT_OPTIONS'] = '-no-color'
+        return true if system(env, "bash -co pipefail 'make -C ../.. apply |
+                                    tee ../../build/#{@name}/terraform-apply.log'")
       end
     end
     raise 'Applying cluster failed'
@@ -143,7 +146,10 @@ class Cluster
       3.times do |idx|
         env = env_variables
         env['TF_LOG'] = 'TRACE' if idx.positive?
-        return true if system(env, 'make -C ../.. destroy')
+        env['TF_DESTROY_OPTIONS'] = '-no-color'
+        env['TF_INIT_OPTIONS'] = '-no-color'
+        return true if system(env, "bash -co pipefail 'make -C ../.. destroy |
+                                    tee ../../build/#{@name}/terraform-destroy.log'")
       end
     end
 
