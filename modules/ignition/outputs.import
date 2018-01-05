@@ -52,3 +52,8 @@ variable "ign_systemd_default_env_id" {
 variable "ign_ntp_dropin_id" {
   type = "string"
 }
+
+variable "ign_nfs_config_id" {
+  type        = "string"
+  description = "Content of NFS configuration file."
+}

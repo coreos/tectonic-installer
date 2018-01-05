@@ -266,3 +266,14 @@ data "ignition_file" "systemd_default_env" {
     content = "${data.template_file.systemd_default_env.rendered}"
   }
 }
+
+data "ignition_file" "nfs_config" {
+  count      = "${var.nfs_config_file != "/dev/null" ? 1 : 0}"
+  path       = "/etc/conf.d/nfs"
+  mode       = 0644
+  filesystem = "root"
+
+  content {
+    content = "${file(var.nfs_config_file)}"
+  }
+}

@@ -1,12 +1,13 @@
 data "ignition_config" "master" {
   files = ["${compact(list(
+    data.ignition_file.cloud_provider_config.id,
     data.ignition_file.kubeconfig.id,
+    var.ign_azure_udev_rules_id,
     var.ign_installer_kubelet_env_id,
     var.ign_installer_runtime_mappings_id,
-    var.ign_azure_udev_rules_id,
     var.ign_max_user_watches_id,
+    var.ign_nfs_config_id,
     var.ign_ntp_dropin_id,
-    data.ignition_file.cloud_provider_config.id,
     var.ign_profile_env_id,
     var.ign_systemd_default_env_id,
    ))}",

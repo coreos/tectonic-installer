@@ -199,3 +199,8 @@ variable "ign_systemd_default_env_id" {
 variable "ign_iscsi_service_id" {
   type = "string"
 }
+
+variable "nfs_config_file" {
+  type        = "string"
+  description = "Path to a file containing the desired NFS config in /etc/conf.d/nfs."
+}
