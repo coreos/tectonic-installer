@@ -58,6 +58,7 @@ quayCreds = [
 defaultBuilderImage = 'quay.io/coreos/tectonic-builder:v1.43'
 tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.14'
 originalCommitId = 'UNKNOWN'
+numberSpinnedClusters = '0'
 
 pipeline {
   agent none
@@ -363,6 +364,7 @@ pipeline {
             }
           }
           parallel builds
+          numberSpinnedClusters = builds.size().toString()
         }
       }
     }
@@ -401,6 +403,7 @@ pipeline {
             unstash 'clean-repo'
             sh """#!/bin/bash -xe
             export BUILD_RESULT=${currentBuild.currentResult}
+            export NUM_CLUSTER=${numberSpinnedClusters}
             ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh jenkins-logs
             """
           }

@@ -21,7 +21,9 @@ if [ "$action" = "smoke-test-logs" ]; then
   fi
 elif [ "$action" = "jenkins-logs" ]; then
   curl -u  "${LOG_ANALYZER_USER}":"${LOG_ANALYZER_PASSWORD}" "${BUILD_URL}""consoleText" >> "${jenkins_filename}"
+  additionalFields="${additionalFields}test_cluster_num=${NUM_CLUSTER},"
 fi
+
 
 #Logstash uses the key=value filter and the ',' character as split field. This means that branches can neither have the '=' nor ',' in them.
 SOURCE_BRANCH=${BRANCH_NAME//[=,]/_}
