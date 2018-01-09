@@ -40,6 +40,7 @@ spec:
         - ./hyperkube
         - scheduler
         - --leader-elect=true
+        - --v=${k8s_log_verbosity}
         livenessProbe:
           httpGet:
             path: /healthz

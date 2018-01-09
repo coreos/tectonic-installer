@@ -221,6 +221,11 @@ tectonic_etcd_count = "0"
 // Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the experimental self-hosted etcd always uses TLS.
 // tectonic_etcd_tls_enabled = true
 
+// (optional) Configure the log verbosity of Kubernetes control plane components. Valid options are integers from 0-10, with 10 being most verbose.
+// 
+// See https://github.com/kubernetes/community/blob/master/contributors/devel/logging.md for more information.
+// tectonic_k8s_log_verbosity = "2"
+
 // The path to the tectonic licence file.
 // You can download the Tectonic license file from your Account overview page at [1].
 // 

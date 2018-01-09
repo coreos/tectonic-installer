@@ -172,3 +172,8 @@ variable "versions" {
   description = "Container versions to use"
   type        = "map"
 }
+
+variable "k8s_log_verbosity" {
+  description = "Log verbosity of Kubernetes control plane components"
+  type        = "string"
+}

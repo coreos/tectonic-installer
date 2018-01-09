@@ -94,6 +94,8 @@ module "bootkube" {
   master_count = "${var.tectonic_master_count}"
 
   cloud_config_path = ""
+
+  k8s_log_verbosity = "${var.tectonic_k8s_log_verbosity}"
 }
 
 module "tectonic" {

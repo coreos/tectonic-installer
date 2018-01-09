@@ -54,6 +54,8 @@ resource "template_dir" "bootkube" {
 
     cloud_provider_profile = "${var.cloud_provider != "" ? "${var.cloud_provider}" : "metal"}"
     cloud_config_path      = "${var.cloud_config_path}"
+
+    k8s_log_verbosity = "${var.k8s_log_verbosity}"
   }
 }
 
@@ -83,6 +85,8 @@ resource "template_dir" "bootkube_bootstrap" {
     advertise_address = "${var.advertise_address}"
     cluster_cidr      = "${var.cluster_cidr}"
     service_cidr      = "${var.service_cidr}"
+
+    k8s_log_verbosity = "${var.k8s_log_verbosity}"
   }
 }
 
