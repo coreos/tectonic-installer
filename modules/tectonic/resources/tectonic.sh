@@ -156,7 +156,8 @@ echo "Creating Ingress"
 kubectl create -f ingress/default-backend/configmap.yaml
 kubectl create -f ingress/default-backend/service.yaml
 kubectl create -f ingress/default-backend/deployment.yaml
-kubectl create -f ingress/ingress.yaml
+kubectl create -f ingress/console-ingress.yaml
+kubectl create -f ingress/identity-ingress.yaml
 
 # shellcheck disable=SC2154
 if [ "${ingress_kind}" = "HostPort" ]; then
