@@ -35,6 +35,12 @@ systemd:
 
 storage:
   files:
+    - path: /etc/kubernetes/kubeconfig
+      filesystem: root
+      mode: 0644
+      contents:
+        inline:
+          {{.ign_kubeconfig_json}}
     - path: /etc/kubernetes/installer/kubelet.env
       filesystem: root
       mode: 0644
