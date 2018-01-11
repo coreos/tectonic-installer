@@ -5,6 +5,7 @@ data "ignition_config" "worker" {
     "${var.ign_installer_runtime_mappings_id}",
     "${var.ign_azure_udev_rules_id}",
     "${var.ign_max_user_watches_id}",
+    "${var.ign_ntp_dropin_id}",
     "${data.ignition_file.cloud-provider-config.id}",
     "${var.ign_ca_cert_id_list}",
   ]

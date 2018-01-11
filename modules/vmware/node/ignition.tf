@@ -10,6 +10,7 @@ data "ignition_config" "node" {
     "${data.ignition_file.node_hostname.*.id[count.index]}",
     "${var.ign_installer_kubelet_env_id}",
     "${var.ign_installer_runtime_mappings_id}",
+    "${var.ign_ntp_dropin_id}",
     "${var.ign_ca_cert_id_list}",
   ]
 

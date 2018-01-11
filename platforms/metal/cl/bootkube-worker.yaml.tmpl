@@ -63,6 +63,11 @@ storage:
       mode: 0400
       contents:
         inline: {{.ign_custom_ca_certs_json}}
+    - path: /etc/systemd/timesyncd.conf.d/10-tectonic-installer.conf
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: {{.ign_ntp_dropin_json}}
 passwd:
   users:
     - name: core
