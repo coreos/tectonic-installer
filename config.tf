@@ -40,6 +40,8 @@ locals {
   // This is a local constant, which needs to be dependency inject because TF cannot handle length() on computed values,
   // see https://github.com/hashicorp/terraform/issues/10857#issuecomment-268289775.
   tectonic_ca_count = "${length(var.tectonic_custom_ca_pem_list) + 3}"
+
+  tectonic_http_proxy_enabled = "${length(var.tectonic_http_proxy_address) > 0}"
 }
 
 variable "tectonic_config_version" {
@@ -529,5 +531,38 @@ variable "tectonic_custom_ca_pem_list" {
 
   description = <<EOF
 (optional) A list of PEM encoded CA files that will be installed in /etc/ssl/certs on etcd, master, and worker nodes.
+EOF
+}
+
+variable "tectonic_http_proxy_address" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) HTTP proxy address.
+
+Example: `http://myproxy.example.com`
+EOF
+}
+
+variable "tectonic_https_proxy_address" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) HTTPS proxy address.
+
+Example: `http://myproxy.example.com`
+EOF
+}
+
+variable "tectonic_no_proxy" {
+  type    = "list"
+  default = []
+
+  description = <<EOF
+(optional) List of local endpoints that will not use HTTP proxy.
+
+Example: `["127.0.0.1","localhost",".example.com","10.3.0.1"]`
 EOF
 }
