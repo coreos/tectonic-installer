@@ -105,3 +105,7 @@ variable "ign_systemd_default_env_id" {
   type    = "string"
   default = ""
 }
+
+variable "ign_ntp_dropin_id" {
+  type = "string"
+}

@@ -7,11 +7,11 @@ data "ignition_config" "etcd" {
 
   files = ["${compact(list(
     data.ignition_file.node_hostname.*.id[count.index],
+    var.ign_ntp_dropin_id,
     var.ign_profile_env_id,
     var.ign_systemd_default_env_id,
   ))}",
     "${var.ign_etcd_crt_id_list}",
-    "${var.ign_ntp_dropin_id}",
   ]
 
   systemd = [

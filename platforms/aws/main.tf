@@ -126,6 +126,7 @@ module "ignition_masters" {
   kubelet_debug_config      = "${var.tectonic_kubelet_debug_config}"
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
+  no_proxy                  = "${var.tectonic_no_proxy}"
   ntp_servers               = "${var.tectonic_ntp_servers}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
 }
