@@ -1,0 +1,158 @@
+---
+# Permissive policy allowing for any pod to run.
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: system-tectonic-permissive
+spec:
+  privileged: true
+  hostNetwork: true
+  hostPID: true
+  hostIPC: true
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  runAsUser:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  hostPorts:
+  - min: 0
+    max: 65535
+  volumes:
+  - '*'
+  allowedCapabilities:
+  - '*'
+
+---
+# Limited policy notably preventing privileged containers and containers wish to use host networking.
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: system-tectonic-limited
+spec:
+  privileged: false
+  hostNetwork: false
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  runAsUser:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  volumes:
+  - '*' 
+  allowedCapabilities: 
+  - '*'
+
+---
+# Role allowing the usage of full permissive PSP
+# Should be bound by a RoleBinding inside of kube-system and tectonic-system
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: permissive-psp-access
+rules:
+  - apiGroups: ["extensions"]
+    resources: ["podsecuritypolicies"]
+    resourceNames: ["system-tectonic-permissive"]
+    verbs: ["use"]
+
+---
+# Role allowing the usage of limited PSP
+# Should be bound by a ClusterRoleBinding for the controller-manager to ensure it has this PSP
+# to resolve to by default.
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: limited-psp-access
+rules:
+  - apiGroups: ["extensions"]
+    resources: ["podsecuritypolicies"]
+    resourceNames: ["system-tectonic-limited"]
+    verbs: ["use"]
+
+---
+# Allow kube-controller-manager to have permissive PSP access in tectonic-system namespace
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: permissive-psp-access
+  namespace: tectonic-system
+subjects:
+- kind: ServiceAccount
+  name: replicaset-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: replication-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: job-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: daemonset-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: statefulset-controller
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: permissive-psp-access
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Allow kube-controller-manager to have permissive PSP access in kube-system namespace
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: permissive-psp-access
+  namespace: kube-system
+subjects:
+- kind: ServiceAccount
+  name: replicaset-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: replication-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: job-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: daemon-set-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: statefulset-controller
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: permissive-psp-access
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Allow kube-controller-manager to have limit PSP access in all namespaces
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: limited-psp-access
+subjects:
+- kind: ServiceAccount
+  name: replicaset-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: replication-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: job-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: daemon-set-controller
+  namespace: kube-system
+- kind: ServiceAccount
+  name: statefulset-controller
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: limited-psp-access
+  apiGroup: rbac.authorization.k8s.io
