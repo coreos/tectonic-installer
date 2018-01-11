@@ -12,6 +12,7 @@ data "ignition_config" "etcd" {
     var.ign_systemd_default_env_id,
    ))}",
     "${var.ign_etcd_crt_id_list}",
+    "${var.ign_ntp_dropin_id}",
   ]
 }
 

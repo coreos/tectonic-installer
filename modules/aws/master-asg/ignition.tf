@@ -6,27 +6,28 @@ data "ignition_config" "main" {
     var.ign_installer_kubelet_env_id,
     var.ign_installer_runtime_mappings_id,
     var.ign_max_user_watches_id,
-    var.ign_s3_puller_id,
+    var.ign_ntp_dropin_id
     var.ign_profile_env_id,
+    var.ign_s3_puller_id,
     var.ign_systemd_default_env_id,
    ))}",
     "${var.ign_ca_cert_id_list}",
   ]
 
   systemd = ["${compact(list(
-    var.ign_docker_dropin_id,
-    var.ign_locksmithd_service_id,
-    var.ign_kubelet_service_id,
-    var.ign_k8s_node_bootstrap_service_id,
-    var.ign_init_assets_service_id,
-    var.ign_rm_assets_service_id,
-    var.ign_bootkube_service_id,
-    var.ign_tectonic_service_id,
     var.ign_bootkube_path_unit_id,
-    var.ign_tectonic_path_unit_id,
-    var.ign_rm_assets_path_unit_id,
-    var.ign_update_ca_certificates_dropin_id,
+    var.ign_bootkube_service_id,
+    var.ign_docker_dropin_id,
+    var.ign_init_assets_service_id,
     var.ign_iscsi_service_id,
+    var.ign_k8s_node_bootstrap_service_id,
+    var.ign_kubelet_service_id,
+    var.ign_locksmithd_service_id,
+    var.ign_rm_assets_path_unit_id,
+    var.ign_rm_assets_service_id,
+    var.ign_tectonic_path_unit_id,
+    var.ign_tectonic_service_id,
+    var.ign_update_ca_certificates_dropin_id,
    ))}"]
 }
 
@@ -52,9 +53,9 @@ data "template_file" "init_assets" {
   template = "${file("${path.module}/resources/init-assets.sh")}"
 
   vars {
-    cluster_name       = "${var.cluster_name}"
-    awscli_image       = "${var.container_images["awscli"]}"
     assets_s3_location = "${var.assets_s3_location}"
+    awscli_image       = "${var.container_images["awscli"]}"
+    cluster_name       = "${var.cluster_name}"
   }
 }
 
@@ -72,9 +73,9 @@ data "template_file" "rm_assets" {
   template = "${file("${path.module}/resources/rm-assets.sh")}"
 
   vars {
-    cluster_name       = "${var.cluster_name}"
-    awscli_image       = "${var.container_images["awscli"]}"
     assets_s3_location = "${var.assets_s3_location}"
+    awscli_image       = "${var.container_images["awscli"]}"
+    cluster_name       = "${var.cluster_name}"
   }
 }
 

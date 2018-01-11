@@ -52,6 +52,7 @@ module "etcd" {
   external_endpoints         = ["${compact(var.tectonic_etcd_servers)}"]
   ign_etcd_crt_id_list       = "${module.ignition_masters.etcd_crt_id_list}"
   ign_etcd_dropin_id_list    = "${module.ignition_masters.etcd_dropin_id_list}"
+  ign_ntp_dropin_id          = "${length(var.tectonic_ntp_servers) > 0 ? module.ignition_masters.ntp_dropin_id : ""}"
   ign_profile_env_id         = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
   ign_systemd_default_env_id = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
   instance_count             = "${var.tectonic_self_hosted_etcd != "" ? 0 : var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(data.google_compute_zones.available.names) == 5 ? 5 : 3}"
@@ -98,6 +99,7 @@ module "masters" {
   ign_kubelet_service_id               = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id            = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id              = "${module.ignition_masters.max_user_watches_id}"
+  ign_ntp_dropin_id                    = "${length(var.tectonic_ntp_servers) > 0 ? module.ignition_masters.ntp_dropin_id : ""}"
   ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
   ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
   ign_tectonic_path_unit_id            = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
@@ -130,6 +132,7 @@ module "workers" {
   ign_kubelet_service_id               = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id            = "${module.ignition_workers.locksmithd_service_id}"
   ign_max_user_watches_id              = "${module.ignition_workers.max_user_watches_id}"
+  ign_ntp_dropin_id                    = "${length(var.tectonic_ntp_servers) > 0 ? module.ignition_workers.ntp_dropin_id : ""}"
   ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
   ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.systemd_default_env_id : ""}"
   ign_update_ca_certificates_dropin_id = "${module.ignition_workers.update_ca_certificates_dropin_id}"
@@ -174,7 +177,7 @@ module "ignition_masters" {
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
   no_proxy                  = "${var.tectonic_no_proxy}"
-  no_proxy                  = "${var.tectonic_no_proxy}"
+  ntp_servers               = "${var.tectonic_ntp_servers}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
 }
 
@@ -199,7 +202,7 @@ module "ignition_workers" {
   kubelet_node_label      = "node-role.kubernetes.io/node"
   kubelet_node_taints     = ""
   no_proxy                = "${var.tectonic_no_proxy}"
-  no_proxy                = "${var.tectonic_no_proxy}"
+  ntp_servers             = "${var.tectonic_ntp_servers}"
   tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
 }
 
