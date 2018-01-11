@@ -523,3 +523,7 @@ variable "tectonic_no_proxy" {
 Example: `["127.0.0.1","localhost",".example.com","10.3.0.1"]`
 EOF
 }
+
+variable "tectonic_ncg_dev_secret" {
+  type = "string"
+}

@@ -1,8 +1,8 @@
 resource "aws_s3_bucket_object" "ignition_master" {
   bucket  = "${var.s3_bucket}"
-  key     = "ignition_master.json"
+  key     = "ignition"
   content = "${data.ignition_config.main.rendered}"
-  acl     = "private"
+  acl     = "public-read"
 
   server_side_encryption = "AES256"
 
@@ -13,9 +13,12 @@ resource "aws_s3_bucket_object" "ignition_master" {
     ), var.extra_tags)}"
 }
 
+data "aws_region" "region" {
+  current = true
+}
+
 data "ignition_config" "s3" {
   replace {
-    source       = "${format("s3://%s/%s", var.s3_bucket, aws_s3_bucket_object.ignition_master.key)}"
-    verification = "sha512-${sha512(data.ignition_config.main.rendered)}"
+    source = "http://${var.cluster_name}-ncg.${var.base_domain}/ignition?profile=controller"
   }
 }

@@ -1,0 +1,49 @@
+apiVersion: apps/v1beta2
+kind: DaemonSet
+metadata:
+  name: ncg
+  namespace: tectonic-system
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      name: ncg
+      phase: prod
+  template:
+    metadata:
+      labels:
+        name: ncg
+        phase: prod
+    spec:
+      containers:
+        - name: node-configuration-generator
+          image: quay.io/alberto_lamela/test:latest
+          imagePullPolicy: Always
+          env:
+            - name: NCG_ADDRESS
+              value: "0.0.0.0:8080"
+            - name: NCG_LOG_LEVEL
+              value: "debug"
+          ports:
+            - name: http
+              containerPort: 8080
+              hostPort: 8080
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "50Mi"
+      hostNetwork: true
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: alberto-lamela-test-pull-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
