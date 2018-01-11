@@ -165,7 +165,6 @@ variable "tectonic_etcd_count" {
   description = <<EOF
 The number of etcd nodes to be created.
 If set to zero, the count of etcd nodes will be determined automatically.
-
 Note: This is not supported on bare metal.
 EOF
 }
@@ -176,7 +175,6 @@ variable "tectonic_etcd_servers" {
 Needs to be set if using an external etcd cluster.
 Note: If this variable is defined, the installer will not create self-signed certs.
 To provide a CA certificate to trust the etcd servers, set "tectonic_etcd_ca_cert_path".
-
 Example: `["etcd1", "etcd2", "etcd3"]`
 EOF
 
@@ -190,7 +188,6 @@ variable "tectonic_etcd_ca_cert_path" {
 
   description = <<EOF
 (optional) The path of the file containing the CA certificate for TLS communication with etcd.
-
 Note: This works only when used in conjunction with an external etcd cluster.
 If set, the variable `tectonic_etcd_servers` must also be set.
 EOF
@@ -202,7 +199,6 @@ variable "tectonic_etcd_client_cert_path" {
 
   description = <<EOF
 (optional) The path of the file containing the client certificate for TLS communication with etcd.
-
 Note: This works only when used in conjunction with an external etcd cluster.
 If set, the variables `tectonic_etcd_servers`, `tectonic_etcd_ca_cert_path`, and `tectonic_etcd_client_key_path` must also be set.
 EOF
@@ -214,7 +210,6 @@ variable "tectonic_etcd_client_key_path" {
 
   description = <<EOF
 (optional) The path of the file containing the client key for TLS communication with etcd.
-
 Note: This works only when used in conjunction with an external etcd cluster.
 If set, the variables `tectonic_etcd_servers`, `tectonic_etcd_ca_cert_path`, and `tectonic_etcd_client_cert_path` must also be set.
 EOF
@@ -226,12 +221,9 @@ variable "tectonic_base_domain" {
   description = <<EOF
 The base DNS domain of the cluster. It must NOT contain a trailing period. Some
 DNS providers will automatically add this if necessary.
-
 Example: `openstack.dev.coreos.systems`.
-
 Note: This field MUST be set manually prior to creating the cluster.
 This applies only to cloud platforms.
-
 [Azure-specific NOTE]
 To use Azure-provided DNS, `tectonic_base_domain` should be set to `""`
 If using DNS records, ensure that `tectonic_base_domain` is set to a properly configured external DNS zone.
@@ -245,7 +237,6 @@ variable "tectonic_cluster_name" {
   description = <<EOF
 The name of the cluster.
 If used in a cloud-environment, this will be prepended to `tectonic_base_domain` resulting in the URL to the Tectonic console.
-
 Note: This field MUST be set manually prior to creating the cluster.
 Warning: Special characters in the name like '.' may cause errors on OpenStack platforms due to resource name constraints.
 EOF
@@ -260,11 +251,8 @@ The path the pull secret file in JSON format.
 This is known to be a "Docker pull secret" as produced by the docker login [1] command.
 A sample JSON content is shown in [2].
 You can download the pull secret from your Account overview page at [3].
-
 [1] https://docs.docker.com/engine/reference/commandline/login/
-
 [2] https://coreos.com/os/docs/latest/registry-authentication.html#manual-registry-auth-setup
-
 [3] https://account.coreos.com/overview
 EOF
 }
@@ -276,7 +264,6 @@ variable "tectonic_license_path" {
   description = <<EOF
 The path to the tectonic licence file.
 You can download the Tectonic license file from your Account overview page at [1].
-
 [1] https://account.coreos.com/overview
 EOF
 }
@@ -287,7 +274,6 @@ variable "tectonic_container_linux_channel" {
 
   description = <<EOF
 (optional) The Container Linux update channel.
-
 Examples: `stable`, `beta`, `alpha`
 EOF
 }
@@ -298,7 +284,6 @@ variable "tectonic_container_linux_version" {
 
   description = <<EOF
 The Container Linux version to use. Set to `latest` to select the latest available version for the selected update channel.
-
 Examples: `latest`, `1465.6.0`
 EOF
 }
@@ -328,7 +313,6 @@ variable "tectonic_admin_email" {
 (internal) The e-mail address used to:
 1. login as the admin user to the Tectonic Console.
 2. generate DNS zones for some providers.
-
 Note: This field MUST be in all lower-case e-mail address format and set manually prior to creating the cluster.
 EOF
 }
@@ -338,7 +322,6 @@ variable "tectonic_admin_password" {
 
   description = <<EOF
 (internal) The admin user password to login to the Tectonic Console.
-
 Note: This field MUST be set manually prior to creating the cluster. Backslashes and double quotes must
 also be escaped.
 EOF
@@ -398,7 +381,6 @@ variable "tectonic_ddns_server" {
 
   description = <<EOF
 (optional) This only applies if you use the modules/dns/ddns module.
-
 Specifies the RFC2136 Dynamic DNS server IP/host to register IP addresses to.
 EOF
 }
@@ -409,7 +391,6 @@ variable "tectonic_ddns_key_name" {
 
   description = <<EOF
 (optional) This only applies if you use the modules/dns/ddns module.
-
 Specifies the RFC2136 Dynamic DNS server key name.
 EOF
 }
@@ -420,7 +401,6 @@ variable "tectonic_ddns_key_algorithm" {
 
   description = <<EOF
 (optional) This only applies if you use the modules/dns/ddns module.
-
 Specifies the RFC2136 Dynamic DNS server key algorithm.
 EOF
 }
@@ -431,7 +411,6 @@ variable "tectonic_ddns_key_secret" {
 
   description = <<EOF
 (optional) This only applies if you use the modules/dns/ddns module.
-
 Specifies the RFC2136 Dynamic DNS server key secret.
 EOF
 }
@@ -441,13 +420,9 @@ variable "tectonic_networking" {
 
   description = <<EOF
 (optional) Configures the network to be used in Tectonic. One of the following values can be used:
-
 - "flannel": enables overlay networking only. This is implemented by flannel using VXLAN.
-
 - "canal": enables overlay networking including network policy. Overlay is implemented by flannel using VXLAN. Network policy is implemented by Calico.
-
 - "calico-ipip": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
-
 - "none": disables the installation of any Pod level networking layer provided by Tectonic. By setting this value, users are expected to deploy their own solution to enable network connectivity for Pods and Services.
 EOF
 }
@@ -486,7 +461,6 @@ variable "tectonic_http_proxy_address" {
 
   description = <<EOF
 (optional) HTTP proxy address.
-
 Example: `http://myproxy.example.com`
 EOF
 }
@@ -497,7 +471,6 @@ variable "tectonic_https_proxy_address" {
 
   description = <<EOF
 (optional) HTTPS proxy address.
-
 Example: `http://myproxy.example.com`
 EOF
 }
@@ -508,7 +481,6 @@ variable "tectonic_no_proxy" {
 
   description = <<EOF
 (optional) List of local endpoints that will not use HTTP proxy.
-
 Example: `["127.0.0.1","localhost",".example.com","10.3.0.1"]`
 EOF
 }

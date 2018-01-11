@@ -157,3 +157,13 @@ variable "tectonic_networking" {
   description = "configures the network to be used in the cluster"
   type        = "string"
 }
+
+variable "ncg_config_worker" {
+  type    = "string"
+  default = ""
+}
+
+variable "ncg_config_master" {
+  type    = "string"
+  default = ""
+}

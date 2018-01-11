@@ -52,7 +52,6 @@ variable "tectonic_aws_ec2_ami_override" {
 variable "tectonic_aws_etcd_extra_sg_ids" {
   description = <<EOF
 (optional) List of additional security group IDs for etcd nodes.
-
 Example: `["sg-51530134", "sg-b253d7cc"]`
 EOF
 
@@ -74,7 +73,6 @@ EOF
 variable "tectonic_aws_master_extra_sg_ids" {
   description = <<EOF
 (optional) List of additional security group IDs for master nodes.
-
 Example: `["sg-51530134", "sg-b253d7cc"]`
 EOF
 
@@ -85,7 +83,6 @@ EOF
 variable "tectonic_aws_worker_extra_sg_ids" {
   description = <<EOF
 (optional) List of additional security group IDs for worker nodes.
-
 Example: `["sg-51530134", "sg-b253d7cc"]`
 EOF
 
@@ -109,7 +106,6 @@ variable "tectonic_aws_external_vpc_id" {
   description = <<EOF
 (optional) ID of an existing VPC to launch nodes into.
 If unset a new VPC is created.
-
 Example: `vpc-123456`
 EOF
 
@@ -141,7 +137,6 @@ variable "tectonic_aws_external_private_zone" {
 (optional) If set, the given Route53 zone ID will be used as the internal (private) zone.
 This zone will be used to create etcd DNS records as well as internal API and internal Ingress records.
 If set, no additional private zone will be created.
-
 Example: `"Z1ILINNUJGTAO1"`
 EOF
 }
@@ -152,7 +147,6 @@ variable "tectonic_aws_external_master_subnet_ids" {
   description = <<EOF
 (optional) List of subnet IDs within an existing VPC to deploy master nodes into.
 Required to use an existing VPC and the list must match the AZ count.
-
 Example: `["subnet-111111", "subnet-222222", "subnet-333333"]`
 EOF
 
@@ -165,7 +159,6 @@ variable "tectonic_aws_external_worker_subnet_ids" {
   description = <<EOF
 (optional) List of subnet IDs within an existing VPC to deploy worker nodes into.
 Required to use an existing VPC and the list must match the AZ count.
-
 Example: `["subnet-111111", "subnet-222222", "subnet-333333"]`
 EOF
 
@@ -177,7 +170,6 @@ variable "tectonic_aws_extra_tags" {
 
   description = <<EOF
 (optional) Extra AWS tags to be applied to created resources.
-
 Example: `{ "key" = "value", "foo" = "bar" }`
 EOF
 
@@ -191,7 +183,6 @@ variable "tectonic_autoscaling_group_extra_tags" {
   description = <<EOF
 (optional) Extra AWS tags to be applied to created autoscaling group resources.
 This is a list of maps having the keys `key`, `value` and `propagate_at_launch`.
-
 Example: `[ { key = "foo", value = "bar", propagate_at_launch = true } ]`
 EOF
 }
@@ -274,7 +265,6 @@ variable "tectonic_aws_master_custom_subnets" {
 
   description = <<EOF
 (optional) This configures master availability zones and their corresponding subnet CIDRs directly.
-
 Example:
 `{ eu-west-1a = "10.0.0.0/20", eu-west-1b = "10.0.16.0/20" }`
 EOF
@@ -286,7 +276,6 @@ variable "tectonic_aws_worker_custom_subnets" {
 
   description = <<EOF
 (optional) This configures worker availability zones and their corresponding subnet CIDRs directly.
-
 Example: `{ eu-west-1a = "10.0.64.0/20", eu-west-1b = "10.0.80.0/20" }`
 EOF
 }
@@ -317,7 +306,6 @@ variable "tectonic_aws_master_iam_role_name" {
   description = <<EOF
 (optional) Name of IAM role to use for the instance profiles of master nodes.
 The name is also the last part of a role's ARN.
-
 Example:
  * Role ARN  = arn:aws:iam::123456789012:role/tectonic-installer
  * Role Name = tectonic-installer
@@ -331,7 +319,6 @@ variable "tectonic_aws_worker_iam_role_name" {
   description = <<EOF
 (optional) Name of IAM role to use for the instance profiles of worker nodes.
 The name is also the last part of a role's ARN.
-
 Example:
  * Role ARN  = arn:aws:iam::123456789012:role/tectonic-installer
  * Role Name = tectonic-installer
@@ -345,7 +332,6 @@ variable "tectonic_aws_etcd_iam_role_name" {
   description = <<EOF
 (optional) Name of IAM role to use for the instance profiles of etcd nodes.
 The name is also the last part of a role's ARN.
-
 Example:
  * Role ARN  = arn:aws:iam::123456789012:role/tectonic-installer
  * Role Name = tectonic-installer
@@ -359,7 +345,6 @@ variable "tectonic_aws_worker_load_balancers" {
   description = <<EOF
 (optional) List of ELBs to attach all worker instances to.
 This is useful for exposing NodePort services via load-balancers managed separately from the cluster.
-
 Example:
  * `["ingress-nginx"]`
 EOF

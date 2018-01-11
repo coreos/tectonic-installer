@@ -27,9 +27,9 @@ data "aws_ami" "coreos_ami" {
 
 resource "aws_autoscaling_group" "masters" {
   name                 = "${var.cluster_name}-masters"
-  desired_capacity     = "${var.instance_count}"
-  max_size             = "${var.instance_count * 3}"
-  min_size             = "${var.instance_count}"
+  desired_capacity     = "1"
+  max_size             = "1"
+  min_size             = "1"
   launch_configuration = "${aws_launch_configuration.master_conf.id}"
   vpc_zone_identifier  = ["${var.subnet_ids}"]
 
@@ -56,6 +56,24 @@ resource "aws_autoscaling_group" "masters" {
 
   lifecycle {
     create_before_destroy = true
+  }
+}
+
+data "ignition_config" "s3" {
+  append {
+    source = "http://${var.cluster_name}-ncg.${var.base_domain}/ignition?profile=master"
+  }
+
+  files = ["${data.ignition_file.kubeconfig.id}"]
+}
+
+data "ignition_file" "kubeconfig" {
+  filesystem = "root"
+  path       = "/etc/kubernetes/kubeconfig"
+  mode       = 0644
+
+  content {
+    content = "${var.kubeconfig_content}"
   }
 }
 
