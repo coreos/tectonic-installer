@@ -1,28 +1,30 @@
 module "etcd" {
   source = "../../modules/vmware/etcd"
 
-  base_domain             = "${var.tectonic_base_domain}"
-  cluster_name            = "${var.tectonic_cluster_name}"
-  container_image         = "${var.tectonic_container_images["etcd"]}"
-  core_public_keys        = ["${var.tectonic_vmware_ssh_authorized_key}"]
-  dns_server              = "${var.tectonic_vmware_node_dns}"
-  external_endpoints      = ["${compact(var.tectonic_etcd_servers)}"]
-  gateways                = "${var.tectonic_vmware_etcd_gateways}"
-  hostname                = "${var.tectonic_vmware_etcd_hostnames}"
-  ign_etcd_crt_id_list    = "${module.ignition_masters.etcd_crt_id_list}"
-  ign_etcd_dropin_id_list = "${module.ignition_masters.etcd_dropin_id_list}"
-  instance_count          = "${var.tectonic_self_hosted_etcd != "" ? 0 : var.tectonic_etcd_count }"
-  ip_address              = "${var.tectonic_vmware_etcd_ip}"
-  vm_disk_datastores      = "${var.tectonic_vmware_etcd_datastores}"
-  vm_disk_template        = "${var.tectonic_vmware_vm_template}"
-  vm_disk_template_folder = "${var.tectonic_vmware_vm_template_folder}"
-  vm_memory               = "${var.tectonic_vmware_etcd_memory}"
-  vm_network_labels       = "${var.tectonic_vmware_etcd_networks}"
-  vm_vcpu                 = "${var.tectonic_vmware_etcd_vcpu}"
-  vmware_clusters         = "${var.tectonic_vmware_etcd_clusters}"
-  vmware_datacenters      = "${var.tectonic_vmware_etcd_datacenters}"
-  vmware_folder           = "${vsphere_folder.tectonic_vsphere_folder.path}"
-  vmware_resource_pool    = "${var.tectonic_vmware_etcd_resource_pool}"
+  base_domain                = "${var.tectonic_base_domain}"
+  cluster_name               = "${var.tectonic_cluster_name}"
+  container_image            = "${var.tectonic_container_images["etcd"]}"
+  core_public_keys           = ["${var.tectonic_vmware_ssh_authorized_key}"]
+  dns_server                 = "${var.tectonic_vmware_node_dns}"
+  external_endpoints         = ["${compact(var.tectonic_etcd_servers)}"]
+  gateways                   = "${var.tectonic_vmware_etcd_gateways}"
+  hostname                   = "${var.tectonic_vmware_etcd_hostnames}"
+  ign_etcd_crt_id_list       = "${module.ignition_masters.etcd_crt_id_list}"
+  ign_etcd_dropin_id_list    = "${module.ignition_masters.etcd_dropin_id_list}"
+  instance_count             = "${var.tectonic_self_hosted_etcd != "" ? 0 : var.tectonic_etcd_count }"
+  ip_address                 = "${var.tectonic_vmware_etcd_ip}"
+  vm_disk_datastores         = "${var.tectonic_vmware_etcd_datastore}"
+  vm_disk_template           = "${var.tectonic_vmware_vm_template}"
+  vm_disk_template_folder    = "${var.tectonic_vmware_vm_template_folder}"
+  vm_memory                  = "${var.tectonic_vmware_etcd_memory}"
+  vm_network_labels          = "${var.tectonic_vmware_etcd_networks}"
+  vm_vcpu                    = "${var.tectonic_vmware_etcd_vcpu}"
+  vmware_clusters            = "${var.tectonic_vmware_etcd_clusters}"
+  vmware_datacenters         = "${var.tectonic_vmware_etcd_datacenters}"
+  vmware_folder              = "${vsphere_folder.tectonic_vsphere_folder.path}"
+  vmware_resource_pool       = "${var.tectonic_vmware_etcd_resource_pool}"
+  ign_profile_env_id         = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
+  ign_systemd_default_env_id = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 data "template_file" "etcd_hostname_list" {
@@ -51,7 +53,6 @@ module "ignition_masters" {
   etcd_tls_enabled          = "${var.tectonic_etcd_tls_enabled}"
   image_re                  = "${var.tectonic_image_re}"
   ingress_ca_cert_pem       = "${module.ingress_certs.ca_cert_pem}"
-  iscsi_enabled             = "${var.tectonic_iscsi_enabled}"
   kube_ca_cert_pem          = "${module.kube_certs.ca_cert_pem}"
   kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   kubelet_cni_bin_dir       = "${var.tectonic_networking == "calico" || var.tectonic_networking == "canal" ? "/var/lib/cni/bin" : "" }"
@@ -60,6 +61,9 @@ module "ignition_masters" {
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
   use_metadata              = false
+  http_proxy                = "${var.tectonic_http_proxy_address}"
+  https_proxy               = "${var.tectonic_https_proxy_address}"
+  no_proxy                  = "${var.tectonic_no_proxy}"
 }
 
 module "masters" {
@@ -77,7 +81,6 @@ module "masters" {
   ign_docker_dropin_id                 = "${module.ignition_masters.docker_dropin_id}"
   ign_installer_kubelet_env_id         = "${module.ignition_masters.installer_kubelet_env_id}"
   ign_installer_runtime_mappings_id    = "${module.ignition_masters.installer_runtime_mappings_id}"
-  ign_iscsi_service_id                 = "${module.ignition_masters.iscsi_service_id}"
   ign_k8s_node_bootstrap_service_id    = "${module.ignition_masters.k8s_node_bootstrap_service_id}"
   ign_kubelet_service_id               = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id            = "${module.ignition_masters.locksmithd_service_id}"
@@ -100,6 +103,8 @@ module "masters" {
   vmware_datacenters                   = "${var.tectonic_vmware_master_datacenters}"
   vmware_folder                        = "${vsphere_folder.tectonic_vsphere_folder.path}"
   vmware_resource_pool                 = "${var.tectonic_vmware_master_resource_pool}"
+  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
+  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 module "ignition_workers" {
@@ -111,7 +116,6 @@ module "ignition_workers" {
   etcd_ca_cert_pem        = "${module.etcd_certs.etcd_ca_crt_pem}"
   image_re                = "${var.tectonic_image_re}"
   ingress_ca_cert_pem     = "${module.ingress_certs.ca_cert_pem}"
-  iscsi_enabled           = "${var.tectonic_iscsi_enabled}"
   kube_ca_cert_pem        = "${module.kube_certs.ca_cert_pem}"
   kube_dns_service_ip     = "${module.bootkube.kube_dns_service_ip}"
   kubelet_cni_bin_dir     = "${var.tectonic_networking == "calico" || var.tectonic_networking == "canal" ? "/var/lib/cni/bin" : "" }"
@@ -119,6 +123,9 @@ module "ignition_workers" {
   kubelet_node_label      = "node-role.kubernetes.io/node"
   kubelet_node_taints     = ""
   tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
+  http_proxy              = "${var.tectonic_http_proxy_address}"
+  https_proxy             = "${var.tectonic_https_proxy_address}"
+  no_proxy                = "${var.tectonic_no_proxy}"
 }
 
 module "workers" {
@@ -134,7 +141,6 @@ module "workers" {
   ign_docker_dropin_id                 = "${module.ignition_workers.docker_dropin_id}"
   ign_installer_kubelet_env_id         = "${module.ignition_workers.installer_kubelet_env_id}"
   ign_installer_runtime_mappings_id    = "${module.ignition_workers.installer_runtime_mappings_id}"
-  ign_iscsi_service_id                 = "${module.ignition_workers.iscsi_service_id}"
   ign_k8s_node_bootstrap_service_id    = "${module.ignition_workers.k8s_node_bootstrap_service_id}"
   ign_kubelet_service_id               = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id            = "${module.ignition_workers.locksmithd_service_id}"
@@ -155,4 +161,6 @@ module "workers" {
   vmware_datacenters                   = "${var.tectonic_vmware_worker_datacenters}"
   vmware_folder                        = "${vsphere_folder.tectonic_vsphere_folder.path}"
   vmware_resource_pool                 = "${var.tectonic_vmware_worker_resource_pool}"
+  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
+  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.systemd_default_env_id : ""}"
 }

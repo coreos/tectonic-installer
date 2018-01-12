@@ -162,7 +162,17 @@ variable "custom_ca_cert_pem_list" {
   description = "(optional) A list of custom CAs in PEM format."
 }
 
-variable "iscsi_enabled" {
-  type    = "string"
-  default = "false"
+variable "http_proxy" {
+  type        = "string"
+  description = "HTTP proxy address."
+}
+
+variable "https_proxy" {
+  type        = "string"
+  description = "HTTPS proxy address."
+}
+
+variable "no_proxy" {
+  type        = "list"
+  description = "List of local endpoints that will not use HTTP proxy."
 }
