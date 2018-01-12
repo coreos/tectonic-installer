@@ -112,11 +112,13 @@ pipeline {
       defaultValue: true,
       description: ''
     )
+    /* Disabled until we start the work again on gcp
     booleanParam(
       name: 'PLATFORM/GCP',
-      defaultValue: true,
+      defaultValue: false,
       description: ''
     )
+    */
     booleanParam(
       name: 'PLATFORM/BARE_METAL',
       defaultValue: true,
@@ -314,9 +316,11 @@ pipeline {
             [file: 'custom_tls_spec.rb', args: '']
           ]
           def gcp = [
-            [file: 'basic_spec.rb', args: ''],
+          /* Disabled until we start the work again on gcp
+           *  [file: 'basic_spec.rb', args: ''],
             [file: 'ha_spec.rb', args: ''],
             [file: 'custom_tls_spec.rb', args: '']
+           */
           ]
 
           def metal = [
