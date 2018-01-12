@@ -39,6 +39,7 @@ module "ignition_masters" {
   etcd_initial_cluster_list = "${var.tectonic_metal_controller_domains}"
   image_re                  = "${var.tectonic_image_re}"
   ingress_ca_cert_pem       = "${module.ingress_certs.ca_cert_pem}"
+  iscsi_enabled             = "${var.tectonic_iscsi_enabled}"
   kube_ca_cert_pem          = "${module.kube_certs.ca_cert_pem}"
   kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   kubelet_cni_bin_dir       = "${var.tectonic_networking == "calico" || var.tectonic_networking == "canal" ? "/var/lib/cni/bin" : "" }"
@@ -63,6 +64,7 @@ resource "matchbox_group" "controller" {
     domain_name        = "${element(var.tectonic_metal_controller_domains, count.index)}"
     etcd_enabled       = "${var.tectonic_self_hosted_etcd != "" ? "false" : length(compact(var.tectonic_etcd_servers)) != 0 ? "false" : "true"}"
     exclude_tectonic   = "${var.tectonic_vanilla_k8s}"
+    iscsi_enabled      = "${var.iscsi_enabled ? true : false}"
     ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
 
     ign_bootkube_path_unit_json            = "${jsonencode(module.bootkube.systemd_path_unit_rendered)}"
@@ -90,6 +92,7 @@ module "ignition_workers" {
   etcd_ca_cert_pem        = "${module.etcd_certs.etcd_ca_crt_pem}"
   image_re                = "${var.tectonic_image_re}"
   ingress_ca_cert_pem     = "${module.ingress_certs.ca_cert_pem}"
+  iscsi_enabled           = "${var.tectonic_iscsi_enabled}"
   kube_ca_cert_pem        = "${module.kube_certs.ca_cert_pem}"
   kube_dns_service_ip     = "${module.bootkube.kube_dns_service_ip}"
   kubelet_cni_bin_dir     = "${var.tectonic_networking == "calico" || var.tectonic_networking == "canal" ? "/var/lib/cni/bin" : "" }"
@@ -111,6 +114,7 @@ resource "matchbox_group" "worker" {
 
   metadata {
     domain_name        = "${element(var.tectonic_metal_worker_domains, count.index)}"
+    iscsi_enabled      = "${var.iscsi_enabled ? true : false}"
     ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
 
     # extra data
