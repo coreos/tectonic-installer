@@ -90,6 +90,7 @@ module "etcd" {
   etcd_iam_role              = "${var.tectonic_aws_etcd_iam_role_name}"
   ign_profile_env_id         = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
   ign_systemd_default_env_id = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
+  ec2_ami                    = "${var.tectonic_aws_ec2_ami_override}"
 }
 
 module "ignition_masters" {
@@ -165,7 +166,6 @@ module "masters" {
   ign_tectonic_path_unit_id            = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
   ign_tectonic_service_id              = "${module.tectonic.systemd_service_id}"
   ign_update_ca_certificates_dropin_id = "${module.ignition_masters.update_ca_certificates_dropin_id}"
-  image_re                             = "${var.tectonic_image_re}"
   instance_count                       = "${var.tectonic_master_count}"
   master_iam_role                      = "${var.tectonic_aws_master_iam_role_name}"
   master_sg_ids                        = "${concat(var.tectonic_aws_master_extra_sg_ids, list(module.vpc.master_sg_id))}"
