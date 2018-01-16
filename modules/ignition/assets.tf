@@ -207,3 +207,16 @@ data "ignition_systemd_unit" "iscsi" {
   name    = "iscsid.service"
   enabled = "${var.iscsi_enabled ? true : false}"
 }
+
+data "ignition_file" "resolved_domains_dropin" {
+  filesystem = "root"
+  path       = "/etc/systemd/resolved.conf.d/10-domains.conf"
+  mode       = 0644
+
+  content {
+    content = <<EOF
+[Resolve]
+Domains=${var.resolved_domains}
+EOF
+  }
+}

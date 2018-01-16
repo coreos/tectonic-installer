@@ -118,6 +118,7 @@ module "ignition_masters" {
   kubelet_debug_config      = "${var.tectonic_kubelet_debug_config}"
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
+  resolved_domains          = "${var.resolved_domains}"
 }
 
 module "masters" {
@@ -152,6 +153,7 @@ module "masters" {
   ign_tectonic_path_unit_id            = "${module.tectonic.systemd_path_unit_id}"
   ign_tectonic_service_id              = "${module.tectonic.systemd_service_id}"
   ign_update_ca_certificates_dropin_id = "${module.ignition_masters.update_ca_certificates_dropin_id}"
+  ign_resolved_domains_id              = "${module.ignition_masters.resolved_domains_dropin_id}"
   image_re                             = "${var.tectonic_image_re}"
   instance_count                       = "${var.tectonic_master_count}"
   master_iam_role                      = "${var.tectonic_aws_master_iam_role_name}"
@@ -183,6 +185,7 @@ module "ignition_workers" {
   kubelet_debug_config    = "${var.tectonic_kubelet_debug_config}"
   kubelet_node_label      = "node-role.kubernetes.io/node"
   kubelet_node_taints     = ""
+  resolved_domains        = "${var.resolved_domains}"
 }
 
 module "workers" {
@@ -206,6 +209,7 @@ module "workers" {
   ign_max_user_watches_id              = "${module.ignition_workers.max_user_watches_id}"
   ign_s3_puller_id                     = "${module.ignition_workers.s3_puller_id}"
   ign_update_ca_certificates_dropin_id = "${module.ignition_workers.update_ca_certificates_dropin_id}"
+  ign_resolved_domains_id              = "${module.ignition_workers.resolved_domains_dropin_id}"
   instance_count                       = "${var.tectonic_worker_count}"
   load_balancers                       = "${var.tectonic_aws_worker_load_balancers}"
   root_volume_iops                     = "${var.tectonic_aws_worker_root_volume_iops}"
