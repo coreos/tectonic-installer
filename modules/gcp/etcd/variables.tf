@@ -79,3 +79,7 @@ variable "public_ssh_key" {
 variable "ign_etcd_crt_id_list" {
   type = "list"
 }
+
+variable "ign_ntp_dropin_id" {
+  type = "string"
+}

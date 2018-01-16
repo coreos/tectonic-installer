@@ -5,6 +5,7 @@ data "ignition_config" "main" {
     "${var.ign_installer_kubelet_env_id}",
     "${var.ign_installer_runtime_mappings_id}",
     "${var.ign_gcs_puller_id}",
+    "${var.ign_ntp_dropin_id}",
     "${data.ignition_file.init_assets.id}",
     "${data.ignition_file.detect_master.id}",
     "${var.ign_ca_cert_id_list}",

@@ -30,6 +30,14 @@ output "k8s_node_bootstrap_service_rendered" {
   value = "${data.template_file.k8s_node_bootstrap.rendered}"
 }
 
+output "ntp_dropin_id" {
+  value = "${data.ignition_file.ntp_dropin.id}"
+}
+
+output "ntp_dropin_rendered" {
+  value = "${data.template_file.ntp_dropin.rendered}"
+}
+
 output "init_assets_service_id" {
   value = "${data.ignition_systemd_unit.init_assets.id}"
 }

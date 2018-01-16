@@ -40,3 +40,7 @@ variable "ign_ca_cert_id_list" {
 variable "ign_iscsi_service_id" {
   type = "string"
 }
+
+variable "ign_ntp_dropin_id" {
+  type = "string"
+}

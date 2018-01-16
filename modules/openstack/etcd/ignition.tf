@@ -8,6 +8,7 @@ data "ignition_config" "etcd" {
   files = [
     "${data.ignition_file.resolv_conf.id}",
     "${var.ign_etcd_crt_id_list}",
+    "${var.ign_ntp_dropin_id}",
   ]
 
   systemd = [

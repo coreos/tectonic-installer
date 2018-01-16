@@ -9,6 +9,7 @@ data "ignition_config" "etcd" {
   files = [
     "${data.ignition_file.node_hostname.*.id[count.index]}",
     "${var.ign_etcd_crt_id_list}",
+    "${var.ign_ntp_dropin_id}",
   ]
 }
 
