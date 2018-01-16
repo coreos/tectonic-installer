@@ -40,6 +40,8 @@ locals {
   // This is a local constant, which needs to be dependency inject because TF cannot handle length() on computed values,
   // see https://github.com/hashicorp/terraform/issues/10857#issuecomment-268289775.
   tectonic_ca_count = "${length(var.tectonic_custom_ca_pem_list) + 3}"
+
+  tectonic_http_proxy_enabled = "${length(var.tectonic_http_proxy_address) > 0}"
 }
 
 variable "tectonic_config_version" {
