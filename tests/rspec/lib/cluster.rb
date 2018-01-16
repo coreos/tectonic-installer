@@ -118,6 +118,32 @@ class Cluster
       .map { |pod| [pod[0], nodes[pod[1]]] }.to_h
   end
 
+  def forensic(events = true)
+    save_kubernetes_events(@kubeconfig, @name) if events
+
+    master_ip_addresses.each do |master_ip|
+      save_docker_logs(master_ip, @name)
+
+      ['bootkube', 'tectonic', 'kubelet', 'k8s-node-bootstrap'].each do |service|
+        print_service_logs(master_ip, service, @name)
+      end
+    end
+
+    worker_ip_addresses.each do |worker_ip|
+      save_docker_logs(worker_ip, @name, master_ip_address)
+
+      ['kubelet'].each do |service|
+        print_service_logs(worker_ip, service, @name, master_ip_address)
+      end
+    end
+
+    etcd_ip_addresses.each do |etcd_ip|
+      ['etcd-member'].each do |service|
+        print_service_logs(etcd_ip, service, @name, master_ip_address)
+      end
+    end
+  end
+
   private
 
   def license_and_pull_secret_defined?
@@ -138,6 +164,8 @@ class Cluster
                                     tee ../../build/#{@name}/terraform-apply.log'")
       end
     end
+  rescue Timeout::Error
+    forensic(false)
     raise 'Applying cluster failed'
   end
 
@@ -242,6 +270,8 @@ class Cluster
       sleep 10
     end
 
+    puts 'Trying to collecting the logs...'
+    forensic(false) # Call forensic to collect logs when service timeout
     raise "timeout waiting for #{service} service to bootstrap on any of: #{ips}"
   end
 
