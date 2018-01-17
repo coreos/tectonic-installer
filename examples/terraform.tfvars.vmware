@@ -130,6 +130,10 @@ tectonic_master_count = "1"
 // - "none": disables the installation of any Pod level networking layer provided by Tectonic. By setting this value, users are expected to deploy their own solution to enable network connectivity for Pods and Services.
 // tectonic_networking = "flannel"
 
+// (optional) Content of NFS configuration file.
+// Example: "OPTS_RPC_MOUNTD=\"8 -N 2 -N 3 -V 4 -V 4.1\""
+// tectonic_nfs_config = ""
+
 // The path the pull secret file in JSON format.
 // This is known to be a "Docker pull secret" as produced by the docker login [1] command.
 // A sample JSON content is shown in [2].

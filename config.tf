@@ -488,3 +488,13 @@ variable "tectonic_iscsi_enabled" {
   default     = "false"
   description = "(optional) Start iscsid.service to enable iscsi volume attachment."
 }
+
+variable "tectonic_nfs_config" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) Content of NFS configuration file.
+Example: "OPTS_RPC_MOUNTD=\"8 -N 2 -N 3 -V 4 -V 4.1\""
+EOF
+}

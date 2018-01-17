@@ -156,3 +156,8 @@ variable "iscsi_enabled" {
   type    = "string"
   default = "false"
 }
+
+variable "nfs_config" {
+  type        = "string"
+  description = "Content of NFS configuration file."
+}

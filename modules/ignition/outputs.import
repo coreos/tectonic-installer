@@ -40,3 +40,8 @@ variable "ign_ca_cert_id_list" {
 variable "ign_iscsi_service_id" {
   type = "string"
 }
+
+variable "ign_nfs_config_id" {
+  type        = "string"
+  description = "Content of NFS configuration file."
+}
