@@ -112,6 +112,12 @@ tectonic_etcd_count = "0"
 // Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the experimental self-hosted etcd always uses TLS.
 // tectonic_etcd_tls_enabled = true
 
+// "(optional) The HTTP proxy address to set in the environment variables of installed ContainerLinux instances."
+tectonic_http_proxy_address = ""
+
+// "(optional) The HTTPS proxy address to set in the environment variables of installed ContainerLinux instances."
+tectonic_https_proxy_address = ""
+
 // (optional) Start iscsid.service to enable iscsi volume attachment.
 // tectonic_iscsi_enabled = "false"
 
@@ -233,6 +239,9 @@ tectonic_metal_worker_names = ""
 // 
 // - "calico": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
 // tectonic_networking = "flannel"
+
+// "(optional) This variable should contain a comma-separated list of domain extensions proxy should not be used for. For instance, if the value of no_proxy is ‘.mit.edu’, proxy will not be used to retrieve documents from MIT."
+tectonic_no_proxy = ""
 
 // The path the pull secret file in JSON format.
 // This is known to be a "Docker pull secret" as produced by the docker login [1] command.

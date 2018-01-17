@@ -40,6 +40,8 @@ locals {
   // This is a local constant, which needs to be dependency inject because TF cannot handle length() on computed values,
   // see https://github.com/hashicorp/terraform/issues/10857#issuecomment-268289775.
   tectonic_ca_count = "${length(var.tectonic_custom_ca_pem_list) + 3}"
+
+  tectonic_http_proxy_enabled = "${length(var.tectonic_http_proxy_address) > 0}"
 }
 
 variable "tectonic_config_version" {
@@ -536,4 +538,31 @@ variable "tectonic_iscsi_enabled" {
   type        = "string"
   default     = "false"
   description = "(optional) Start iscsid.service to enable iscsi volume attachment."
+}
+
+variable "tectonic_http_proxy_address" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+"(optional) The HTTP proxy address to set in the environment variables of installed ContainerLinux instances."
+EOF
+}
+
+variable "tectonic_https_proxy_address" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+"(optional) The HTTPS proxy address to set in the environment variables of installed ContainerLinux instances."
+EOF
+}
+
+variable "tectonic_no_proxy" {
+  default = []
+  type    = "list"
+
+  description = <<EOF
+"(optional) This variable should contain a comma-separated list of domain extensions proxy should not be used for. For instance, if the value of no_proxy is ‘.mit.edu’, proxy will not be used to retrieve documents from MIT."
+EOF
 }

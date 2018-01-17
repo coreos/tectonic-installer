@@ -124,3 +124,11 @@ variable "ign_tectonic_path_unit_id" {
   type    = "string"
   default = ""
 }
+
+variable "ign_profile_env_id" {
+  type = "string"
+}
+
+variable "ign_systemd_default_env_id" {
+  type = "string"
+}

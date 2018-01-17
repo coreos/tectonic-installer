@@ -87,7 +87,10 @@ variable "s3_bucket" {
   type = "string"
 }
 
-variable "dns_server_ip" {
-  type    = "string"
-  default = ""
+variable "ign_profile_env_id" {
+  type = "string"
+}
+
+variable "ign_systemd_default_env_id" {
+  type = "string"
 }
