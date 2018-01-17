@@ -147,3 +147,7 @@ variable "dns_server_ip" {
   type    = "string"
   default = ""
 }
+
+variable "ign_resolved_domains_id" {
+  type = "string"
+}

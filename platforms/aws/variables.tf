@@ -345,3 +345,8 @@ Example:
  * `["ingress-nginx"]`
 EOF
 }
+
+variable "resolved_domains" {
+  type    = "string"
+  default = ""
+}

@@ -156,3 +156,8 @@ variable "iscsi_enabled" {
   type    = "string"
   default = "false"
 }
+
+variable "resolved_domains" {
+  type    = "string"
+  default = ""
+}

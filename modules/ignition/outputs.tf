@@ -147,3 +147,7 @@ output "etcd_crt_id_list" {
 output "iscsi_service_id" {
   value = "${data.ignition_systemd_unit.iscsi.id}"
 }
+
+output "resolved_domains_dropin_id" {
+  value = "${data.ignition_file.resolved_domains_dropin.id}"
+}
