@@ -71,7 +71,9 @@ module "etcd" {
   container_image            = "${var.tectonic_container_images["etcd"]}"
   container_linux_channel    = "${var.tectonic_container_linux_channel}"
   container_linux_version    = "${module.container_linux.version}"
+  ec2_ami                    = "${var.tectonic_aws_ec2_ami_override}"
   ec2_type                   = "${var.tectonic_aws_etcd_ec2_type}"
+  etcd_iam_role              = "${var.tectonic_aws_etcd_iam_role_name}"
   external_endpoints         = "${compact(var.tectonic_etcd_servers)}"
   extra_tags                 = "${var.tectonic_aws_extra_tags}"
   ign_etcd_crt_id_list       = "${module.ignition_masters.etcd_crt_id_list}"
@@ -87,10 +89,6 @@ module "etcd" {
   ssh_key                    = "${var.tectonic_aws_ssh_key}"
   subnets                    = "${module.vpc.worker_subnet_ids}"
   tls_enabled                = "${var.tectonic_etcd_tls_enabled}"
-  etcd_iam_role              = "${var.tectonic_aws_etcd_iam_role_name}"
-  ign_profile_env_id         = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
-  ign_systemd_default_env_id = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
-  ec2_ami                    = "${var.tectonic_aws_ec2_ami_override}"
 }
 
 module "ignition_masters" {
@@ -145,6 +143,7 @@ module "masters" {
   container_images                     = "${var.tectonic_container_images}"
   container_linux_channel              = "${var.tectonic_container_linux_channel}"
   container_linux_version              = "${module.container_linux.version}"
+  ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
   ec2_type                             = "${var.tectonic_aws_master_ec2_type}"
   extra_tags                           = "${var.tectonic_aws_extra_tags}"
   ign_bootkube_path_unit_id            = "${module.bootkube.systemd_path_unit_id}"
@@ -177,9 +176,6 @@ module "masters" {
   s3_bucket                            = "${aws_s3_bucket.tectonic.bucket}"
   ssh_key                              = "${var.tectonic_aws_ssh_key}"
   subnet_ids                           = "${module.vpc.master_subnet_ids}"
-  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
-  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
-  ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
 }
 
 module "ignition_workers" {
@@ -217,6 +213,7 @@ module "workers" {
   cluster_name                         = "${var.tectonic_cluster_name}"
   container_linux_channel              = "${var.tectonic_container_linux_channel}"
   container_linux_version              = "${module.container_linux.version}"
+  ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
   ec2_type                             = "${var.tectonic_aws_worker_ec2_type}"
   extra_tags                           = "${var.tectonic_aws_extra_tags}"
   ign_ca_cert_id_list                  = "${module.ignition_masters.ca_cert_id_list}"
@@ -242,9 +239,6 @@ module "workers" {
   subnet_ids                           = "${module.vpc.worker_subnet_ids}"
   vpc_id                               = "${module.vpc.vpc_id}"
   worker_iam_role                      = "${var.tectonic_aws_worker_iam_role_name}"
-  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
-  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.systemd_default_env_id : ""}"
-  ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
 }
 
 module "dns" {

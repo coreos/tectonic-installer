@@ -78,8 +78,6 @@ module "etcd" {
   tls_enabled                = "${var.tectonic_etcd_tls_enabled}"
   versions                   = "${var.tectonic_versions}"
   vm_size                    = "${var.tectonic_azure_etcd_vm_size}"
-  ign_profile_env_id         = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
-  ign_systemd_default_env_id = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 # Workaround for https://github.com/hashicorp/terraform/issues/4084
@@ -180,8 +178,6 @@ module "masters" {
   storage_id                           = "${module.resource_group.storage_id}"
   storage_type                         = "${var.tectonic_azure_master_storage_type}"
   vm_size                              = "${var.tectonic_azure_master_vm_size}"
-  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
-  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 module "ignition_workers" {
@@ -245,8 +241,6 @@ module "workers" {
   tectonic_kube_dns_service_ip         = "${module.bootkube.kube_dns_service_ip}"
   vm_size                              = "${var.tectonic_azure_worker_vm_size}"
   worker_count                         = "${var.tectonic_worker_count}"
-  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
-  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.systemd_default_env_id : ""}"
 }
 
 module "dns" {
