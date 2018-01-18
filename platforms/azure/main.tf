@@ -125,6 +125,7 @@ module "ignition_masters" {
   etcd_tls_enabled          = "${var.tectonic_etcd_tls_enabled}"
   http_proxy                = "${var.tectonic_http_proxy_address}"
   https_proxy               = "${var.tectonic_https_proxy_address}"
+  ign_iscsi_service_id      = "${module.ignition_masters.iscsi_service_id}"
   image_re                  = "${var.tectonic_image_re}"
   ingress_ca_cert_pem       = "${module.ingress_certs.ca_cert_pem}"
   iscsi_enabled             = "${var.tectonic_iscsi_enabled}"
@@ -136,9 +137,6 @@ module "ignition_masters" {
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
   no_proxy                  = "${var.tectonic_no_proxy}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
-  http_proxy                = "${var.tectonic_http_proxy_address}"
-  https_proxy               = "${var.tectonic_https_proxy_address}"
-  no_proxy                  = "${var.tectonic_no_proxy}"
 }
 
 module "masters" {
@@ -191,20 +189,19 @@ module "ignition_workers" {
   etcd_ca_cert_pem        = "${module.etcd_certs.etcd_ca_crt_pem}"
   http_proxy              = "${var.tectonic_http_proxy_address}"
   https_proxy             = "${var.tectonic_https_proxy_address}"
-  ingress_ca_cert_pem     = "${module.ingress_certs.ca_cert_pem}"
+  ign_iscsi_service_id    = "${module.ignition_workers.iscsi_service_id}"
   image_re                = "${var.tectonic_image_re}"
+  ingress_ca_cert_pem     = "${module.ingress_certs.ca_cert_pem}"
   iscsi_enabled           = "${var.tectonic_iscsi_enabled}"
-  kube_dns_service_ip     = "${module.bootkube.kube_dns_service_ip}"
   kube_ca_cert_pem        = "${module.kube_certs.ca_cert_pem}"
+  kube_dns_service_ip     = "${module.bootkube.kube_dns_service_ip}"
   kubelet_cni_bin_dir     = "${var.tectonic_networking == "calico" || var.tectonic_networking == "canal" ? "/var/lib/cni/bin" : "" }"
   kubelet_debug_config    = "${var.tectonic_kubelet_debug_config}"
   kubelet_node_label      = "node-role.kubernetes.io/node"
   kubelet_node_taints     = ""
   no_proxy                = "${var.tectonic_no_proxy}"
-  tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
-  http_proxy              = "${var.tectonic_http_proxy_address}"
-  https_proxy             = "${var.tectonic_https_proxy_address}"
   no_proxy                = "${var.tectonic_no_proxy}"
+  tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
 }
 
 module "workers" {
