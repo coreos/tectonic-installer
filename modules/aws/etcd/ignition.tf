@@ -6,11 +6,10 @@ data "ignition_config" "etcd" {
     "${var.ign_etcd_dropin_id_list[count.index]}",
   ]
 
-  files = ["${compact(list(
-    var.ign_profile_env_id,
-    var.ign_systemd_default_env_id,
-   ))}",
+  files = [
     "${var.ign_etcd_crt_id_list}",
+    "${var.ign_profile_env_id}",
+    "${var.ign_systemd_default_env_id}",
   ]
 }
 
