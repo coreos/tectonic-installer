@@ -5,7 +5,7 @@ go_library(
     srcs = ["main.go"],
     importpath = "gopkg.in/alecthomas/kingpin.v2/cmd/genvalues",
     visibility = ["//visibility:private"],
-    deps = ["@com_github_alecthomas_template//:go_default_library"],
+    deps = ["//installer/vendor/github.com/alecthomas/template:go_default_library"],
 )
 
 go_binary(
