@@ -48,6 +48,17 @@ resource "aws_security_group_rule" "master_ingress_http" {
   to_port     = 80
 }
 
+// NCG
+resource "aws_security_group_rule" "master_ncg" {
+  type              = "ingress"
+  security_group_id = "${aws_security_group.master.id}"
+
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  from_port   = 8080
+  to_port     = 8080
+}
+
 resource "aws_security_group_rule" "master_ingress_https" {
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
