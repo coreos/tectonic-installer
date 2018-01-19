@@ -157,3 +157,8 @@ variable "tectonic_networking" {
   description = "configures the network to be used in the cluster"
   type        = "string"
 }
+
+variable "ncg_dev_secret" {
+  type    = "string"
+  default = ""
+}
