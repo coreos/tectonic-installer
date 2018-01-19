@@ -171,6 +171,7 @@ module "masters" {
   s3_bucket                            = "${aws_s3_bucket.tectonic.bucket}"
   ssh_key                              = "${var.tectonic_aws_ssh_key}"
   subnet_ids                           = "${module.vpc.master_subnet_ids}"
+  kubeconfig_content                   = "${module.bootkube.kubeconfig}"
 }
 
 module "ignition_workers" {
@@ -229,6 +230,7 @@ module "workers" {
   subnet_ids                           = "${module.vpc.worker_subnet_ids}"
   vpc_id                               = "${module.vpc.vpc_id}"
   worker_iam_role                      = "${var.tectonic_aws_worker_iam_role_name}"
+  kubeconfig_content                   = "${module.bootkube.kubeconfig}"
 }
 
 module "dns" {
