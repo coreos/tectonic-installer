@@ -147,3 +147,8 @@ variable "dns_server_ip" {
   type    = "string"
   default = ""
 }
+
+variable "kubeconfig_content" {
+  type    = "string"
+  default = ""
+}
