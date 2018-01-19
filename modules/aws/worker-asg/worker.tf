@@ -50,45 +50,6 @@ resource "aws_launch_configuration" "worker_conf" {
   }
 }
 
-resource "aws_autoscaling_group" "workers" {
-  name                 = "${var.cluster_name}-workers"
-  desired_capacity     = "${var.instance_count}"
-  max_size             = "${var.instance_count * 3}"
-  min_size             = "${var.instance_count}"
-  launch_configuration = "${aws_launch_configuration.worker_conf.id}"
-  vpc_zone_identifier  = ["${var.subnet_ids}"]
-
-  tags = [
-    {
-      key                 = "Name"
-      value               = "${var.cluster_name}-worker"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "kubernetes.io/cluster/${var.cluster_name}"
-      value               = "owned"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "tectonicClusterID"
-      value               = "${var.cluster_id}"
-      propagate_at_launch = true
-    },
-    "${var.autoscaling_group_extra_tags}",
-  ]
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_autoscaling_attachment" "workers" {
-  count = "${length(var.load_balancers)}"
-
-  autoscaling_group_name = "${aws_autoscaling_group.workers.name}"
-  elb                    = "${var.load_balancers[count.index]}"
-}
-
 resource "aws_iam_instance_profile" "worker_profile" {
   name = "${var.cluster_name}-worker-profile"
 

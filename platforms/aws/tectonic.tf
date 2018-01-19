@@ -47,6 +47,7 @@ module "bootkube" {
   cloud_config_path   = ""
   tectonic_networking = "${var.tectonic_networking}"
   calico_mtu          = "1480"
+  ncg_dev_secret      = "${var.tectonic_ncg_dev_secret}"
 }
 
 module "tectonic" {

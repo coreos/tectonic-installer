@@ -2,11 +2,32 @@ data "aws_region" "current" {
   current = true
 }
 
+// NCG
+resource "aws_route53_zone" "tectonic_int" {
+  vpc_id        = "${module.vpc.vpc_id}"
+  name          = "${var.tectonic_base_domain}"
+  force_destroy = true
+
+  tags = "${merge(map(
+      "Name", "${var.tectonic_cluster_name}_tectonic_int",
+      "KubernetesCluster", "${var.tectonic_cluster_name}",
+      "tectonicClusterID", "${module.tectonic.cluster_id}"
+    ), var.tectonic_aws_extra_tags)}"
+}
+
+resource "aws_route53_record" "tectonic_ncg" {
+  zone_id = "${aws_route53_zone.tectonic_int.id}"
+  name    = "${var.tectonic_cluster_name}-ncg.${var.tectonic_base_domain}"
+  type    = "CNAME"
+  ttl     = "1"
+  records = ["${aws_s3_bucket.tectonic.bucket_domain_name}"]
+}
+
 resource "aws_s3_bucket" "tectonic" {
   # Buckets must start with a lower case name and are limited to 63 characters,
   # so we prepend the letter 'a' and use the md5 hex digest for the case of a long domain
   # leaving 29 chars for the cluster name.
-  bucket = "${var.tectonic_aws_assets_s3_bucket_name == "" ? format("%s%s-%s", "a", var.tectonic_cluster_name, md5(format("%s-%s", data.aws_region.current.name , var.tectonic_base_domain))) : var.tectonic_aws_assets_s3_bucket_name }"
+  bucket = "${var.tectonic_cluster_name}-ncg.${var.tectonic_base_domain}"
 
   acl = "private"
 
