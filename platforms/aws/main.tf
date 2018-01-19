@@ -88,8 +88,6 @@ module "etcd" {
   subnets                    = "${module.vpc.worker_subnet_ids}"
   tls_enabled                = "${var.tectonic_etcd_tls_enabled}"
   etcd_iam_role              = "${var.tectonic_aws_etcd_iam_role_name}"
-  ign_profile_env_id         = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
-  ign_systemd_default_env_id = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 module "ignition_masters" {
@@ -127,9 +125,6 @@ module "ignition_masters" {
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
   no_proxy                  = "${var.tectonic_no_proxy}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
-  http_proxy                = "${var.tectonic_http_proxy_address}"
-  https_proxy               = "${var.tectonic_https_proxy_address}"
-  no_proxy                  = "${var.tectonic_no_proxy}"
 }
 
 module "masters" {
@@ -177,8 +172,6 @@ module "masters" {
   s3_bucket                            = "${aws_s3_bucket.tectonic.bucket}"
   ssh_key                              = "${var.tectonic_aws_ssh_key}"
   subnet_ids                           = "${module.vpc.master_subnet_ids}"
-  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
-  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 module "ignition_workers" {
@@ -203,9 +196,6 @@ module "ignition_workers" {
   kubelet_node_taints     = ""
   no_proxy                = "${var.tectonic_no_proxy}"
   tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
-  http_proxy              = "${var.tectonic_http_proxy_address}"
-  https_proxy             = "${var.tectonic_https_proxy_address}"
-  no_proxy                = "${var.tectonic_no_proxy}"
 }
 
 module "workers" {
@@ -241,8 +231,6 @@ module "workers" {
   subnet_ids                           = "${module.vpc.worker_subnet_ids}"
   vpc_id                               = "${module.vpc.vpc_id}"
   worker_iam_role                      = "${var.tectonic_aws_worker_iam_role_name}"
-  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
-  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.systemd_default_env_id : ""}"
 }
 
 module "dns" {
