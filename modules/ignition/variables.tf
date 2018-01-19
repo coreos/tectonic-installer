@@ -180,3 +180,17 @@ variable "https_proxy" {
 variable "no_proxy" {
   type = "list"
 }
+
+variable "ign_profile_env_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "ign_systemd_default_env_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "ign_iscsi_service_id" {
+  type = "string"
+}

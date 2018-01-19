@@ -164,8 +164,6 @@ EOF
   instance_count                = "${var.tectonic_etcd_count}"
   self_hosted_etcd              = "${var.tectonic_self_hosted_etcd}"
   tls_enabled                   = "${var.tectonic_etcd_tls_enabled}"
-  ign_profile_env_id            = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
-  ign_systemd_default_env_id    = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 module "ignition_masters" {
@@ -235,8 +233,6 @@ EOF
   ign_update_ca_certificates_dropin_id = "${module.ignition_masters.update_ca_certificates_dropin_id}"
   instance_count                       = "${var.tectonic_master_count}"
   kubeconfig_content                   = "${module.bootkube.kubeconfig}"
-  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
-  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
 }
 
 module "ignition_workers" {
@@ -289,8 +285,6 @@ EOF
   ign_update_ca_certificates_dropin_id = "${module.ignition_workers.update_ca_certificates_dropin_id}"
   instance_count                       = "${var.tectonic_worker_count}"
   kubeconfig_content                   = "${module.bootkube.kubeconfig}"
-  ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
-  ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.systemd_default_env_id : ""}"
 }
 
 module "secrets" {

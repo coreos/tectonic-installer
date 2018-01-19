@@ -59,11 +59,3 @@ variable "public_ssh_key" {
 variable "kubeconfig_content" {
   type = "string"
 }
-
-variable "ign_profile_env_id" {
-  type = "string"
-}
-
-variable "ign_systemd_default_env_id" {
-  type = "string"
-}

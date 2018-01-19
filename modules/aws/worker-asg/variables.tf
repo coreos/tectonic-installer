@@ -91,11 +91,3 @@ variable "ign_s3_puller_id" {
 variable "s3_bucket" {
   type = "string"
 }
-
-variable "ign_profile_env_id" {
-  type = "string"
-}
-
-variable "ign_systemd_default_env_id" {
-  type = "string"
-}
