@@ -20,6 +20,7 @@ module "vpc" {
   cidr_block               = "${var.tectonic_aws_vpc_cidr_block}"
   cluster_id               = "${module.tectonic.cluster_id}"
   cluster_name             = "${var.tectonic_cluster_name}"
+  console_allowed_cidr     = "${var.tectonic_aws_console_allowed_cidr}"
   custom_dns_name          = "${var.tectonic_dns_name}"
   enable_etcd_sg           = "${length(compact(var.tectonic_etcd_servers)) == 0 ? 1 : 0}"
   external_master_subnets  = "${compact(var.tectonic_aws_external_master_subnet_ids)}"

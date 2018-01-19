@@ -42,14 +42,14 @@ resource "aws_security_group" "console" {
 
   ingress {
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["${concat(var.console_allowed_cidr, list(var.cidr_block))}"]
     from_port   = 80
     to_port     = 80
   }
 
   ingress {
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["${concat(var.console_allowed_cidr, list(var.cidr_block))}"]
     from_port   = 443
     to_port     = 443
   }

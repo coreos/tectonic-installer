@@ -345,3 +345,15 @@ Example:
  * `["ingress-nginx"]`
 EOF
 }
+
+variable "tectonic_aws_console_allowed_cidr" {
+  type    = "list"
+  default = ["0.0.0.0/0"]
+
+  description = <<EOF
+"(optional) List of CIDR blocks allowed access to the Tectonic console. The VPC CIDR block is implicitly appended.
+
+Example:
+ * `["192.168.0.0/16"]`"
+EOF
+}

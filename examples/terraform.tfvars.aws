@@ -10,6 +10,12 @@
 // If name is not provided the installer will construct the name using "tectonic_cluster_name", current AWS region and "tectonic_base_domain"
 // tectonic_aws_assets_s3_bucket_name = ""
 
+// "(optional) List of CIDR blocks allowed access to the Tectonic console. The VPC CIDR block is implicitly appended.
+// 
+// Example:
+//  * `["192.168.0.0/16"]`"
+tectonic_aws_console_allowed_cidr = ""
+
 // Instance size for the etcd node(s). Example: `t2.medium`. Read the [etcd recommended hardware](https://coreos.com/etcd/docs/latest/op-guide/hardware.html) guide for best performance
 tectonic_aws_etcd_ec2_type = "t2.medium"
 
