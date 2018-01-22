@@ -41,7 +41,7 @@ genrule(
     cmd = "cp $(<) $(@)",
 )
 
-PLATFORMS = ["aws", "azure", "gcp", "govcloud", "metal", "openstack", "vmware"]
+PLATFORMS = ["aws", "azure", "gcp", "govcloud", "metal", "openstack/neutron", "vmware"]
 
 [genrule(
     name = "examples_" + platform,
