@@ -24,9 +24,13 @@ func NewInstallWorkflow(userConfig Metadata) Workflow {
 type terraformPrepareStep struct{}
 
 func (s terraformPrepareStep) Execute(m *Metadata) error {
-	clusterName := m.GetValue("cluster_name").(string)
-	buildPath := tectonic.NewBuildLocation(clusterName)
-	m.SetValue("build_path", buildPath)
+	var buildPath string
+	buildPath = (m.GetValue("build_path")).(string)
+	if buildPath == "" {
+		clusterName := m.GetValue("cluster_name").(string)
+		buildPath = tectonic.NewBuildLocation(clusterName)
+		m.SetValue("build_path", buildPath)
+	}
 	varfile := filepath.Join(buildPath, "terraform.tfvars")
 	if _, err := os.Stat(varfile); os.IsNotExist(err) {
 		from, err := os.Open(m.GetValue("var_file").(string))
@@ -50,7 +54,7 @@ func (s terraformPrepareStep) Execute(m *Metadata) error {
 type terraformInitStep struct{}
 
 func (s terraformInitStep) Execute(m *Metadata) error {
-	log.Printf("Initializing cluster %s...", m.GetValue("cluster_name").(string))
+	log.Printf("Initializing cluster ...")
 	bp := (m.GetValue("build_path")).(string)
 	tfInit := exec.Command("terraform", "init", tectonic.FindTemplatesForType("aws")) // TODO: get from cluster config
 	tfInit.Dir = bp

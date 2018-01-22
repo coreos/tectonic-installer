@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/coreos/tectonic-installer/installer/pkg/tectonic"
 	"github.com/coreos/tectonic-installer/installer/pkg/workflow"
@@ -34,7 +35,18 @@ func main() {
 		}
 	case clusterDeleteCommand.FullCommand():
 		{
-			// TODO up next
+			buildPath := *deleteClusterDir
+			pathStat, err := os.Stat(buildPath)
+			// TODO: add deeper checking of the path for having cluster state
+			if os.IsNotExist(err) || !pathStat.IsDir() {
+				log.Fatalf("Provided path %s is not valid cluster state location.")
+			}
+			w := workflow.NewDestroyWorkflow(
+				workflow.Metadata{
+					"build_path": buildPath,
+				},
+			)
+			w.Execute()
 		}
 	}
 }
