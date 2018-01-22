@@ -42,6 +42,11 @@ variable "ec2_type" {
   type = "string"
 }
 
+variable "ec2_ami" {
+  type    = "string"
+  default = ""
+}
+
 variable "extra_tags" {
   description = "Extra AWS tags to be applied to created resources."
   type        = "map"
@@ -67,10 +72,6 @@ variable "root_volume_iops" {
 variable "sg_ids" {
   type        = "list"
   description = "The security group IDs to be applied."
-}
-
-variable "tls_enabled" {
-  default = false
 }
 
 variable "ign_etcd_dropin_id_list" {

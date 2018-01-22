@@ -71,7 +71,7 @@ variable "tectonic_container_images" {
     awscli                       = "quay.io/coreos/awscli:025a357f05242fdad6a81e8a6b520098aa65a600"
     gcloudsdk                    = "google/cloud-sdk:178.0.0-alpine"
     bootkube                     = "quay.io/coreos/bootkube:v0.8.1"
-    etcd                         = "quay.io/coreos/etcd:v3.1.8"
+    etcd                         = "quay.io/coreos/etcd:v3.2.14"
     etcd_operator                = "quay.io/coreos/etcd-operator:v0.5.0"
     hyperkube                    = "quay.io/coreos/hyperkube:v1.9.1_coreos.0"
     kube_core_renderer           = "quay.io/coreos/kube-core-renderer-dev:79403c0864d4a98773d92d01998124c096faf59f"
@@ -79,7 +79,7 @@ variable "tectonic_container_images" {
     tectonic_channel_operator    = "quay.io/coreos/tectonic-channel-operator:0.6.2"
     tectonic_etcd_operator       = "quay.io/coreos/tectonic-etcd-operator:v0.0.2"
     tectonic_prometheus_operator = "quay.io/coreos/tectonic-prometheus-operator:v1.9.0"
-    tectonic_cluo_operator       = "quay.io/coreos/tectonic-cluo-operator:v0.2.5"
+    tectonic_cluo_operator       = "quay.io/coreos/tectonic-cluo-operator:v0.3.0"
     tectonic_torcx               = "quay.io/coreos/tectonic-torcx:v0.2.0"
     kubernetes_addon_operator    = "quay.io/coreos/kubernetes-addon-operator:4b83569d763dc95e1f61c77b31989fd3957bfc67"
     tectonic_alm_operator        = "quay.io/coreos/tectonic-alm-operator:0.2.1"
@@ -112,12 +112,12 @@ variable "tectonic_versions" {
   type        = "map"
 
   default = {
-    etcd          = "3.1.8"
+    etcd          = "3.2.14"
     kubernetes    = "1.8.4+tectonic.1"
     monitoring    = "1.9.0"
     tectonic      = "1.8.4-tectonic.2"
     tectonic-etcd = "0.0.1"
-    cluo          = "0.2.5"
+    cluo          = "0.3.0"
     alm           = "0.2.1"
   }
 }
@@ -183,16 +183,6 @@ EOF
 
   type    = "list"
   default = []
-}
-
-variable "tectonic_etcd_tls_enabled" {
-  default = true
-
-  description = <<EOF
-(optional) If set to `true`, all etcd endpoints will be configured to use the "https" scheme.
-
-Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the experimental self-hosted etcd always uses TLS.
-EOF
 }
 
 variable "tectonic_etcd_ca_cert_path" {
