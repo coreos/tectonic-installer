@@ -1,14 +1,8 @@
 #!/bin/sh
 set -e
 
-if [ "$#" -ne "3" ]; then
-    echo "Usage: $0 kubeconfig assets_path self_hosted_etcd"
-    exit 1
-fi
-
 KUBECONFIG="$1"
 ASSETS_PATH="$2"
-SELF_HOSTED_ETCD="$3"
 
 # Setup API Authentication
 KUBECTL="/kubectl --kubeconfig=$KUBECONFIG"
@@ -102,6 +96,20 @@ wait_for_pods() {
   set -e
 }
 
+asset_cleanup() {
+  echo "Cleaning up installation assets"
+
+  # shellcheck disable=SC2034
+  for d in "manifests" "auth" "tectonic" "tls"; do
+      rm -rf "$${ASSETS_PATH:?}/$${d:?}/"*
+  done
+
+  # shellcheck disable=SC2034
+  for f in "bootkube.sh" "tectonic.sh" "tectonic-wrapper.sh"; do
+      rm -f "$${ASSETS_PATH:?}/$${f:?}"
+  done
+}
+
 # chdir into the assets path directory
 cd "$ASSETS_PATH/tectonic"
 
@@ -130,9 +138,6 @@ kubectl create -f rbac/binding-discovery.yaml
 echo "Creating Cluster Config For Tectonic"
 kubectl create -f cluster-config.yaml
 
-echo "Creating Tectonic ConfigMaps"
-kubectl create -f config.yaml
-
 echo "Creating Tectonic Secrets"
 kubectl create -f secrets/pull.json
 kubectl create -f secrets/license.json
@@ -141,46 +146,14 @@ kubectl create -f secrets/ca-cert.yaml
 kubectl create -f secrets/identity-grpc-client.yaml
 kubectl create -f secrets/identity-grpc-server.yaml
 
-echo "Creating Ingress"
-kubectl create -f ingress/default-backend/configmap.yaml
-kubectl create -f ingress/default-backend/service.yaml
-kubectl create -f ingress/default-backend/deployment.yaml
-kubectl create -f ingress/ingress.yaml
-
-# shellcheck disable=SC2154
-if [ "${ingress_kind}" = "HostPort" ]; then
-  kubectl create -f ingress/hostport/service.yaml
-  kubectl create -f ingress/hostport/daemonset.yaml
-elif [ "${ingress_kind}" = "NodePort" ]; then
-  kubectl create -f ingress/nodeport/service.yaml
-  kubectl create -f ingress/nodeport/deployment.yaml
-else
-  echo "Unrecognized Ingress Kind: ${ingress_kind}"
-fi
-
-echo "Creating Tectonic Identity"
-kubectl create -f identity/configmap.yaml
-kubectl create -f identity/services.yaml
-kubectl create -f identity/deployment.yaml
-
-echo "Creating Tectonic Console"
-kubectl create -f console/service.yaml
-kubectl create -f console/deployment.yaml
-
 echo "Creating Etcd Operator"
 # Operator in the tectonic-system namespace used for etcd as a service
 kubectl create -f etcd/etcd-operator.yaml
-
-echo "Creating Heapster / Stats Emitter"
-kubectl create -f heapster/service.yaml
-kubectl create -f heapster/deployment.yaml
-kubectl create -f stats-emitter.yaml
 
 echo "Creating Operators"
 kubectl create -f updater/tectonic-channel-operator-kind.yaml
 kubectl create -f updater/app-version-kind.yaml
 kubectl create -f updater/migration-status-kind.yaml
-kubectl create -f updater/node-agent.yaml
 kubectl create -f updater/tectonic-monitoring-config.yaml
 
 wait_for_crd tectonic-system channeloperatorconfigs.tco.coreos.com
@@ -190,22 +163,22 @@ kubectl create -f updater/operators/kube-version-operator.yaml
 kubectl create -f updater/operators/tectonic-channel-operator.yaml
 kubectl create -f updater/operators/tectonic-prometheus-operator.yaml
 kubectl create -f updater/operators/tectonic-cluo-operator.yaml
+kubectl create -f updater/operators/kubernetes-addon-operator.yaml
+kubectl create -f updater/operators/tectonic-alm-operator.yaml
+kubectl create -f updater/operators/tectonic-utility-operator.yaml
 
 wait_for_crd tectonic-system appversions.tco.coreos.com
 kubectl create -f updater/app_versions/app-version-tectonic-cluster.yaml
 kubectl create -f updater/app_versions/app-version-kubernetes.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-monitoring.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-cluo.yaml
-
-if [ "$SELF_HOSTED_ETCD" = "true" ]; then
-  echo "Creating self hosted etcd resources"
-  kubectl apply -f updater/cluster-config.yaml
-  kubectl create -f updater/app_versions/app-version-tectonic-etcd.yaml
-  kubectl create -f updater/operators/tectonic-etcd-operator.yaml
-fi
+kubectl create -f updater/app_versions/app-version-kubernetes-addon.yaml
+kubectl create -f updater/app_versions/app-version-tectonic-alm.yaml
+kubectl create -f updater/app_versions/app-version-tectonic-utility.yaml
 
 # wait for Tectonic pods
 wait_for_pods tectonic-system
+asset_cleanup
 
 echo "Tectonic installation is done"
 exit 0

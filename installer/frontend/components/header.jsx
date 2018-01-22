@@ -22,6 +22,10 @@ const parseLatestVersion = (html) => {
 };
 
 const hasNewVersion = (latestRelease) => {
+  if (!semver.valid(latestRelease) || !semver.valid(GIT_TAG)) {
+    return false;
+  }
+
   const lrMajor = semver.major(latestRelease);
   const gtMajor = semver.major(GIT_TAG);
   if (lrMajor !== gtMajor) {
@@ -67,7 +71,7 @@ export class Header extends React.Component {
     this.state = { latestRelease: null };
   }
 
-  componentDidMount() {
+  componentDidMount () {
     fetchLatestRelease().then((release) => {
       this.setState({ latestRelease: parseLatestVersion(release) });
     }).catch((err) => {
@@ -77,7 +81,7 @@ export class Header extends React.Component {
 
   }
 
-  render() {
+  render () {
     const latestRelease = this.state.latestRelease || null;
 
     const productDdItems = {

@@ -6,7 +6,7 @@
 3. CoreOS does not ship with `make`, so Docker builds still have to use small scripts.
 */
 
-creds = [
+commonCreds = [
   file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_license_path'),
   file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'),
   file(credentialsId: 'GCP-APPLICATION', variable: 'GOOGLE_APPLICATION_CREDENTIALS'),
@@ -15,10 +15,6 @@ creds = [
     passwordVariable: 'LOG_ANALYZER_PASSWORD',
     usernameVariable: 'LOG_ANALYZER_USER'
   ),
-  [
-    $class: 'AmazonWebServicesCredentialsBinding',
-    credentialsId: 'tectonic-jenkins-installer'
-  ],
   [
     $class: 'AzureCredentialsBinding',
     credentialsId: 'azure-tectonic-test-service-principal',
@@ -34,7 +30,24 @@ creds = [
   ]
 ]
 
-quay_creds = [
+creds = commonCreds.collect()
+creds.push(
+  [
+    $class: 'AmazonWebServicesCredentialsBinding',
+    credentialsId: 'tectonic-jenkins-installer'
+  ],
+)
+
+govcloudCreds = commonCreds.collect()
+govcloudCreds.push(
+    usernamePassword(
+      credentialsId: 'tectonic-jenkins-installer-govcloud',
+      passwordVariable: 'AWS_SECRET_ACCESS_KEY',
+      usernameVariable: 'AWS_ACCESS_KEY_ID'
+    )
+)
+
+quayCreds = [
   usernamePassword(
     credentialsId: 'quay-robot',
     passwordVariable: 'QUAY_ROBOT_SECRET',
@@ -42,25 +55,26 @@ quay_creds = [
   )
 ]
 
-default_builder_image = 'quay.io/coreos/tectonic-builder:v1.41'
-tectonic_smoke_test_env_image = 'quay.io/coreos/tectonic-smoke-test-env:v5.8'
+defaultBuilderImage = 'quay.io/coreos/tectonic-builder:v1.44'
+tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.14'
+originalCommitId = 'UNKNOWN'
 
 pipeline {
   agent none
   environment {
-    KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.2_coreos.0'
+    KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.4_coreos.0'
     LOGSTASH_BUCKET = 'log-analyzer-tectonic-installer'
   }
   options {
-    // Individual steps have stricter timeouts. 300 minutes should be never reached.
-    timeout(time:5, unit:'HOURS')
+    // Individual steps have stricter timeouts. 360 minutes should be never reached.
+    timeout(time:6, unit:'HOURS')
     timestamps()
     buildDiscarder(logRotator(numToKeepStr:'20', artifactNumToKeepStr: '20'))
   }
   parameters {
     string(
       name: 'builder_image',
-      defaultValue: default_builder_image,
+      defaultValue: defaultBuilderImage,
       description: 'tectonic-builder docker image to use for builds'
     )
     string(
@@ -83,8 +97,18 @@ pipeline {
       defaultValue: true,
       description: ''
     )
+    string(
+      name: 'COMPONENT_TEST_IMAGES',
+      defaultValue: '',
+      description: 'List of container images for component tests to run (comma-separated)'
+    )
     booleanParam(
       name: 'PLATFORM/AWS',
+      defaultValue: true,
+      description: ''
+    )
+    booleanParam(
+      name: 'PLATFORM/GOVCLOUD',
       defaultValue: true,
       description: ''
     )
@@ -93,11 +117,13 @@ pipeline {
       defaultValue: true,
       description: ''
     )
+    /* Disabled until we start the work again on gcp
     booleanParam(
       name: 'PLATFORM/GCP',
-      defaultValue: true,
+      defaultValue: false,
       description: ''
     )
+    */
     booleanParam(
       name: 'PLATFORM/BARE_METAL',
       defaultValue: true,
@@ -116,14 +142,13 @@ pipeline {
           script {
             def err = null
             try {
-              timeout(time: 10, unit: 'MINUTES') {
+              timeout(time: 20, unit: 'MINUTES') {
                 forcefullyCleanWorkspace()
                 checkout scm
-                stash name: 'clean-repo', excludes: 'installer/vendor/**,tests/smoke/vendor/**,images/tectonic-stats-extender/vendor/**'
-                sh('git rev-parse origin/"\${BRANCH_NAME}" > original-commit-hash')
-                stash name: 'original-commit-hash', includes: 'original-commit-hash'
+                stash name: 'clean-repo', excludes: 'installer/vendor/**,tests/smoke/vendor/**'
+                originalCommitId = sh(returnStdout: true, script: 'git rev-parse origin/"\${BRANCH_NAME}"')
+                echo "originalCommitId: ${originalCommitId}"
 
-                printLogstashAttributes()
                 withDockerContainer(params.builder_image) {
                   ansiColor('xterm') {
                     sh """#!/bin/bash -ex
@@ -148,10 +173,10 @@ pipeline {
                     stash name: 'smoke-test-binary', includes: 'bin/smoke'
                   }
                 }
-                withDockerContainer(tectonic_smoke_test_env_image) {
+                withDockerContainer(tectonicSmokeTestEnvImage) {
                   sh"""#!/bin/bash -ex
                     cd tests/rspec
-                    bundler exec rubocop --cache false spec lib
+                    rubocop --cache false spec lib
                   """
                 }
               }
@@ -159,7 +184,7 @@ pipeline {
               err = error
               throw error
             } finally {
-              reportStatusToGithub((err == null) ? 'success' : 'failure', 'basic-tests')
+              reportStatusToGithub((err == null) ? 'success' : 'failure', 'basic-tests', originalCommitId)
               cleanWs notFailBuild: true
             }
           }
@@ -247,7 +272,7 @@ pipeline {
           } finally {
             node('worker && ec2') {
               unstash 'clean-repo'
-              reportStatusToGithub((err == null) ? 'success' : 'failure', 'gui-tests')
+              reportStatusToGithub((err == null) ? 'success' : 'failure', 'gui-tests', originalCommitId)
             }
           }
         }
@@ -257,7 +282,7 @@ pipeline {
     stage("Smoke Tests") {
       when {
         expression {
-          return params.RUN_SMOKE_TESTS || params.RUN_CONFORMANCE_TESTS
+          return params.RUN_SMOKE_TESTS || params.RUN_CONFORMANCE_TESTS || params.COMPONENT_TEST_IMAGES != ''
         }
       }
       environment {
@@ -275,7 +300,11 @@ pipeline {
             [file: 'vpc_internal_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'],
             [file: 'network_canal_spec.rb', args: ''],
             [file: 'exp_spec.rb', args: ''],
-            [file: 'ca_spec.rb', args: '']
+            [file: 'ca_spec.rb', args: ''],
+            [file: 'custom_tls_spec.rb', args: '']
+          ]
+          def govcloud = [
+            [file: 'vpc_internal_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root']
           ]
           def azure = [
             [file: 'basic_spec.rb', args: ''],
@@ -286,68 +315,53 @@ pipeline {
             */
             [file: 'external_spec.rb', args: ''],
             [file: 'example_spec.rb', args: ''],
-            [file: 'self_hosted_etcd_spec.rb', args: ''],
-            [file: 'external_self_hosted_etcd_spec.rb', args: '']
+            [file: 'custom_tls_spec.rb', args: '']
           ]
           def gcp = [
-            [file: 'basic_spec.rb', args: ''],
+          /* Disabled until we start the work again on gcp
+           *  [file: 'basic_spec.rb', args: ''],
             [file: 'ha_spec.rb', args: ''],
+            [file: 'custom_tls_spec.rb', args: '']
+           */
+          ]
+
+          def metal = [
+            [file: 'basic_spec.rb', args: ''],
+            [file: 'custom_tls_spec.rb', args: '']
           ]
 
           if (params."PLATFORM/AWS") {
             aws.each { build ->
               filepath = 'spec/aws/' + build.file
-              builds['aws/' + build.file] = runRSpecTest(filepath, build.args)
+              builds['aws/' + build.file] = runRSpecTest(filepath, build.args, creds)
+            }
+          }
+
+          if (params."PLATFORM/GOVCLOUD") {
+            govcloud.each { build ->
+              filepath = 'spec/govcloud/' + build.file
+              builds['govcloud/' + build.file] = runRSpecTest(filepath, build.args, govcloudCreds)
             }
           }
 
           if (params."PLATFORM/AZURE") {
             azure.each { build ->
               filepath = 'spec/azure/' + build.file
-              builds['azure/' + build.file] = runRSpecTest(filepath, build.args)
+              builds['azure/' + build.file] = runRSpecTest(filepath, build.args, creds)
             }
           }
 
           if (params."PLATFORM/GCP") {
             gcp.each { build ->
               filepath = 'spec/gcp/' + build.file
-              builds['gcp/' + build.file] = runRSpecTest(filepath, build.args)
+              builds['gcp/' + build.file] = runRSpecTest(filepath, build.args, creds)
             }
           }
 
           if (params."PLATFORM/BARE_METAL") {
-            builds['bare_metal'] = {
-              node('worker && bare-metal') {
-                def err = null
-                def specFile = 'spec/metal/basic_spec.rb'
-                try {
-                  timeout(time: 4, unit: 'HOURS') {
-                    ansiColor('xterm') {
-                      unstash 'clean-repo'
-                      unstash 'smoke-test-binary'
-                      withCredentials(creds) {
-                        sh """#!/bin/bash -ex
-                        cd tests/rspec
-                        export RBENV_ROOT=/usr/local/rbenv
-                        export PATH="/usr/local/rbenv/bin:$PATH"
-                        eval \"\$(rbenv init -)\"
-                        rbenv install -s
-                        gem install bundler
-                        bundler install
-                        bundler exec rspec $specFile
-                        """
-                      }
-                    }
-                  }
-                } catch (error) {
-                  err = error
-                  throw error
-                } finally {
-                  reportStatusToGithub((err == null) ? 'success' : 'failure', specFile)
-                  archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**/*'
-                  cleanWs notFailBuild: true
-                }
-              }
+            metal.each { build ->
+              filepath = 'spec/metal/' + build.file
+              builds['metal/' + build.file] = runRSpecTestBareMetal(filepath, creds)
             }
           }
           parallel builds
@@ -362,7 +376,7 @@ pipeline {
       steps {
         node('worker && ec2') {
           forcefullyCleanWorkspace()
-          withCredentials(quay_creds) {
+          withCredentials(quayCreds) {
             ansiColor('xterm') {
               unstash 'clean-repo'
               sh """
@@ -388,7 +402,8 @@ pipeline {
           withCredentials(creds) {
             unstash 'clean-repo'
             sh """#!/bin/bash -xe
-            ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh
+            export BUILD_RESULT=${currentBuild.currentResult}
+            ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh jenkins-logs
             """
           }
         }
@@ -399,11 +414,11 @@ pipeline {
 
 def forcefullyCleanWorkspace() {
   return withDockerContainer(
-    image: tectonic_smoke_test_env_image,
+    image: tectonicSmokeTestEnvImage,
     args: '-u root'
   ) {
     ansiColor('xterm') {
-      sh """#!/bin/bash -ex
+      sh """#!/bin/bash -e
         if [ -d "\$WORKSPACE" ]
         then
           rm -rfv \$WORKSPACE/*
@@ -413,24 +428,27 @@ def forcefullyCleanWorkspace() {
   }
 }
 
-def runRSpecTest(testFilePath, dockerArgs) {
+def runRSpecTest(testFilePath, dockerArgs, credentials) {
   return {
     node('worker && ec2') {
       def err = null
       try {
-        timeout(time: 4, unit: 'HOURS') {
+        timeout(time: 5, unit: 'HOURS') {
           forcefullyCleanWorkspace()
           ansiColor('xterm') {
-            withCredentials(creds) {
+            withCredentials(credentials + quayCreds) {
               withDockerContainer(
-                image: tectonic_smoke_test_env_image,
+                image: tectonicSmokeTestEnvImage,
                 args: '-u root -v /var/run/docker.sock:/var/run/docker.sock ' + dockerArgs
               ) {
                 unstash 'clean-repo'
                 unstash 'smoke-test-binary'
                 sh """#!/bin/bash -ex
+                  mkdir -p templogfiles && chmod 777 templogfiles
                   cd tests/rspec
-                  bundler exec rspec ${testFilePath}
+
+                  # Directing test output both to stdout as well as a log file
+                  rspec ${testFilePath} --format RspecTap::Formatter --format RspecTap::Formatter --out ../../templogfiles/format=tap.log
                 """
               }
             }
@@ -440,8 +458,16 @@ def runRSpecTest(testFilePath, dockerArgs) {
         err = error
         throw error
       } finally {
-        reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath)
-        archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**/*'
+        reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
+        archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
+        withDockerContainer(params.builder_image) {
+         withCredentials(creds) {
+           sh """#!/bin/bash -xe
+           ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
+           """
+         }
+        }
+
         cleanWs notFailBuild: true
       }
 
@@ -449,21 +475,50 @@ def runRSpecTest(testFilePath, dockerArgs) {
   }
 }
 
+def runRSpecTestBareMetal(testFilePath, credentials) {
+  return {
+    node('worker && bare-metal') {
+      def err = null
+      try {
+        timeout(time: 5, unit: 'HOURS') {
+          ansiColor('xterm') {
+            unstash 'clean-repo'
+            unstash 'smoke-test-binary'
+            withCredentials(credentials + quayCreds) {
+              sh """#!/bin/bash -ex
+              cd tests/rspec
+              export RBENV_ROOT=/usr/local/rbenv
+              export PATH="/usr/local/rbenv/bin:$PATH"
+              eval \"\$(rbenv init -)\"
+              rbenv install -s
+              gem install bundler
+              bundler install
+              bundler exec rspec ${testFilePath} --format RspecTap::Formatter --format RspecTap::Formatter --out ../../templogfiles/format=tap.log
+              """
+            }
+          }
+        }
+      } catch (error) {
+        err = error
+        throw error
+      } finally {
+        reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
+        archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
+        withCredentials(credentials) {
+          sh """#!/bin/bash -xe
+          ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
+           """
+         }
+        cleanWs notFailBuild: true
+      }
+    }
+  }
+}
 
-def reportStatusToGithub(status, context) {
+def reportStatusToGithub(status, context, commitId) {
   withCredentials(creds) {
-    unstash 'original-commit-hash'
-    commitId = readFile('original-commit-hash')
     sh """#!/bin/bash -ex
       ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context} ${commitId}
     """
   }
-}
-//Function used to print environment variables that are used by Logstash as attributes for the log file.
-def printLogstashAttributes() {
-    echo  "Build_Number=" + env.BUILD_NUMBER
-    echo  "JOB_NAME=" + env.JOB_NAME
-    echo  "USER_REQUEST=" +  env.CHANGE_AUTHOR
-    echo  "GIT_TARGET_BRANCH=" + env.CHANGE_TARGET
-    echo  "GIT_PR_NUMBER=" + env.CHANGE_ID
 }

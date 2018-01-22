@@ -13,6 +13,9 @@ custom_sg_cidrs = ""
 // If name is not provided the installer will construct the name using "tectonic_cluster_name", current AWS region and "tectonic_base_domain"
 // tectonic_aws_assets_s3_bucket_name = ""
 
+// (optional) AMI override for all nodes. Example: `ami-foobar123`.
+// tectonic_aws_ec2_ami_override = ""
+
 // Instance size for the etcd node(s). Example: `t2.medium`. Read the [etcd recommended hardware](https://coreos.com/etcd/docs/latest/op-guide/hardware.html) guide for best performance
 tectonic_aws_etcd_ec2_type = "t2.medium"
 
@@ -20,6 +23,14 @@ tectonic_aws_etcd_ec2_type = "t2.medium"
 // 
 // Example: `["sg-51530134", "sg-b253d7cc"]`
 // tectonic_aws_etcd_extra_sg_ids = ""
+
+// (optional) Name of IAM role to use for the instance profiles of etcd nodes.
+// The name is also the last part of a role's ARN.
+// 
+// Example:
+//  * Role ARN  = arn:aws:iam::123456789012:role/tectonic-installer
+//  * Role Name = tectonic-installer
+// tectonic_aws_etcd_iam_role_name = ""
 
 // The amount of provisioned IOPS for the root block device of etcd nodes.
 // Ignored if the volume type is not io1.
@@ -57,6 +68,8 @@ tectonic_aws_etcd_root_volume_type = "gp2"
 // tectonic_aws_external_worker_subnet_ids = ""
 
 // (optional) Extra AWS tags to be applied to created resources.
+// 
+// Example: `{ "key" = "value", "foo" = "bar" }`
 // tectonic_aws_extra_tags = ""
 
 // (optional) This configures master availability zones and their corresponding subnet CIDRs directly.
@@ -94,6 +107,9 @@ tectonic_aws_master_root_volume_type = "gp2"
 // (optional) If set to true, create private-facing ingress resources (ELB, A-records).
 // If set to false, no private-facing ingress resources will be provisioned and all DNS records will be created in the public Route53 zone.
 // tectonic_aws_private_endpoints = true
+
+// (optional) This declares the AWS credentials profile to use.
+// tectonic_aws_profile = "default"
 
 // (optional) If set to true, create public-facing ingress resources (ELB, A-records).
 // If set to false, no public-facing ingress resources will be created.
@@ -194,6 +210,9 @@ tectonic_cluster_name = ""
 // Examples: `latest`, `1465.6.0`
 tectonic_container_linux_version = "latest"
 
+// (optional) A list of PEM encoded CA files that will be installed in /etc/ssl/certs on etcd, master, and worker nodes.
+// tectonic_custom_ca_pem_list = ""
+
 // (optional) This only applies if you use the modules/dns/ddns module.
 // 
 // Specifies the RFC2136 Dynamic DNS server key algorithm.
@@ -216,12 +235,6 @@ tectonic_container_linux_version = "latest"
 
 // (optional) DNS prefix used to construct the console and API server endpoints.
 // tectonic_dns_name = ""
-
-// (optional) The size in MB of the PersistentVolume used for handling etcd backups.
-// tectonic_etcd_backup_size = "512"
-
-// (optional) The name of an existing Kubernetes StorageClass that will be used for handling etcd backups.
-// tectonic_etcd_backup_storage_class = ""
 
 // (optional) The path of the file containing the CA certificate for TLS communication with etcd.
 // 
@@ -255,17 +268,23 @@ tectonic_etcd_count = "0"
 // Example: `["etcd1", "etcd2", "etcd3"]`
 // tectonic_etcd_servers = ""
 
-// (optional) If set to `true`, all etcd endpoints will be configured to use the "https" scheme.
+// (optional) HTTP proxy address.
 // 
-// Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the experimental self-hosted etcd always uses TLS.
-// tectonic_etcd_tls_enabled = true
+// Example: `http://myproxy.example.com`
+// tectonic_http_proxy_address = ""
+
+// (optional) HTTPS proxy address.
+// 
+// Example: `http://myproxy.example.com`
+// tectonic_https_proxy_address = ""
+
+// (optional) Start iscsid.service to enable iscsi volume attachment.
+// tectonic_iscsi_enabled = "false"
 
 // The path to the tectonic licence file.
 // You can download the Tectonic license file from your Account overview page at [1].
 // 
 // [1] https://account.coreos.com/overview
-// 
-// Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_license_path = ""
 
 // The number of master nodes to be created.
@@ -278,8 +297,15 @@ tectonic_master_count = "1"
 // 
 // - "canal": [ALPHA] enables overlay networking including network policy. Overlay is implemented by flannel using VXLAN. Network policy is implemented by Calico.
 // 
-// - "calico": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
+// - "calico-ipip": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
+// 
+// - "none": disables the installation of any Pod level networking layer provided by Tectonic. By setting this value, users are expected to deploy their own solution to enable network connectivity for Pods and Services.
 // tectonic_networking = "flannel"
+
+// (optional) List of local endpoints that will not use HTTP proxy.
+// 
+// Example: `["127.0.0.1","localhost",".example.com","10.3.0.1"]`
+// tectonic_no_proxy = ""
 
 // The path the pull secret file in JSON format.
 // This is known to be a "Docker pull secret" as produced by the docker login [1] command.
@@ -291,8 +317,6 @@ tectonic_master_count = "1"
 // [2] https://coreos.com/os/docs/latest/registry-authentication.html#manual-registry-auth-setup
 // 
 // [3] https://account.coreos.com/overview
-// 
-// Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_pull_secret_path = ""
 
 // (optional) This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation.
@@ -302,10 +326,7 @@ tectonic_pull_secret_path = ""
 // Validity period of the self-signed certificates (in hours).
 // Default is 3 years.
 // This setting is ignored if user provided certificates are used.
-tectonic_tls_validity_period = "string"
-
-// If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
-tectonic_vanilla_k8s = false
+tectonic_tls_validity_period = "26280"
 
 // The number of worker nodes to be created.
 // This applies only to cloud platforms.

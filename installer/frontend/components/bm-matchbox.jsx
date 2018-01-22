@@ -61,7 +61,7 @@ const dispatchToProps = dispatch => ({
       .then(value => {
         const available = value.coreos;
         if (!available || available.length === 0) {
-          return Promise.reject(`could not find any coreos images at ${endpointURL}`);
+          return Promise.reject(`Could not find any Container Linux images at ${endpointURL}`);
         }
 
         const useVersion = available.map(v => v.version).sort(compareVersions).pop();
@@ -83,13 +83,13 @@ const dispatchToProps = dispatch => ({
 
 export const BM_Matchbox = connect(stateToProps, dispatchToProps)(
   class Matchbox extends React.Component {
-    componentDidMount() {
+    componentDidMount () {
       if (!this.props.osToUse) {
         this.props.getOsToUse(this.props.http);
       }
     }
 
-    componentWillUnmount() {
+    componentWillUnmount () {
       clearTimeout(this.timeout);
     }
 
@@ -127,7 +127,7 @@ export const BM_Matchbox = connect(stateToProps, dispatchToProps)(
               <div className="col-xs-9">
                 <Input id={BM_MATCHBOX_HTTP}
                   className="wiz-inline-field wiz-inline-field--prefix"
-                  autoFocus="true"
+                  autoFocus={true}
                   prefix={<span className="input__prefix">http://</span>}
                   placeholder="matchbox.example.com:8080"
                   forceDirty={!!osError}

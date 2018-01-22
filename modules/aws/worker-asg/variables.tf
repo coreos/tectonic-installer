@@ -26,6 +26,11 @@ variable "ec2_type" {
   type = "string"
 }
 
+variable "ec2_ami" {
+  type    = "string"
+  default = ""
+}
+
 variable "instance_count" {
   type = "string"
 }
@@ -81,4 +86,13 @@ variable "worker_iam_role" {
 
 variable "ign_s3_puller_id" {
   type = "string"
+}
+
+variable "s3_bucket" {
+  type = "string"
+}
+
+variable "dns_server_ip" {
+  type    = "string"
+  default = ""
 }

@@ -35,22 +35,17 @@ const (
 	nodeCountEnv = "SMOKE_NODE_COUNT"
 	// manifestPathsEnv is the environment variable that defines the paths to the manifests that are deployed on the cluster.
 	manifestPathsEnv = "SMOKE_MANIFEST_PATHS"
-	// manifestSelfHostedEnv is the environment variable that specifies whether or not to test for self-hosted etcd manifests.
-	manifestSelfHostedEtcdEnv = "SMOKE_MANIFEST_SELF_HOSTED_ETCD"
 )
 
 var (
 	// defaultIgnoredManifests represents the manifests that are ignored by
 	// testAllResourcesCreated by default.
-	defaultIgnoredManifests = []string{"bootstrap"}
-
-	// selfHostedEtcdManifests represents the manifests that are ignored by
-	// testAllResourcesCreated when manifestSelfHostedEtcdEnv isn't set to empty string.
-	selfHostedEtcdManifests = []string{
-		// Generated all the time but only deployed when experimental is enabled.
+	defaultIgnoredManifests = []string{
 		"tectonic/updater/cluster-config.yaml",
 		"tectonic/updater/app_versions/app-version-tectonic-etcd.yaml",
 		"tectonic/updater/operators/tectonic-etcd-operator.yaml",
+		"bootstrap",
+		"kco-config.yaml",
 	}
 
 	// equivalentKindRemapping is used by resourceIdentifier to map different
@@ -75,7 +70,7 @@ func testCluster(t *testing.T) {
 	t.Run("GetIdentityLogs", testGetIdentityLogs)
 
 	ne := os.Getenv(networkingEnv)
-	if ne == "canal" || ne == "calico" {
+	if ne == "canal" || ne == "calico-ipip" {
 		t.Run("NetworkPolicy", testNetworkPolicy)
 	}
 
@@ -351,13 +346,8 @@ func testAllResourcesCreated(t *testing.T) {
 		t.Skipf("no manifest paths in environment variable %s, skipping", manifestPathsEnv)
 	}
 
-	ignoredManifests := defaultIgnoredManifests
-	if manifestSelfHostedEtcd := os.Getenv(manifestSelfHostedEtcdEnv); manifestSelfHostedEtcd != "" {
-		ignoredManifests = append(ignoredManifests, selfHostedEtcdManifests...)
-	}
-
 	max := 10 * time.Minute
-	err := retry(allResourcesCreated(manifestsPathsSp, ignoredManifests), t, 30*time.Second, max)
+	err := retry(allResourcesCreated(manifestsPathsSp, defaultIgnoredManifests), t, 30*time.Second, max)
 	if err != nil {
 		t.Fatalf("timed out waiting for all manifests to be created after %v", max)
 	}

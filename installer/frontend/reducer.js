@@ -38,7 +38,7 @@ const DEFAULT_AWS = {
 };
 
 // setIn({...}, 'a.b.c', 'd')
-function setIn(object, path, value) {
+function setIn (object, path, value) {
   const array = _.isString(path) ? path.split('.') : path;
   return fromJS(object).setIn(array, value).toJS();
 }
@@ -46,7 +46,6 @@ function setIn(object, path, value) {
 const reducersTogether = combineReducers({
 
   // State machine associated with server submissions
-  // Should not be saved or restored
   commitState: (state, action) => {
     if (!state) {
       return {
@@ -101,8 +100,7 @@ const reducersTogether = combineReducers({
     }
   },
 
-  // The user's intentions for their cluster. Should be
-  // saveable/restorable
+  // The user's intentions for their cluster
   clusterConfig: (state, action) => {
     if (!state) {
       return DEFAULT_CLUSTER_CONFIG;
@@ -129,7 +127,7 @@ const reducersTogether = combineReducers({
       return object.toJS();
     }
 
-    // Adds a value at a given path or no-op if a value already for the path
+    // Adds a value at a given path or no-op if a value already exists for the path
     case configActionTypes.ADD_IN:
       return _.isEmpty(_.get(state, action.payload.path))
         ? setIn(state, action.payload.path, action.payload.value)
@@ -153,8 +151,7 @@ const reducersTogether = combineReducers({
       array.push(index.toString());
       // TODO: (kans) delete all the other stuff too
       const invalidArray = ['error'].concat(array);
-      const asyncArray = ['error_async'].concat(array);
-      const arrays = [array, asyncArray, invalidArray];
+      const arrays = [array, invalidArray];
       return fromJS(state).withMutations(map => {
         arrays.forEach(a => {
           if (map.getIn(a)) {
@@ -169,8 +166,7 @@ const reducersTogether = combineReducers({
     }
   },
 
-  // Errors resulting from server states, user uploads, network issues,
-  // or other transient phenomena. Should not be saved or restored.
+  // Errors resulting from server states, user uploads, network issues, or other transient phenomena
   eventErrors: (state, action) => {
     if (!state) {
       return {};
@@ -186,8 +182,7 @@ const reducersTogether = combineReducers({
     }
   },
 
-  // Facts the server knows at load time, that we have to get asynchronously.
-  // Should not change value across restores. (so never save or restore it)
+  // Facts the server knows at load time, that we have to get asynchronously
   serverFacts: (state, action) => {
     if (state === undefined) {
       return {
@@ -215,7 +210,7 @@ const reducersTogether = combineReducers({
     }
   },
 
-  // The status of the cluster. Should be preserved across restores.
+  // The status of the cluster
   cluster: (state, action) => {
     if (!state) {
       return {
@@ -250,7 +245,7 @@ const reducersTogether = combineReducers({
     }
   },
 
-  // Stores the "dirtiness" of UI fields. Should be saved and restored
+  // Stores the "dirtiness" of UI fields
   dirty: (state, action) => {
     // this isArray check is just to prevent errors with old progress files & dev mode
     if (!state || _.isArray(state)) {
@@ -295,39 +290,6 @@ const reducersTogether = combineReducers({
   },
 });
 
-function filterClusterConfig(cc = {}) {
-  Object.keys(cc).forEach(k => {
-    if (!DEFAULT_CLUSTER_CONFIG.hasOwnProperty(k)) {
-      console.error(`Removed clusterConfig.${k} because it's not in defaults.`);
-      delete cc[k];
-      return;
-    }
-    let defaultType;
-    let restoreType;
-    try {
-      defaultType = Object.getPrototypeOf(DEFAULT_CLUSTER_CONFIG[k]);
-    } catch (unused) {
-      defaultType = typeof DEFAULT_CLUSTER_CONFIG[k];
-    }
-    try {
-      restoreType = Object.getPrototypeOf(cc[k]);
-    } catch (unused) {
-      restoreType = typeof cc[k];
-    }
-    if (defaultType !== restoreType) {
-      console.error(`Removed clusterConfig.${k}. Should be ${defaultType} but was ${restoreType}`);
-      delete cc[k];
-      return;
-    }
-    if (cc[k].inFly) {
-      console.debug(`Set clusterConfig.${k}.inFly to false`);
-      cc[k].inFly = false;
-    }
-  });
-  delete cc.inFly;
-  return cc;
-}
-
 // Shim for tests
 export const reducer = (state, action) => {
   let restored;
@@ -339,7 +301,7 @@ export const reducer = (state, action) => {
     });
     restored.aws = _.defaults(restored.aws, DEFAULT_AWS);
     if (restored.clusterConfig) {
-      restored.clusterConfig = _.defaults(filterClusterConfig(restored.clusterConfig), DEFAULT_CLUSTER_CONFIG);
+      restored.clusterConfig = _.defaults(restored.clusterConfig, DEFAULT_CLUSTER_CONFIG);
     }
     break;
   default:
@@ -349,8 +311,8 @@ export const reducer = (state, action) => {
   return reducersTogether(restored, action);
 };
 
-// Preserves only the savable bits of state
+// Returns only the bits of state that should be saved and restored
 export const savable = (state) => {
   const {dirty, clusterConfig} = state;
-  return {dirty, clusterConfig};
+  return {dirty, clusterConfig: _.omit(clusterConfig, ['error', 'extra', 'extraError', 'extraInFly', 'inFly'])};
 };

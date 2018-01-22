@@ -121,13 +121,13 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
 
     updateStatus ({tectonic, terraform}) {
       if (terraform.action === 'apply') {
-        const services = (tectonic.isEtcdSelfHosted ? [{key: 'etcd', name: 'Etcd'}] : []).concat([
+        const services = [
           {key: 'kubernetes', name: 'Kubernetes'},
           {key: 'identity', name: 'Tectonic Identity'},
           {key: 'ingress', name: 'Tectonic Ingress Controller'},
           {key: 'console', name: 'Tectonic Console'},
           {key: 'tectonicSystem', name: 'other Tectonic services'},
-        ]);
+        ];
         this.setState({services});
 
         const tectonicSucceeded = services.filter(s => _.get(tectonic[s.key], 'success')).length;
@@ -222,7 +222,9 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
         const dnsReady = tectonic.console.success || ((tectonic.console.message || '').search('no such host') === -1);
         consoleSubsteps.push(
           <Step pending={isTFRunning} done={dnsReady && !isTFRunning} cancel={tfError} key="dnsReady">
-            Resolving <a href={`https://${tectonicDomain}`} target="_blank">{tectonicDomain}</a>
+            Resolving {tectonicDomain
+              ? <a href={`https://${tectonicDomain}`} target="_blank">{tectonicDomain}</a>
+              : 'Tectonic DNS'}
           </Step>
         );
 
@@ -265,7 +267,13 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
         );
       }
 
-      const tfTitle = `${isApply ? 'Applying' : 'Destroying'} Terraform`;
+      const tfTitle = `Terraform ${_.startCase(action)}`;
+
+      // Show Terraform actions menu if,
+      //   (1) The Terraform apply step has succeeded, and
+      //   (2) The cluster state data is populated (required by some of the menu actions)
+      // Otherwise, we will just show the Terraform logs instead.
+      const showTfActions = isApplySuccess && !!clusterName;
 
       return <div>
         {!isBareMetal &&
@@ -300,7 +308,7 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
               {tfError
                 ? <span><span className="wiz-running-fg">{tfTitle}:</span> [Failure] {_.startCase(action)} failed</span>
                 : tfTitle}
-              {output && !isApplySuccess &&
+              {output && !showTfActions &&
                 <div className="pull-right" style={{fontSize: '13px'}}>
                   <a onClick={() => this.setState({showLogs: !showLogs})}>
                     {showLogs
@@ -316,7 +324,7 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
             </Step>
             <div style={{marginLeft: 22}}>
               {isAWS && isApply && statusMsg !== 'success' && <ProgressBar progress={state.terraformProgress} isActive={isTFRunning} />}
-              {showLogs && output && !isApplySuccess &&
+              {showLogs && output && !showTfActions &&
                 <div className="log-pane">
                   <div className="log-pane__header">
                     <div className="log-pane__header__message">Terraform logs</div>
@@ -337,7 +345,7 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
                 <Alert severity="error" noIcon>
                   <b>{_.startCase(action)} Failed</b>. Your installation is blocked. To continue:
                   <ol style={{fontSize: 13, paddingLeft: 30, paddingTop: 10, paddingBottom: 10}}>
-                    <li><a onClick={saveLog}>Save Terraform logs</a> and <a href="/terraform/assets" download>download assets</a> for debugging purposes.</li>
+                    <li><a onClick={saveLog}>Save Terraform logs</a> and <a href="/terraform/assets" download="assets.zip">download assets</a> for debugging purposes.</li>
                     <li>Destroy your cluster to clear anything that may have been created. Or,</li>
                     <li>Reapply Terraform.</li>
                   </ol>
@@ -353,7 +361,7 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
                   <Btn isError={false} onClick={this.retry} title="Retry Terraform Apply" />
                 </Alert>
               }
-              {isApplySuccess &&
+              {showTfActions &&
                 <div className="wiz-launch-progress__help">
                   You can save Terraform logs, or destroy your cluster if you changed your mind:&nbsp;
                   <DropdownInline
@@ -374,11 +382,16 @@ export const TF_PowerOn = connect(stateToProps, dispatchToProps)(
         {!isTFRunning && !isDestroySuccess &&
           <div className="row">
             <div className="col-xs-12">
-              <a href="/terraform/assets" download>
+              <a href="/terraform/assets" download="assets.zip">
                 <button className={classNames('btn btn-primary wiz-giant-button')}>
-                  <i className="fa fa-download"></i>&nbsp;&nbsp;Download assets
+                  <i className="fa fa-download"></i>&nbsp;&nbsp;Download Assets
                 </button>
               </a>
+            </div>
+            <div className="col-xs-12">
+              <div className="wiz-pending-fg">
+                <p>The assets contain TLS certificates used by Kubelets and manifests for all Tectonic components.</p>
+              </div>
             </div>
           </div>
         }
@@ -402,3 +415,6 @@ TF_PowerOn.canNavigateForward = ({cluster}) => {
 
   return ready;
 };
+
+// Don't allow resetting the wizard until Terraform has completed
+TF_PowerOn.canReset = ({cluster}) => _.get(cluster, 'status.terraform.status', '').toLowerCase() !== 'running';

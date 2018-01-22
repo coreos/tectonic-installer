@@ -10,109 +10,12 @@ data "ignition_config" "etcd" {
     "${data.ignition_user.core.id}",
   ]
 
-  files = [
-    "${data.ignition_file.etcd_ca.id}",
-    "${data.ignition_file.etcd_server_crt.id}",
-    "${data.ignition_file.etcd_server_key.id}",
-    "${data.ignition_file.etcd_client_crt.id}",
-    "${data.ignition_file.etcd_client_key.id}",
-    "${data.ignition_file.etcd_peer_crt.id}",
-    "${data.ignition_file.etcd_peer_key.id}",
+  files = ["${compact(list(
+    var.ign_profile_env_id,
+    var.ign_systemd_default_env_id,
+   ))}",
+    "${var.ign_etcd_crt_id_list}",
   ]
-}
-
-data "ignition_file" "etcd_ca" {
-  count = "${var.etcd_count > 0 ? 1 : 0}"
-
-  path       = "/etc/ssl/etcd/ca.crt"
-  mode       = 0644
-  uid        = 232
-  gid        = 232
-  filesystem = "root"
-
-  content {
-    content = "${var.tls_ca_crt_pem}"
-  }
-}
-
-data "ignition_file" "etcd_client_key" {
-  path       = "/etc/ssl/etcd/client.key"
-  mode       = 0400
-  uid        = 0
-  gid        = 0
-  filesystem = "root"
-
-  content {
-    content = "${var.tls_client_key_pem}"
-  }
-}
-
-data "ignition_file" "etcd_client_crt" {
-  path       = "/etc/ssl/etcd/client.crt"
-  mode       = 0400
-  uid        = 0
-  gid        = 0
-  filesystem = "root"
-
-  content {
-    content = "${var.tls_client_crt_pem}"
-  }
-}
-
-data "ignition_file" "etcd_server_key" {
-  count = "${var.etcd_count > 0 ? 1 : 0}"
-
-  path       = "/etc/ssl/etcd/server.key"
-  mode       = 0400
-  uid        = 232
-  gid        = 232
-  filesystem = "root"
-
-  content {
-    content = "${var.tls_server_key_pem}"
-  }
-}
-
-data "ignition_file" "etcd_server_crt" {
-  count = "${var.etcd_count > 0 ? 1 : 0}"
-
-  path       = "/etc/ssl/etcd/server.crt"
-  mode       = 0400
-  uid        = 232
-  gid        = 232
-  filesystem = "root"
-
-  content {
-    content = "${var.tls_server_crt_pem}"
-  }
-}
-
-data "ignition_file" "etcd_peer_key" {
-  count = "${var.etcd_count > 0 ? 1 : 0}"
-
-  path       = "/etc/ssl/etcd/peer.key"
-  mode       = 0400
-  uid        = 232
-  gid        = 232
-  filesystem = "root"
-
-  content {
-    content = "${var.tls_peer_key_pem}"
-  }
-}
-
-data "ignition_file" "etcd_peer_crt" {
-  count = "${var.etcd_count > 0 ? 1 : 0}"
-
-  path       = "/etc/ssl/etcd/peer.crt"
-  mode       = 0400
-  uid        = 232
-  gid        = 232
-  filesystem = "root"
-
-  content {
-    content = "${var.tls_peer_crt_pem}"
-  }
 }
 
 data "ignition_user" "core" {
@@ -128,8 +31,8 @@ data "ignition_user" "core" {
 data "ignition_systemd_unit" "locksmithd" {
   count = "${var.etcd_count}"
 
-  name   = "locksmithd.service"
-  enable = true
+  name    = "locksmithd.service"
+  enabled = true
 
   dropin = [
     {
@@ -138,10 +41,10 @@ data "ignition_systemd_unit" "locksmithd" {
       content = <<EOF
 [Service]
 Environment=REBOOT_STRATEGY=etcd-lock
-${var.tls_enabled ? "Environment=\"LOCKSMITHD_ETCD_CAFILE=/etc/ssl/etcd/ca.crt\"" : ""}
-${var.tls_enabled ? "Environment=\"LOCKSMITHD_ETCD_KEYFILE=/etc/ssl/etcd/client.key\"" : ""}
-${var.tls_enabled ? "Environment=\"LOCKSMITHD_ETCD_CERTFILE=/etc/ssl/etcd/client.crt\"" : ""}
-Environment="LOCKSMITHD_ENDPOINT=${var.tls_enabled ? "https" : "http"}://etcd-${count.index}:2379"
+Environment="LOCKSMITHD_ETCD_CAFILE=/etc/ssl/etcd/ca.crt"
+Environment="LOCKSMITHD_ETCD_KEYFILE=/etc/ssl/etcd/client.key"
+Environment="LOCKSMITHD_ETCD_CERTFILE=/etc/ssl/etcd/client.crt"
+Environment="LOCKSMITHD_ENDPOINT=https://etcd-${count.index}:2379"
 EOF
     },
   ]

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { withNav } from '../nav';
 import { validate } from '../validate';
 import { readFile } from '../readfile';
-import { toError, toAsyncError, toExtraData, toInFly, toExtraDataInFly, toExtraDataError } from '../utils';
+import { toError, toExtraData, toInFly, toExtraDataInFly, toExtraDataError } from '../utils';
 
 import { dirtyActions, configActions } from '../actions';
 import { DESELECTED_FIELDS } from '../cluster-config.js';
@@ -104,7 +104,7 @@ const Field = withNav(connect(
       }
     },
     onBlur: e => {
-      if (props.blurry || e.target.value) {
+      if (e.target.value) {
         props.makeDirty();
       }
     },
@@ -128,7 +128,7 @@ const Field = withNav(connect(
 }));
 
 const makeBooleanField = type => {
-  return function booleanField(props) {
+  return function booleanField (props) {
     const renderField = (injectedProps, cleanedProps, classes) => {
       return <input type={type} checked={injectedProps.inverted ? !injectedProps.value : injectedProps.value} className={classes} {...cleanedProps}
         onChange={e => {
@@ -186,40 +186,34 @@ export const ToggleButton = props => <button className={props.className} style={
   <i style={{marginLeft: 7}} className={classNames('fa', {'fa-chevron-up': props.value, 'fa-chevron-down': !props.value})}></i>
 </button>;
 
-// A textarea/file-upload combo
-// <FileArea id:REQUIRED invalid="error message" placeholder value onValue>
-export const FileArea = connect(
-  () => ({tag: 'textarea'}),
+export const FileInput = connect(
+  null,
   (dispatch, {id}) => ({makeDirty: () => dispatch(dirtyActions.add(id))}),
-)((props) => {
-  const {onValue, makeDirty, uploadButtonLabel} = props;
-  const handleUpload = (e) => {
+)(({id, makeDirty, onValue}) => {
+  const upload = e => {
     readFile(e.target.files.item(0))
-      .then((value) => {
-        onValue(value);
-      })
-      .catch((msg) => {
-        console.error(msg);
-      })
-      .then(() => {
-        makeDirty();
-      });
+      .then(onValue)
+      .catch(msg => console.error(msg))
+      .then(makeDirty);
+
     // Reset value so that onChange fires if you pick the same file again.
     e.target.value = null;
   };
-
-  return (
-    <div>
-      <label className="btn btn-sm btn-link">
-        <span className="fa fa-upload"></span>&nbsp;&nbsp;{uploadButtonLabel || 'Upload'} {' '}
-        <input style={{display: 'none'}}
-          type="file"
-          onChange={handleUpload} />
-      </label>
-      <Field {...props} />
-    </div>
-  );
+  return <input type="file" id={id} onChange={upload} style={{display: 'none'}} />;
 });
+
+// A textarea/file-upload combo
+// <FileArea id:REQUIRED invalid="error message" placeholder value onValue>
+export const FileArea = props => {
+  const {id, onValue, uploadButtonLabel} = props;
+  return <div>
+    <label className="btn btn-sm btn-link">
+      <span className="fa fa-upload"></span>&nbsp;&nbsp;{uploadButtonLabel || 'Upload'}
+      <FileInput id={id} onValue={onValue} />
+    </label>
+    <Field {...props} tag="textarea" />
+  </div>;
+};
 
 // <Select id:REQUIRED value onValue>
 //   <option....>
@@ -229,7 +223,7 @@ export const Select = ({id, children, value, onValue, invalid, isDirty, makeDirt
   if (availableValues) {
     let options = availableValues.value;
     if (value && !options.map(r => r.value).includes(value)) {
-      options = [{label: value, value: value}].concat(options);
+      options = [{label: value, value}].concat(options);
     }
 
     const optgroups = new Map();
@@ -299,20 +293,16 @@ export const Selector = props => {
 
 const stateToProps = ({clusterConfig, dirty}, {field}) => ({
   value: _.get(clusterConfig, field),
-  invalid: _.get(clusterConfig, toError(field))
-    || _.get(clusterConfig, toAsyncError(field))
-    || _.get(clusterConfig, toExtraDataError(field)),
+  invalid: _.get(clusterConfig, toError(field)) || _.get(clusterConfig, toExtraDataError(field)),
   isDirty: _.get(dirty, field),
   extraData: _.get(clusterConfig, toExtraData(field)),
   inFly: _.get(clusterConfig, toInFly(field)) || _.get(clusterConfig, toExtraDataInFly(field)),
 });
 
 const dispatchToProps = (dispatch, {field}) => ({
-  updateField: (path, value, invalid) => dispatch(configActions.updateField(path, value, invalid)),
+  updateField: (path, value) => dispatch(configActions.updateField(path, value)),
   makeDirty: () => dispatch(dirtyActions.add(field)),
   refreshExtraData: () => dispatch(configActions.refreshExtraData(field)),
-  removeField: (i) => dispatch(configActions.removeField(field, i)),
-  appendField: () => dispatch(configActions.appendField(field)),
 });
 
 class Connect_ extends React.Component {
@@ -335,9 +325,7 @@ class Connect_ extends React.Component {
   }
 
   render () {
-    const { field, value, invalid, children, isDirty, makeDirty,
-      extraData, refreshExtraData, inFly, removeField, appendField,
-    } = this.props;
+    const {children, extraData, field, inFly, invalid, isDirty, makeDirty, refreshExtraData, value} = this.props;
 
     const child = React.Children.only(children);
     const id = child.props.id || field;
@@ -350,8 +338,6 @@ class Connect_ extends React.Component {
       isDirty,
       makeDirty,
       refreshExtraData,
-      removeField,
-      appendField,
       onValue: v => this.handleValue(v),
     };
 
@@ -378,16 +364,16 @@ export const Connect = connect(stateToProps, dispatchToProps)(Connect_);
 const stateToIsDeselected = ({clusterConfig}, {field}) => {
   field = `${DESELECTED_FIELDS}.${field}`;
   return {
-    field: field,
+    field,
     isDeselected: !!_.get(clusterConfig, field),
   };
 };
 
 export const Deselect = connect(
   stateToIsDeselected,
-  dispatch => ({setField: (k, v) => configActions.setIn(k, v, dispatch)})
-)(({field, isDeselected, setField}) => <span className="deselect">
-  <CheckBox id={field} value={!isDeselected} onValue={v => setField(field, !v)} />
+  {updateField: configActions.updateField}
+)(({field, isDeselected, updateField}) => <span className="deselect">
+  <CheckBox id={field} value={!isDeselected} onValue={v => updateField(field, !v)} />
 </span>);
 
 export const DeselectField = connect(stateToIsDeselected)(({children, isDeselected}) => React.cloneElement(
@@ -440,7 +426,7 @@ export class AsyncSelect extends React.Component {
 
     let options = availableValues.value;
     if (value && !options.map(r => r.value).includes(value)) {
-      options = [{label: value, value: value}].concat(options);
+      options = [{label: value, value}].concat(options);
     }
     const style = {};
     if (!onRefresh) {
@@ -500,30 +486,56 @@ export class AsyncSelect extends React.Component {
   }
 }
 
-class InnerFieldList_ extends React.Component {
-  render() {
-    const {value, removeField, children, fields, id} = this.props;
-    const onlyChild = React.Children.only(children);
-    const newChildren = _.map(value, (unused, i) => {
-      const row = {};
-      _.keys(fields).forEach(k => row[k] = `${id}.${i}.${k}`);
-      const childProps = { row, i, key: i, remove: () => removeField(id, i) };
-      if (i === value.length - 1) {
-        childProps.autoFocus = true;
-      }
-      return React.cloneElement(onlyChild, childProps);
-    });
-    return <div>{newChildren}</div>;
-  }
-}
+export const FieldRowList = connect(
+  ({clusterConfig}, {id}) => ({
+    globalError: _.get(clusterConfig, `${toError(id)}.global`),
+    rowIndexes: _.keys(clusterConfig[id]),
+  }),
+  {appendField: configActions.appendField, removeField: configActions.removeField}
+)(
+  class FieldRowList_ extends React.Component {
+    constructor (props) {
+      super(props);
+      this.state = {
+        autoFocus: props.autoFocus,
+      };
+    }
 
-export const ConnectedFieldList = connect(
-  ({clusterConfig}, {id}) => ({value: clusterConfig[id]}),
-  (dispatch) => ({removeField: (id, i) => dispatch(configActions.removeField(id, i))})
-)((props) => <InnerFieldList_ {...props} />);
+    render () {
+      const {appendField, globalError, id, placeholder, removeField, Row, rowFields, rowIndexes} = this.props;
+
+      return <div>
+        {_.map(rowIndexes, i => {
+          const row = _.mapValues(rowFields, (v, k) => `${id}.${i}.${k}`);
+          return <div className="row" key={i} style={{padding: '0 0 20px 0'}}>
+            <Row autoFocus={this.state.autoFocus && i === _.last(rowIndexes)} placeholder={placeholder} row={row} />
+            <div className="col-xs-1">
+              <i className="fa fa-minus-circle list-add-or-subtract pull-right" onClick={() => removeField(id, i)}></i>
+            </div>
+          </div>;
+        })}
+        <div className="row">
+          <div className="col-xs-3">
+            <span className="wiz-link" onClick={() => {
+              this.setState({autoFocus: true});
+              appendField(id);
+            }}>
+              <i className="fa fa-plus-circle list-add wiz-link"></i>&nbsp; Add More
+            </span>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-xs-12" style={{margin: '10px 0'}}>
+            <ErrorComponent error={globalError} />
+          </div>
+        </div>
+      </div>;
+    }
+  }
+);
 
 export class DropdownMixin extends React.PureComponent {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.listener = this._onWindowClick.bind(this);
     this.state = {active: !!props.active};
@@ -566,7 +578,7 @@ export class DropdownMixin extends React.PureComponent {
 }
 
 export class Dropdown extends DropdownMixin {
-  render() {
+  render () {
     const {active} = this.state;
     const {items, header} = this.props;
 
@@ -588,7 +600,7 @@ export class Dropdown extends DropdownMixin {
 }
 
 export class DropdownInline extends DropdownMixin {
-  render() {
+  render () {
     const {active} = this.state;
     const {items, header} = this.props;
 

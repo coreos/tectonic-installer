@@ -10,20 +10,15 @@ resource "template_dir" "tectonic" {
 
   vars {
     addon_resizer_image                = "${var.container_images["addon_resizer"]}"
-    console_image                      = "${var.container_images["console"]}"
-    error_server_image                 = "${var.container_images["error_server"]}"
-    heapster_image                     = "${var.container_images["heapster"]}"
-    identity_image                     = "${var.container_images["identity"]}"
-    ingress_controller_image           = "${var.container_images["ingress_controller"]}"
     kube_version_operator_image        = "${var.container_images["kube_version_operator"]}"
-    node_agent_image                   = "${var.container_images["node_agent"]}"
+    kubernetes_addon_operator_image    = "${var.container_images["kubernetes_addon_operator"]}"
     etcd_operator_image                = "${var.container_images["etcd_operator"]}"
-    stats_emitter_image                = "${var.container_images["stats_emitter"]}"
-    stats_extender_image               = "${var.container_images["stats_extender"]}"
     tectonic_channel_operator_image    = "${var.container_images["tectonic_channel_operator"]}"
     tectonic_prometheus_operator_image = "${var.container_images["tectonic_prometheus_operator"]}"
     tectonic_etcd_operator_image       = "${var.container_images["tectonic_etcd_operator"]}"
     tectonic_cluo_operator_image       = "${var.container_images["tectonic_cluo_operator"]}"
+    tectonic_alm_operator_image        = "${var.container_images["tectonic_alm_operator"]}"
+    tectonic_utility_operator_image    = "${var.container_images["tectonic_utility_operator"]}"
 
     tectonic_monitoring_auth_base_image = "${var.container_base_images["tectonic_monitoring_auth"]}"
     config_reload_base_image            = "${var.container_base_images["config_reload"]}"
@@ -43,6 +38,7 @@ resource "template_dir" "tectonic" {
     etcd_version                   = "${var.versions["etcd"]}"
     tectonic_etcd_operator_version = "${var.versions["tectonic-etcd"]}"
     tectonic_cluo_operator_version = "${var.versions["cluo"]}"
+    tectonic_alm_operator_version  = "${var.versions["alm"]}"
 
     etcd_cluster_size = "${var.master_count > 2 ? 3 : 1}"
 
@@ -85,7 +81,6 @@ resource "template_dir" "tectonic" {
     kubectl_secret    = "${random_id.kubectl_secret.b64}"
 
     kube_apiserver_url = "${var.kube_apiserver_url}"
-    oidc_issuer_url    = "https://${var.base_address}/identity"
     stats_url          = "${var.stats_url}"
 
     # TODO: We could also patch https://www.terraform.io/docs/providers/random/ to add an UUID resource.
@@ -120,8 +115,7 @@ data "template_file" "tectonic_wrapper" {
   template = "${file("${path.module}/resources/tectonic-wrapper.sh")}"
 
   vars {
-    hyperkube_image  = "${var.container_images["hyperkube"]}"
-    self_hosted_etcd = "${var.self_hosted_etcd != "" ? "true" : "false"}"
+    hyperkube_image = "${var.container_images["hyperkube"]}"
   }
 }
 
@@ -137,7 +131,7 @@ data "template_file" "tectonic_service" {
 
 data "ignition_systemd_unit" "tectonic_service" {
   name    = "tectonic.service"
-  enable  = false
+  enabled = false
   content = "${data.template_file.tectonic_service.rendered}"
 }
 
@@ -148,6 +142,6 @@ data "template_file" "tectonic_path" {
 
 data "ignition_systemd_unit" "tectonic_path" {
   name    = "tectonic.path"
-  enable  = true
+  enabled = true
   content = "${data.template_file.tectonic_path.rendered}"
 }

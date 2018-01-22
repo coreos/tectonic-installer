@@ -16,9 +16,9 @@ export const DryRun = () => <div className="row">
     </div>
     <div className="from-group">
       <div className="wiz-giant-button-container">
-        <a href="/terraform/assets" download>
+        <a href="/terraform/assets" download="assets.zip">
           <button className="btn btn-primary wiz-giant-button">
-            <i className="fa fa-download"></i>&nbsp;&nbsp;Download assets
+            <i className="fa fa-download"></i>&nbsp;&nbsp;Download Assets
           </button>
         </a>
       </div>
@@ -27,3 +27,4 @@ export const DryRun = () => <div className="row">
 </div>;
 
 DryRun.canNavigateForward = () => false;
+DryRun.canReset = () => true;

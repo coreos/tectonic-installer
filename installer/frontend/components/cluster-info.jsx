@@ -6,10 +6,9 @@ import { validate } from '../validate';
 import { CLUSTER_NAME, PULL_SECRET, TECTONIC_LICENSE, LICENSING } from '../cluster-config';
 import fields from '../fields';
 import { Field, Form } from '../form';
-import { readFile } from '../readfile';
 
 import { Alert } from './alert';
-import { Connect, Input } from './ui';
+import { Connect, FileInput, Input } from './ui';
 
 // eslint-disable-next-line react/jsx-no-target-blank
 const accountLink = <a href="https://account.coreos.com" rel="noopener" target="_blank">account.coreos.com</a>;
@@ -50,19 +49,7 @@ const pullSecretField = new Field(PULL_SECRET, {
   },
 });
 
-new Form(LICENSING, [fields[CLUSTER_NAME], licenseField, pullSecretField]);
-
-const FileInput = ({id, onValue}) => {
-  const upload = e => {
-    readFile(e.target.files.item(0))
-      .then(onValue)
-      .catch(msg => console.error(msg));
-
-    // Reset value so that onChange fires if you pick the same file again.
-    e.target.value = null;
-  };
-  return <input type="file" id={id} onChange={upload} style={{display: 'none'}} />;
-};
+const form = new Form(LICENSING, [fields[CLUSTER_NAME], licenseField, pullSecretField]);
 
 const FileUpload = ({buttonTitle, description, ErrorHelp, field, id, onValue, value}) => {
   const invalid = field.validator(value);
@@ -114,7 +101,7 @@ export const ClusterInfo = () => <div>
     </div>
     <div className="col-xs-9">
       <Connect field={CLUSTER_NAME}>
-        <Input placeholder="production" autoFocus="true" />
+        <Input placeholder="production" autoFocus={true} />
       </Connect>
       <p className="text-muted">Give this cluster a name that will help you identify it.</p>
     </div>
@@ -137,6 +124,4 @@ export const ClusterInfo = () => <div>
   </div>
 </div>;
 
-ClusterInfo.canNavigateForward = ({clusterConfig: cc}) => !fields[CLUSTER_NAME].validator(cc[CLUSTER_NAME], cc) &&
-  !licenseField.validator(cc[TECTONIC_LICENSE]) &&
-  !pullSecretField.validator(cc[PULL_SECRET]);
+ClusterInfo.canNavigateForward = form.canNavigateForward;

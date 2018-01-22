@@ -1,8 +1,9 @@
+const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 
 const clusterInfoPageCommands = {
-  test(json, platform) {
+  test (json, platform) {
     const parentDir = path.resolve(__dirname, '..');
     const licensePath = path.join(parentDir, 'tectonic-license.txt');
     const configPath = path.join(parentDir, 'config.json');
@@ -15,10 +16,10 @@ const clusterInfoPageCommands = {
     /* eslint-enable no-sync */
 
     this.setField('@name', 'a%$#b');
-    if (platform === 'aws') {
+    if (platform === 'aws-tf') {
       this.expectValidationErrorContains('must be a valid AWS Stack Name');
     }
-    if (platform === 'metal') {
+    if (platform === 'bare-metal-tf') {
       this.expectValidationErrorContains('must be alphanumeric');
     }
 
@@ -28,16 +29,28 @@ const clusterInfoPageCommands = {
     this.setValue('@licenseUpload', licensePath);
     this.setValue('@pullSecretUpload', configPath);
 
-    if (platform === 'aws') {
+    if (platform === 'aws-tf' && !_.isEmpty(json.awsTags)) {
       this
+        .setField('input[id="awsTags.0.key"]', 'abc')
+        .setField('input[id="awsTags.0.value"]', 'abc')
+        .expectNoValidationError()
         .setField('input[id="awsTags.0.key"]', '')
-        .setField('input[id="awsTags.0.value"]', 'testing')
         .expectValidationErrorContains('Both fields are required')
-        .setField('input[id="awsTags.0.key"]', 'test_tag')
+        .setField('input[id="awsTags.0.key"]', 'abc')
+        .expectNoValidationError()
         .setField('input[id="awsTags.0.value"]', '')
         .expectValidationErrorContains('Both fields are required')
-        .setField('input[id="awsTags.0.key"]', 'test_tag')
-        .setField('input[id="awsTags.0.value"]', 'testing')
+        .setField('input[id="awsTags.0.key"]', '')
+        .expectNoValidationError()
+        .click('.fa-plus-circle')
+        .click('.fa-plus-circle')
+        .setField('input[id="awsTags.1.key"]', 'abc')
+        .setField('input[id="awsTags.2.key"]', 'abc')
+        .expectValidationErrorContains('Tag keys must be unique')
+        .click('.fa-minus-circle')
+        .click('.fa-minus-circle')
+        .setField('input[id="awsTags.0.key"]', json.awsTags[0].key)
+        .setField('input[id="awsTags.0.value"]', json.awsTags[0].value)
         .expectNoValidationError();
     }
   },

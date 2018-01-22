@@ -38,15 +38,11 @@ export const BM_SSHKeys = () => <div>
     <div className="col-xs-9">
       <div className="wiz-ssh-key-container">
         <Connect field={SSH_AUTHORIZED_KEY}>
-          <FileArea
-            className="wiz-ssh-key-container__input"
-            placeholder={keyPlaceholder}
-            autoFocus />
+          <FileArea autoFocus={true} className="wiz-ssh-key-container__input" placeholder={keyPlaceholder} />
         </Connect>
       </div>
     </div>
   </div>
-  <sshKeyForm.Errors />
 </div>;
 
 BM_SSHKeys.canNavigateForward = sshKeyForm.canNavigateForward;

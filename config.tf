@@ -11,7 +11,7 @@ provider "external" {
 }
 
 provider "ignition" {
-  version = "0.1.0"
+  version = "1.0.0"
 }
 
 provider "local" {
@@ -32,6 +32,16 @@ provider "template" {
 
 provider "tls" {
   version = "1.0.0"
+}
+
+locals {
+  // The total amount of public CA certificates present in Tectonic.
+  // That is all custom CAs + kube CA + etcd CA + ingress CA
+  // This is a local constant, which needs to be dependency inject because TF cannot handle length() on computed values,
+  // see https://github.com/hashicorp/terraform/issues/10857#issuecomment-268289775.
+  tectonic_ca_count = "${length(var.tectonic_custom_ca_pem_list) + 3}"
+
+  tectonic_http_proxy_enabled = "${length(var.tectonic_http_proxy_address) > 0}"
 }
 
 variable "tectonic_config_version" {
@@ -59,34 +69,22 @@ variable "tectonic_container_images" {
   default = {
     addon_resizer                = "gcr.io/google_containers/addon-resizer:2.1"
     awscli                       = "quay.io/coreos/awscli:025a357f05242fdad6a81e8a6b520098aa65a600"
+    gcloudsdk                    = "google/cloud-sdk:178.0.0-alpine"
     bootkube                     = "quay.io/coreos/bootkube:v0.8.1"
-    calico                       = "quay.io/calico/node:v2.6.1"
-    calico_cni                   = "quay.io/calico/cni:v1.11.0"
-    console                      = "quay.io/coreos/tectonic-console:v2.3.4"
-    error_server                 = "quay.io/coreos/tectonic-error-server:1.0"
-    etcd                         = "quay.io/coreos/etcd:v3.1.8"
+    etcd                         = "quay.io/coreos/etcd:v3.2.14"
     etcd_operator                = "quay.io/coreos/etcd-operator:v0.5.0"
-    flannel                      = "quay.io/coreos/flannel:v0.8.0-amd64"
-    flannel_cni                  = "quay.io/coreos/flannel-cni:v0.2.0"
-    heapster                     = "gcr.io/google_containers/heapster:v1.4.1"
-    hyperkube                    = "quay.io/coreos/hyperkube:v1.8.2_coreos.0"
-    identity                     = "quay.io/coreos/dex:v2.7.1"
-    ingress_controller           = "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.9.0-beta.16"
-    kenc                         = "quay.io/coreos/kenc:0.0.2"
-    kubedns                      = "gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.5"
-    kubednsmasq                  = "gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.5"
-    kubedns_sidecar              = "gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.5"
-    kube_version                 = "quay.io/coreos/kube-version:0.1.0"
-    kube_version_operator        = "quay.io/coreos/kube-version-operator:v1.7.9-kvo.5"
-    node_agent                   = "quay.io/coreos/node-agent:cd69b4a0f65b0d3a3b30edfce3bb184fd2a22c26"
-    pod_checkpointer             = "quay.io/coreos/pod-checkpointer:e22cc0e3714378de92f45326474874eb602ca0ac"
-    stats_emitter                = "quay.io/coreos/tectonic-stats:6e882361357fe4b773adbf279cddf48cb50164c1"
-    stats_extender               = "quay.io/coreos/tectonic-stats-extender:487b3da4e175da96dabfb44fba65cdb8b823db2e"
-    tectonic_channel_operator    = "quay.io/coreos/tectonic-channel-operator:0.5.4"
+    hyperkube                    = "quay.io/coreos/hyperkube:v1.9.1_coreos.0"
+    kube_core_renderer           = "quay.io/coreos/kube-core-renderer-dev:79403c0864d4a98773d92d01998124c096faf59f"
+    kube_version_operator        = "quay.io/coreos/kube-version-operator:v1.8.4-kvo.5"
+    tectonic_channel_operator    = "quay.io/coreos/tectonic-channel-operator:0.6.2"
     tectonic_etcd_operator       = "quay.io/coreos/tectonic-etcd-operator:v0.0.2"
-    tectonic_prometheus_operator = "quay.io/coreos/tectonic-prometheus-operator:v1.7.1"
-    tectonic_cluo_operator       = "quay.io/coreos/tectonic-cluo-operator:v0.2.4"
-    tectonic_torcx               = "quay.io/coreos/tectonic-torcx:installer-latest"
+    tectonic_prometheus_operator = "quay.io/coreos/tectonic-prometheus-operator:v1.9.0"
+    tectonic_cluo_operator       = "quay.io/coreos/tectonic-cluo-operator:v0.3.0"
+    tectonic_torcx               = "quay.io/coreos/tectonic-torcx:v0.2.0"
+    kubernetes_addon_operator    = "quay.io/coreos/kubernetes-addon-operator:4b83569d763dc95e1f61c77b31989fd3957bfc67"
+    tectonic_alm_operator        = "quay.io/coreos/tectonic-alm-operator:0.2.1"
+    tectonic_utility_operator    = "quay.io/coreos/tectonic-utility-operator:fd342530b94b0addf41b3109d1fcd3adfd7f2101"
+    tectonic_network_operator    = "quay.io/coreos/tectonic-network-operator:5de83dde5aab8532cb5d1046de3f04193ac2d827"
   }
 }
 
@@ -114,12 +112,13 @@ variable "tectonic_versions" {
   type        = "map"
 
   default = {
-    etcd          = "3.1.8"
-    kubernetes    = "1.7.9+tectonic.1"
-    monitoring    = "1.7.1"
-    tectonic      = "1.8.2-tectonic.1"
+    etcd          = "3.2.14"
+    kubernetes    = "1.8.4+tectonic.1"
+    monitoring    = "1.9.0"
+    tectonic      = "1.8.4-tectonic.2"
     tectonic-etcd = "0.0.1"
-    cluo          = "0.2.4"
+    cluo          = "0.3.0"
+    alm           = "0.2.1"
   }
 }
 
@@ -184,16 +183,6 @@ EOF
 
   type    = "list"
   default = []
-}
-
-variable "tectonic_etcd_tls_enabled" {
-  default = true
-
-  description = <<EOF
-(optional) If set to `true`, all etcd endpoints will be configured to use the "https" scheme.
-
-Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the experimental self-hosted etcd always uses TLS.
-EOF
 }
 
 variable "tectonic_etcd_ca_cert_path" {
@@ -278,8 +267,6 @@ You can download the pull secret from your Account overview page at [3].
 [2] https://coreos.com/os/docs/latest/registry-authentication.html#manual-registry-auth-setup
 
 [3] https://account.coreos.com/overview
-
-Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 EOF
 }
 
@@ -292,8 +279,6 @@ The path to the tectonic licence file.
 You can download the Tectonic license file from your Account overview page at [1].
 
 [1] https://account.coreos.com/overview
-
-Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 EOF
 }
 
@@ -327,7 +312,7 @@ variable "tectonic_update_server" {
 
 variable "tectonic_update_channel" {
   type        = "string"
-  default     = "tectonic-1.7-production"
+  default     = "tectonic-1.8-production"
   description = "(internal) The Tectonic Omaha update channel"
 }
 
@@ -392,21 +377,13 @@ EOF
 }
 
 variable "tectonic_tls_validity_period" {
+  type    = "string"
+  default = "26280"
+
   description = <<EOF
 Validity period of the self-signed certificates (in hours).
 Default is 3 years.
 This setting is ignored if user provided certificates are used.
-EOF
-
-  default = 26280
-  type    = "string"
-}
-
-variable "tectonic_vanilla_k8s" {
-  default = false
-
-  description = <<EOF
-If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
 EOF
 }
 
@@ -470,33 +447,10 @@ variable "tectonic_networking" {
 
 - "canal": [ALPHA] enables overlay networking including network policy. Overlay is implemented by flannel using VXLAN. Network policy is implemented by Calico.
 
-- "calico": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
+- "calico-ipip": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
+
+- "none": disables the installation of any Pod level networking layer provided by Tectonic. By setting this value, users are expected to deploy their own solution to enable network connectivity for Pods and Services.
 EOF
-}
-
-variable "tectonic_self_hosted_etcd" {
-  default = ""
-
-  description = <<EOF
-(internal) [ALPHA] If set to one of the following values, self-hosted etcd is deployed:
-
-- "enabled": Deploys a self-hosted etcd cluster.
-
-- "pv_backup": Deploys a self-hosted etcd cluster including backups to Persistence Volumes.
-`tectonic_etcd_backup_size` and `tectonic_etcd_backup_storage_class` must be configured when using this setting.
-EOF
-}
-
-variable "tectonic_etcd_backup_size" {
-  type        = "string"
-  description = "(optional) The size in MB of the PersistentVolume used for handling etcd backups."
-  default     = "512"
-}
-
-variable "tectonic_etcd_backup_storage_class" {
-  type        = "string"
-  default     = ""
-  description = "(optional) The name of an existing Kubernetes StorageClass that will be used for handling etcd backups."
 }
 
 variable "tectonic_bootstrap_upgrade_cl" {
@@ -510,4 +464,52 @@ variable "tectonic_kubelet_debug_config" {
   default = ""
 
   description = "(internal) debug flags for the kubelet (used in CI only)"
+}
+
+variable "tectonic_custom_ca_pem_list" {
+  type    = "list"
+  default = []
+
+  description = <<EOF
+(optional) A list of PEM encoded CA files that will be installed in /etc/ssl/certs on etcd, master, and worker nodes.
+EOF
+}
+
+variable "tectonic_iscsi_enabled" {
+  type        = "string"
+  default     = "false"
+  description = "(optional) Start iscsid.service to enable iscsi volume attachment."
+}
+
+variable "tectonic_http_proxy_address" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) HTTP proxy address.
+
+Example: `http://myproxy.example.com`
+EOF
+}
+
+variable "tectonic_https_proxy_address" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) HTTPS proxy address.
+
+Example: `http://myproxy.example.com`
+EOF
+}
+
+variable "tectonic_no_proxy" {
+  type    = "list"
+  default = []
+
+  description = <<EOF
+(optional) List of local endpoints that will not use HTTP proxy.
+
+Example: `["127.0.0.1","localhost",".example.com","10.3.0.1"]`
+EOF
 }

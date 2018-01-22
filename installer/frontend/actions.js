@@ -63,9 +63,16 @@ export const commitPhases = {
   SUCCEEDED: 'COMMIT_SUCCEEDED',
   FAILED: 'COMMIT_FAILED',
 };
-const FIELDS = {};
+export const FIELDS = {};
 const FIELD_TO_DEPS = {};
 export const FORMS = {};
+
+const getField = name => {
+  if (!FIELDS[name]) {
+    throw new Error(`Field ${name} not found`);
+  }
+  return FIELDS[name];
+};
 
 // TODO (ggreer) standardize on order of params. is dispatch first or last?
 export const configActions = {
@@ -77,38 +84,27 @@ export const configActions = {
     payload.splice(0, payload.length - 1);
     return values;
   },
-  append: (path, value, dispatch) => dispatch({payload: {path, value}, type: configActionTypes.APPEND}),
-  removeAt: (path, index, dispatch) => dispatch({payload: {path, index}, type: configActionTypes.REMOVE_AT}),
   merge: payload => dispatch => dispatch({payload, type: configActionTypes.MERGE}),
+
   // TODO: (kans) move below to form actions...
-  removeField: (fieldName, i) => (dispatch, getState) => {
-    const field = FIELDS[fieldName];
-    if (!field) {
-      throw new Error(`${fieldName} has no field for removing`);
-    }
-    field.remove(dispatch, i, getState);
+  removeField: (fieldListId, index) => (dispatch, getState) => {
+    const fieldList = getField(fieldListId);
+    dispatch({payload: {path: fieldListId, index}, type: configActionTypes.REMOVE_AT});
+    fieldList.validate(dispatch, getState);
   },
-  appendField: fieldName => (dispatch, getState) => {
-    const field = FIELDS[fieldName];
-    if (!field) {
-      throw new Error(`${fieldName} has no field for appending`);
-    }
-    field.append(dispatch, getState);
+  appendField: fieldListId => (dispatch, getState) => {
+    const fieldList = getField(fieldListId);
+    const value = _.mapValues(fieldList.rowFields, 'default');
+    dispatch({payload: {path: fieldListId, value}, type: configActionTypes.APPEND});
+    fieldList.validate(dispatch, getState);
   },
   refreshExtraData: fieldName => (dispatch, getState) => {
-    const field = FIELDS[fieldName];
-    if (!field) {
-      throw new Error(`${fieldName} has no field for refreshing`);
-    }
-    field.getExtraStuff(dispatch, getState().clusterConfig, FIELDS, 0);
+    const field = getField(fieldName);
+    field.getExtraStuff(dispatch, getState, FIELDS);
   },
   updateField: (fieldName, inputValue) => (dispatch, getState) => {
     const [name, ...split] = fieldName.split('.');
-    const field = FIELDS[name];
-    if (!field) {
-      throw new Error(`${name} has no field for updating`);
-    }
-
+    const field = getField(name);
     return field.update(dispatch, inputValue, getState, FIELDS, FIELD_TO_DEPS, split);
   },
 };
@@ -117,53 +113,26 @@ export const __deleteEverything__ = () => {
   [FIELDS, FIELD_TO_DEPS, FORMS, DEFAULT_CLUSTER_CONFIG]
     .forEach(o => _.keys(o).forEach(k => delete o[k]));
 
-  ['error', 'error_async', 'ignore', 'inFly', 'extra']
-    .forEach(k => DEFAULT_CLUSTER_CONFIG[k] = {});
+  ['error', 'inFly', 'extra'].forEach(k => DEFAULT_CLUSTER_CONFIG[k] = {});
 
   return {type: configActionTypes.RESET};
 };
 
-export const validateAllFields = cb => async (dispatch, getState) => {
-  const initialCC = getState().clusterConfig;
-  const unvisitedFields = new Set(_.values(FIELDS));
-  const visitedNames = new Set();
-
-  const visit = async field => {
-    const { id } = field;
-
-    visitedNames.add(id);
-    unvisitedFields.delete(field);
-
-    const { clusterConfig } = getState();
-    // we must update ignores before validation... because validation depends on it
-    field.ignoreWhen(dispatch, clusterConfig);
-    // TODO: (kans) this is bad
-    await field.getExtraStuff(dispatch, clusterConfig, FIELDS, 0);
-    await field.validate(dispatch, getState, initialCC, 0);
-  };
+export const validateFields = async (ids, getState, dispatch, updatedId, isNow) => {
+  const unvisitedIds = ids;
 
   // Just shake the array really hard until all the nodes fall out...
-  while (unvisitedFields.size > 0) {
-    const toVisit = [];
-
-    unvisitedFields.forEach(f => {
-      const unresolvedDeps = f.dependencies.filter(d => !visitedNames.has(d)).length;
-      if (unresolvedDeps) {
-        return;
-      }
-      toVisit.push(f);
-    });
-
-    if (!toVisit.length && unvisitedFields.size > 0) {
-      throw new Error(`unresolvable fields: ${unvisitedFields.toJSON().map(f => f.name).join(' ')}`);
+  while (unvisitedIds.length) {
+    // All the fields that have already had their dependencies validated
+    const toVisit = unvisitedIds.filter(id => !_.intersection(unvisitedIds, FIELDS[id].dependencies).length);
+    if (!toVisit.length) {
+      throw new Error(`Unresolvable fields: ${unvisitedIds}`);
     }
-    // TODO: (kans) use promise.All here for speeds
-    for (const dep of toVisit) {
-      await visit(dep);
-    }
-  }
-  if (_.isFunction(cb)) {
-    cb();
+    await Promise.all(toVisit.map(
+      id => FIELDS[id].getExtraStuff(dispatch, getState, FIELDS, isNow)
+        .then(() => FIELDS[id].validate(dispatch, getState, updatedId, isNow))
+    ));
+    _.pullAll(unvisitedIds, toVisit);
   }
 };
 
@@ -202,10 +171,10 @@ export const registerForm = (form, fields) => {
     DEFAULT_CLUSTER_CONFIG[fieldName] = f.default;
     FIELDS[fieldName] = f;
 
-    _.each(f.dependencies, d => addDep(f, d));
+    _.each(f.dependencies, d => addDep(f.id, d));
   });
 
   // HACK to avoid figuring out the "correct" order in FIELD_TO_DEPS
   // ... peers can have deps on the same branch
-  _.each(form.dependencies, d => addDep(form, d));
+  _.each(form.dependencies, d => addDep(form.id, d));
 };

@@ -22,16 +22,17 @@ import { TectonicGA } from '../tectonic-ga';
 import { KubernetesCIDRs } from './k8s-cidrs';
 import { CIDRRow } from './cidr';
 import { Field, Form } from '../form';
+import { toError } from '../utils';
 
 import {
-  AWS_CONTROLLER_SUBNET_IDS,
   AWS_CONTROLLER_SUBNETS,
+  AWS_CONTROLLER_SUBNET_IDS,
   AWS_CREATE_VPC,
   AWS_HOSTED_ZONE_ID,
   AWS_REGION,
   AWS_REGION_FORM,
-  AWS_SUBNETS,
   AWS_SPLIT_DNS,
+  AWS_SUBNETS,
   AWS_VPC_CIDR,
   AWS_VPC_FORM,
   AWS_VPC_ID,
@@ -47,7 +48,8 @@ import {
   VPC_CREATE ,
   VPC_PRIVATE,
   VPC_PUBLIC,
-  toVPCSubnet,
+  getAwsZoneDomain,
+  selectedSubnets,
 } from '../cluster-config';
 
 const AWS_ADVANCED_NETWORKING = 'awsAdvancedNetworking';
@@ -55,19 +57,25 @@ const DEFAULT_AWS_VPC_CIDR = '10.0.0.0/16';
 
 const {setIn} = configActions;
 
-const validateVPC = (dispatch, getState, data, oldData, isNow, extraData, oldCC) => {
-  const cc = getState().clusterConfig;
+const validateVPC = async (data, cc, updatedId, dispatch) => {
+  const hostedZoneID = data[AWS_HOSTED_ZONE_ID];
+  const privateZone = _.get(cc, ['extra', AWS_HOSTED_ZONE_ID, 'privateZones', hostedZoneID]);
+  if (privateZone && hostedZoneID && data[AWS_CREATE_VPC] !== VPC_PRIVATE) {
+    return 'Private Route 53 Zones must use an existing private VPC.';
+  }
 
   const isCreate = cc[AWS_CREATE_VPC] === VPC_CREATE;
   const awsVpcId = cc[AWS_VPC_ID];
 
   if (!isCreate && !awsVpcId) {
     // User hasn't selected a VPC yet. Don't try to validate.
-    return Promise.resolve();
+    return;
   }
 
-  // Fields relevant to the VPC validation
-  const vpcFields = [
+  // Prevent unnecessary calls to validate API by only continuing if a field relevant to VPC validation has changed.
+  // However, we always continue if updatedId is undefined, since that probably means the form has just been loaded and
+  // we are doing initial validation.
+  if (updatedId && ![
     AWS_CONTROLLER_SUBNETS,
     AWS_CONTROLLER_SUBNET_IDS,
     AWS_CREATE_VPC,
@@ -79,22 +87,20 @@ const validateVPC = (dispatch, getState, data, oldData, isNow, extraData, oldCC)
     DESELECTED_FIELDS,
     POD_CIDR,
     SERVICE_CIDR,
-  ];
-
-  // Prevent unnecessary calls to validate API by only continuing if a field relevant to VPC validation has changed.
-  // However, we always continue if none of the form data has changed, since that probably means the form has just been
-  // loaded and we are doing initial validation.
-  if (_.every(vpcFields, k => _.isEqual(cc[k], oldCC[k])) && !_.isEqual(data, oldData)) {
-    return Promise.resolve();
+  ].includes(updatedId)) {
+    return _.get(cc, toError(AWS_VPC_FORM));
   }
 
   const getSubnets = subnets => {
-    const selected = toVPCSubnet(cc[AWS_REGION], subnets, cc[DESELECTED_FIELDS][AWS_SUBNETS]);
+    const selected = selectedSubnets(cc, subnets);
     return _.map(selected, (v, k) => isCreate ? {availabilityZone: k, instanceCIDR: v} : {availabilityZone: k, id: v});
   };
 
   const controllerSubnets = getSubnets(cc[isCreate ? AWS_CONTROLLER_SUBNETS : AWS_CONTROLLER_SUBNET_IDS]);
   const workerSubnets = getSubnets(cc[isCreate ? AWS_WORKER_SUBNETS : AWS_WORKER_SUBNET_IDS]);
+  if (_.isEmpty(controllerSubnets) || _.isEmpty(workerSubnets)) {
+    return 'You must provide subnets for both masters and workers.';
+  }
 
   const isPrivate = cc[AWS_CREATE_VPC] === VPC_PRIVATE;
   const network = {
@@ -110,11 +116,12 @@ const validateVPC = (dispatch, getState, data, oldData, isNow, extraData, oldCC)
     network.awsVpcId = awsVpcId;
   }
 
-  return dispatch(validateSubnets(network)).then(json => {
-    if (!json.valid) {
-      return Promise.reject(json.message);
-    }
-  });
+  try {
+    return await dispatch(validateSubnets(network))
+      .then(json => json.valid ? undefined : json.message);
+  } catch (e) {
+    return e.message || e.toString();
+  }
 };
 
 const vpcInfoForm = new Form(AWS_VPC_FORM, [
@@ -129,14 +136,13 @@ const vpcInfoForm = new Form(AWS_VPC_FORM, [
   new Field(AWS_HOSTED_ZONE_ID, {
     default: '',
     dependencies: [AWS_REGION_FORM],
-    validator: (value, clusterConfig, oldValue, extraData) => {
+    validator: (value, cc) => {
       const empty = validate.nonEmpty(value);
       if (empty) {
         return empty;
       }
-
-      if (!extraData || !extraData.zoneToName[value]) {
-        return 'Unknown zone id.';
+      if (!getAwsZoneDomain(cc)) {
+        return 'Unknown zone ID.';
       }
     },
     getExtraStuff: (dispatch, isNow) => dispatch(getZones(null, null, isNow))
@@ -166,19 +172,10 @@ const vpcInfoForm = new Form(AWS_VPC_FORM, [
   new Field(AWS_WORKER_SUBNETS, {default: {}}),
   new Field(AWS_WORKER_SUBNET_IDS, {default: {}}),
   new Field(CLUSTER_SUBDOMAIN, {default: '', validator: compose(validate.nonEmpty, validate.domainName)}),
+  new Field(DESELECTED_FIELDS, {default: {}}),
 ], {
   dependencies: [POD_CIDR, SERVICE_CIDR],
-  validator: (data, cc) => {
-    const hostedZoneID = data[AWS_HOSTED_ZONE_ID];
-    const privateZone = _.get(cc, ['extra', AWS_HOSTED_ZONE_ID, 'privateZones', hostedZoneID]);
-    if (!privateZone || !hostedZoneID) {
-      return;
-    }
-    if (privateZone && data[AWS_CREATE_VPC] !== VPC_PRIVATE) {
-      return 'Private Route 53 Zones must use an existing private VPC.';
-    }
-  },
-  asyncValidator: validateVPC,
+  validator: validateVPC,
 });
 
 const SubnetSelect = ({field, name, subnets, disabled, fieldName}) => <div className="row form-group">
@@ -189,7 +186,7 @@ const SubnetSelect = ({field, name, subnets, disabled, fieldName}) => <div class
   <div className="col-xs-6">
     <Connect field={field}>
       <Select disabled={disabled}>
-        <option disabled>Select a subnet</option>
+        <option disabled value="">Select a subnet</option>
         {_.filter(subnets, ({availabilityZone}) => availabilityZone === name)
           .map(({id, instanceCIDR}) => <option value={id} key={instanceCIDR}>{instanceCIDR} ({id})</option>)
         }
@@ -241,7 +238,6 @@ export const AWS_VPC = connect(stateToProps, dispatchToProps)(props => {
       const fieldName = `${AWS_SUBNETS}.${az}`;
       return <DeselectField key={az} field={fieldName}>
         <CIDRRow
-          autoFocus={az.endsWith('a')}
           field={`${AWS_CONTROLLER_SUBNETS}.${az}`}
           fieldName={fieldName}
           name={az}
@@ -462,7 +458,7 @@ export const AWS_VPC = connect(stateToProps, dispatchToProps)(props => {
       </div>
       }
       <hr />
-      <KubernetesCIDRs />
+      <KubernetesCIDRs autoFocus={false} />
     </div>
     }
   </div>;
@@ -473,20 +469,15 @@ AWS_VPC.canNavigateForward = ({clusterConfig}) => {
     return false;
   }
 
-  if (clusterConfig[AWS_CREATE_VPC] === VPC_CREATE) {
-    const workerSubnets = clusterConfig[AWS_WORKER_SUBNETS];
-    const controllerSubnets = clusterConfig[AWS_CONTROLLER_SUBNETS];
-    return !validate.AWSsubnetCIDR(clusterConfig[AWS_VPC_CIDR]) &&
-           _.every(controllerSubnets, subnet => !validate.AWSsubnetCIDR(subnet)) &&
-           _.every(workerSubnets, subnet => !validate.AWSsubnetCIDR(subnet)) &&
-           !validate.someSelected(_.keys(clusterConfig[AWS_CONTROLLER_SUBNETS]), clusterConfig[DESELECTED_FIELDS][AWS_SUBNETS]) &&
-           !validate.someSelected(_.keys(clusterConfig[AWS_WORKER_SUBNETS]), clusterConfig[DESELECTED_FIELDS][AWS_SUBNETS]);
-  }
+  const deselectedSubnets = clusterConfig[DESELECTED_FIELDS][AWS_SUBNETS];
+  const isSelected = field => !validate.someSelected(_.keys(clusterConfig[field]), deselectedSubnets);
 
-  return _.size(clusterConfig[AWS_CONTROLLER_SUBNET_IDS]) > 0 &&
-         _.size(clusterConfig[AWS_WORKER_SUBNET_IDS]) > 0 &&
-         _.some(clusterConfig[AWS_CONTROLLER_SUBNET_IDS], id => !validate.nonEmpty(id)) &&
-         _.some(clusterConfig[AWS_WORKER_SUBNET_IDS], id => !validate.nonEmpty(id)) &&
-         !validate.someSelected(_.keys(clusterConfig[AWS_CONTROLLER_SUBNET_IDS]), clusterConfig[DESELECTED_FIELDS][AWS_SUBNETS]) &&
-         !validate.someSelected(_.keys(clusterConfig[AWS_WORKER_SUBNET_IDS]), clusterConfig[DESELECTED_FIELDS][AWS_SUBNETS]);
+  if (clusterConfig[AWS_CREATE_VPC] === VPC_CREATE) {
+    // The subnet CIDR fields are dynamically generated, so their validators won't automatically invalidate the form
+    return _.every(clusterConfig[AWS_CONTROLLER_SUBNETS], subnet => !validate.AWSsubnetCIDR(subnet)) &&
+      _.every(clusterConfig[AWS_WORKER_SUBNETS], subnet => !validate.AWSsubnetCIDR(subnet)) &&
+      isSelected(AWS_CONTROLLER_SUBNETS) &&
+      isSelected(AWS_WORKER_SUBNETS);
+  }
+  return isSelected(AWS_CONTROLLER_SUBNET_IDS) && isSelected(AWS_WORKER_SUBNET_IDS);
 };

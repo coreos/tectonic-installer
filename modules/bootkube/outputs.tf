@@ -19,14 +19,8 @@ output "id" {
   value = "${sha1("
   ${local_file.kubeconfig.id}
   ${local_file.bootkube_sh.id}
-  ${template_dir.bootkube.id} ${template_dir.bootkube_bootstrap.id}
-  ${join(" ",
-    template_dir.etcd_manifests.*.id,
-    template_dir.etcd_bootstrap_manifests.*.id,
-    local_file.etcd_bootstrap_service.*.id,
-    local_file.migrate_etcd_cluster.*.id,
-    local_file.migrate_etcd_cluster_pv_backup.*.id,
-    )}
+  ${local_file.kco-config_yaml.id}
+  ${template_dir.bootkube.id}
   ")}"
 }
 

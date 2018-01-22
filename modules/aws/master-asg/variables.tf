@@ -49,9 +49,9 @@ variable "ign_s3_puller_id" {
   type = "string"
 }
 
-variable "image_re" {
-  description = "(internal) Regular expression used to extract repo and tag components from image strings"
-  type        = "string"
+variable "ec2_ami" {
+  type    = "string"
+  default = ""
 }
 
 variable "instance_count" {
@@ -67,6 +67,11 @@ variable "master_iam_role" {
 variable "master_sg_ids" {
   type        = "list"
   description = "The security group IDs to be applied to the master nodes."
+}
+
+variable "private_endpoints" {
+  description = "If set to true, private-facing ingress resources are created."
+  default     = true
 }
 
 variable "public_endpoints" {
@@ -120,4 +125,25 @@ variable "ign_tectonic_service_id" {
 
 variable "ign_tectonic_path_unit_id" {
   type = "string"
+}
+
+variable "ign_init_assets_service_id" {
+  type = "string"
+}
+
+variable "ign_rm_assets_service_id" {
+  type = "string"
+}
+
+variable "ign_rm_assets_path_unit_id" {
+  type = "string"
+}
+
+variable "s3_bucket" {
+  type = "string"
+}
+
+variable "dns_server_ip" {
+  type    = "string"
+  default = ""
 }

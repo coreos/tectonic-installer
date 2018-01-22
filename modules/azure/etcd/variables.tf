@@ -68,38 +68,6 @@ variable "const_internal_node_names" {
   description = "(internal) The list of hostnames assigned to etcd member nodes."
 }
 
-variable "tls_enabled" {
-  default = false
-}
-
-variable "tls_ca_crt_pem" {
-  default = ""
-}
-
-variable "tls_client_key_pem" {
-  default = ""
-}
-
-variable "tls_client_crt_pem" {
-  default = ""
-}
-
-variable "tls_server_key_pem" {
-  default = ""
-}
-
-variable "tls_server_crt_pem" {
-  default = ""
-}
-
-variable "tls_peer_key_pem" {
-  default = ""
-}
-
-variable "tls_peer_crt_pem" {
-  default = ""
-}
-
 variable "container_image" {
   type = "string"
 }
@@ -114,4 +82,18 @@ variable "ign_etcd_dropin_id_list" {
 
 variable "fault_domains" {
   type = "string"
+}
+
+variable "ign_etcd_crt_id_list" {
+  type = "list"
+}
+
+variable "ign_profile_env_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "ign_systemd_default_env_id" {
+  type    = "string"
+  default = ""
 }

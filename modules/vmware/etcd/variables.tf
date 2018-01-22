@@ -60,9 +60,9 @@ variable vm_network_labels {
   description = "ETCD VMs PortGroups"
 }
 
-variable vm_disk_datastore {
-  type        = "string"
-  description = "Datastore to create ETCD VM in "
+variable vm_disk_datastores {
+  type        = "map"
+  description = "vSphere datastores to use for VMs"
 }
 
 variable vm_disk_template {
@@ -95,34 +95,20 @@ variable hostname {
   description = "Hostname of the node"
 }
 
-variable "tls_ca_crt_pem" {
-  default = ""
-}
-
-variable "tls_client_key_pem" {
-  default = ""
-}
-
-variable "tls_client_crt_pem" {
-  default = ""
-}
-
-variable "tls_server_key_pem" {
-  default = ""
-}
-
-variable "tls_server_crt_pem" {
-  default = ""
-}
-
-variable "tls_peer_key_pem" {
-  default = ""
-}
-
-variable "tls_peer_crt_pem" {
-  default = ""
-}
-
 variable "ign_etcd_dropin_id_list" {
   type = "list"
+}
+
+variable "ign_etcd_crt_id_list" {
+  type = "list"
+}
+
+variable "ign_profile_env_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "ign_systemd_default_env_id" {
+  type    = "string"
+  default = ""
 }

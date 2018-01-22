@@ -46,6 +46,9 @@ tectonic_cluster_name = ""
 // Examples: `latest`, `1465.6.0`
 tectonic_container_linux_version = "latest"
 
+// (optional) A list of PEM encoded CA files that will be installed in /etc/ssl/certs on etcd, master, and worker nodes.
+// tectonic_custom_ca_pem_list = ""
+
 // (optional) This only applies if you use the modules/dns/ddns module.
 // 
 // Specifies the RFC2136 Dynamic DNS server key algorithm.
@@ -65,12 +68,6 @@ tectonic_container_linux_version = "latest"
 // 
 // Specifies the RFC2136 Dynamic DNS server IP/host to register IP addresses to.
 // tectonic_ddns_server = ""
-
-// (optional) The size in MB of the PersistentVolume used for handling etcd backups.
-// tectonic_etcd_backup_size = "512"
-
-// (optional) The name of an existing Kubernetes StorageClass that will be used for handling etcd backups.
-// tectonic_etcd_backup_storage_class = ""
 
 // (optional) The path of the file containing the CA certificate for TLS communication with etcd.
 // 
@@ -104,17 +101,23 @@ tectonic_etcd_count = "0"
 // Example: `["etcd1", "etcd2", "etcd3"]`
 // tectonic_etcd_servers = ""
 
-// (optional) If set to `true`, all etcd endpoints will be configured to use the "https" scheme.
+// (optional) HTTP proxy address.
 // 
-// Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the experimental self-hosted etcd always uses TLS.
-// tectonic_etcd_tls_enabled = true
+// Example: `http://myproxy.example.com`
+// tectonic_http_proxy_address = ""
+
+// (optional) HTTPS proxy address.
+// 
+// Example: `http://myproxy.example.com`
+// tectonic_https_proxy_address = ""
+
+// (optional) Start iscsid.service to enable iscsi volume attachment.
+// tectonic_iscsi_enabled = "false"
 
 // The path to the tectonic licence file.
 // You can download the Tectonic license file from your Account overview page at [1].
 // 
 // [1] https://account.coreos.com/overview
-// 
-// Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_license_path = ""
 
 // The number of master nodes to be created.
@@ -124,7 +127,7 @@ tectonic_master_count = "1"
 // (optional) Sets the MTU size for workload interfaces and the IP-in-IP tunnel device.
 // 
 // Note: This setting is only effective, if tectonic_networking is set to `calico`.
-// tectonic_metal_calico_mtu = "1500"
+// tectonic_metal_calico_mtu = "1480"
 
 // The domain name which resolves to controller node(s)
 // 
@@ -225,8 +228,15 @@ tectonic_metal_worker_names = ""
 // 
 // - "canal": [ALPHA] enables overlay networking including network policy. Overlay is implemented by flannel using VXLAN. Network policy is implemented by Calico.
 // 
-// - "calico": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
+// - "calico-ipip": [ALPHA] enables BGP based networking. Routing and network policy is implemented by Calico. Note this has been tested on baremetal installations only.
+// 
+// - "none": disables the installation of any Pod level networking layer provided by Tectonic. By setting this value, users are expected to deploy their own solution to enable network connectivity for Pods and Services.
 // tectonic_networking = "flannel"
+
+// (optional) List of local endpoints that will not use HTTP proxy.
+// 
+// Example: `["127.0.0.1","localhost",".example.com","10.3.0.1"]`
+// tectonic_no_proxy = ""
 
 // The path the pull secret file in JSON format.
 // This is known to be a "Docker pull secret" as produced by the docker login [1] command.
@@ -238,8 +248,6 @@ tectonic_metal_worker_names = ""
 // [2] https://coreos.com/os/docs/latest/registry-authentication.html#manual-registry-auth-setup
 // 
 // [3] https://account.coreos.com/overview
-// 
-// Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_pull_secret_path = ""
 
 // (optional) This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation.
@@ -254,10 +262,7 @@ tectonic_ssh_authorized_key = ""
 // Validity period of the self-signed certificates (in hours).
 // Default is 3 years.
 // This setting is ignored if user provided certificates are used.
-tectonic_tls_validity_period = "string"
-
-// If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
-tectonic_vanilla_k8s = false
+tectonic_tls_validity_period = "26280"
 
 // The number of worker nodes to be created.
 // This applies only to cloud platforms.

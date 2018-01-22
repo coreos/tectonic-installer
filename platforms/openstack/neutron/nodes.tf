@@ -1,13 +1,12 @@
 # etcd
 
 resource "openstack_compute_servergroup_v2" "etcd_group" {
-  count    = "${var.tectonic_self_hosted_etcd != "" ? 0 : 1}"
   name     = "${var.tectonic_cluster_name}-etcd-group"
   policies = ["anti-affinity"]
 }
 
 resource "openstack_compute_instance_v2" "etcd_node" {
-  count = "${var.tectonic_self_hosted_etcd != "" ? 0 : var.tectonic_etcd_count}"
+  count = "${var.tectonic_etcd_count}"
   name  = "${var.tectonic_cluster_name}_etcd_node_${count.index}"
 
   image_name = "${var.tectonic_openstack_image_name}"
@@ -119,9 +118,6 @@ resource "null_resource" "tectonic" {
     "module.bootkube",
     "module.tectonic",
     "module.dns",
-    "module.flannel_vxlan",
-    "module.calico",
-    "module.canal",
     "openstack_compute_instance_v2.master_node",
     "openstack_networking_port_v2.master",
     "openstack_networking_floatingip_v2.master",

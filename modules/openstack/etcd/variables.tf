@@ -19,44 +19,7 @@ variable "core_public_keys" {
   type = "list"
 }
 
-variable "self_hosted_etcd" {
-  default     = ""
-  description = "See tectonic_self_hosted_etcd in config.tf"
-}
-
 variable "instance_count" {
-  default = ""
-}
-
-variable "tls_enabled" {
-  default = false
-}
-
-variable "tls_ca_crt_pem" {
-  default = ""
-}
-
-variable "tls_server_key_pem" {
-  default = ""
-}
-
-variable "tls_server_crt_pem" {
-  default = ""
-}
-
-variable "tls_client_key_pem" {
-  default = ""
-}
-
-variable "tls_client_crt_pem" {
-  default = ""
-}
-
-variable "tls_peer_key_pem" {
-  default = ""
-}
-
-variable "tls_peer_crt_pem" {
   default = ""
 }
 
@@ -66,4 +29,18 @@ variable "ign_etcd_dropin_id_list" {
 
 variable "ign_coreos_metadata_dropin_id" {
   type = "string"
+}
+
+variable "ign_etcd_crt_id_list" {
+  type = "list"
+}
+
+variable "ign_profile_env_id" {
+  type    = "string"
+  default = ""
+}
+
+variable "ign_systemd_default_env_id" {
+  type    = "string"
+  default = ""
 }
