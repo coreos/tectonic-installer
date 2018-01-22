@@ -35,9 +35,10 @@ func ClusterNameFromVarfile(varfile string) (string, error) {
 	return "", errors.New("not found")
 }
 
-func NewBuildLocation(clusterName string) string {
+func NewBuildLocation(path ...string) string {
 	pwd, _ := os.Getwd()
-	buildPath := filepath.Join(pwd, clusterName)
+	path = append([]string{pwd}, path...)
+	buildPath := filepath.Join(path...)
 	err := os.MkdirAll(buildPath, os.ModeDir|0755)
 	if err != nil {
 		log.Fatalf("Failed to create build folder at %s", buildPath)
@@ -49,4 +50,11 @@ func NewBuildLocation(clusterName string) string {
 func FindTemplatesForType(buildType string) string {
 	pwd, _ := os.Getwd()
 	return filepath.Join(pwd, "platforms", buildType)
+}
+
+// implement actual detection of templates
+func FindTemplatesForStep(step ...string) string {
+	pwd, _ := os.Getwd()
+	step = append([]string{pwd, "phases"}, step...)
+	return filepath.Join(step...)
 }

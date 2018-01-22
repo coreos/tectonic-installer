@@ -32,9 +32,9 @@ resource "aws_autoscaling_group" "workers" {
   }
 }
 
-resource "aws_autoscaling_attachment" "workers" {
-  count = "${length(local.aws_lbs_workers)}"
-
-  autoscaling_group_name = "${aws_autoscaling_group.workers.name}"
-  elb                    = "${local.aws_lbs_workers[count.index]}"
-}
+//resource "aws_autoscaling_attachment" "workers" {
+//  count = "${length(local.aws_lbs_workers)}"
+//
+//  autoscaling_group_name = "${aws_autoscaling_group.workers.name}"
+//  elb                    = "${local.aws_lbs_workers[count.index]}"
+//}

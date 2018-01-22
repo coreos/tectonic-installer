@@ -1,7 +1,5 @@
 package workflow
 
-import "log"
-
 // Workflow is a high-level representation
 // of a set of actions performed in a predictable order
 type Workflow interface {
@@ -21,11 +19,9 @@ type WorkflowType struct {
 }
 
 func (w WorkflowType) Execute() error {
-	var stepError error
 	for _, oneStep := range w.steps {
-		stepError = oneStep.Execute(&w.metadata)
-		if stepError != nil {
-			log.Fatal(stepError) // TODO: actually do proper error handling
+		if stepError := oneStep.Execute(&w.metadata); stepError != nil {
+			return stepError // TODO: actually do proper error handling
 		}
 	}
 	return nil

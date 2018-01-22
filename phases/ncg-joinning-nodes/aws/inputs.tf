@@ -3,7 +3,7 @@ data "terraform_remote_state" "bootstrap" {
   backend = "local"
 
   config {
-    path = "${path.module}/../../../build/${var.tectonic_cluster_name}/terraform.tfstate"
+    path = "${path.module}/../../../${var.tectonic_cluster_name}/bootstrap_node.tfstate"
   }
 }
 

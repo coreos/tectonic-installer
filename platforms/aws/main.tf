@@ -4,6 +4,10 @@ provider "aws" {
   version = "1.7.0"
 }
 
+data "terraform_remote_state" "bootstrap" {
+  backend = "local"
+}
+
 data "aws_availability_zones" "azs" {}
 
 module "container_linux" {

@@ -24,13 +24,15 @@ func main() {
 			if err != nil {
 				log.Fatalf("%s is not a valid config file", *clusterConfigFlag)
 			}
-			w := workflow.NewInstallWorkflow(
+			w := workflow.NewNcgBootsrapWorkflow(
 				workflow.Metadata{
 					"var_file":     *clusterConfigFlag,
 					"cluster_name": clusterName,
 				},
 			)
-			w.Execute()
+			if err := w.Execute(); err != nil {
+				log.Fatal(err)
+			}
 		}
 	case clusterDeleteCommand.FullCommand():
 		{
