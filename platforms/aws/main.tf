@@ -231,7 +231,6 @@ module "workers" {
   worker_iam_role                      = "${var.tectonic_aws_worker_iam_role_name}"
   ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
   kubeconfig_content                   = "${module.bootkube.kubeconfig}"
-  ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
 }
 
 module "dns" {
