@@ -59,7 +59,7 @@ spec:
       path: /etc/kubernetes/cloud
   - name: ssl-certs-host
     hostPath:
-      path: /usr/share/ca-certificates
+      path: /etc/ssl/certs
   - name: var-lock
     hostPath:
       path: /var/lock

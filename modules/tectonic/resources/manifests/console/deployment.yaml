@@ -140,9 +140,6 @@ spec:
         - mountPath: /etc/ssl/certs
           name: ssl-certs-host
           readOnly: true
-        - mountPath: /usr/share/ca-certificates
-          name: ca-certs-host
-          readOnly: true
         - mountPath: /etc/tectonic/licenses
           name: tectonic-license-secret
           readOnly: true
@@ -164,9 +161,6 @@ spec:
       - hostPath:
           path: /etc/ssl/certs
         name: ssl-certs-host
-      - hostPath:
-          path: /usr/share/ca-certificates
-        name: ca-certs-host
       - name: tectonic-license-secret
         secret:
           secretName: tectonic-license-secret

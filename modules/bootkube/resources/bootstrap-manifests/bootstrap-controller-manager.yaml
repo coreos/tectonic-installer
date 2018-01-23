@@ -33,4 +33,4 @@ spec:
       path: /etc/kubernetes
   - name: ssl-host
     hostPath:
-      path: /usr/share/ca-certificates
+      path: /etc/ssl/certs
