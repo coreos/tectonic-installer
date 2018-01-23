@@ -65,7 +65,7 @@ export const commitPhases = {
 };
 export const FIELDS = {};
 const FIELD_TO_DEPS = {};
-export const FORMS = {};
+const FORMS = {};
 
 const getField = name => {
   if (!FIELDS[name]) {

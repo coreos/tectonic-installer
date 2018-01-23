@@ -92,9 +92,7 @@ export const SPLIT_DNS_OPTIONS = {
   [SPLIT_DNS_OFF]: 'Do not create a private zone.',
 };
 
-const EXTERNAL = 'external';
-const PROVISIONED = 'provisioned';
-export const ETCD_OPTIONS = { EXTERNAL, PROVISIONED };
+export const ETCD_OPTIONS = {EXTERNAL: 'external', PROVISIONED: 'provisioned'};
 
 // String that would be an invalid IAM role name
 export const IAM_ROLE_CREATE_OPTION = '%create%';
@@ -131,144 +129,176 @@ export const DEFAULT_CLUSTER_CONFIG = {
   [RETRY]: false, // whether we're retrying a terraform apply
 };
 
-export const toAWS_TF = ({clusterConfig: cc, dirty}, FORMS) => {
-  const controllers = FORMS[AWS_CONTROLLERS].getData(cc);
-  const etcds = FORMS[AWS_ETCDS].getData(cc);
-  const workers = FORMS[AWS_WORKERS].getData(cc);
-
-  const extraTags = {};
-  _.each(cc[AWS_TAGS], ({key, value}) => {
-    if (key && value) {
-      extraTags[key] = value;
-    }
-  });
-
-  const ret = {
+// Cluster config that is common to all platforms
+const baseConfig = cc => {
+  const config = {
     dryRun: cc[DRY_RUN],
-    platform: 'aws',
     license: cc[TECTONIC_LICENSE],
     pullSecret: cc[PULL_SECRET],
     retry: cc[RETRY],
-    credentials: {
-      AWSAccessKeyID: cc[AWS_ACCESS_KEY_ID],
-      AWSSecretAccessKey: cc[AWS_SECRET_ACCESS_KEY],
-    },
     variables: {
-      tectonic_admin_password: cc[ADMIN_PASSWORD],
-      tectonic_aws_region: cc[AWS_REGION],
-      tectonic_admin_email: cc[ADMIN_EMAIL],
-      tectonic_aws_master_ec2_type: controllers[INSTANCE_TYPE],
-      tectonic_aws_master_iam_role_name: controllers[IAM_ROLE] === IAM_ROLE_CREATE_OPTION ? undefined : controllers[IAM_ROLE],
-      tectonic_aws_master_root_volume_iops: controllers[STORAGE_TYPE] === 'io1' ? controllers[STORAGE_IOPS] : undefined,
-      tectonic_aws_master_root_volume_size: controllers[STORAGE_SIZE_IN_GIB],
-      tectonic_aws_master_root_volume_type: controllers[STORAGE_TYPE],
-      tectonic_aws_worker_ec2_type: workers[INSTANCE_TYPE],
-      tectonic_aws_worker_iam_role_name: workers[IAM_ROLE] === IAM_ROLE_CREATE_OPTION ? undefined : workers[IAM_ROLE],
-      tectonic_aws_worker_root_volume_iops: workers[STORAGE_TYPE] === 'io1' ? workers[STORAGE_IOPS] : undefined,
-      tectonic_aws_worker_root_volume_size: workers[STORAGE_SIZE_IN_GIB],
-      tectonic_aws_worker_root_volume_type: workers[STORAGE_TYPE],
-      tectonic_aws_ssh_key: cc[AWS_SSH],
-      tectonic_base_domain: getAwsZoneDomain(cc),
-      tectonic_cluster_cidr: cc[POD_CIDR],
-      tectonic_cluster_name: cc[CLUSTER_NAME],
-      tectonic_master_count: controllers[NUMBER_OF_INSTANCES],
-      tectonic_service_cidr: cc[SERVICE_CIDR],
-      tectonic_worker_count: workers[NUMBER_OF_INSTANCES],
-      tectonic_dns_name: cc[CLUSTER_SUBDOMAIN],
+      Console: {
+        AdminEmail: cc[ADMIN_EMAIL],
+        AdminPassword: cc[ADMIN_PASSWORD],
+      },
+      Name: cc[CLUSTER_NAME],
+      Networking: {
+        PodCIDR: cc[POD_CIDR],
+        ServiceCIDR: cc[SERVICE_CIDR],
+      },
+      Version: '1.0',
     },
   };
 
-  if (cc[ETCD_OPTION] === EXTERNAL) {
-    ret.variables.tectonic_etcd_servers = [cc[EXTERNAL_ETCD_CLIENT]];
-  } else if (cc[ETCD_OPTION] === PROVISIONED) {
-    ret.variables.tectonic_aws_etcd_ec2_type = etcds[INSTANCE_TYPE];
-    ret.variables.tectonic_aws_etcd_root_volume_iops = etcds[STORAGE_TYPE] === 'io1' ? etcds[STORAGE_IOPS] : undefined;
-    ret.variables.tectonic_aws_etcd_root_volume_size = etcds[STORAGE_SIZE_IN_GIB];
-    ret.variables.tectonic_aws_etcd_root_volume_type = etcds[STORAGE_TYPE];
-    ret.variables.tectonic_etcd_count = etcds[NUMBER_OF_INSTANCES];
+  if (cc[CA_TYPE] === CA_TYPES.OWNED) {
+    config.variables.CA = {
+      Cert: cc[CA_CERTIFICATE],
+      Key: cc[CA_PRIVATE_KEY],
+      KeyAlg: keyToAlg(cc[CA_PRIVATE_KEY]),
+    };
   }
 
-  if (_.size(extraTags) > 0) {
-    ret.variables.tectonic_aws_extra_tags = extraTags;
-  }
+  return config;
+};
 
+export const toAwsConfig = ({clusterConfig: cc, dirty}) => {
+  const credentials = {
+    AWSAccessKeyID: cc[AWS_ACCESS_KEY_ID],
+    AWSSecretAccessKey: cc[AWS_SECRET_ACCESS_KEY],
+  };
   if (cc[STS_ENABLED]) {
-    ret.credentials.AWSSessionToken = cc[AWS_SESSION_TOKEN];
+    credentials.AWSSessionToken = cc[AWS_SESSION_TOKEN];
+  }
+
+  const etcdsVal = id => cc[`${AWS_ETCDS}-${id}`];
+  const mastersVal = id => cc[`${AWS_CONTROLLERS}-${id}`];
+  const workersVal = id => cc[`${AWS_WORKERS}-${id}`];
+  const iamRole = role => role === IAM_ROLE_CREATE_OPTION ? undefined : role;
+
+  const variables = {
+    AWS: {
+      Master: {
+        EC2Type: mastersVal(INSTANCE_TYPE),
+        IAMRoleName: iamRole(mastersVal(IAM_ROLE)),
+        RootVolume: {
+          Size: mastersVal(STORAGE_SIZE_IN_GIB),
+          Type: mastersVal(STORAGE_TYPE),
+        },
+      },
+      Worker: {
+        EC2Type: workersVal(INSTANCE_TYPE),
+        IAMRoleName: iamRole(workersVal(IAM_ROLE)),
+        RootVolume: {
+          Size: workersVal(STORAGE_SIZE_IN_GIB),
+          Type: workersVal(STORAGE_TYPE),
+        },
+      },
+      Region: cc[AWS_REGION],
+      SSHKey: cc[AWS_SSH],
+    },
+    DNS: {
+      BaseDomain: getAwsZoneDomain(cc),
+      DNSName: cc[CLUSTER_SUBDOMAIN],
+    },
+    Etcd: {},
+    Masters: {
+      NodeCount: mastersVal(NUMBER_OF_INSTANCES),
+    },
+    Platform: 'aws',
+    Workers: {
+      NodeCount: workersVal(NUMBER_OF_INSTANCES),
+    },
+  };
+
+  _.each(cc[AWS_TAGS], ({key, value}) => {
+    if (key && value) {
+      _.set(variables.AWS, `ExtraTags.${key}`, value);
+    }
+  });
+
+  if (mastersVal(STORAGE_TYPE) === 'io1') {
+    variables.AWS.Master.RootVolume.IOPS = mastersVal(STORAGE_IOPS);
+  }
+  if (workersVal(STORAGE_TYPE) === 'io1') {
+    variables.AWS.Worker.RootVolume.IOPS = workersVal(STORAGE_IOPS);
+  }
+  if (cc[ETCD_OPTION] === ETCD_OPTIONS.EXTERNAL) {
+    variables.Etcd = {ExternalServers: [cc[EXTERNAL_ETCD_CLIENT]]};
+  } else if (cc[ETCD_OPTION] === ETCD_OPTIONS.PROVISIONED) {
+    variables.Etcd = {NodeCount: etcdsVal(NUMBER_OF_INSTANCES)};
+    variables.AWS.Etcd = {
+      EC2Type: etcdsVal(INSTANCE_TYPE),
+      RootVolume: {
+        Size: etcdsVal(STORAGE_SIZE_IN_GIB),
+        Type: etcdsVal(STORAGE_TYPE),
+      },
+    };
+    if (etcdsVal(STORAGE_TYPE) === 'io1') {
+      variables.AWS.Etcd.IOPS = etcdsVal(STORAGE_IOPS);
+    }
   }
 
   if (cc[AWS_CREATE_VPC] === VPC_CREATE) {
-    ret.variables.tectonic_aws_vpc_cidr_block = cc[AWS_VPC_CIDR];
+    variables.AWS.VPCCIDRBlock = cc[AWS_VPC_CIDR];
 
     // If the AWS Advanced Networking section was never opened, omit these variables so that sensible default subnets
     // will be created
     if (dirty[AWS_ADVANCED_NETWORKING]) {
-      ret.variables.tectonic_aws_master_custom_subnets = selectedSubnets(cc, cc[AWS_CONTROLLER_SUBNETS]);
-      ret.variables.tectonic_aws_worker_custom_subnets = selectedSubnets(cc, cc[AWS_WORKER_SUBNETS]);
+      variables.AWS.Master.CustomSubnets = selectedSubnets(cc, cc[AWS_CONTROLLER_SUBNETS]);
+      variables.AWS.Worker.CustomSubnets = selectedSubnets(cc, cc[AWS_WORKER_SUBNETS]);
     }
   } else {
-    ret.variables.tectonic_aws_external_vpc_id = cc[AWS_VPC_ID];
-    ret.variables.tectonic_aws_external_master_subnet_ids = _.values(selectedSubnets(cc, cc[AWS_CONTROLLER_SUBNET_IDS]));
-    ret.variables.tectonic_aws_external_worker_subnet_ids = _.values(selectedSubnets(cc, cc[AWS_WORKER_SUBNET_IDS]));
-    ret.variables.tectonic_aws_public_endpoints = cc[AWS_CREATE_VPC] !== VPC_PRIVATE;
+    variables.AWS.External = cc[AWS_VPC_ID];
+    variables.AWS.Master.SubnetIDs = _.values(selectedSubnets(cc, cc[AWS_CONTROLLER_SUBNET_IDS]));
+    variables.AWS.PublicEndpoints = cc[AWS_CREATE_VPC] !== VPC_PRIVATE;
+    variables.AWS.Worker.SubnetIDs = _.values(selectedSubnets(cc, cc[AWS_WORKER_SUBNET_IDS]));
   }
 
   if (cc[AWS_CREATE_VPC] !== VPC_PRIVATE && cc[AWS_SPLIT_DNS] === SPLIT_DNS_OFF) {
-    ret.variables.tectonic_aws_private_endpoints = false;
+    variables.AWS.PrivateEndpoints = false;
   }
 
-  if (cc[CA_TYPE] === CA_TYPES.OWNED) {
-    ret.variables.tectonic_ca_cert = cc[CA_CERTIFICATE];
-    ret.variables.tectonic_ca_key = cc[CA_PRIVATE_KEY];
-    ret.variables.tectonic_ca_key_alg = keyToAlg(cc[CA_PRIVATE_KEY]);
-  }
-  return ret;
+  return _.merge(baseConfig(cc), {credentials, variables});
 };
 
-export const toBaremetal_TF = ({clusterConfig: cc}, FORMS) => {
-  const sshKey = FORMS[BM_SSH_KEY].getData(cc);
+export const toMetalConfig = ({clusterConfig: cc}) => {
   const masters = cc[BM_MASTERS];
   const workers = cc[BM_WORKERS];
 
-  const ret = {
-    dryRun: cc[DRY_RUN],
-    platform: 'metal',
-    license: cc[TECTONIC_LICENSE],
-    pullSecret: cc[PULL_SECRET],
-    retry: cc[RETRY],
-    variables: {
-      tectonic_admin_password: cc[ADMIN_PASSWORD],
-      tectonic_cluster_name: cc[CLUSTER_NAME],
-      tectonic_admin_email: cc[ADMIN_EMAIL],
-      tectonic_container_linux_version: cc[BM_OS_TO_USE],
-      tectonic_metal_ingress_domain: getTectonicDomain(cc),
-      tectonic_metal_controller_domain: cc[CONTROLLER_DOMAIN],
-      tectonic_metal_controller_domains: masters.map(({host}) => host),
-      tectonic_metal_controller_names: masters.map(({host}) => host.split('.')[0]),
-      tectonic_metal_controller_macs: masters.map(({mac}) => mac),
-      tectonic_metal_worker_domains: workers.map(({host}) => host),
-      tectonic_metal_worker_names: workers.map(({host}) => host.split('.')[0]),
-      tectonic_metal_worker_macs: workers.map(({mac}) => mac),
-      tectonic_metal_matchbox_http_url: `http://${cc[BM_MATCHBOX_HTTP]}`,
-      tectonic_metal_matchbox_rpc_endpoint: cc[BM_MATCHBOX_RPC],
-      tectonic_metal_matchbox_ca: cc[BM_MATCHBOX_CA],
-      tectonic_metal_matchbox_client_cert: cc[BM_MATCHBOX_CLIENT_CERT],
-      tectonic_metal_matchbox_client_key: cc[BM_MATCHBOX_CLIENT_KEY],
-      tectonic_ssh_authorized_key: sshKey[SSH_AUTHORIZED_KEY],
-      tectonic_cluster_cidr: cc[POD_CIDR],
-      tectonic_service_cidr: cc[SERVICE_CIDR],
-      tectonic_base_domain: 'unused',
+  const variables = {
+    ContainerLinux: {
+      Version: cc[BM_OS_TO_USE],
     },
+    Metal: {
+      Matchbox: {
+        CA: cc[BM_MATCHBOX_CA],
+        Client: {
+          Cert: cc[BM_MATCHBOX_CLIENT_CERT],
+          Key: cc[BM_MATCHBOX_CLIENT_KEY],
+        },
+        HTTPURL: `http://${cc[BM_MATCHBOX_HTTP]}`,
+        RPCEndpoint: cc[BM_MATCHBOX_RPC],
+      },
+      Controller: {
+        Domain: cc[CONTROLLER_DOMAIN],
+        Domains: masters.map(({host}) => host),
+        MACs: masters.map(({mac}) => mac),
+        Names: masters.map(({host}) => host.split('.')[0]),
+      },
+      IngressDomain: getTectonicDomain(cc),
+      SSHAuthorizedKey: cc[SSH_AUTHORIZED_KEY],
+      Worker: {
+        Domains: workers.map(({host}) => host),
+        MACs: workers.map(({mac}) => mac),
+        Names: workers.map(({host}) => host.split('.')[0]),
+      },
+    },
+    Platform: 'metal',
   };
 
-  if (cc[ETCD_OPTION] === EXTERNAL) {
-    ret.variables.tectonic_etcd_servers = [cc[EXTERNAL_ETCD_CLIENT]];
+  if (cc[ETCD_OPTION] === ETCD_OPTIONS.EXTERNAL) {
+    variables.Etcd = {ExternalServers: [cc[EXTERNAL_ETCD_CLIENT]]};
   }
 
-  if (cc[CA_TYPE] === CA_TYPES.OWNED) {
-    ret.variables.tectonic_ca_cert = cc[CA_CERTIFICATE];
-    ret.variables.tectonic_ca_key = cc[CA_PRIVATE_KEY];
-    ret.variables.tectonic_ca_key_alg = keyToAlg(cc[CA_PRIVATE_KEY]);
-  }
-
-  return ret;
+  return _.merge(baseConfig(cc), {variables});
 };

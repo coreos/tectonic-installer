@@ -22,7 +22,7 @@ import (
 
 const (
 	stateFileName  = "terraform.tfstate"
-	tfVarsFileName = "terraform.tfvars"
+	configFileName = "tectonic-cluster-config.yaml"
 	logsFolderName = "logs"
 
 	logsFileSuffix = ".log"
@@ -103,10 +103,10 @@ func (ex *Executor) AddFile(name string, content []byte) error {
 	return ioutil.WriteFile(filePath, content, 0660)
 }
 
-// AddVariables writes the `terraform.tfvars` file in the Executor's working
-// directory using the given content. It may replace an existing file.
+// AddVariables writes the Tectonic cluster config file in the Executor's
+// working directory using the given content. It may replace an existing file.
 func (ex *Executor) AddVariables(content []byte) error {
-	return ex.AddFile(tfVarsFileName, content)
+	return ex.AddFile(configFileName, content)
 }
 
 // AddEnvironmentVariables adds extra environment variables that will be set

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/dghubble/sessions"
+	"github.com/ghodss/yaml"
 	"github.com/kardianos/osext"
 
 	"github.com/coreos/tectonic-installer/installer/pkg/terraform"
@@ -19,14 +20,27 @@ import (
 // TerraformApplyHandlerInput describes the input expected by the
 // terraformApplyHandler HTTP Handler.
 type TerraformApplyHandlerInput struct {
-	Platform      string                 `json:"platform"`
-	Credentials   terraform.Credentials  `json:"credentials"`
-	AdminPassword []byte                 `json:"adminPassword"`
-	Variables     map[string]interface{} `json:"variables"`
-	License       string                 `json:"license"`
-	PullSecret    string                 `json:"pullSecret"`
-	DryRun        bool                   `json:"dryRun"`
-	Retry         bool                   `json:"retry"`
+	Credentials terraform.Credentials `json:"credentials"`
+	DryRun      bool                  `json:"dryRun"`
+	License     string                `json:"license"`
+	PullSecret  string                `json:"pullSecret"`
+	Retry       bool                  `json:"retry"`
+	Variables   struct {
+		AWS              map[string]interface{} `json:"AWS,omitempty"`
+		Console          map[string]interface{} `json:"Console"`
+		ContainerLinux   map[string]interface{} `json:"ContainerLinux,omitempty"`
+		DNS              map[string]interface{} `json:"DNS,omitempty"`
+		Etcd             map[string]interface{} `json:"Etcd,omitempty"`
+		Masters          map[string]interface{} `json:"Masters,omitempty"`
+		Metal            map[string]interface{} `json:"Metal,omitempty"`
+		Name             string                 `json:"Name"`
+		Networking       map[string]interface{} `json:"Networking"`
+		Platform         string                 `json:"Platform"`
+		SSHAuthorizedKey string                 `json:"SSHAuthorizedKey,omitempty"`
+		Tectonic         map[string]string      `json:"Tectonic"`
+		Version          string                 `json:"Version"`
+		Workers          map[string]interface{} `json:"Workers,omitempty"`
+	} `json:"variables"`
 }
 
 func terraformApplyHandler(w http.ResponseWriter, req *http.Request, ctx *Context) error {
@@ -49,7 +63,7 @@ func terraformApplyHandler(w http.ResponseWriter, req *http.Request, ctx *Contex
 	if err != nil {
 		return err
 	}
-	tfMainDir := fmt.Sprintf("%s/platforms/%s", ex.WorkingDirectory(), input.Platform)
+	tfMainDir := fmt.Sprintf("%s/platforms/%s", ex.WorkingDirectory(), input.Variables.Platform)
 
 	// Copy the TF Templates to the Executor's working directory.
 	if err := terraform.RestoreSources(ex.WorkingDirectory()); err != nil {
@@ -155,7 +169,7 @@ func newExecutorFromApplyHandlerInput(input *TerraformApplyHandlerInput) (*terra
 	if err != nil {
 		return nil, newInternalServerError("Could not determine executable's folder: %s", err)
 	}
-	clusterName := input.Variables["tectonic_cluster_name"].(string)
+	clusterName := input.Variables.Name
 	if len(clusterName) == 0 {
 		return nil, newBadRequestError("Tectonic cluster name not provided")
 	}
@@ -188,6 +202,7 @@ func newExecutorFromApplyHandlerInput(input *TerraformApplyHandlerInput) (*terra
 	if err != nil {
 		return nil, newInternalServerError("Could not create Terraform executor: %s", err)
 	}
+
 	// Write the License and Pull Secret to disk, and wire these files in the
 	// variables.
 	if input.License == "" {
@@ -198,11 +213,13 @@ func newExecutorFromApplyHandlerInput(input *TerraformApplyHandlerInput) (*terra
 		return nil, newBadRequestError("Tectonic pull secret not provided")
 	}
 	ex.AddFile("pull_secret.json", []byte(input.PullSecret))
-	input.Variables["tectonic_license_path"] = "./license.txt"
-	input.Variables["tectonic_pull_secret_path"] = "./pull_secret.json"
+	input.Variables.Tectonic = map[string]string{
+		"LicensePath":    "./license.txt",
+		"PullSecretPath": "./pull_secret.json",
+	}
 
 	// Add variables and the required environment variables.
-	if variables, err := json.MarshalIndent(input.Variables, "", "  "); err == nil {
+	if variables, err := yaml.Marshal(input.Variables); err == nil {
 		ex.AddVariables(variables)
 	} else {
 		return nil, newBadRequestError("Could not marshal Terraform variables: %s", err)
