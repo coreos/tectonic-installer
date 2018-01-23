@@ -229,6 +229,7 @@ module "workers" {
   vpc_id                               = "${module.vpc.vpc_id}"
   worker_iam_role                      = "${var.tectonic_aws_worker_iam_role_name}"
   kubeconfig_content                   = "${module.bootkube.kubeconfig}"
+  ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
 }
 
 module "dns" {
