@@ -14,7 +14,7 @@ require 'tfstate_file'
 class AwsCluster < Cluster
   def initialize(tfvars_file)
     export_random_region_if_not_defined if Jenkins.environment?
-    AWSIAM.assume_role
+    AWSIAM.assume_role if ENV.key?('TECTONIC_INSTALLER_ROLE')
     @aws_region = tfvars_file.tectonic_aws_region
 
     unless ssh_key_defined?
