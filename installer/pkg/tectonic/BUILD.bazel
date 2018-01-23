@@ -2,7 +2,10 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
     name = "go_default_library",
-    srcs = ["defaults.go"],
+    srcs = [
+        "buildstate.go",
+        "defaults.go",
+    ],
     importpath = "github.com/coreos/tectonic-installer/installer/pkg/tectonic",
     visibility = ["//visibility:public"],
 )

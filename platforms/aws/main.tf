@@ -171,6 +171,7 @@ module "masters" {
   subnet_ids                           = "${module.vpc.master_subnet_ids}"
   ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
   kubeconfig_content                   = "${module.bootkube.kubeconfig}"
+  ec2_ami                              = "${var.tectonic_aws_ec2_ami_override}"
 }
 
 module "ignition_workers" {
