@@ -5,6 +5,7 @@ data "ignition_config" "worker" {
     var.ign_installer_runtime_mappings_id,
     var.ign_azure_udev_rules_id,
     var.ign_max_user_watches_id,
+    var.ign_nfs_config_id,
     data.ignition_file.cloud-provider-config.id,
     var.ign_profile_env_id,
     var.ign_systemd_default_env_id,

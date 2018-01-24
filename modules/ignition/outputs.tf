@@ -163,3 +163,11 @@ output "systemd_default_env_id" {
 output "systemd_default_env_rendered" {
   value = "${data.template_file.systemd_default_env.rendered}"
 }
+
+output "nfs_config_id" {
+  value = "${data.ignition_file.nfs_config.id}"
+}
+
+output "nfs_config_rendered" {
+  value = "{data.template_file.nfs_config.rendered}"
+}

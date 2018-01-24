@@ -248,3 +248,21 @@ data "ignition_file" "systemd_default_env" {
     content = "${data.template_file.systemd_default_env.rendered}"
   }
 }
+
+data "template_file" "nfs_config" {
+  vars {
+    nfs_config = "${var.nfs_config}"
+  }
+
+  template = "${file("${path.module}/resources/conf.d/nfs")}"
+}
+
+data "ignition_file" "nfs_config" {
+  path       = "/etc/conf.d/nfs"
+  mode       = 0644
+  filesystem = "root"
+
+  content {
+    content = "${data.template_file.nfs_config.rendered}"
+  }
+}

@@ -194,3 +194,8 @@ variable "ign_systemd_default_env_id" {
 variable "ign_iscsi_service_id" {
   type = "string"
 }
+
+variable "nfs_config" {
+  type        = "string"
+  description = "Content of NFS configuration file."
+}
