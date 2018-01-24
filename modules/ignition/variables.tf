@@ -204,3 +204,7 @@ variable "nfs_config_file" {
   type        = "string"
   description = "Path to a file containing the desired NFS config in /etc/conf.d/nfs."
 }
+
+variable "proxy_exclusive_units" {
+  default = false
+}

@@ -157,7 +157,7 @@ output "iscsi_service_id" {
 }
 
 output "profile_env_id" {
-  value = "${data.ignition_file.profile_env.id}"
+  value = "${join("",data.ignition_file.profile_env.*.id)}"
 }
 
 output "profile_env_rendered" {

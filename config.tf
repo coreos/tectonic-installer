@@ -592,3 +592,7 @@ EOF
 locals {
   _tectonic_nfs_config_file = "${var.tectonic_nfs_config_file != "" ? var.tectonic_nfs_config_file : "/dev/null"}"
 }
+
+variable "tectonic_proxy_exclusive_units" {
+  default = false
+}

@@ -238,6 +238,7 @@ data "template_file" "profile_env" {
 }
 
 data "ignition_file" "profile_env" {
+  count      = "${var.proxy_exclusive_units}"
   path       = "/etc/profile.env"
   mode       = 0644
   filesystem = "root"
