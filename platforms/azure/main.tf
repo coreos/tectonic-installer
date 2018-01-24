@@ -67,6 +67,7 @@ module "etcd" {
   fault_domains              = "${var.tectonic_azure_location_fault_domains["${var.tectonic_azure_location}"]}"
   ign_etcd_crt_id_list       = "${module.ignition_masters.etcd_crt_id_list}"
   ign_etcd_dropin_id_list    = "${module.ignition_masters.etcd_dropin_id_list}"
+  ign_ntp_dropin_id          = "${length(var.tectonic_ntp_servers) > 0 ? module.ignition_masters.ntp_dropin_id : ""}"
   ign_profile_env_id         = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
   ign_systemd_default_env_id = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
   location                   = "${var.tectonic_azure_location}"
@@ -83,17 +84,17 @@ module "etcd" {
 # Workaround for https://github.com/hashicorp/terraform/issues/4084
 data "null_data_source" "cloud_provider" {
   inputs = {
-    "cloud"                      = "${var.tectonic_azure_cloud_environment}"
-    "tenantId"                   = "${data.azurerm_client_config.current.tenant_id}"
-    "subscriptionId"             = "${data.azurerm_client_config.current.subscription_id}"
     "aadClientId"                = "${data.azurerm_client_config.current.client_id}"
     "aadClientSecret"            = "${var.tectonic_azure_client_secret}"
-    "resourceGroup"              = "${module.resource_group.name}"
+    "cloud"                      = "${var.tectonic_azure_cloud_environment}"
     "location"                   = "${var.tectonic_azure_location}"
-    "subnetName"                 = "${module.vnet.worker_subnet_name}"
-    "securityGroupName"          = "${module.vnet.worker_nsg_name}"
-    "vnetName"                   = "${module.vnet.vnet_id}"
     "primaryAvailabilitySetName" = "${module.workers.availability_set_name}"
+    "resourceGroup"              = "${module.resource_group.name}"
+    "securityGroupName"          = "${module.vnet.worker_nsg_name}"
+    "subnetName"                 = "${module.vnet.worker_subnet_name}"
+    "subscriptionId"             = "${data.azurerm_client_config.current.subscription_id}"
+    "tenantId"                   = "${data.azurerm_client_config.current.tenant_id}"
+    "vnetName"                   = "${module.vnet.vnet_id}"
   }
 }
 
@@ -136,6 +137,7 @@ module "ignition_masters" {
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
   no_proxy                  = "${var.tectonic_no_proxy}"
+  ntp_servers               = "${var.tectonic_ntp_servers}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
 }
 
@@ -161,6 +163,7 @@ module "masters" {
   ign_kubelet_service_id               = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id            = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id              = "${module.ignition_masters.max_user_watches_id}"
+  ign_ntp_dropin_id                    = "${length(var.tectonic_ntp_servers) > 0 ? module.ignition_masters.ntp_dropin_id : ""}"
   ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
   ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
   ign_tectonic_path_unit_id            = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
@@ -201,6 +204,7 @@ module "ignition_workers" {
   kubelet_node_taints     = ""
   no_proxy                = "${var.tectonic_no_proxy}"
   no_proxy                = "${var.tectonic_no_proxy}"
+  ntp_servers             = "${var.tectonic_ntp_servers}"
   tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
 }
 
@@ -224,6 +228,7 @@ module "workers" {
   ign_kubelet_service_id               = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id            = "${module.ignition_workers.locksmithd_service_id}"
   ign_max_user_watches_id              = "${module.ignition_workers.max_user_watches_id}"
+  ign_ntp_dropin_id                    = "${length(var.tectonic_ntp_servers) > 0 ? module.ignition_workers.ntp_dropin_id : ""}"
   ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
   ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.systemd_default_env_id : ""}"
   ign_tx_off_service_id                = "${module.ignition_workers.tx_off_service_id}"

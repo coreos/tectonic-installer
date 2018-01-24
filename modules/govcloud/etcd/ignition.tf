@@ -7,6 +7,7 @@ data "ignition_config" "etcd" {
   ]
 
   files = ["${compact(list(
+    var.ign_ntp_dropin_id,
     var.ign_profile_env_id,
     var.ign_systemd_default_env_id,
     var.dns_server_ip != "" ? join("", data.ignition_file.node_resolv.*.id) : "",

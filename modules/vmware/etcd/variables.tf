@@ -110,3 +110,7 @@ variable "ign_systemd_default_env_id" {
 variable "ign_etcd_dropin_id_list" {
   type = "list"
 }
+
+variable "ign_ntp_dropin_id" {
+  type = "string"
+}

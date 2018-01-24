@@ -567,3 +567,13 @@ variable "tectonic_no_proxy" {
 "(optional) This variable should contain a comma-separated list of domain extensions proxy should not be used for. For instance, if the value of no_proxy is ‘.mit.edu’, proxy will not be used to retrieve documents from MIT."
 EOF
 }
+
+variable "tectonic_ntp_servers" {
+  type    = "list"
+  default = []
+
+  description = <<EOF
+(optional) If left blank, the default Container Linux NTP servers will be used.
+A list of NTP servers to be used for time synchronization on the cluster nodes.
+EOF
+}

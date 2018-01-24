@@ -50,6 +50,7 @@ module "ignition_masters" {
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
   no_proxy                  = "${var.tectonic_no_proxy}"
+  ntp_servers               = "${var.tectonic_ntp_servers}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
   use_metadata              = false
 }
@@ -81,6 +82,7 @@ resource "matchbox_group" "controller" {
     ign_k8s_node_bootstrap_service_json    = "${jsonencode(module.ignition_masters.k8s_node_bootstrap_service_rendered)}"
     ign_kubelet_service_json               = "${jsonencode(module.ignition_masters.kubelet_service_rendered)}"
     ign_max_user_watches_json              = "${jsonencode(module.ignition_masters.max_user_watches_rendered)}"
+    ign_ntp_dropin_json                    = "${length(var.tectonic_ntp_servers) > 0 ? jsonencode(module.ignition_masters.ntp_dropin_rendered) : ""}"
     ign_profile_env_json                   = "${local.tectonic_http_proxy_enabled ? jsonencode(module.ignition_masters.profile_env_rendered) : ""}"
     ign_systemd_default_env_json           = "${local.tectonic_http_proxy_enabled ? jsonencode(module.ignition_masters.systemd_default_env_rendered) : ""}"
     ign_tectonic_path_unit_json            = "${jsonencode(module.tectonic.systemd_path_unit_rendered)}"
@@ -109,7 +111,7 @@ module "ignition_workers" {
   kubelet_node_label      = "node-role.kubernetes.io/node"
   kubelet_node_taints     = ""
   no_proxy                = "${var.tectonic_no_proxy}"
-  no_proxy                = "${var.tectonic_no_proxy}"
+  ntp_servers             = "${var.tectonic_ntp_servers}"
   tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
 }
 
@@ -140,6 +142,7 @@ resource "matchbox_group" "worker" {
     ign_k8s_node_bootstrap_service_json    = "${jsonencode(module.ignition_workers.k8s_node_bootstrap_service_rendered)}"
     ign_kubelet_service_json               = "${jsonencode(module.ignition_workers.kubelet_service_rendered)}"
     ign_max_user_watches_json              = "${jsonencode(module.ignition_workers.max_user_watches_rendered)}"
+    ign_ntp_dropin_json                    = "${length(var.tectonic_ntp_servers) > 0 ? jsonencode(module.ignition_workers.ntp_dropin_rendered) : ""}"
     ign_profile_env_json                   = "${local.tectonic_http_proxy_enabled ? jsonencode(module.ignition_workers.profile_env_rendered) : ""}"
     ign_systemd_default_env_json           = "${local.tectonic_http_proxy_enabled ? jsonencode(module.ignition_workers.systemd_default_env_rendered) : ""}"
     ign_update_ca_certificates_dropin_json = "${jsonencode(module.ignition_workers.update_ca_certificates_dropin_rendered)}"

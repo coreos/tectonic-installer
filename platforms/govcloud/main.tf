@@ -77,6 +77,7 @@ module "etcd" {
   extra_tags                 = "${var.tectonic_govcloud_extra_tags}"
   ign_etcd_crt_id_list       = "${module.ignition_masters.etcd_crt_id_list}"
   ign_etcd_dropin_id_list    = "${module.ignition_masters.etcd_dropin_id_list}"
+  ign_ntp_dropin_id          = "${length(var.tectonic_ntp_servers) > 0 ? module.ignition_masters.ntp_dropin_id : ""}"
   ign_profile_env_id         = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
   ign_systemd_default_env_id = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
   instance_count             = "${length(data.template_file.etcd_hostname_list.*.id)}"
@@ -123,6 +124,7 @@ module "ignition_masters" {
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
   no_proxy                  = "${var.tectonic_no_proxy}"
+  ntp_servers               = "${var.tectonic_ntp_servers}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
 }
 
@@ -153,6 +155,7 @@ module "masters" {
   ign_kubelet_service_id               = "${module.ignition_masters.kubelet_service_id}"
   ign_locksmithd_service_id            = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id              = "${module.ignition_masters.max_user_watches_id}"
+  ign_ntp_dropin_id                    = "${length(var.tectonic_ntp_servers) > 0 ? module.ignition_masters.ntp_dropin_id : ""}"
   ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
   ign_rm_assets_path_unit_id           = "${module.ignition_masters.rm_assets_path_unit_id}"
   ign_rm_assets_service_id             = "${module.ignition_masters.rm_assets_service_id}"
@@ -195,6 +198,7 @@ module "ignition_workers" {
   kubelet_node_label      = "node-role.kubernetes.io/node"
   kubelet_node_taints     = ""
   no_proxy                = "${var.tectonic_no_proxy}"
+  ntp_servers             = "${var.tectonic_ntp_servers}"
   tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
 }
 
@@ -217,6 +221,7 @@ module "workers" {
   ign_kubelet_service_id               = "${module.ignition_workers.kubelet_service_id}"
   ign_locksmithd_service_id            = "${module.ignition_workers.locksmithd_service_id}"
   ign_max_user_watches_id              = "${module.ignition_workers.max_user_watches_id}"
+  ign_ntp_dropin_id                    = "${length(var.tectonic_ntp_servers) > 0 ? module.ignition_workers.ntp_dropin_id : ""}"
   ign_s3_puller_id                     = "${module.ignition_workers.s3_puller_id}"
   ign_update_ca_certificates_dropin_id = "${module.ignition_workers.update_ca_certificates_dropin_id}"
   instance_count                       = "${var.tectonic_worker_count}"

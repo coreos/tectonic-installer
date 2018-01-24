@@ -145,6 +145,10 @@ tectonic_master_count = "1"
 // "(optional) This variable should contain a comma-separated list of domain extensions proxy should not be used for. For instance, if the value of no_proxy is ‘.mit.edu’, proxy will not be used to retrieve documents from MIT."
 tectonic_no_proxy = ""
 
+// (optional) If left blank, the default Container Linux NTP servers will be used.
+// A list of NTP servers to be used for time synchronization on the cluster nodes.
+// tectonic_ntp_servers = ""
+
 // Disable floating ip assignments for k8s nodes.
 // Warning: Enabling this option removes direct internet access,
 // which prevents NodePorts from working.
