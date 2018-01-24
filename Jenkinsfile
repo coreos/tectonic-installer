@@ -144,7 +144,6 @@ pipeline {
                 originalCommitId = sh(returnStdout: true, script: 'git rev-parse origin/"\${BRANCH_NAME}"')
                 echo "originalCommitId: ${originalCommitId}"
 
-                printLogstashAttributes()
                 withDockerContainer(params.builder_image) {
                   ansiColor('xterm') {
                     sh """#!/bin/bash -ex
@@ -400,7 +399,8 @@ pipeline {
           withCredentials(creds) {
             unstash 'clean-repo'
             sh """#!/bin/bash -xe
-            ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh
+            export BUILD_RESULT=${currentBuild.currentResult}
+            ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh jenkins-logs
             """
           }
         }
@@ -441,8 +441,10 @@ def runRSpecTest(testFilePath, dockerArgs, credentials) {
                 unstash 'clean-repo'
                 unstash 'smoke-test-binary'
                 sh """#!/bin/bash -ex
+                  mkdir -p templogfiles && chmod 777 templogfiles
                   cd tests/rspec
-                  bundler exec rspec ${testFilePath}
+                  # Directing test output both to stdout as well as a log file
+                  rspec ${testFilePath} --format RspecTap::Formatter --format RspecTap::Formatter --out ../../templogfiles/format=tap.log
                 """
               }
             }
@@ -453,7 +455,15 @@ def runRSpecTest(testFilePath, dockerArgs, credentials) {
         throw error
       } finally {
         reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
-        archiveArtifacts allowEmptyArchive: true, artifacts: 'tests/rspec/logs/**/*.log'
+        archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
+        withDockerContainer(params.builder_image) {
+         withCredentials(creds) {
+           sh """#!/bin/bash -xe
+           ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
+           """
+         }
+        }
+
         cleanWs notFailBuild: true
       }
 
@@ -492,7 +502,7 @@ def runRSpecTestBareMetal(testFilePath, credentials) {
         archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
         withCredentials(credentials) {
           sh """#!/bin/bash -xe
-          ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh baremetal-smoke-test-logs ${testFilePath}
+          ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
            """
          }
         cleanWs notFailBuild: true
@@ -507,12 +517,4 @@ def reportStatusToGithub(status, context, commitId) {
       ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context} ${commitId}
     """
   }
-}
-//Function used to print environment variables that are used by Logstash as attributes for the log file.
-def printLogstashAttributes() {
-    echo  "Build_Number=" + env.BUILD_NUMBER
-    echo  "JOB_NAME=" + env.JOB_NAME
-    echo  "USER_REQUEST=" +  env.CHANGE_AUTHOR
-    echo  "GIT_TARGET_BRANCH=" + env.CHANGE_TARGET
-    echo  "GIT_PR_NUMBER=" + env.CHANGE_ID
 }
