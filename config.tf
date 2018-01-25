@@ -595,4 +595,10 @@ locals {
 
 variable "tectonic_proxy_exclusive_units" {
   default = false
+
+  description = <<EOF
+(optional) When set to true, it restricts the application of proxy settings to processes started through systemd units.
+Global proxy settings will not be affected in this case.
+When set to false, the proxy settings will apply globally, including to all processes lauched by users.
+EOF
 }
