@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: tectonic-console-ingress
+  namespace: tectonic-system
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    ingress.kubernetes.io/use-port-in-redirects: "true"
+    kubernetes.io/ingress.class: "tectonic"
+    ingress.kubernetes.io/affinity: cookie
+    ingress.kubernetes.io/session-cookie-hash: sha1
+    ingress.kubernetes.io/session-cookie-name: tectonic-affinity
+spec:
+  tls:
+  - hosts:
+    - ${console_base_host}
+    secretName: tectonic-ingress-tls-secret
+  rules:
+  - host: ${console_base_host}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: tectonic-console
+          servicePort: 80
