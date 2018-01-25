@@ -83,5 +83,5 @@ spec:
           secretName: kube-cloud-cfg
       - name: ssl-host
         hostPath:
-          path: /usr/share/ca-certificates
+          path: /etc/ssl/certs
       dnsPolicy: Default # Don't use cluster DNS.

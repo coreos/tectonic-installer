@@ -92,7 +92,7 @@ spec:
       volumes:
       - name: ssl-certs-host
         hostPath:
-          path: /usr/share/ca-certificates
+          path: /etc/ssl/certs
       - name: secrets
         secret:
           secretName: kube-apiserver
