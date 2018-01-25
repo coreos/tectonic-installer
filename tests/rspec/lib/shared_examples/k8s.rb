@@ -12,6 +12,9 @@ require 'name_generator'
 require 'password_generator'
 require 'webdriver_helpers'
 require 'k8s_conformance_tests'
+require 'test_container'
+require 'with_retries'
+require 'jenkins'
 
 RSpec.shared_examples 'withRunningCluster' do |tf_vars_path, vpn_tunnel = false|
   include_examples('withBuildFolderSetup', tf_vars_path)
@@ -24,11 +27,29 @@ RSpec.shared_examples 'withRunningClusterWithCustomTLS' do |tf_vars_path, domain
   include_examples('withRunningClusterExistingBuildFolder', vpn_tunnel)
 end
 
-RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = false|
+RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = false, exist_plat = nil, exist_tf = nil|
   before(:all) do
-    @cluster = ClusterFactory.from_tf_vars(@tfvars_file)
-    begin
+    # See https://stackoverflow.com/a/45936219/4011134
+    @exceptions = []
+
+    @cluster = if exist_plat.nil? && exist_tf.nil?
+                 ClusterFactory.from_tf_vars(@tfvars_file)
+               else
+                 ClusterFactory.from_variable(exist_plat, exist_tf)
+               end
+
+    if exist_plat.nil? && exist_tf.nil?
       @cluster.start
+    else
+      @cluster.init
+    end
+  end
+
+  # after(:all) hooks that are defined first are executed last
+  # Make sure to run `@cluster.stop` after `@cluster.forensic`
+  after(:all) do
+    begin
+      @cluster.stop if exist_plat.nil? && exist_tf.nil?
     rescue => e
       Forensic.run(@cluster)
       raise "Aborting execution due startup failed. Error: #{e}"
@@ -127,6 +148,7 @@ RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = f
       # remove platform AZURE when the JIRA https://jira.prod.coreos.systems/browse/INST-619 is fixed
       skip_platform = %w[metal azure gcp]
       skip "This test is not ready to run in #{platform}" if skip_platform.include?(platform)
+      skip 'Skipping this tests. running locally' unless Jenkins.environment?
     end
 
     it 'can scale up nodes by 1 worker' do

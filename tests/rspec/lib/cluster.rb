@@ -12,6 +12,8 @@ require 'tfstate_file'
 require 'tfvars_file'
 require 'timeout'
 require 'with_retries'
+require 'open3'
+require 'base64'
 
 # Cluster represents a k8s cluster
 class Cluster
@@ -26,6 +28,7 @@ class Cluster
     @name = ENV['CLUSTER'] || NameGenerator.generate(@tfvars_file.prefix)
     @tectonic_admin_email = ENV['TF_VAR_tectonic_admin_email'] || NameGenerator.generate_fake_email
     @tectonic_admin_password = ENV['TF_VAR_tectonic_admin_password'] || PasswordGenerator.generate_password
+    save_console_creds(@name, @tectonic_admin_email, @tectonic_admin_password)
 
     @build_path = File.join(File.realpath('../../'), "build/#{@name}")
     @manifest_path = File.join(@build_path, 'generated')
@@ -49,6 +52,10 @@ class Cluster
 
   def update_cluster
     start
+  end
+
+  def init
+    terraform_init
   end
 
   def stop
@@ -118,6 +125,13 @@ class Cluster
   end
 
   def forensic(events = true)
+    outputs_console_logs = machine_boot_console_logs
+    outputs_console_logs.each do |ip, log|
+      puts "saving boot logs from master-#{ip}"
+      decoded_base64_content = Base64.decode64(log)
+      save_to_file(@name, 'console_machine', ip, 'console_machine', decoded_base64_content)
+    end
+
     save_kubernetes_events(@kubeconfig, @name) if events
 
     master_ip_addresses.each do |master_ip|
@@ -141,6 +155,10 @@ class Cluster
         print_service_logs(etcd_ip, service, @name, master_ip_address)
       end
     end
+  end
+
+  def machine_boot_console_logs
+    { '0.0.0.0' => 'not implemented yet' }
   end
 
   private
@@ -185,6 +203,17 @@ class Cluster
   rescue => e
     recover_from_failed_destroy
     raise e
+  end
+
+  def terraform_init
+    ::Timeout.timeout(30 * 60) do # 30 minutes
+      env = env_variables
+      env['TF_INIT_OPTIONS'] = '-no-color'
+      return true if system(env, 'make -C ../.. terraform-init')
+    end
+  rescue Timeout::Error
+    forensic(false)
+    raise 'Terraform init failed'
   end
 
   def recover_from_failed_destroy() end
@@ -236,6 +265,7 @@ class Cluster
 
   def wait_for_bootstrapping
     ips = master_ip_addresses
+    raise 'Empty master ips. Aborting...' if ips.empty?
     wait_for_service('bootkube', ips)
     wait_for_service('tectonic', ips)
     puts 'HOORAY! The cluster is up'
@@ -253,17 +283,19 @@ class Cluster
   def wait_for_service(service, ips)
     from = Time.now
 
-    180.times do # 180 * 10 = 1800 seconds = 30 minutes
-      return if service_finished_bootstrapping?(ips, service)
+    ::Timeout.timeout(30 * 60) do # 30 minutes
+      loop do
+        return if service_finished_bootstrapping?(ips, service)
 
-      elapsed = Time.now - from
-      if (elapsed.round % 5).zero?
-        puts "Waiting for bootstrapping of #{service} service to complete..."
-        puts "Checked master nodes: #{ips}"
+        elapsed = Time.now - from
+        if (elapsed.round % 5).zero?
+          puts "Waiting for bootstrapping of #{service} service to complete..."
+          puts "Checked master nodes: #{ips}"
+        end
+        sleep 10
       end
-      sleep 10
     end
-
+  rescue Timeout::Error
     puts 'Trying to collecting the logs...'
     forensic(false) # Call forensic to collect logs when service timeout
     raise "timeout waiting for #{service} service to bootstrap on any of: #{ips}"
@@ -271,7 +303,6 @@ class Cluster
 
   def service_finished_bootstrapping?(ips, service)
     command = "test -e /opt/tectonic/init_#{service}.done"
-
     ips.each do |ip|
       finished = 1
       begin
@@ -285,7 +316,6 @@ class Cluster
         return true
       end
     end
-
     false
   end
 
