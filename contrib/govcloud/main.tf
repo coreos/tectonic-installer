@@ -48,7 +48,7 @@ resource "aws_instance" "bastion" {
   vpc_security_group_ids = ["${compact(concat(list(aws_security_group.powerdns.id), list(aws_security_group.vpn_sg.id)))}"]
   source_dest_check      = false
   key_name               = "${var.ssh_key}"
-  user_data              = "${data.template_file.services.rendered}"
+  user_data              = "${data.ignition_config.main.rendered}"
 
   depends_on = ["aws_eip.ovpn_eip"]
 
@@ -57,16 +57,29 @@ resource "aws_instance" "bastion" {
   }
 }
 
-data "template_file" "services" {
-  template = "${file("${path.module}/services.sh")}"
+data "ignition_config" "main" {
+  files = ["${compact(list(
+    data.ignition_file.nginx_conf.id,
+   ))}"]
 
-  vars {
-    ip           = "${aws_eip.ovpn_eip.public_ip}"
-    dns_zone     = "${var.base_domain}"
-    private_cidr = "${cidrsubnet(var.vpc_cidr, 6, 25)}"
-    username     = "${var.nginx_username}"
-    password     = "${var.nginx_password}"
-  }
+  systemd = ["${compact(list(
+    data.ignition_systemd_unit.gateway_service.id,
+    data.ignition_systemd_unit.nginx_service.id,
+    data.ignition_systemd_unit.openvpn_service.id,
+    data.ignition_systemd_unit.powerdns_service.id,
+    data.ignition_systemd_unit.update-engine.id,
+    data.ignition_systemd_unit.locksmithd.id,
+   ))}"]
+}
+
+data "ignition_systemd_unit" "update-engine" {
+  name = "update-engine.service"
+  mask = true
+}
+
+data "ignition_systemd_unit" "locksmithd" {
+  name = "locksmithd.service"
+  mask = true
 }
 
 # IGW
