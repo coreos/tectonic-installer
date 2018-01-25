@@ -251,6 +251,11 @@ tectonic_no_proxy = ""
 // A list of NTP servers to be used for time synchronization on the cluster nodes.
 // tectonic_ntp_servers = ""
 
+// (optional) When set to true, it restricts the application of proxy settings to processes started through systemd units.
+// Global proxy settings will not be affected in this case.
+// When set to false, the proxy settings will apply globally, including to all processes lauched by users.
+// tectonic_proxy_exclusive_units = false
+
 // The path the pull secret file in JSON format.
 // This is known to be a "Docker pull secret" as produced by the docker login [1] command.
 // A sample JSON content is shown in [2].
