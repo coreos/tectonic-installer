@@ -54,6 +54,7 @@ module "ignition_masters" {
   ntp_servers               = "${var.tectonic_ntp_servers}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
   use_metadata              = false
+  proxy_exclusive_units     = "${var.tectonic_proxy_exclusive_units}"
 }
 
 resource "matchbox_group" "controller" {
@@ -115,6 +116,7 @@ module "ignition_workers" {
   no_proxy                = "${var.tectonic_no_proxy}"
   ntp_servers             = "${var.tectonic_ntp_servers}"
   tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
+  proxy_exclusive_units   = "${var.tectonic_proxy_exclusive_units}"
 }
 
 resource "matchbox_group" "worker" {
