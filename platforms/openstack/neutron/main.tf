@@ -206,6 +206,7 @@ module "ignition_masters" {
   http_proxy                = "${var.tectonic_http_proxy_address}"
   https_proxy               = "${var.tectonic_https_proxy_address}"
   no_proxy                  = "${var.tectonic_no_proxy}"
+  proxy_exclusive_units     = "${var.tectonic_proxy_exclusive_units}"
 }
 
 module "master_nodes" {
@@ -267,6 +268,7 @@ module "ignition_workers" {
   http_proxy              = "${var.tectonic_http_proxy_address}"
   https_proxy             = "${var.tectonic_https_proxy_address}"
   no_proxy                = "${var.tectonic_no_proxy}"
+  proxy_exclusive_units   = "${var.tectonic_proxy_exclusive_units}"
 }
 
 module "worker_nodes" {
