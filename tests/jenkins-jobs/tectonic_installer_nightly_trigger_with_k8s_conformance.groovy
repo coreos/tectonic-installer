@@ -33,7 +33,7 @@ job("triggers/tectonic-installer-nightly-trigger_with_k8s_conformance") {
                   value(true)
                 }
                 booleanParameterConfig {
-                  name('CONFORMANCE_TESTS_BASIC')
+                  name('BASIC_CLUSTER_CONFIG_ONLY')
                   value(true)
                 }
                 booleanParameterConfig {
