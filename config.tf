@@ -577,3 +577,18 @@ variable "tectonic_ntp_servers" {
 A list of NTP servers to be used for time synchronization on the cluster nodes.
 EOF
 }
+
+variable "tectonic_nfs_config_file" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) the path to an NFS configuration file to be placed in /etc/conf.d/nfs
+file on the CL nodes.
+EOF
+}
+
+# Workaround for https://github.com/hashicorp/hil/issues/50
+locals {
+  _tectonic_nfs_config_file = "${var.tectonic_nfs_config_file != "" ? var.tectonic_nfs_config_file : "/dev/null"}"
+}
