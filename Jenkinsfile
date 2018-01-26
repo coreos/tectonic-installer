@@ -34,7 +34,7 @@ creds = commonCreds.collect()
 creds.push(
   [
     $class: 'AmazonWebServicesCredentialsBinding',
-    credentialsId: 'tectonic-jenkins-installer'
+    credentialsId: 'TF-TECTONIC-JENKINS'
   ],
 )
 
@@ -55,8 +55,8 @@ quayCreds = [
   )
 ]
 
-defaultBuilderImage = 'quay.io/coreos/tectonic-builder:v1.43'
-tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.14'
+defaultBuilderImage = 'quay.io/coreos/tectonic-builder:v1.44'
+tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.15'
 originalCommitId = 'UNKNOWN'
 
 pipeline {
@@ -194,8 +194,8 @@ pipeline {
         }
       }
       environment {
-        TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
-        GRAFITI_DELETER_ROLE = 'grafiti-deleter'
+        TECTONIC_INSTALLER_ROLE = 'tf-tectonic-installer'
+        GRAFITI_DELETER_ROLE = 'tf-grafiti'
         TF_VAR_tectonic_container_images = "${params.hyperkube_image}"
       }
       steps {
@@ -281,8 +281,8 @@ pipeline {
         }
       }
       environment {
-        TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
-        GRAFITI_DELETER_ROLE = 'grafiti-deleter'
+        TECTONIC_INSTALLER_ROLE = 'tf-tectonic-installer'
+        GRAFITI_DELETER_ROLE = 'tf-grafiti'
         TF_VAR_tectonic_container_images = "${params.hyperkube_image}"
         TF_VAR_tectonic_kubelet_debug_config = "--minimum-container-ttl-duration=8h --maximum-dead-containers-per-container=9999 --maximum-dead-containers=9999"
         GOOGLE_PROJECT = "tectonic-installer"
