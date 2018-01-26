@@ -102,6 +102,11 @@ pipeline {
       description: ''
     )
     booleanParam(
+      name: 'CONFORMANCE_TESTS_BASIC',
+      defaultValue: true,
+      description: ''
+    )
+    booleanParam(
       name: 'RUN_GUI_TESTS',
       defaultValue: true,
       description: ''
@@ -351,6 +356,14 @@ pipeline {
             [file: 'basic_spec.rb', args: ''],
             [file: 'custom_tls_spec.rb', args: '']
           ]
+
+          if (params."CONFORMANCE_TESTS_BASIC") {
+            aws = [aws[0]]
+            govcloud = [govcloud[0]]
+            azure = [azure[0]]
+            metal = [metal[0]]
+            // gcp = [gcp[0]] // Disabled until we start the work again on gcp
+          }
 
           if (params."PLATFORM/AWS") {
             aws.each { build ->

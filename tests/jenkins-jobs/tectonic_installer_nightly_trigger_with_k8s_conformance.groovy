@@ -33,6 +33,10 @@ job("triggers/tectonic-installer-nightly-trigger_with_k8s_conformance") {
                   value(true)
                 }
                 booleanParameterConfig {
+                  name('CONFORMANCE_TESTS_BASIC')
+                  value(true)
+                }
+                booleanParameterConfig {
                   name('PLATFORM/GCP')
                   value(false)
                 }
