@@ -173,31 +173,19 @@ variable "iscsi_enabled" {
 }
 
 variable "http_proxy" {
-  default = ""
-  type    = "string"
+  type = "string"
 }
 
 variable "https_proxy" {
-  default = ""
-  type    = "string"
+  type = "string"
+}
+
+variable "http_proxy_enabled" {
+  type = "string"
 }
 
 variable "no_proxy" {
   type = "list"
-}
-
-variable "ign_profile_env_id" {
-  type    = "string"
-  default = ""
-}
-
-variable "ign_systemd_default_env_id" {
-  type    = "string"
-  default = ""
-}
-
-variable "ign_iscsi_service_id" {
-  type = "string"
 }
 
 variable "nfs_config_file" {
@@ -206,5 +194,5 @@ variable "nfs_config_file" {
 }
 
 variable "proxy_exclusive_units" {
-  default = false
+  type = "string"
 }

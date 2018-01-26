@@ -38,8 +38,8 @@ module "ignition_masters" {
   etcd_count                = "${length(var.tectonic_metal_controller_names)}"
   etcd_initial_cluster_list = "${var.tectonic_metal_controller_domains}"
   http_proxy                = "${var.tectonic_http_proxy_address}"
+  http_proxy_enabled        = "${local.tectonic_http_proxy_enabled}"
   https_proxy               = "${var.tectonic_https_proxy_address}"
-  ign_iscsi_service_id      = "${module.ignition_masters.iscsi_service_id}"
   image_re                  = "${var.tectonic_image_re}"
   ingress_ca_cert_pem       = "${module.ingress_certs.ca_cert_pem}"
   iscsi_enabled             = "${var.tectonic_iscsi_enabled}"
@@ -52,9 +52,9 @@ module "ignition_masters" {
   nfs_config_file           = "${local._tectonic_nfs_config_file}"
   no_proxy                  = "${var.tectonic_no_proxy}"
   ntp_servers               = "${var.tectonic_ntp_servers}"
+  proxy_exclusive_units     = "${var.tectonic_proxy_exclusive_units}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
   use_metadata              = false
-  proxy_exclusive_units     = "${var.tectonic_proxy_exclusive_units}"
 }
 
 resource "matchbox_group" "controller" {
@@ -85,8 +85,8 @@ resource "matchbox_group" "controller" {
     ign_max_user_watches_json              = "${jsonencode(module.ignition_masters.max_user_watches_rendered)}"
     ign_nfs_config_json                    = "${var.tectonic_nfs_config_file != "" ? jsonencode(module.ignition_masters.nfs_config_rendered) : ""}"
     ign_ntp_dropin_json                    = "${length(var.tectonic_ntp_servers) > 0 ? jsonencode(module.ignition_masters.ntp_dropin_rendered) : ""}"
-    ign_profile_env_json                   = "${local.tectonic_http_proxy_enabled ? jsonencode(module.ignition_masters.profile_env_rendered) : ""}"
-    ign_systemd_default_env_json           = "${local.tectonic_http_proxy_enabled ? jsonencode(module.ignition_masters.systemd_default_env_rendered) : ""}"
+    ign_profile_env_json                   = "${jsonencode(module.ignition_masters.profile_env_rendered)}"
+    ign_systemd_default_env_json           = "${jsonencode(module.ignition_masters.systemd_default_env_rendered)}"
     ign_tectonic_path_unit_json            = "${jsonencode(module.tectonic.systemd_path_unit_rendered)}"
     ign_tectonic_service_json              = "${jsonencode(module.tectonic.systemd_service_rendered)}"
     ign_update_ca_certificates_dropin_json = "${jsonencode(module.ignition_masters.update_ca_certificates_dropin_rendered)}"
@@ -101,8 +101,8 @@ module "ignition_workers" {
   custom_ca_cert_pem_list = "${var.tectonic_custom_ca_pem_list}"
   etcd_ca_cert_pem        = "${module.etcd_certs.etcd_ca_crt_pem}"
   http_proxy              = "${var.tectonic_http_proxy_address}"
+  http_proxy_enabled      = "${local.tectonic_http_proxy_enabled}"
   https_proxy             = "${var.tectonic_https_proxy_address}"
-  ign_iscsi_service_id    = "${module.ignition_workers.iscsi_service_id}"
   image_re                = "${var.tectonic_image_re}"
   ingress_ca_cert_pem     = "${module.ingress_certs.ca_cert_pem}"
   iscsi_enabled           = "${var.tectonic_iscsi_enabled}"
@@ -115,8 +115,8 @@ module "ignition_workers" {
   nfs_config_file         = "${local._tectonic_nfs_config_file}"
   no_proxy                = "${var.tectonic_no_proxy}"
   ntp_servers             = "${var.tectonic_ntp_servers}"
-  tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
   proxy_exclusive_units   = "${var.tectonic_proxy_exclusive_units}"
+  tectonic_vanilla_k8s    = "${var.tectonic_vanilla_k8s}"
 }
 
 resource "matchbox_group" "worker" {
@@ -147,8 +147,8 @@ resource "matchbox_group" "worker" {
     ign_max_user_watches_json              = "${jsonencode(module.ignition_workers.max_user_watches_rendered)}"
     ign_nfs_config_json                    = "${var.tectonic_nfs_config_file != "" ? jsonencode(module.ignition_workers.nfs_config_rendered) : ""}"
     ign_ntp_dropin_json                    = "${length(var.tectonic_ntp_servers) > 0 ? jsonencode(module.ignition_workers.ntp_dropin_rendered) : ""}"
-    ign_profile_env_json                   = "${local.tectonic_http_proxy_enabled ? jsonencode(module.ignition_workers.profile_env_rendered) : ""}"
-    ign_systemd_default_env_json           = "${local.tectonic_http_proxy_enabled ? jsonencode(module.ignition_workers.systemd_default_env_rendered) : ""}"
+    ign_profile_env_json                   = "${jsonencode(module.ignition_workers.profile_env_rendered)}"
+    ign_systemd_default_env_json           = "${jsonencode(module.ignition_workers.systemd_default_env_rendered)}"
     ign_update_ca_certificates_dropin_json = "${jsonencode(module.ignition_workers.update_ca_certificates_dropin_rendered)}"
   }
 }
