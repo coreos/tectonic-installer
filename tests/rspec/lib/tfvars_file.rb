@@ -14,10 +14,6 @@ class TFVarsFile
     @data = JSON.parse(File.read(path))
   end
 
-  def self_hosted_etcd?
-    !data.fetch('tectonic_self_hosted_etcd', '').empty?
-  end
-
   def networking
     data['tectonic_networking']
   end
@@ -27,11 +23,21 @@ class TFVarsFile
   end
 
   def master_count
-    data['tectonic_master_count'].to_i
+    count = if platform.eql?('metal')
+              data['tectonic_metal_controller_names'].count
+            else
+              data['tectonic_master_count'].to_i
+            end
+    count
   end
 
   def worker_count
-    data['tectonic_worker_count'].to_i
+    count = if platform.eql?('metal')
+              data['tectonic_metal_worker_names'].count
+            else
+              data['tectonic_worker_count'].to_i
+            end
+    count
   end
 
   def etcd_count
@@ -40,6 +46,16 @@ class TFVarsFile
 
   def add_worker_node(node_count)
     data['tectonic_worker_count'] = node_count.to_s
+    save
+  end
+
+  def change_cluster_name(cluster_name)
+    data['tectonic_cluster_name'] = cluster_name
+    save
+  end
+
+  def change_dns_name(dns_name)
+    data['tectonic_dns_name'] = dns_name
     save
   end
 

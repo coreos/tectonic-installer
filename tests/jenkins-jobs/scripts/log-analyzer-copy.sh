@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 set -xeo pipefail
 
 jenkins_filename="jenkins.log"
@@ -19,7 +20,7 @@ if [ "$action" = "smoke-test-logs" ] ; then
     exit 0
   fi
 elif [ "$action" = "jenkins-logs" ]; then
-  curl -u  "${LOG_ANALYZER_USER}":"${LOG_ANALYZER_PASSWORD}" "${BUILD_URL}""consoleText" >> "${jenkins_filename}"
+  curl -k -u  "${LOG_ANALYZER_USER}":"${LOG_ANALYZER_PASSWORD}" "${BUILD_URL}""consoleText" >> "${jenkins_filename}"
 fi
 
 #Logstash uses the key=value filter and the ',' character as split field. This means that branches can neither have the '=' nor ',' in them.

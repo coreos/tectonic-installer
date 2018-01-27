@@ -54,16 +54,14 @@ quayCreds = [
     usernameVariable: 'QUAY_ROBOT_USERNAME'
   )
 ]
-
 defaultBuilderImage = 'quay.io/coreos/tectonic-builder:v1.43'
-tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.14'
+tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.15'
 originalCommitId = 'UNKNOWN'
 
 pipeline {
   agent none
   environment {
     KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.4_coreos.0'
-    LOGSTASH_BUCKET = 'log-analyzer-tectonic-installer'
   }
   options {
     // Individual steps have stricter timeouts. 360 minutes should be never reached.
@@ -97,6 +95,16 @@ pipeline {
       defaultValue: true,
       description: ''
     )
+    string(
+      name: 'COMPONENT_TEST_IMAGES',
+      defaultValue: '',
+      description: 'List of container images for component tests to run (comma-separated)'
+    )
+    string(
+      name: 'LOGSTASH_BUCKET',
+      defaultValue: 'log-analyzer-tectonic-installer',
+      description: 's3 bucket name to sync jenkins log files into'
+    )
     booleanParam(
       name: 'PLATFORM/AWS',
       defaultValue: true,
@@ -124,6 +132,16 @@ pipeline {
       defaultValue: true,
       description: ''
     )
+    string(
+      name : 'ghOrg',
+      defaultValue: 'coreos',
+      description: 'Github organization'
+    )
+    string(
+      name: 'ghRepo',
+      defaultValue: 'tectonic-installer',
+      description: 'Github repo'
+    )
   }
 
   stages {
@@ -137,10 +155,10 @@ pipeline {
           script {
             def err = null
             try {
-              timeout(time: 10, unit: 'MINUTES') {
+              timeout(time: 20, unit: 'MINUTES') {
                 forcefullyCleanWorkspace()
                 checkout scm
-                stash name: 'clean-repo', excludes: 'installer/vendor/**,tests/smoke/vendor/**,images/tectonic-stats-extender/vendor/**'
+                stash name: 'clean-repo', excludes: 'installer/vendor/**,tests/smoke/vendor/**'
                 originalCommitId = sh(returnStdout: true, script: 'git rev-parse origin/"\${BRANCH_NAME}"')
                 echo "originalCommitId: ${originalCommitId}"
 
@@ -171,7 +189,7 @@ pipeline {
                 withDockerContainer(tectonicSmokeTestEnvImage) {
                   sh"""#!/bin/bash -ex
                     cd tests/rspec
-                    bundler exec rubocop --cache false spec lib
+                    rubocop --cache false spec lib
                   """
                 }
               }
@@ -277,7 +295,7 @@ pipeline {
     stage("Smoke Tests") {
       when {
         expression {
-          return params.RUN_SMOKE_TESTS || params.RUN_CONFORMANCE_TESTS
+          return params.RUN_SMOKE_TESTS || params.RUN_CONFORMANCE_TESTS || params.COMPONENT_TEST_IMAGES != ''
         }
       }
       environment {
@@ -441,6 +459,7 @@ def runRSpecTest(testFilePath, dockerArgs, credentials) {
                 sh """#!/bin/bash -ex
                   mkdir -p templogfiles && chmod 777 templogfiles
                   cd tests/rspec
+
                   # Directing test output both to stdout as well as a log file
                   rspec ${testFilePath} --format RspecTap::Formatter --format RspecTap::Formatter --out ../../templogfiles/format=tap.log
                 """
@@ -474,7 +493,7 @@ def runRSpecTestBareMetal(testFilePath, credentials) {
     node('worker && bare-metal') {
       def err = null
       try {
-        timeout(time: 4, unit: 'HOURS') {
+        timeout(time: 5, unit: 'HOURS') {
           ansiColor('xterm') {
             unstash 'clean-repo'
             unstash 'smoke-test-binary'
@@ -512,7 +531,7 @@ def runRSpecTestBareMetal(testFilePath, credentials) {
 def reportStatusToGithub(status, context, commitId) {
   withCredentials(creds) {
     sh """#!/bin/bash -ex
-      ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context} ${commitId}
+      GH_ORG=\${ghOrg} GH_REPO=\${ghRepo} ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context} ${commitId}
     """
   }
 }
