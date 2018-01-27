@@ -173,34 +173,26 @@ variable "iscsi_enabled" {
 }
 
 variable "http_proxy" {
-  default = ""
-  type    = "string"
+  type = "string"
 }
 
 variable "https_proxy" {
-  default = ""
-  type    = "string"
+  type = "string"
+}
+
+variable "http_proxy_enabled" {
+  type = "string"
 }
 
 variable "no_proxy" {
   type = "list"
 }
 
-variable "ign_profile_env_id" {
-  type    = "string"
-  default = ""
-}
-
-variable "ign_systemd_default_env_id" {
-  type    = "string"
-  default = ""
-}
-
-variable "ign_iscsi_service_id" {
-  type = "string"
-}
-
 variable "nfs_config_file" {
   type        = "string"
   description = "Path to a file containing the desired NFS config in /etc/conf.d/nfs."
+}
+
+variable "proxy_exclusive_units" {
+  type = "string"
 }

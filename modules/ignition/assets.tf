@@ -1,3 +1,7 @@
+locals {
+  profile_env_enabled = "${var.http_proxy_enabled && !var.proxy_exclusive_units}"
+}
+
 data "template_file" "max_user_watches" {
   template = "${file("${path.module}/resources/sysctl.d/max-user-watches.conf")}"
 }
@@ -228,6 +232,8 @@ data "ignition_systemd_unit" "iscsi" {
 }
 
 data "template_file" "profile_env" {
+  count = "${local.profile_env_enabled ? 1 : 0}"
+
   vars {
     http_proxy  = "${var.http_proxy}"
     https_proxy = "${var.https_proxy}"
@@ -238,6 +244,8 @@ data "template_file" "profile_env" {
 }
 
 data "ignition_file" "profile_env" {
+  count = "${local.profile_env_enabled ? 1 : 0}"
+
   path       = "/etc/profile.env"
   mode       = 0644
   filesystem = "root"
@@ -248,6 +256,8 @@ data "ignition_file" "profile_env" {
 }
 
 data "template_file" "systemd_default_env" {
+  count = "${var.http_proxy_enabled ? 1 : 0}"
+
   vars {
     http_proxy  = "${var.http_proxy}"
     https_proxy = "${var.https_proxy}"
@@ -258,6 +268,8 @@ data "template_file" "systemd_default_env" {
 }
 
 data "ignition_file" "systemd_default_env" {
+  count = "${var.http_proxy_enabled ? 1 : 0}"
+
   path       = "/etc/systemd/system.conf.d/10-default-env.conf"
   mode       = 0644
   filesystem = "root"
