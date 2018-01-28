@@ -15,7 +15,7 @@ RSpec.describe 'aws-vpc' do
   before(:all) do
     export_random_region_if_not_defined
     # AWSIAM.assume_role(ENV['TF_VAR_tectonic_aws_region']) if ENV.key?('TECTONIC_INSTALLER_ROLE')
-    @vpc = AWSVPC.new('test-vpc')
+    @vpc = AWSVPC.new('test-vpc', ENV['TF_VAR_tectonic_base_domain'])
     @vpc.create
   end
 

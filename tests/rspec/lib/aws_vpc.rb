@@ -13,9 +13,11 @@ class AWSVPC
   attr_reader :master_subnet_ids
   attr_reader :worker_subnet_ids
   attr_reader :vpn_connection
+  attr_reader :base_domain
 
-  def initialize(name)
+  def initialize(name, base_domain)
     @name = name
+    @base_domain = base_domain
     @ovpn_password =
       `tr -cd '[:alnum:]' < /dev/urandom | head -c 32 ; echo`.chomp
   end
@@ -25,7 +27,7 @@ class AWSVPC
       'TF_VAR_vpc_aws_region' => ENV['TF_VAR_tectonic_aws_region'],
       'TF_VAR_vpc_name' => @name,
       'TF_VAR_ovpn_password' => @ovpn_password,
-      'TF_VAR_base_domain' => 'tectonic-ci.de',
+      'TF_VAR_base_domain' => @base_domain,
       'TF_VAR_aws_role' => ENV['TF_VAR_tectonic_aws_installer_role']
     }
   end
@@ -35,7 +37,8 @@ class AWSVPC
       'TF_VAR_tectonic_aws_external_private_zone' => @private_zone_id,
       'TF_VAR_tectonic_aws_external_vpc_id' => @vpc_id,
       'TF_VAR_tectonic_aws_external_master_subnet_ids' => @master_subnet_ids,
-      'TF_VAR_tectonic_aws_external_worker_subnet_ids' => @worker_subnet_ids
+      'TF_VAR_tectonic_aws_external_worker_subnet_ids' => @worker_subnet_ids,
+      'TF_VAR_tectonic_base_domain' => @base_domain
     }
     vars.each do |key, value|
       ENV[key] = value
