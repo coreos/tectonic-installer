@@ -62,6 +62,7 @@ pipeline {
   agent none
   environment {
     KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.4_coreos.0'
+    TF_VAR_tectonic_aws_region = "${params.AWS_REGION}"
   }
   options {
     // Individual steps have stricter timeouts. 360 minutes should be never reached.
@@ -109,6 +110,11 @@ pipeline {
       name: 'PLATFORM/AWS',
       defaultValue: true,
       description: ''
+    )
+    string(
+      name: 'AWS_REGION',
+      defaultValue: 'us-east-1',
+      description: 'aws region to use'
     )
     booleanParam(
       name: 'PLATFORM/GOVCLOUD',
