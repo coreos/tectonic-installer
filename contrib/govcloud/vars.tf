@@ -7,6 +7,11 @@ variable vpc_name {
   default     = "bastion"
 }
 
+variable instance_type {
+  description = "The type of the ec2 machine."
+  default     = "t2.micro"
+}
+
 variable base_domain {
   default     = "tectonic-ci.de"
   description = "The base domain for this cluster's FQDN"

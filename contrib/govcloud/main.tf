@@ -43,7 +43,7 @@ resource "aws_instance" "bastion" {
   # 1st available AZ
   availability_zone      = "${data.aws_availability_zones.available.names[0]}"
   ami                    = "${data.aws_ami.coreos_ami.image_id}"
-  instance_type          = "t2.micro"
+  instance_type          = "${var.instance_type}"
   subnet_id              = "${aws_subnet.pub_subnet_generic.id}"
   vpc_security_group_ids = ["${compact(concat(list(aws_security_group.powerdns.id), list(aws_security_group.vpn_sg.id)))}"]
   source_dest_check      = false
@@ -58,9 +58,7 @@ resource "aws_instance" "bastion" {
 }
 
 data "ignition_config" "main" {
-  files = ["${compact(list(
-    data.ignition_file.nginx_conf.id,
-   ))}"]
+  files = ["${data.ignition_file.nginx_conf.id}"]
 
   systemd = ["${compact(list(
     data.ignition_systemd_unit.gateway_service.id,
