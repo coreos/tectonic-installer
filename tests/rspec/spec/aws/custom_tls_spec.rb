@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
 require 'shared_examples/k8s'
-
-DOMAIN = 'tectonic-ci.de'
-
 RSpec.describe 'aws-custom-tls' do
   include_examples('withBuildFolderSetup', '../smoke/aws/vars/aws.tfvars.json')
-  include_examples('withTLSSetup', DOMAIN)
+  include_examples('withTLSSetup', ENV['TF_VAR_tectonic_base_domain'])
 
   before(:all) do
     # doing this because the example aws.tfvars.json is being used by the UI tests

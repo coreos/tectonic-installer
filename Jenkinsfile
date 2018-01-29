@@ -319,6 +319,7 @@ pipeline {
             GRAFITI_DELETER_ROLE = 'grafiti-deleter'
             TF_VAR_tectonic_aws_region = "${params.AWS_REGION}"
             TF_VAR_tectonic_base_domain = "${params.aws_base_domain}"
+            TF_VAR_base_domain = "${params.aws_base_domain}"
           }
           steps {
             script {

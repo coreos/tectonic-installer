@@ -25,7 +25,7 @@ class AWSVPC
       'TF_VAR_vpc_aws_region' => ENV['TF_VAR_tectonic_aws_region'],
       'TF_VAR_vpc_name' => @name,
       'TF_VAR_ovpn_password' => @ovpn_password,
-      'TF_VAR_base_domain' => 'tectonic-ci.de'
+      'TF_VAR_base_domain' => ENV['TF_VAR_tectonic_base_domain']
     }
   end
 
@@ -34,7 +34,8 @@ class AWSVPC
       'TF_VAR_tectonic_aws_external_private_zone' => @private_zone_id,
       'TF_VAR_tectonic_aws_external_vpc_id' => @vpc_id,
       'TF_VAR_tectonic_aws_external_master_subnet_ids' => @master_subnet_ids,
-      'TF_VAR_tectonic_aws_external_worker_subnet_ids' => @worker_subnet_ids
+      'TF_VAR_tectonic_aws_external_worker_subnet_ids' => @worker_subnet_ids,
+      'TF_VAR_tectonic_base_domain' => ENV['TF_VAR_tectonic_base_domain']
     }
     vars.each do |key, value|
       ENV[key] = value
