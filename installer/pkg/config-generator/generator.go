@@ -13,55 +13,57 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// ConfigGenerator defines the cluster config generation for a cluster.
 type ConfigGenerator struct {
 	config.Cluster
 }
 
-type ConfigurationObject struct {
+type configurationObject struct {
 	metav1.TypeMeta
 
-	Metadata `json:"metadata,omitempty"`
-	Data     map[string]string `json:"data,omitempty"`
+	Metadata metadata `json:"metadata,omitempty"`
+	Data     data     `json:"data,omitempty"`
 }
 
-type Data map[string]string
+type data map[string]string
 
-type Metadata struct {
+type metadata struct {
 	Name      string `json:"name,omitempty"`
 	Namespace string `json:"namespace,omitempty"`
 }
 
-type UnmarshaledData map[string]interface{}
+type genericData map[string]interface{}
 
+// New returns a ConfigGenerator for a cluster.
 func New(cluster config.Cluster) ConfigGenerator {
 	return ConfigGenerator{
 		Cluster: cluster,
 	}
 }
 
+// KubeSystem returns, if successful, a yaml string for the kube-system.
 func (c ConfigGenerator) KubeSystem() (string, error) {
-	return configMap("kube-system", UnmarshaledData{
+	return configMap("kube-system", genericData{
 		"core-config":    c.coreConfig(),
 		"network-config": c.networkConfig(),
 	})
 }
 
+// TectonicSystem returns, if successful, a yaml string for the tectonic-system.
 func (c ConfigGenerator) TectonicSystem() (string, error) {
-	return configMap("tectonic-system", UnmarshaledData{
+	return configMap("tectonic-system", genericData{
 		"addon-config":   c.addonConfig(),
 		"utility-config": c.utilityConfig(),
 	})
 }
 
 func (c ConfigGenerator) addonConfig() *kubeaddon.OperatorConfig {
-	addonConfig := kubeaddon.OperatorConfig{
+	return &kubeaddon.OperatorConfig{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: kubeaddon.APIVersion,
 			Kind:       kubeaddon.Kind,
 		},
 	}
-
-	return &addonConfig
 }
 
 func (c ConfigGenerator) coreConfig() *kubecore.OperatorConfig {
@@ -105,8 +107,8 @@ func (c ConfigGenerator) utilityConfig() *tectonicutility.OperatorConfig {
 	return &utilityConfig
 }
 
-func configMap(namespace string, unmarshaledData UnmarshaledData) (string, error) {
-	data := make(Data)
+func configMap(namespace string, unmarshaledData genericData) (string, error) {
+	data := make(data)
 
 	for key, obj := range unmarshaledData {
 		str, err := marshalYAML(obj)
@@ -116,12 +118,12 @@ func configMap(namespace string, unmarshaledData UnmarshaledData) (string, error
 		data[key] = str
 	}
 
-	configurationObject := ConfigurationObject{
+	configurationObject := configurationObject{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
 			Kind:       "ConfigMap",
 		},
-		Metadata: Metadata{
+		Metadata: metadata{
 			Name:      "cluster-config-v1",
 			Namespace: namespace,
 		},

@@ -4,6 +4,7 @@ import (
 	"github.com/coreos/tectonic-installer/installer/pkg/config"
 )
 
+// AWS defines all variables for this platform.
 type AWS struct {
 	AssetsS3BucketName      string `json:"tectonic_aws_assets_s3_bucket_name,omitempty"`
 	EtcdEC2Type             string `json:"tectonic_aws_etcd_ec2_type,omitempty"`
@@ -40,40 +41,41 @@ type AWS struct {
 	WorkerRootVolumeType    string `json:"tectonic_aws_worker_root_volume_type,omitempty"`
 }
 
+// NewAWS returns the config for AWS.
 func NewAWS(cluster config.Cluster) AWS {
 	return AWS{
-	// AssetsS3BucketName:      "",
-	// EtcdEC2Type:             "",
-	// EtcdExtraSGIDs:          "",
-	// EtcdIAMRoleName:         "",
-	// EtcdRootVolumeIOPS:      "",
-	// EtcdRootVolumeSize:      "",
-	// EtcdRootVolumeType:      "",
-	// ExternalMasterSubnetIDs: "",
-	// ExternalPrivateZone:     "",
-	// ExternalVPCID:           "",
-	// ExternalWorkerSubnetIDs: "",
-	// ExtraTags:               "",
-	// MasterCustomSubnets:     "",
-	// MasterEC2Type:           "",
-	// MasterExtraSGIDs:        "",
-	// MasterIAMRoleName:       "",
-	// MasterRootVolumeIOPS:    "",
-	// MasterRootVolumeSize:    "",
-	// MasterRootVolumeType:    "",
-	// PrivateEndpoints:        "",
-	// Profile:                 "",
-	// PublicEndpoints:         "",
-	// Region:                  "",
-	// SSHKey:                  "",
-	// VPCCIDRBlock:            "",
-	// WorkerCustomSubnets:     "",
-	// WorkerEC2Type:           "",
-	// WorkerExtraSGIDs:        "",
-	// WorkerIAMRoleName:       "",
-	// WorkerLoadBalancers:     "",
-	// WorkerRootVolumeIOPS:    "",
-	// WorkerRootVolumeSize:    "",
-	// WorkerRootVolumeType:    "",
+		AssetsS3BucketName:      cluster.AWS.AssetsS3BucketName,
+		EtcdEC2Type:             cluster.AWS.Etcd.EC2Type,
+		EtcdExtraSGIDs:          cluster.AWS.Etcd.ExtraSGIDs,
+		EtcdIAMRoleName:         cluster.AWS.Etcd.IAMRoleName,
+		EtcdRootVolumeIOPS:      cluster.AWS.Etcd.RootVolume.IOPS,
+		EtcdRootVolumeSize:      cluster.AWS.Etcd.RootVolume.Size,
+		EtcdRootVolumeType:      cluster.AWS.Etcd.RootVolume.Type,
+		ExternalMasterSubnetIDs: cluster.AWS.External.MasterSubnetIDs,
+		ExternalPrivateZone:     cluster.AWS.External.PrivateZone,
+		ExternalVPCID:           cluster.AWS.External.VPCID,
+		ExternalWorkerSubnetIDs: cluster.AWS.External.WorkerSubnetIDs,
+		ExtraTags:               cluster.AWS.ExtraTags,
+		MasterCustomSubnets:     cluster.AWS.Master.CustomSubnets,
+		MasterEC2Type:           cluster.AWS.Master.EC2Type,
+		MasterExtraSGIDs:        cluster.AWS.Master.ExtraSGIDs,
+		MasterIAMRoleName:       cluster.AWS.Master.IAMRoleName,
+		MasterRootVolumeIOPS:    cluster.AWS.Master.RootVolume.IOPS,
+		MasterRootVolumeSize:    cluster.AWS.Master.RootVolume.Size,
+		MasterRootVolumeType:    cluster.AWS.Master.RootVolume.Type,
+		PrivateEndpoints:        cluster.AWS.PrivateEndpoints,
+		Profile:                 cluster.AWS.Profile,
+		PublicEndpoints:         cluster.AWS.PublicEndpoints,
+		Region:                  cluster.AWS.Region,
+		SSHKey:                  cluster.AWS.SSHKey,
+		VPCCIDRBlock:            cluster.AWS.VPCCIDRBlock,
+		WorkerCustomSubnets:     cluster.AWS.Worker.CustomSubnets,
+		WorkerEC2Type:           cluster.AWS.Worker.EC2Type,
+		WorkerExtraSGIDs:        cluster.AWS.Worker.ExtraSGIDs,
+		WorkerIAMRoleName:       cluster.AWS.Worker.IAMRoleName,
+		WorkerLoadBalancers:     cluster.AWS.Worker.LoadBalancers,
+		WorkerRootVolumeIOPS:    cluster.AWS.Worker.RootVolume.IOPS,
+		WorkerRootVolumeSize:    cluster.AWS.Worker.RootVolume.Size,
+		WorkerRootVolumeType:    cluster.AWS.Worker.RootVolume.Type,
 	}
 }

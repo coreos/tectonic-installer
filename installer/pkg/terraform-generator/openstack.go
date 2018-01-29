@@ -4,6 +4,7 @@ import (
 	"github.com/coreos/tectonic-installer/installer/pkg/config"
 )
 
+// OpenStack defines all variables for this platform.
 type OpenStack struct {
 	DisableFloatingIP string `json:"tectonic_openstack_disable_floatingip,omitempty"`
 	DNSNameservers    string `json:"tectonic_openstack_dns_nameservers,omitempty"`
@@ -21,21 +22,22 @@ type OpenStack struct {
 	WorkerFlavorName  string `json:"tectonic_openstack_worker_flavor_name,omitempty"`
 }
 
+// NewOpenStack returns the config for OpenStack.
 func NewOpenStack(cluster config.Cluster) OpenStack {
 	return OpenStack{
-	// DisableFloatingIP: "",
-	// DNSNameservers:    "",
-	// EtcdFlavorID:      "",
-	// EtcdFlavorName:    "",
-	// ExternalGatewayID: "",
-	// FloatingipPool:    "",
-	// ImageID:           "",
-	// ImageName:         "",
-	// LBProvider:        "",
-	// MasterFlavorID:    "",
-	// MasterFlavorName:  "",
-	// SubnetCIDR:        "",
-	// WorkerFlavorID:    "",
-	// WorkerFlavorName:  "",
+		DisableFloatingIP: cluster.OpenStack.DisableFloatingIP,
+		DNSNameservers:    cluster.OpenStack.DNSNameservers,
+		EtcdFlavorID:      cluster.OpenStack.EtcdFlavor.ID,
+		EtcdFlavorName:    cluster.OpenStack.EtcdFlavor.Name,
+		ExternalGatewayID: cluster.OpenStack.ExternalGatewayID,
+		FloatingIPPool:    cluster.OpenStack.FloatingIPPool,
+		ImageID:           cluster.OpenStack.Image.ID,
+		ImageName:         cluster.OpenStack.Image.Name,
+		LBProvider:        cluster.OpenStack.LBProvider,
+		MasterFlavorID:    cluster.OpenStack.MasterFlavor.ID,
+		MasterFlavorName:  cluster.OpenStack.MasterFlavor.Name,
+		SubnetCIDR:        cluster.OpenStack.SubnetCIDR,
+		WorkerFlavorID:    cluster.OpenStack.WorkerFlavor.ID,
+		WorkerFlavorName:  cluster.OpenStack.WorkerFlavor.Name,
 	}
 }

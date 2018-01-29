@@ -6,11 +6,12 @@ import (
 	"github.com/coreos/tectonic-installer/installer/pkg/config"
 )
 
+// TerraformGenerator defines the terraform config generator for a cluster.
 type TerraformGenerator struct {
 	config.Cluster
 }
 
-type TFVars struct {
+type tfVars struct {
 	AWS       `json:",inline"`
 	Azure     `json:",inline"`
 	GCP       `json:",inline"`
@@ -21,14 +22,16 @@ type TFVars struct {
 	VMware    `json:",inline"`
 }
 
+// New returns a TerraformGenerator for a cluster.
 func New(cluster config.Cluster) TerraformGenerator {
 	return TerraformGenerator{
 		Cluster: cluster,
 	}
 }
 
+// TFVars returns, if successful, the terraform variables as a json string.
 func (c TerraformGenerator) TFVars() (string, error) {
-	tfVars := TFVars{
+	tfVars := tfVars{
 		AWS:       NewAWS(c.Cluster),
 		Azure:     NewAzure(c.Cluster),
 		GCP:       NewGCP(c.Cluster),

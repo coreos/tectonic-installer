@@ -4,6 +4,7 @@ import (
 	"github.com/coreos/tectonic-installer/installer/pkg/config"
 )
 
+// Azure defines all variables for this platform.
 type Azure struct {
 	CloudEnvironment       string `json:"tectonic_azure_cloud_environment,omitempty"`
 	EtcdStorageType        string `json:"tectonic_azure_etcd_storage_type,omitempty"`
@@ -27,27 +28,28 @@ type Azure struct {
 	WorkerVMSize           string `json:"tectonic_azure_worker_vm_size,omitempty"`
 }
 
+// NewAzure returns the config for Azure.
 func NewAzure(cluster config.Cluster) Azure {
 	return Azure{
-	// CloudEnvironment:       "",
-	// EtcdStorageType:        "",
-	// EtcdVMSize:             "",
-	// ExternalDNSZoneID:      "",
-	// ExternalMasterSubnetID: "",
-	// ExternalNSGMasterID:    "",
-	// ExternalNSGWorkerID:    "",
-	// ExternalResourceGroup:  "",
-	// ExternalVNetID:         "",
-	// ExternalWorkerSubnetID: "",
-	// ExtraTags:              "",
-	// MasterStorageType:      "",
-	// MasterVMSize:           "",
-	// PrivateCluster:         "",
-	// SSHKey:                 "",
-	// SSHNetworkExternal:     "",
-	// SSHNetworkInternal:     "",
-	// VNetCIDRBlock:          "",
-	// WorkerStorageType:      "",
-	// WorkerVMSize:           "",
+		CloudEnvironment:       cluster.Azure.CloudEnvironment,
+		EtcdStorageType:        cluster.Azure.Etcd.StorageType,
+		EtcdVMSize:             cluster.Azure.Etcd.VMSize,
+		ExternalDNSZoneID:      cluster.Azure.External.DNSZoneID,
+		ExternalMasterSubnetID: cluster.Azure.External.MasterSubnetID,
+		ExternalNSGMasterID:    cluster.Azure.External.NSG.MasterID,
+		ExternalNSGWorkerID:    cluster.Azure.External.NSG.WorkerID,
+		ExternalResourceGroup:  cluster.Azure.External.ResourceGroup,
+		ExternalVNetID:         cluster.Azure.External.VNetID,
+		ExternalWorkerSubnetID: cluster.Azure.External.WorkerSubnetID,
+		ExtraTags:              cluster.Azure.ExtraTags,
+		MasterStorageType:      cluster.Azure.Master.StorageType,
+		MasterVMSize:           cluster.Azure.Master.VMSize,
+		PrivateCluster:         cluster.Azure.PrivateCluster,
+		SSHKey:                 cluster.Azure.SSH.Key,
+		SSHNetworkExternal:     cluster.Azure.SSH.Network.External,
+		SSHNetworkInternal:     cluster.Azure.SSH.Network.Internal,
+		VNetCIDRBlock:          cluster.Azure.VNetCIDRBlock,
+		WorkerStorageType:      cluster.Azure.Worker.StorageType,
+		WorkerVMSize:           cluster.Azure.Worker.VMSize,
 	}
 }

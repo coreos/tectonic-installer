@@ -6,6 +6,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// Parse parses a yaml string and returns, if successful, a Config.
 func Parse(data string) (*Config, error) {
 	config := &Config{}
 
@@ -17,6 +18,7 @@ func Parse(data string) (*Config, error) {
 	return config, nil
 }
 
+// ParseFile parses a yaml file and returns, if successful, a Config.
 func ParseFile(path string) (*Config, error) {
 	dat, err := ioutil.ReadFile(path)
 	if err != nil {
