@@ -4,7 +4,7 @@ provider "aws" {
   version = "1.7.0"
 
   assume_role {
-    role_arn     = "${var.tectonic_aws_iam_role == "" ? "" : ${var.tectonic_aws_iam_role}}"
+    role_arn     = "${var.tectonic_aws_installer_role == "" ? "" : "${var.tectonic_aws_installer_role}"}"
     session_name = "TECTONIC_INSTALLER_${var.tectonic_cluster_name}"
   }
 }
