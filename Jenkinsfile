@@ -63,6 +63,7 @@ pipeline {
   agent none
   environment {
     KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.4_coreos.0'
+    LOGSTASH_BUCKET= "log-analyzer-tectonic-installer"
   }
   options {
     // Individual steps have stricter timeouts. 360 minutes should be never reached.
@@ -302,7 +303,6 @@ pipeline {
         TF_VAR_tectonic_container_images = "${params.hyperkube_image}"
         TF_VAR_tectonic_kubelet_debug_config = "--minimum-container-ttl-duration=8h --maximum-dead-containers-per-container=9999 --maximum-dead-containers=9999"
         GOOGLE_PROJECT = "tectonic-installer"
-        LOGSTASH_BUCKET= "log-analyzer-tectonic-installer"
       }
       steps {
         script {
@@ -416,7 +416,6 @@ pipeline {
             script {
               try {
                 sh """#!/bin/bash -xe
-                export LOGSTASH_BUCKET='log-analyzer-tectonic-installer'
                 export BUILD_RESULT=${currentBuild.currentResult}
                 ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh jenkins-logs
                 """
