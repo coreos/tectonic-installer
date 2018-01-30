@@ -302,6 +302,7 @@ pipeline {
         TF_VAR_tectonic_container_images = "${params.hyperkube_image}"
         TF_VAR_tectonic_kubelet_debug_config = "--minimum-container-ttl-duration=8h --maximum-dead-containers-per-container=9999 --maximum-dead-containers=9999"
         GOOGLE_PROJECT = "tectonic-installer"
+        LOGSTASH_BUCKET= "log-analyzer-tectonic-installer"
       }
       steps {
         script {
@@ -486,12 +487,19 @@ def runRSpecTest(testFilePath, dockerArgs, credentials) {
         archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
         withDockerContainer(params.builder_image) {
          withCredentials(creds) {
-           sh """#!/bin/bash -xe
-           ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
-           """
+          script {
+            try {
+              sh """#!/bin/bash -xe
+              ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
+              """
+            } catch (Exception e) {
+              notifyBuildSlack(true)
+            } finally {
+              cleanWs notFailBuild: true
+            }
+          }
          }
         }
-
         cleanWs notFailBuild: true
       }
 
@@ -529,9 +537,17 @@ def runRSpecTestBareMetal(testFilePath, credentials) {
         reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
         archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
         withCredentials(credentials) {
-          sh """#!/bin/bash -xe
-          ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
-           """
+          script {
+            try {
+              sh """#!/bin/bash -xe
+              ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
+              """
+            } catch (Exception e) {
+              notifyBuildSlack(true)
+            } finally {
+              cleanWs notFailBuild: true
+            }
+          }
          }
         cleanWs notFailBuild: true
       }
