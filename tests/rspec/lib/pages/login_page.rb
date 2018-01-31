@@ -12,12 +12,10 @@ class Login < BasePage
   USERNAME_INPUT          = { id: 'login' }.freeze
   PASSWORD_INPUT          = { id: 'password' }.freeze
   SUBMIT_INPUT            = { id: 'submit-login' }.freeze
-  CLUSTER_STATUS_LABEL    = { id: 'resource-title' }.freeze
+  TECTONIC_LOGO           = { id: 'logo' }.freeze
   LOGIN_FAIL              = { id: 'login-error' }.freeze
-  ADMIN_SIDE_BAR          = { css: '#sidebar > div.navigation-container > div:nth-child(6) > div' }.freeze
-  LOGOUT                  = {
-    css: '#sidebar > div.navigation-container > div:nth-child(6) > ul > li:nth-child(2) > a'
-  }.freeze
+  ADMIN_SIDE_BAR          = { id: 'qa_admin' }.freeze
+  LOGOUT                  = { id: 'qa_logout' }.freeze
 
   def initialize(driver)
     super
@@ -26,6 +24,7 @@ class Login < BasePage
   def login_page(console_url)
     check_console_health(console_url)
     visit(console_url)
+    raise 'Internal server error while trying to login' if check_internal_server_error
     expect(displayed?(USERNAME_INPUT)).to be_truthy
   end
 
@@ -43,8 +42,9 @@ class Login < BasePage
   end
 
   def success_login?
-    wait_for { displayed?(CLUSTER_STATUS_LABEL) }
-    text_of(CLUSTER_STATUS_LABEL).include? 'Cluster Status'
+    raise 'Internal server error while trying to login' if check_internal_server_error
+    wait_for { displayed?(TECTONIC_LOGO) }
+    expect(displayed?(TECTONIC_LOGO)).to be_truthy
   end
 
   def fail_to_login?
@@ -71,5 +71,15 @@ class Login < BasePage
       raise "Console was not ready. Response from /health = #{status_json}" if elapsed > 1200 # 20 mins timeout
       sleep 2
     end
+  end
+
+  def check_internal_server_error
+    page_source = @driver.page_source
+    if page_source.include?('Internal Server Error')
+      puts 'Internal server Error - HTML source'
+      puts page_source
+      return true
+    end
+    false
   end
 end
