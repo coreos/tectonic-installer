@@ -52,20 +52,16 @@ const toExport = {
 };
 
 const ignoredKeys = [
-  'tectonic_admin_email',
-  'tectonic_admin_password',
-  'tectonic_container_linux_channel',
-  'tectonic_container_linux_version',
-  'tectonic_license_path',
-  'tectonic_pull_secret_path',
-  'tectonic_stats_url',
-  'tectonic_update_app_id',
-  'tectonic_update_channel',
-  'tectonic_update_server',
+  'Console.AdminEmail',
+  'Console.AdminPassword',
+  'Tectonic.LicensePath',
+  'Tectonic.PullSecretPath',
+  'StatsURL',
+  'Update',
 ];
 
 module.exports = Object.assign(
   toExport,
-  steps('metal', '../output/metal.tfvars'),
-  steps('metal-smoke', '../../../../tests/smoke/bare-metal/vars/metal.tfvars.json', ignoredKeys)
+  steps('metal', '../output/metal.yaml'),
+  steps('metal-smoke', '../../../../tests/smoke/bare-metal/vars/metal.yaml', ignoredKeys)
 );

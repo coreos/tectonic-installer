@@ -1,21 +1,23 @@
+const _ = require('lodash');
 const deep = require('deep-diff').diff;
 const fs = require('fs');
 const JSZip = require('jszip');
 const path = require('path');
 const request = require('request');
+const yaml = require('js-yaml');
 
 const diffTfvars = (client, assetsZip, expected, ignoredKeys = []) => {
   return JSZip.loadAsync(assetsZip).then(zip => {
-    zip.file(/tfvars$/)[0].async('string').then(tfvars => {
-      const actual = JSON.parse(tfvars);
-      ignoredKeys.forEach(k => {
-        delete actual[k];
-        delete expected[k];
+    zip.file(/tectonic-cluster-config.yaml$/)[0].async('string').then(yamlStr => {
+      const actual = yaml.safeLoad(yamlStr);
+      ignoredKeys.forEach(keyPath => {
+        _.unset(actual, keyPath);
+        _.unset(expected, keyPath);
       });
       const diff = deep(actual, expected);
       if (diff !== undefined) {
         client.assert.fail(
-          'The following terraform.tfvars attributes differ from their expected value: ' +
+          'The following cluster config attributes differ from their expected value: ' +
           diff.map(d => `\n  ${d.path.join('.')} (expected: ${d.rhs}, got: ${d.lhs})`)
         );
       }
@@ -50,7 +52,7 @@ const testManualBoot = (client, expectedOutputFilePath, ignoredKeys) => {
       }
 
       // eslint-disable-next-line no-sync
-      const expected = JSON.parse(fs.readFileSync(path.join(__dirname, expectedOutputFilePath), 'utf8'));
+      const expected = yaml.safeLoad(fs.readFileSync(path.join(__dirname, expectedOutputFilePath), 'utf8'));
 
       diffTfvars(client, assetsZip, expected, ignoredKeys)
         .then(() => client.click('.btn-link .fa-refresh'));

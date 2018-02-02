@@ -1,0 +1,49 @@
+AWS:
+  Etcd:
+    EC2Type: t2.medium
+    RootVolume:
+      Size: 30
+      Type: gp2
+  ExtraTags:
+    test_tag: testing
+  Master:
+    CustomSubnets:
+      us-west-1a: 10.0.0.0/19
+      us-west-1c: 10.0.32.0/20
+    EC2Type: t2.medium
+    RootVolume:
+      Size: 30
+      Type: gp2
+  PrivateEndpoints: false
+  Region: us-west-1
+  SSHKey: tectonic-jenkins
+  VPCCIDRBlock: 10.0.0.0/16
+  Worker:
+    CustomSubnets:
+      us-west-1a: 10.0.64.0/19
+      us-west-1c: 10.0.96.0/20
+    EC2Type: t2.medium
+    RootVolume:
+      Size: 30
+      Type: gp2
+Console:
+  AdminEmail: admin@example.com
+  AdminPassword: password
+DNS:
+  BaseDomain: tectonic-ci.de
+  DNSName: aws-custom-vpc
+Etcd:
+  NodeCount: 3
+Masters:
+  NodeCount: 2
+Name: aws-custom-vpc
+Networking:
+  PodCIDR: 10.2.0.0/16
+  ServiceCIDR: 10.3.0.0/16
+Platform: aws
+Tectonic:
+  LicensePath: ./license.txt
+  PullSecretPath: ./pull_secret.json
+Version: "1.0"
+Workers:
+  NodeCount: 2

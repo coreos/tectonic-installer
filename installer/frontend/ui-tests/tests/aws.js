@@ -48,18 +48,17 @@ const toExport = {
 };
 
 const ignoredKeys = [
-  'tectonic_admin_email',
-  'tectonic_admin_password',
-  'tectonic_aws_region',
-  'tectonic_aws_ssh_key',
-  'tectonic_container_linux_channel',
-  'tectonic_license_path',
-  'tectonic_pull_secret_path',
-  'tectonic_stats_url',
+  'AWS.Region',
+  'AWS.SSHKey',
+  'Console.AdminEmail',
+  'Console.AdminPassword',
+  'Tectonic.LicensePath',
+  'Tectonic.PullSecretPath',
+  'StatsURL',
 ];
 
 module.exports = Object.assign(
   toExport,
-  steps('aws', '../../../../tests/smoke/aws/vars/aws.tfvars.json', ignoredKeys),
-  steps('aws-custom-vpc', '../output/aws-custom-vpc.tfvars')
+  steps('aws', '../../../../tests/smoke/aws/vars/aws.yaml', ignoredKeys),
+  steps('aws-custom-vpc', '../output/aws-custom-vpc.yaml')
 );
