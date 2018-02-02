@@ -96,8 +96,9 @@ RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = f
     expect(ContainerLinux.channel(@cluster)).to eq(@cluster.tf_var('tectonic_container_linux_channel'))
   end
 
-  describe 'Interact with tectonic console' do
-    before(:each) do
+  # Disabled because it is causing some invalid results. Need some investigation
+  xdescribe 'Interact with tectonic console' do
+    before(:all) do
       @driver = WebdriverHelpers.start_webdriver
       @login = Login.new(@driver)
       @console_url = @cluster.tectonic_console_url
