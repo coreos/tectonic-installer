@@ -1,3 +1,16 @@
+provider "aws" {
+  region  = "${var.tectonic_aws_region}"
+  profile = "${var.tectonic_aws_profile}"
+  version = "1.7.0"
+}
+
+data "aws_availability_zones" "azs" {}
+
+data "template_file" "etcd_hostname_list" {
+  count    = "${var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(data.aws_availability_zones.azs.names) == 5 ? 5 : 3}"
+  template = "${var.tectonic_cluster_name}-etcd-${count.index}.${var.tectonic_base_domain}"
+}
+
 module "kube_certs" {
   source = "../../modules/tls/kube/self-signed"
 

@@ -349,3 +349,8 @@ Example:
  * `["ingress-nginx"]`
 EOF
 }
+
+locals {
+  ingress_internal_fqdn = "${var.tectonic_cluster_name}.${var.tectonic_base_domain}"
+  api_internal_fqdn     = "${var.tectonic_cluster_name}-api.${var.tectonic_base_domain}"
+}
