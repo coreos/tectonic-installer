@@ -125,13 +125,13 @@ RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = f
   end
 
   describe 'Interact with tectonic console' do
-    before(:all) do
+    before(:each) do
       @driver = WebdriverHelpers.start_webdriver
       @login = Login.new(@driver)
       @console_url = @cluster.tectonic_console_url
     end
 
-    after(:all) do
+    after(:each) do
       WebdriverHelpers.stop_webdriver(@driver) if defined? @driver
     end
 

@@ -98,4 +98,12 @@ class BasePage
   rescue
     retry if (retries += 1) < 10
   end
+
+  def wait_for_load
+    180.times do
+      page_load = @driver.execute_script('return document.readyState')
+      break if page_load.eql?('complete')
+      sleep 1
+    end
+  end
 end
