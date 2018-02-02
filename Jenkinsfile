@@ -71,8 +71,8 @@ originalCommitId = 'UNKNOWN'
 pipeline {
   agent none
   environment {
-    KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.4_coreos.0'
-    LOGSTASH_BUCKET= "log-analyzer-tectonic-installer"
+    KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.9.1_coreos.0'
+    LOGSTASH_BUCKET = 'log-analyzer-tectonic-installer'
   }
   options {
     // Individual steps have stricter timeouts. 360 minutes should be never reached.
@@ -99,6 +99,11 @@ pipeline {
     booleanParam(
       name: 'RUN_SMOKE_TESTS',
       defaultValue: true,
+      description: ''
+    )
+    booleanParam(
+      name: 'BASIC_CLUSTER_CONFIG_ONLY',
+      defaultValue: false,
       description: ''
     )
     booleanParam(
@@ -351,6 +356,14 @@ pipeline {
             [file: 'basic_spec.rb', args: ''],
             [file: 'custom_tls_spec.rb', args: '']
           ]
+
+          if (params."BASIC_CLUSTER_CONFIG_ONLY") {
+            aws = [aws[0]]
+            govcloud = [govcloud[0]]
+            azure = [azure[0]]
+            metal = [metal[0]]
+            // gcp = [gcp[0]] // Disabled until we start the work again on gcp
+          }
 
           if (params."PLATFORM/AWS") {
             aws.each { build ->
