@@ -144,6 +144,11 @@ pipeline {
       defaultValue: false,
       description: ''
     )
+    booleanParam(
+      name: 'BASIC_CLUSTER_CONFIG_ONLY',
+      defaultValue: false,
+      description: ''
+    )
   }
 
   stages {
@@ -301,6 +306,14 @@ pipeline {
             [file: 'basic_spec.rb', args: ''],
             [file: 'custom_tls_spec.rb', args: '']
           ]
+
+          if (params."BASIC_CLUSTER_CONFIG_ONLY") {
+            aws = [aws[0]]
+            govcloud = [govcloud[0]]
+            azure = [azure[0]]
+            // gcp = [gcp[0]]
+            metal = [metal[0]]
+          }
 
           if (params."PLATFORM/AWS") {
             aws.each { build ->

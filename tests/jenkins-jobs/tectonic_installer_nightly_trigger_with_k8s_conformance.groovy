@@ -33,6 +33,10 @@ job("triggers/tectonic-installer-nightly-trigger_with_k8s_conformance") {
                   value(true)
                 }
                 booleanParameterConfig {
+                  name('BASIC_CLUSTER_CONFIG_ONLY')
+                  value(true)
+                }
+                booleanParameterConfig {
                   name('PLATFORM/GCP')
                   value(false)
                 }
