@@ -76,6 +76,7 @@ module "ignition_masters" {
   http_proxy                = "${var.tectonic_http_proxy_address}"
   https_proxy               = "${var.tectonic_https_proxy_address}"
   no_proxy                  = "${var.tectonic_no_proxy}"
+  iscsi_enabled             = "${var.tectonic_iscsi_enabled}"
 }
 
 data "ignition_config" "master" {

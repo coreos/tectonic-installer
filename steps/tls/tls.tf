@@ -4,6 +4,10 @@ provider "aws" {
   version = "1.7.0"
 }
 
+data "terraform_remote_state" "tls" {
+  backend = "local"
+}
+
 data "aws_availability_zones" "azs" {}
 
 data "template_file" "etcd_hostname_list" {
