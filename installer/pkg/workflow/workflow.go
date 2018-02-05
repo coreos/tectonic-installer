@@ -1,7 +1,5 @@
 package workflow
 
-import "log"
-
 // Workflow is a high-level representation
 // of a set of actions performed in a predictable order.
 type Workflow interface {
@@ -35,7 +33,7 @@ func (w simpleWorkflow) Execute() error {
 	for _, step := range w.steps {
 		err = step(&w.metadata)
 		if err != nil {
-			log.Fatal(err) // TODO: actually do proper error handling
+			return err
 		}
 	}
 	return nil

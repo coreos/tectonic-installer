@@ -38,3 +38,11 @@ func FindTemplatesForType(buildType string) string {
 	pwd, _ := os.Getwd()
 	return filepath.Join(pwd, "platforms", buildType)
 }
+
+// FindTemplatesForStep determines the location of top-level
+// Terraform templates for a given step of build.
+func FindTemplatesForStep(step ...string) string {
+	pwd, _ := os.Getwd()
+	step = append([]string{pwd, "steps"}, step...)
+	return filepath.Join(step...)
+}
