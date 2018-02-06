@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/coreos/tectonic-installer/installer/pkg/workflow"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -18,12 +20,16 @@ func main() {
 	case clusterInstallCommand.FullCommand():
 		{
 			w := workflow.NewInstallWorkflow(*clusterConfigFlag)
-			w.Execute()
+			if err := w.Execute(); err != nil {
+				log.Fatal(err) // TODO: actually do proper error handling
+			}
 		}
 	case clusterDeleteCommand.FullCommand():
 		{
 			w := workflow.NewDestroyWorkflow(*deleteClusterDir)
-			w.Execute()
+			if err := w.Execute(); err != nil {
+				log.Fatal(err) // TODO: actually do proper error handling
+			}
 		}
 	}
 }
