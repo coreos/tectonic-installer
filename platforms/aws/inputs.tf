@@ -27,4 +27,5 @@ locals {
   tectonic_path_unit        = "${data.terraform_remote_state.assets.tectonic_path_unit}"
   bootkube_service          = "${data.terraform_remote_state.assets.bootkube_service}"
   bootkube_path_unit        = "${data.terraform_remote_state.assets.bootkube_path_unit}"
+  kubeconfig_content    = "${data.terraform_remote_state.assets.kubeconfig_content}"
 }
