@@ -42,11 +42,6 @@ variable "ec2_type" {
   type = "string"
 }
 
-variable "ec2_ami" {
-  type    = "string"
-  default = ""
-}
-
 variable "extra_tags" {
   description = "Extra AWS tags to be applied to created resources."
   type        = "map"
@@ -74,16 +69,8 @@ variable "sg_ids" {
   description = "The security group IDs to be applied."
 }
 
-variable "ign_etcd_dropin_id_list" {
-  type = "list"
-}
-
 variable "s3_bucket" {
   type = "string"
-}
-
-variable "ign_etcd_crt_id_list" {
-  type = "list"
 }
 
 variable "etcd_iam_role" {
@@ -97,12 +84,7 @@ variable "dns_server_ip" {
   default = ""
 }
 
-variable "ign_profile_env_id" {
-  type    = "string"
-  default = ""
-}
-
-variable "ign_systemd_default_env_id" {
+variable "ec2_ami" {
   type    = "string"
   default = ""
 }

@@ -21,9 +21,12 @@ resource "template_dir" "bootkube" {
     serviceaccount_pub = "${base64encode(tls_private_key.service_account.public_key_pem)}"
     serviceaccount_key = "${base64encode(tls_private_key.service_account.private_key_pem)}"
 
-    etcd_ca_cert     = "${base64encode(var.etcd_ca_cert_pem)}"
-    etcd_client_cert = "${base64encode(var.etcd_client_cert_pem)}"
-    etcd_client_key  = "${base64encode(var.etcd_client_key_pem)}"
+    etcd_ca_cert        = "${base64encode(var.etcd_ca_cert_pem)}"
+    etcd_client_cert    = "${base64encode(var.etcd_client_cert_pem)}"
+    etcd_client_key     = "${base64encode(var.etcd_client_key_pem)}"
+    ncg_config_worker   = "${jsonencode(var.ncg_config_worker)}"
+    ncg_config_master   = "${jsonencode(var.ncg_config_master)}"
+    kube_dns_service_ip = "${cidrhost(var.service_cidr, 10)}"
   }
 }
 

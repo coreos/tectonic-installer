@@ -1,6 +1,7 @@
 locals {
-  ami_owner = "595879546273"
-  arn       = "aws"
+  ami_owner          = "595879546273"
+  arn                = "aws"
+  ignition_etcd_keys = ["ignition_etcd_0.json", "ignition_etcd_1.json", "ignition_etcd_2.json"]
 }
 
 data "aws_ami" "coreos_ami" {
@@ -96,6 +97,14 @@ resource "aws_iam_role_policy" "etcd" {
   ]
 }
 EOF
+}
+
+data "ignition_config" "s3" {
+  count = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
+
+  replace {
+    source = "${format("s3://%s/%s", var.s3_bucket, local.ignition_etcd_keys[count.index])}"
+  }
 }
 
 resource "aws_instance" "etcd_node" {

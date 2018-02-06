@@ -1,3 +1,11 @@
+provider "aws" {
+  region  = "${var.tectonic_aws_region}"
+  profile = "${var.tectonic_aws_profile}"
+  version = "1.7.0"
+}
+
+data "aws_availability_zones" "azs" {}
+
 data "template_file" "etcd_hostname_list" {
   count    = "${var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(data.aws_availability_zones.azs.names) == 5 ? 5 : 3}"
   template = "${var.tectonic_cluster_name}-etcd-${count.index}.${var.tectonic_base_domain}"
@@ -9,8 +17,8 @@ module "bootkube" {
 
   cluster_name = "${var.tectonic_cluster_name}"
 
-  kube_apiserver_url = "https://${var.tectonic_aws_private_endpoints ? module.dns.api_internal_fqdn : module.dns.api_external_fqdn}:443"
-  oidc_issuer_url    = "https://${var.tectonic_aws_private_endpoints ? module.dns.ingress_internal_fqdn : module.dns.ingress_external_fqdn}/identity"
+  kube_apiserver_url = "https://${local.api_internal_fqdn}:443"
+  oidc_issuer_url    = "https://${local.ingress_internal_fqdn}/identity"
 
   # Platform-independent variables wiring, do not modify.
   container_images = "${var.tectonic_container_images}"
@@ -24,29 +32,31 @@ module "bootkube" {
   oidc_username_claim = "email"
   oidc_groups_claim   = "groups"
   oidc_client_id      = "tectonic-kubectl"
-  oidc_ca_cert        = "${module.ingress_certs.ca_cert_pem}"
+  oidc_ca_cert        = "${local.ingress_certs_ca_cert_pem}"
 
   pull_secret_path = "${pathexpand(var.tectonic_pull_secret_path)}"
 
-  apiserver_cert_pem   = "${module.kube_certs.apiserver_cert_pem}"
-  apiserver_key_pem    = "${module.kube_certs.apiserver_key_pem}"
-  etcd_ca_cert_pem     = "${module.etcd_certs.etcd_ca_crt_pem}"
-  etcd_client_cert_pem = "${module.etcd_certs.etcd_client_crt_pem}"
-  etcd_client_key_pem  = "${module.etcd_certs.etcd_client_key_pem}"
-  etcd_peer_cert_pem   = "${module.etcd_certs.etcd_peer_crt_pem}"
-  etcd_peer_key_pem    = "${module.etcd_certs.etcd_peer_key_pem}"
-  etcd_server_cert_pem = "${module.etcd_certs.etcd_server_crt_pem}"
-  etcd_server_key_pem  = "${module.etcd_certs.etcd_server_key_pem}"
-  kube_ca_cert_pem     = "${module.kube_certs.ca_cert_pem}"
-  kubelet_cert_pem     = "${module.kube_certs.kubelet_cert_pem}"
-  kubelet_key_pem      = "${module.kube_certs.kubelet_key_pem}"
+  apiserver_cert_pem   = "${local.kube_certs_apiserver_cert_pem}"
+  apiserver_key_pem    = "${local.kube_certs_apiserver_key_pem}"
+  etcd_ca_cert_pem     = "${local.etcd_ca_crt_pem}"
+  etcd_client_cert_pem = "${local.etcd_client_crt_pem}"
+  etcd_client_key_pem  = "${local.etcd_client_key_pem}"
+  etcd_peer_cert_pem   = "${local.etcd_peer_crt_pem}"
+  etcd_peer_key_pem    = "${local.etcd_peer_key_pem}"
+  etcd_server_cert_pem = "${local.etcd_server_crt_pem}"
+  etcd_server_key_pem  = "${local.etcd_server_key_pem}"
+  kube_ca_cert_pem     = "${local.kube_certs_ca_cert_pem}"
+  kubelet_cert_pem     = "${local.kube_certs_kubelet_cert_pem}"
+  kubelet_key_pem      = "${local.kube_certs_kubelet_key_pem}"
 
-  etcd_endpoints = "${module.dns.etcd_endpoints}"
-  master_count   = "${var.tectonic_master_count}"
+  etcd_endpoints = "${data.template_file.etcd_hostname_list.*.rendered}"
+  master_count   = "1"
 
   cloud_config_path   = ""
   tectonic_networking = "${var.tectonic_networking}"
   calico_mtu          = "1480"
+  ncg_config_worker   = "${data.ignition_config.worker.rendered}"
+  ncg_config_master   = "${data.ignition_config.master.rendered}"
 }
 
 module "tectonic" {
@@ -55,8 +65,8 @@ module "tectonic" {
 
   cluster_name = "${var.tectonic_cluster_name}"
 
-  base_address       = "${var.tectonic_aws_private_endpoints ? module.dns.ingress_internal_fqdn : module.dns.ingress_external_fqdn}"
-  kube_apiserver_url = "https://${var.tectonic_aws_private_endpoints ? module.dns.api_internal_fqdn : module.dns.api_external_fqdn}:443"
+  base_address       = "${local.ingress_internal_fqdn}"
+  kube_apiserver_url = "https://${local.api_internal_fqdn}:443"
   service_cidr       = "${var.tectonic_service_cidr}"
 
   # Platform-independent variables wiring, do not modify.
@@ -75,21 +85,21 @@ module "tectonic" {
   update_server  = "${var.tectonic_update_server}"
 
   ca_generated = "${var.tectonic_ca_cert == "" ? false : true}"
-  ca_cert      = "${module.kube_certs.ca_cert_pem}"
+  ca_cert      = "${local.kube_certs_ca_cert_pem}"
 
-  ingress_ca_cert_pem = "${module.ingress_certs.ca_cert_pem}"
-  ingress_cert_pem    = "${module.ingress_certs.cert_pem}"
-  ingress_key_pem     = "${module.ingress_certs.key_pem}"
+  ingress_ca_cert_pem = "${local.ingress_certs_ca_cert_pem}"
+  ingress_cert_pem    = "${local.ingress_certs_cert_pem}"
+  ingress_key_pem     = "${local.ingress_certs_key_pem}"
 
-  identity_client_cert_pem = "${module.identity_certs.client_cert_pem}"
-  identity_client_key_pem  = "${module.identity_certs.client_key_pem}"
-  identity_server_cert_pem = "${module.identity_certs.server_cert_pem}"
-  identity_server_key_pem  = "${module.identity_certs.server_key_pem}"
+  identity_client_cert_pem = "${local.identity_certs_client_cert_pem}"
+  identity_client_key_pem  = "${local.identity_certs_client_key_pem}"
+  identity_server_cert_pem = "${local.identity_certs_server_cert_pem}"
+  identity_server_key_pem  = "${local.identity_certs_server_key_pem}"
 
   console_client_id = "tectonic-console"
   kubectl_client_id = "tectonic-kubectl"
   ingress_kind      = "NodePort"
-  master_count      = "${var.tectonic_master_count}"
+  master_count      = "1"
   stats_url         = "${var.tectonic_stats_url}"
 
   image_re = "${var.tectonic_image_re}"
@@ -109,5 +119,5 @@ data "archive_file" "assets" {
   # Additionally, data sources do not support managing any lifecycle whatsoever,
   # and therefore, the archive is never deleted. To avoid cluttering the module
   # folder, we write it in the Terraform managed hidden folder `.terraform`.
-  output_path = "./.terraform/generated_${sha1("${module.etcd_certs.id} ${module.tectonic.id} ${module.bootkube.id}")}.zip"
+  output_path = "./.terraform/generated_${sha1("${module.tectonic.id} ${module.bootkube.id}")}.zip"
 }
