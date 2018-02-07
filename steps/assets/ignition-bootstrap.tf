@@ -79,7 +79,7 @@ data "ignition_config" "bootstrap" {
 }
 
 data "template_file" "init_assets" {
-  template = "${file("${path.module}/../../modules/aws/master-asg/resources/init-assets.sh")}"
+  template = "${file("${path.module}/resources/init-assets.sh")}"
 
   vars {
     cluster_name       = "${var.tectonic_cluster_name}"
@@ -99,7 +99,7 @@ data "ignition_file" "init_assets" {
 }
 
 data "template_file" "rm_assets" {
-  template = "${file("${path.module}/../../modules/aws/master-asg/resources/rm-assets.sh")}"
+  template = "${file("${path.module}/resources/rm-assets.sh")}"
 
   vars {
     cluster_name       = "${var.tectonic_cluster_name}"
