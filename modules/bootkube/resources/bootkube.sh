@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Hack to clear static manifests that may have been created by bootkube
+# between k8s-node-bootstrapper finishing and the initial reboot.
+rm -rf /etc/kubernetes/manifests
+
 # When self-hosted etcd is enabled, bootkube places an static pod manifest in
 # /etc/kubernetes/manifests for Kubelet to boot a temporary etcd instance.
 # However, Kubelet might not have started yet and therefore the folder might
