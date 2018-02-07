@@ -112,11 +112,15 @@ tectonic_etcd_count = "0"
 // Note: If `tectonic_experimental` is set to `true` this variable has no effect, because the experimental self-hosted etcd always uses TLS.
 // tectonic_etcd_tls_enabled = true
 
-// "(optional) The HTTP proxy address to set in the environment variables of installed ContainerLinux instances."
-tectonic_http_proxy_address = ""
+// (optional) HTTP proxy address.
+// 
+// Example: `http://myproxy.example.com`
+// tectonic_http_proxy_address = ""
 
-// "(optional) The HTTPS proxy address to set in the environment variables of installed ContainerLinux instances."
-tectonic_https_proxy_address = ""
+// (optional) HTTPS proxy address.
+// 
+// Example: `http://myproxy.example.com`
+// tectonic_https_proxy_address = ""
 
 // (optional) Start iscsid.service to enable iscsi volume attachment.
 // tectonic_iscsi_enabled = "false"
@@ -146,8 +150,10 @@ tectonic_master_count = "1"
 // file on the CL nodes.
 // tectonic_nfs_config_file = ""
 
-// "(optional) This variable should contain a comma-separated list of domain extensions proxy should not be used for. For instance, if the value of no_proxy is ‘.mit.edu’, proxy will not be used to retrieve documents from MIT."
-tectonic_no_proxy = ""
+// (optional) List of local endpoints that will not use HTTP proxy.
+// 
+// Example: `["127.0.0.1","localhost",".example.com","10.3.0.1"]`
+// tectonic_no_proxy = ""
 
 // (optional) If left blank, the default Container Linux NTP servers will be used.
 // A list of NTP servers to be used for time synchronization on the cluster nodes.
