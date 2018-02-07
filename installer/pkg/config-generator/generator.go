@@ -74,7 +74,6 @@ func (c ConfigGenerator) coreConfig() *kubecore.OperatorConfig {
 		},
 	}
 
-	coreConfig.InitialConfig.InitialMasterCount = c.Cluster.Masters.NodeCount
 	coreConfig.NetworkConfig.ClusterCIDR = c.Cluster.Networking.NodeCIDR
 	coreConfig.NetworkConfig.EtcdServers = strings.Join(c.Cluster.Etcd.ExternalServers, ",")
 	coreConfig.NetworkConfig.ServiceCIDR = c.Cluster.Networking.ServiceCIDR
