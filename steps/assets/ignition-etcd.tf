@@ -1,11 +1,10 @@
 locals {
   etcd_internal_instance_count = "${length(data.template_file.etcd_hostname_list.*.id)}"
-  etcd_instance_count = "${length(${compact(var.tectonic_etcd_servers)}) == 0 ? local.etcd_internal_instance_count : 0}"
+  etcd_instance_count          = "${length(compact(var.tectonic_etcd_servers)) == 0 ? local.etcd_internal_instance_count : 0}"
 }
 
 resource "aws_s3_bucket_object" "ignition_etcd" {
-
-  count = "${local.etcd_instance_count}"
+  count   = "${local.etcd_instance_count}"
   bucket  = "${aws_s3_bucket.tectonic.bucket}"
   key     = "ignition_etcd_${count.index}.json"
   content = "${data.ignition_config.etcd.*.rendered[count.index]}"
@@ -14,9 +13,9 @@ resource "aws_s3_bucket_object" "ignition_etcd" {
   server_side_encryption = "AES256"
 
   tags = "${merge(map(
-      "Name", "${var.cluster_name}-ignition-etcd-${count.index}",
-      "KubernetesCluster", "${var.cluster_name}",
-      "tectonicClusterID", "${var.cluster_id}"
+      "Name", "${var.tectonic_cluster_name}-ignition-etcd-${count.index}",
+      "KubernetesCluster", "${var.tectonic_cluster_name}",
+      "tectonicClusterID", "${module.tectonic.cluster_id}"
     ), var.tectonic_aws_extra_tags)}"
 }
 

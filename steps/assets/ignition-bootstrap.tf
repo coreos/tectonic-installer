@@ -3,6 +3,7 @@ resource "aws_s3_bucket_object" "ignition_bootstrap" {
   key     = "ignition"
   content = "${data.ignition_config.bootstrap.rendered}"
   acl     = "public-read"
+
   # TODO: Lock down permissions.
   # At the minute this is pulic (so accessible via http) so joiners nodes can reach the NCG using the same url
   server_side_encryption = "AES256"
@@ -10,7 +11,7 @@ resource "aws_s3_bucket_object" "ignition_bootstrap" {
   tags = "${merge(map(
       "Name", "${var.tectonic_cluster_name}-ignition-master",
       "KubernetesCluster", "${var.tectonic_cluster_name}",
-      "tectonicClusterID", "${local.cluster_id}"
+      "tectonicClusterID", "${module.tectonic.cluster_id}"
     ), var.tectonic_aws_extra_tags)}"
 }
 
