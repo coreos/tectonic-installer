@@ -83,9 +83,6 @@ module "ignition_masters" {
 
 data "ignition_config" "masters" {
   files = ["${compact(list(
-    data.ignition_file.detect_master.id,
-    data.ignition_file.init_assets.id,
-    data.ignition_file.rm_assets.id,
     module.ignition_masters.installer_kubelet_env_id,
     module.ignition_masters.installer_runtime_mappings_id,
     module.ignition_masters.max_user_watches_id,
