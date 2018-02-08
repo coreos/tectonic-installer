@@ -131,7 +131,7 @@ module "tectonic" {
 
   console_client_id = "tectonic-console"
   kubectl_client_id = "tectonic-kubectl"
-  ingress_kind      = "HostPort"
+  ingress_kind      = "NodePort"
   self_hosted_etcd  = "${var.tectonic_self_hosted_etcd}"
   master_count      = "${var.tectonic_master_count}"
   stats_url         = "${var.tectonic_stats_url}"
