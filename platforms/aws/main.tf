@@ -124,7 +124,7 @@ module "ignition_masters" {
   kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   kubeconfig_fetch_cmd      = "/opt/s3-puller.sh ${aws_s3_bucket_object.kubeconfig.bucket}/${aws_s3_bucket_object.kubeconfig.key} /etc/kubernetes/kubeconfig"
   kubelet_debug_config      = "${var.tectonic_kubelet_debug_config}"
-  kubelet_node_label        = "node-role.kubernetes.io/master"
+  kubelet_node_label        = "${join(",", concat(var.tectonic_additional_master_node_labels, list("node-role.kubernetes.io/master")))}"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
   no_proxy                  = "${var.tectonic_no_proxy}"
 }
@@ -194,7 +194,7 @@ module "ignition_workers" {
   kube_dns_service_ip     = "${module.bootkube.kube_dns_service_ip}"
   kubeconfig_fetch_cmd    = "/opt/s3-puller.sh ${aws_s3_bucket_object.kubeconfig.bucket}/${aws_s3_bucket_object.kubeconfig.key} /etc/kubernetes/kubeconfig"
   kubelet_debug_config    = "${var.tectonic_kubelet_debug_config}"
-  kubelet_node_label      = "node-role.kubernetes.io/node"
+  kubelet_node_label      = "${join(",", concat(var.tectonic_additional_master_node_labels, list("node-role.kubernetes.io/node")))}"
   kubelet_node_taints     = ""
   no_proxy                = "${var.tectonic_no_proxy}"
 }
