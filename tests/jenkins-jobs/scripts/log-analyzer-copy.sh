@@ -37,6 +37,7 @@ if [ -n "$testFilePath" ]; then
         specName=$(echo "${testFilePath}" | cut -d'/' -f3 | sed 's/_spec\.rb//')
         additionalFields="${additionalFields}platform=${platform},specName=${specName},"
 fi
+additionalFields="${additionalFields}job=${JOB_NAME//[=,\/]/_},"
 
 for file in *.log
   do
@@ -45,7 +46,7 @@ for file in *.log
       echo "Log file is bigger than 1GB, dropping the file"
       rm "${file}"
     else
-      mv "$file" "pull_request=${CHANGE_ID},build_number=${BUILD_NUMBER},author=${CHANGE_AUTHOR},source_branch=${SOURCE_BRANCH},target_branch=${TARGET_BRANCH},${additionalFields}${file}"
+      mv "$file" "pull_request=${CHANGE_ID},build_number=${BUILD_NUMBER},author=${CHANGE_AUTHOR},source_branch=${SOURCE_BRANCH},target_branch=${TARGET_BRANCH},${additionalFields}logfile=${file}"
     fi
   done
 
