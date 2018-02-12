@@ -117,7 +117,8 @@ case "${action}" in
 esac
 
 for file in *.log ; do
-  declare -i log_file_size=$(stat --format=%s "${file}")
+  declare -i log_file_size
+  log_file_size=$(stat --format=%s "${file}")
   if [[ ${log_file_size} -ge 1000000000 ]]; then
     echo "Log file is bigger than 1GB, dropping the file"
     rm "${file}"
