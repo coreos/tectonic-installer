@@ -8,5 +8,5 @@ COMMIT="$3"
 curl -f \
      -H 'Content-Type: application/json' \
      -u "$GITHUB_CREDENTIALS" \
-     "https://api.github.com/repos/coreos/tectonic-installer/statuses/${COMMIT}" \
+     "https://api.github.com/repos/${GH_ORG}/${GH_REPO}/statuses/${COMMIT}" \
      -d "{\"state\": \"${STATUS}\", \"target_url\": \"${BUILD_URL}\", \"description\": \"\", \"context\": \"${CONTEXT}\"}"

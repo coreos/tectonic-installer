@@ -11,6 +11,8 @@ job("builders/tectonic-smoke-env-docker-image") {
   parameters {
     stringParam('TECTONIC_SMOKE_TAG', '', 'Tectonic Smoke Docker tag')
     booleanParam('DRY_RUN', true, 'Just build the docker image')
+    stringParam('ghOrg', 'coreos', 'Github organization')
+    stringParam('ghRepo', 'tectonic-installer', 'Github repo')
   }
 
   wrappers {
@@ -24,7 +26,7 @@ job("builders/tectonic-smoke-env-docker-image") {
   scm {
     git {
       remote {
-        url('https://github.com/coreos/tectonic-installer')
+        url('https://github.com/\${ghOrg}/\${ghRepo}')
       }
       branch('origin/master')
     }
@@ -34,7 +36,7 @@ job("builders/tectonic-smoke-env-docker-image") {
   steps {
     def cmd = """#!/bin/bash -ex
 export TECTONIC_SMOKE_IMAGE=quay.io/coreos/tectonic-smoke-test-env:\${TECTONIC_SMOKE_TAG}
-docker build -t \${TECTONIC_SMOKE_IMAGE} -f images/tectonic-smoke-test-env/Dockerfile .
+docker build -t \${TECTONIC_SMOKE_IMAGE} -f images/tectonic-smoke-test-env/Dockerfile --no-cache .
 
 if \${DRY_RUN};
 then

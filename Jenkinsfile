@@ -54,16 +54,14 @@ quayCreds = [
     usernameVariable: 'QUAY_ROBOT_USERNAME'
   )
 ]
-
 defaultBuilderImage = 'quay.io/coreos/tectonic-builder:v1.43'
-tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.14'
+tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.15'
 originalCommitId = 'UNKNOWN'
 
 pipeline {
   agent none
   environment {
     KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.4_coreos.0'
-    LOGSTASH_BUCKET = 'log-analyzer-tectonic-installer'
   }
   options {
     // Individual steps have stricter timeouts. 360 minutes should be never reached.
@@ -97,10 +95,30 @@ pipeline {
       defaultValue: true,
       description: ''
     )
+    string(
+      name: 'COMPONENT_TEST_IMAGES',
+      defaultValue: '',
+      description: 'List of container images for component tests to run (comma-separated)'
+    )
+    string(
+      name: 'LOGSTASH_BUCKET',
+      defaultValue: 'log-analyzer-tectonic-installer',
+      description: 's3 bucket name to sync jenkins log files into'
+    )
     booleanParam(
       name: 'PLATFORM/AWS',
       defaultValue: true,
       description: ''
+    )
+    string(
+      name: 'AWS_REGION',
+      defaultValue: 'us-east-1',
+      description: 'aws region to use'
+    )
+    string(
+      name: 'aws_base_domain',
+      defaultValue: 'tectonic-ci.de',
+      description: 'route53 base domain for tectonic ingress and api'
     )
     booleanParam(
       name: 'PLATFORM/GOVCLOUD',
@@ -124,6 +142,16 @@ pipeline {
       defaultValue: true,
       description: ''
     )
+    string(
+      name : 'ghOrg',
+      defaultValue: 'coreos',
+      description: 'Github organization'
+    )
+    string(
+      name: 'ghRepo',
+      defaultValue: 'tectonic-installer',
+      description: 'Github repo'
+    )
   }
 
   stages {
@@ -137,10 +165,10 @@ pipeline {
           script {
             def err = null
             try {
-              timeout(time: 10, unit: 'MINUTES') {
+              timeout(time: 20, unit: 'MINUTES') {
                 forcefullyCleanWorkspace()
                 checkout scm
-                stash name: 'clean-repo', excludes: 'installer/vendor/**,tests/smoke/vendor/**,images/tectonic-stats-extender/vendor/**'
+                stash name: 'clean-repo', excludes: 'installer/vendor/**,tests/smoke/vendor/**'
                 originalCommitId = sh(returnStdout: true, script: 'git rev-parse origin/"\${BRANCH_NAME}"')
                 echo "originalCommitId: ${originalCommitId}"
 
@@ -171,7 +199,7 @@ pipeline {
                 withDockerContainer(tectonicSmokeTestEnvImage) {
                   sh"""#!/bin/bash -ex
                     cd tests/rspec
-                    bundler exec rubocop --cache false spec lib
+                    rubocop --cache false spec lib
                   """
                 }
               }
@@ -273,97 +301,147 @@ pipeline {
         }
       }
     }
-
-    stage("Smoke Tests") {
-      when {
-        expression {
-          return params.RUN_SMOKE_TESTS || params.RUN_CONFORMANCE_TESTS
-        }
-      }
+    stage("Cluster Live Tests [Smoke,Conformance,Component]") {
       environment {
-        TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
-        GRAFITI_DELETER_ROLE = 'grafiti-deleter'
         TF_VAR_tectonic_container_images = "${params.hyperkube_image}"
         TF_VAR_tectonic_kubelet_debug_config = "--minimum-container-ttl-duration=8h --maximum-dead-containers-per-container=9999 --maximum-dead-containers=9999"
-        GOOGLE_PROJECT = "tectonic-installer"
       }
-      steps {
-        script {
-          def builds = [:]
-          def aws = [
-            [file: 'basic_spec.rb', args: ''],
-            [file: 'vpc_internal_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'],
-            [file: 'network_canal_spec.rb', args: ''],
-            [file: 'exp_spec.rb', args: ''],
-            [file: 'ca_spec.rb', args: ''],
-            [file: 'custom_tls_spec.rb', args: '']
-          ]
-          def govcloud = [
-            [file: 'vpc_internal_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root']
-          ]
-          def azure = [
-            [file: 'basic_spec.rb', args: ''],
-            [file: 'private_external_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'],
-            /*
-            * Test temporarily disabled
-            [file: 'spec/azure_dns_spec.rb', args: ''],
-            */
-            [file: 'external_spec.rb', args: ''],
-            [file: 'example_spec.rb', args: ''],
-            [file: 'custom_tls_spec.rb', args: '']
-          ]
-          def gcp = [
-          /* Disabled until we start the work again on gcp
-           *  [file: 'basic_spec.rb', args: ''],
-            [file: 'ha_spec.rb', args: ''],
-            [file: 'custom_tls_spec.rb', args: '']
-           */
-          ]
 
-          def metal = [
-            [file: 'basic_spec.rb', args: ''],
-            [file: 'custom_tls_spec.rb', args: '']
-          ]
-
-          if (params."PLATFORM/AWS") {
-            aws.each { build ->
-              filepath = 'spec/aws/' + build.file
-              builds['aws/' + build.file] = runRSpecTest(filepath, build.args, creds)
+      parallel {
+        stage("AWS Cluster Live Tests") {
+          when {
+            expression {
+              return (params.RUN_SMOKE_TESTS || params.RUN_CONFORMANCE_TESTS || params.COMPONENT_TEST_IMAGES != '') && params."PLATFORM/AWS"
             }
           }
-
-          if (params."PLATFORM/GOVCLOUD") {
-            govcloud.each { build ->
-              filepath = 'spec/govcloud/' + build.file
-              builds['govcloud/' + build.file] = runRSpecTest(filepath, build.args, govcloudCreds)
+          environment {
+            TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
+            GRAFITI_DELETER_ROLE = 'grafiti-deleter'
+            TF_VAR_tectonic_aws_region = "${params.AWS_REGION}"
+            TF_VAR_tectonic_base_domain = "${params.aws_base_domain}"
+            TF_VAR_base_domain = "${params.aws_base_domain}"
+          }
+          steps {
+            script {
+              def builds = [:]
+              def aws = [
+                [file: 'basic_spec.rb', args: ''],
+                [file: 'vpc_internal_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'],
+                [file: 'network_canal_spec.rb', args: ''],
+                [file: 'exp_spec.rb', args: ''],
+                [file: 'ca_spec.rb', args: ''],
+                [file: 'custom_tls_spec.rb', args: '']
+              ]
+              aws.each { build ->
+                filepath = 'spec/aws/' + build.file
+                builds['aws/' + build.file] = runRSpecTest(filepath, build.args, creds)
+              }
+              parallel builds
             }
           }
-
-          if (params."PLATFORM/AZURE") {
-            azure.each { build ->
-              filepath = 'spec/azure/' + build.file
-              builds['azure/' + build.file] = runRSpecTest(filepath, build.args, creds)
+        }
+        stage("AWS GovCloud Cluster Live Tests") {
+          when {
+            expression {
+              return (params.RUN_SMOKE_TESTS || params.RUN_CONFORMANCE_TESTS || params.COMPONENT_TEST_IMAGES != '') && params."PLATFORM/GOVCLOUD"
             }
           }
-
-          if (params."PLATFORM/GCP") {
-            gcp.each { build ->
-              filepath = 'spec/gcp/' + build.file
-              builds['gcp/' + build.file] = runRSpecTest(filepath, build.args, creds)
+          environment {
+            TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
+            GRAFITI_DELETER_ROLE = 'grafiti-deleter'
+          }
+          steps {
+            script {
+              def builds = [:]
+              def govcloud = [
+                [file: 'vpc_internal_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root']
+              ]
+              govcloud.each { build ->
+                filepath = 'spec/govcloud/' + build.file
+                builds['govcloud/' + build.file] = runRSpecTest(filepath, build.args, govcloudCreds)
+              }
+              parallel builds
             }
           }
-
-          if (params."PLATFORM/BARE_METAL") {
-            metal.each { build ->
-              filepath = 'spec/metal/' + build.file
-              builds['metal/' + build.file] = runRSpecTestBareMetal(filepath, creds)
+        }
+        stage("Bare Metal Cluster Live Tests") {
+          when {
+            expression {
+              return (params.RUN_SMOKE_TESTS || params.RUN_CONFORMANCE_TESTS || params.COMPONENT_TEST_IMAGES != '') && params."PLATFORM/BARE_METAL"
             }
           }
-          parallel builds
+          steps {
+            script {
+              def builds = [:]
+              def metal = [
+                [file: 'basic_spec.rb', args: ''],
+                [file: 'custom_tls_spec.rb', args: '']
+              ]
+              metal.each { build ->
+                filepath = 'spec/metal/' + build.file
+                builds['metal/' + build.file] = runRSpecTestBareMetal(filepath, creds)
+              }
+              parallel builds
+            }
+          }
+        }
+        stage("Azure Cluster Live Tests") {
+          when {
+            expression {
+              return (params.RUN_SMOKE_TESTS || params.RUN_CONFORMANCE_TESTS || params.COMPONENT_TEST_IMAGES != '') && params."PLATFORM/AZURE"
+            }
+          }
+          steps {
+            script {
+              def builds = [:]
+              def azure = [
+                [file: 'basic_spec.rb', args: ''],
+                [file: 'private_external_spec.rb', args: '--device=/dev/net/tun --cap-add=NET_ADMIN -u root'],
+                /*
+                 * Test temporarily disabled
+                 [file: 'spec/azure_dns_spec.rb', args: ''],
+                 */
+                [file: 'external_spec.rb', args: ''],
+                [file: 'example_spec.rb', args: ''],
+                [file: 'custom_tls_spec.rb', args: '']
+              ]
+              azure.each { build ->
+                filepath = 'spec/azure/' + build.file
+                builds['azure/' + build.file] = runRSpecTest(filepath, build.args, creds)
+              }
+              parallel builds
+            }
+          }
+        }
+        stage("GCP Cluster Live Tests") {
+          when {
+            expression {
+              return (params.RUN_SMOKE_TESTS || params.RUN_CONFORMANCE_TESTS || params.COMPONENT_TEST_IMAGES != '') && params."PLATFORM/GCP"
+            }
+          }
+          environment {
+            GOOGLE_PROJECT = "tectonic-installer"
+          }
+          steps {
+            script {
+              def builds = [:]
+              def gcp = [
+                /* Disabled until we start the work again on gcp
+                 *  [file: 'basic_spec.rb', args: ''],
+                 [file: 'ha_spec.rb', args: ''],
+                 [file: 'custom_tls_spec.rb', args: '']
+                 */
+              ]
+              gcp.each { build ->
+                filepath = 'spec/gcp/' + build.file
+                builds['gcp/' + build.file] = runRSpecTest(filepath, build.args, creds)
+              }
+              parallel builds
+            }
+          }
         }
       }
     }
-
     stage('Build docker image')  {
       when {
         branch 'master'
@@ -441,8 +519,9 @@ def runRSpecTest(testFilePath, dockerArgs, credentials) {
                 sh """#!/bin/bash -ex
                   mkdir -p templogfiles && chmod 777 templogfiles
                   cd tests/rspec
+
                   # Directing test output both to stdout as well as a log file
-                  rspec ${testFilePath} --format RspecTap::Formatter --format RspecTap::Formatter --out ../../templogfiles/format=tap.log
+                  rspec ${testFilePath} --format RspecTap::Formatter --format RspecTap::Formatter --out ../../templogfiles/tap.log
                 """
               }
             }
@@ -474,7 +553,7 @@ def runRSpecTestBareMetal(testFilePath, credentials) {
     node('worker && bare-metal') {
       def err = null
       try {
-        timeout(time: 4, unit: 'HOURS') {
+        timeout(time: 5, unit: 'HOURS') {
           ansiColor('xterm') {
             unstash 'clean-repo'
             unstash 'smoke-test-binary'
@@ -487,7 +566,7 @@ def runRSpecTestBareMetal(testFilePath, credentials) {
               rbenv install -s
               gem install bundler
               bundler install
-              bundler exec rspec ${testFilePath} --format RspecTap::Formatter --format RspecTap::Formatter --out ../../templogfiles/format=tap.log
+              bundler exec rspec ${testFilePath} --format RspecTap::Formatter --format RspecTap::Formatter --out ../../templogfiles/tap.log
               """
             }
           }
@@ -512,7 +591,7 @@ def runRSpecTestBareMetal(testFilePath, credentials) {
 def reportStatusToGithub(status, context, commitId) {
   withCredentials(creds) {
     sh """#!/bin/bash -ex
-      ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context} ${commitId}
+      GH_ORG=\${ghOrg} GH_REPO=\${ghRepo} ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context} ${commitId}
     """
   }
 }

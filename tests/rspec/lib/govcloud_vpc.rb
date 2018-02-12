@@ -18,10 +18,6 @@ class GovcloudVPC
     @name = name
     @ovpn_password =
       `tr -cd '[:alnum:]' < /dev/urandom | head -c 32 ; echo`.chomp
-    @mysql_password =
-      `tr -cd '[:alnum:]' < /dev/urandom | head -c 32 ; echo`.chomp
-    @pdns_api_key =
-      `tr -cd '[:alnum:]' < /dev/urandom | head -c 10; echo`.chomp
   end
 
   def env_variables
@@ -30,9 +26,7 @@ class GovcloudVPC
       'TF_VAR_vpc_name' => @name,
       'TF_VAR_base_domain' => 'tectonic-ci.de',
       'TF_VAR_nginx_username' => 'openvpn',
-      'TF_VAR_nginx_password' => @ovpn_password,
-      'TF_VAR_mysql_password' => @mysql_password,
-      'TF_VAR_pdns_api_key' => @pdns_api_key
+      'TF_VAR_nginx_password' => @ovpn_password
     }
   end
 
@@ -41,9 +35,7 @@ class GovcloudVPC
       'TF_VAR_tectonic_govcloud_external_vpc_id' => @vpc_id,
       'TF_VAR_tectonic_govcloud_external_master_subnet_ids' => @master_subnet_ids,
       'TF_VAR_tectonic_govcloud_external_worker_subnet_ids' => @worker_subnet_ids,
-      'TF_VAR_tectonic_govcloud_dns_server_ip' => @vpc_dns,
-      'TF_VAR_tectonic_govcloud_dns_server_api_url' => @dns_api_url,
-      'TF_VAR_tectonic_govcloud_dns_server_api_key' => @pdns_api_key
+      'TF_VAR_tectonic_govcloud_dns_server_ip' => @vpc_dns
     }
     vars.each do |key, value|
       ENV[key] = value
@@ -72,9 +64,8 @@ class GovcloudVPC
   def parse_terraform_output
     tf_out = JSON.parse(`terraform output -json`)
     @vpn_url = tf_out['ovpn_url']['value']
-    @vpc_dns = tf_out['vpc_dns_ip']['value']
+    @vpc_dns = tf_out['vpc_dns']['value']
     @vpc_id = tf_out['vpc_id']['value']
-    @dns_api_url = tf_out['dns_api_url']['value']
     parse_subnets(tf_out)
   end
 

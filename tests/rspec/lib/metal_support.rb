@@ -47,9 +47,8 @@ module MetalSupport
     end
 
     # Download CoreOS images
-    cl_channel = varfile.tectonic_container_linux_channel
     cl_version = varfile.tectonic_container_linux_version
-    system(env_variables_setup, "#{root}/matchbox/scripts/get-coreos #{cl_channel} #{cl_version} ${ASSETS_DIR}")
+    system(env_variables_setup, "#{root}/matchbox/scripts/get-coreos stable #{cl_version} ${ASSETS_DIR}")
 
     # Configuring ssh-agent
     execute_command('eval "$(ssh-agent -s)"')
@@ -60,6 +59,17 @@ module MetalSupport
     execute_command('sudo mkdir -p /etc/rkt/net.d')
     execute_command("sudo cp #{root}/tests/rspec/utils/20-metal.conf /etc/rkt/net.d/")
     execute_command('cat /etc/rkt/net.d/20-metal.conf')
+
+    # Setting up auth to download images from quay.io
+    execute_command('sudo mkdir -p /etc/rkt/auth.d')
+    rkt_auth_file = File.read("#{root}/tests/rspec/utils/rkt-auth.json")
+    data_hash = JSON.parse(rkt_auth_file)
+    data_hash['credentials']['user'] = ENV['QUAY_ROBOT_USERNAME']
+    data_hash['credentials']['password'] = ENV['QUAY_ROBOT_SECRET']
+    File.open('/tmp/rkt-auth.json', 'w') do |f|
+      f.write(data_hash.to_json)
+    end
+    execute_command('sudo mv /tmp/rkt-auth.json /etc/rkt/auth.d/')
 
     # Setting up DNS
     `grep -q "172.18.0.3" /etc/resolv.conf`
@@ -96,6 +106,7 @@ module MetalSupport
     execute_command('sudo rm -Rf /var/lib/cni/networks/*')
     execute_command('sudo rm -Rf /var/lib/rkt/*')
     execute_command('sudo rm -f /etc/rkt/net.d/20-metal.conf')
+    execute_command('sudo rm -rf /tmp/matchbox')
     execute_command('sudo systemctl reset-failed')
   end
 
@@ -144,16 +155,15 @@ module MetalSupport
   end
 
   def self.print_service_logs(service)
-    cmd = "journalctl --no-pager -u #{service}"
+    cmd = "sudo journalctl --no-pager -u #{service}"
     stdout, stderr, exit_status = Open3.capture3(cmd)
-    raise "Cannot retrieve logs of service #{service}" unless exit_status.success?
     output = "Journal of #{service} service (exitcode #{exit_status})"
     output += "\nStandard output: \n#{stdout}"
     output += "\nStandard error: \n#{stderr}"
     output += "\nEnd of journal of #{service} service"
 
     puts output
-    save_file(service, output)
+    save_to_file(service, output)
   end
 
   def self.save_to_file(service_name, output)
@@ -176,7 +186,7 @@ module MetalSupport
   end
 
   def self.execute_command(cmd)
-    Open3.popen3(cmd) do |_stdin, stdout, _stderr, wait_thr|
+    Open3.popen3(cmd) do |_stdin, stdout, stderr, wait_thr|
       exit_status = wait_thr.value
       unless exit_status.success?
         while (line = stdout.gets)
