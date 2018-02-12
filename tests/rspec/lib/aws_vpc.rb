@@ -15,7 +15,7 @@ class AWSVPC
   attr_reader :vpn_connection
   attr_reader :base_domain
 
-  def initialize(name,base_domain)
+  def initialize(name, base_domain)
     @name = name
     @base_domain = base_domain
     @ovpn_password =
