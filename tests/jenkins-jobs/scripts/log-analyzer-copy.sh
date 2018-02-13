@@ -55,6 +55,7 @@ while getopts ":d" arg; do
     ;;
   esac
 done
+# Remove any script params that getopts has processed.
 shift $((OPTIND-1))
 
 action=$1
