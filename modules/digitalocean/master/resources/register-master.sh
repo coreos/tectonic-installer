@@ -13,11 +13,13 @@ register_lb() {
   -d "{\"droplet_ids\": [${2}]}" "https://api.digitalocean.com/v2/load_balancers/${3}/droplets"
 }
 
+# shellcheck disable=SC2086,SC2154,SC2016
 until register_floating_ip $1 $2 $3; do
   echo "failed to register droplet with DO floating IP; retrying in 5 seconds"
   sleep 5
 done
 
+# shellcheck disable=SC2086,SC2154,SC2016
 until register_lb $1 $2 $4; do
   echo "failed to register droplet with DO load balancer; retrying in 5 seconds"
   sleep 5
