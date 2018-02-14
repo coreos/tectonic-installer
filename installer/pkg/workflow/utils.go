@@ -34,7 +34,7 @@ func waitForNcg(m *metadata) error {
 		time.Sleep(time.Second * time.Duration(wait))
 		retries--
 	}
-	return errors.New("NCG is not running.")
+	return errors.New("NCG is not running")
 }
 
 func destroyCname(m *metadata) error {

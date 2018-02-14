@@ -36,19 +36,18 @@ func NewInstallWorkflow(configFile string) Workflow {
 				joiningStep,
 			},
 		}
-	} else {
-		return simpleWorkflow{
-			metadata: metadata{
-				clusterName: clusterName,
-				configFile:  configFile,
-				platform:    platform,
-			},
-			steps: []Step{
-				terraformPrepareStep,
-				terraformInitStep,
-				terraformApplyStep,
-			},
-		}
+	}
+	return simpleWorkflow{
+		metadata: metadata{
+			clusterName: clusterName,
+			configFile:  configFile,
+			platform:    platform,
+		},
+		steps: []Step{
+			terraformPrepareStep,
+			terraformInitStep,
+			terraformApplyStep,
+		},
 	}
 }
 
@@ -62,6 +61,8 @@ func NewInstallWorkflow(configFile string) Workflow {
 //	return tectonic.GenerateTerraformVars(m.Cluster, configFilePath)
 //}
 
+// NewAssetsWorkflow creates new instances of the 'assets' workflow,
+// responsible for running the actions necessary to generate cluster assets.
 func NewAssetsWorkflow(configFile string) Workflow {
 	// TODO: move to tectonicGenerateClusterConfig/tectonicGenerateTerraformVariables and get this dynamically
 	clusterName := "cluster-aws"
@@ -77,6 +78,8 @@ func NewAssetsWorkflow(configFile string) Workflow {
 	}
 }
 
+// NewBootstrapWorkflow creates new instances of the 'bootstrap' workflow,
+// responsible for running the actions necessary to generate a single bootstrap machine cluster.
 func NewBootstrapWorkflow(configFile string) Workflow {
 	// TODO: move to tectonicGenerateClusterConfig/tectonicGenerateTerraformVariables and get this dynamically
 	clusterName := "cluster-aws"
@@ -92,6 +95,8 @@ func NewBootstrapWorkflow(configFile string) Workflow {
 	}
 }
 
+// NewJoinWorkflow creates new instances of the 'join' workflow,
+// responsible for running the actions necessary to scale the machines of the cluster.
 func NewJoinWorkflow(configFile string) Workflow {
 	// TODO: move to tectonicGenerateClusterConfig/tectonicGenerateTerraformVariables and get this dynamically
 	clusterName := "cluster-aws"

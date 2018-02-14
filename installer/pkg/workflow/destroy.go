@@ -34,17 +34,16 @@ func NewDestroyWorkflow(buildPath string) Workflow {
 				assetsDestroyStep,
 			},
 		}
-	} else {
-		return simpleWorkflow{
-			metadata: metadata{
-				statePath: buildPath,
-			},
-			steps: []Step{
-				terraformPrepareStep,
-				terraformInitStep,
-				terraformDestroyStep,
-			},
-		}
+	}
+	return simpleWorkflow{
+		metadata: metadata{
+			statePath: buildPath,
+		},
+		steps: []Step{
+			terraformPrepareStep,
+			terraformInitStep,
+			terraformDestroyStep,
+		},
 	}
 }
 
