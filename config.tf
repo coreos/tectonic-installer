@@ -71,6 +71,7 @@ variable "tectonic_container_images" {
     awscli                       = "quay.io/coreos/awscli:025a357f05242fdad6a81e8a6b520098aa65a600"
     gcloudsdk                    = "google/cloud-sdk:178.0.0-alpine"
     bootkube                     = "quay.io/coreos/bootkube:v0.10.0"
+    tnc_bootstrap                = "quay.io/coreos/tectonic-node-controller-dev:fad3a8e284e2c414fdf1713c7e0ae9d1e1e487ba"
     etcd                         = "quay.io/coreos/etcd:v3.2.14"
     hyperkube                    = "quay.io/coreos/hyperkube:v1.9.1_coreos.0"
     kube_core_renderer           = "quay.io/coreos/kube-core-renderer-dev:6c49ce4da9fc36966812381891b4f558aa53097b"
