@@ -134,6 +134,9 @@ spec:
         # the master to communicate with pods.
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
+      # Minimize downtime during a rolling upgrade or deletion; tell Kubernetes to do a "force
+      # deletion": https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods.
+      terminationGracePeriodSeconds: 0
       containers:
         # Runs calico/node container on each Kubernetes node.  This
         # container programs network policy and routes on each
@@ -149,10 +152,10 @@ spec:
               value: "warning"
             # Don't enable BGP.
             - name: CALICO_NETWORKING_BACKEND
-              value: "k8s,bgp"
+              value: "bird"
             # Cluster type to identify the deployment type
             - name: CLUSTER_TYPE
-              value: "tectonic,canal"
+              value: "tectonic,bgp"
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
               value: "true"
