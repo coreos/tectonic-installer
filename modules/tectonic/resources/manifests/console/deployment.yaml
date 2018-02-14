@@ -146,6 +146,8 @@ spec:
         - mountPath: /etc/tectonic-identity-grpc-client-secret
           name: tectonic-identity-grpc-client-secret
           readOnly: true
+        - mountPath: /usr/share/ca-certificates
+          name: ca-certs-host
       dnsPolicy: ClusterFirst
       imagePullSecrets:
       - name: coreos-pull-secret
@@ -161,6 +163,9 @@ spec:
       - hostPath:
           path: /etc/ssl/certs
         name: ssl-certs-host
+      - hostPath:
+          path: /usr/share/ca-certificates
+        name: ca-certs-host
       - name: tectonic-license-secret
         secret:
           secretName: tectonic-license-secret

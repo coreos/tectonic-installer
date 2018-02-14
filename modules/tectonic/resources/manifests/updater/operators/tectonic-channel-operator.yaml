@@ -42,6 +42,8 @@ spec:
         volumeMounts:
         - name: certs
           mountPath: /etc/ssl/certs
+        - name: ca-certs-host
+          mountPath: /usr/share/ca-certificates
       restartPolicy: Always
       imagePullSecrets:
       - name: coreos-pull-secret
@@ -52,3 +54,6 @@ spec:
       - name: certs
         hostPath:
           path: /etc/ssl/certs
+      - name: ca-certs-host
+        hostPath:
+          path: /usr/share/ca-certificates
