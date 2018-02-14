@@ -42,6 +42,8 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --pod-manifest-path=/etc/kubernetes/manifests \
   --require-kubeconfig \
   --rotate-certificates \
+  --authentication-token-webhook \
+  --authorization-mode=Webhook \
   ${cloud_provider_config} \
   ${debug_config} \
   ${node_taints_param}
