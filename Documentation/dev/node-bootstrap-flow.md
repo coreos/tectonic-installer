@@ -9,7 +9,7 @@ When a cluster node is being bootstrapped from scratch, it goes through several 
 1. first-boot OS configuration, via ignition (systemd units, node configuration, etc)
 1. provisioning of additional assets (k8s manifests, TLS material), via either of:
    * pushing from terraform file/remote-exec (SSH)
-   * pulling from private cloud stores (S3 buckets)
+   * pulling from private cloud stores (S3/DigitalOcean Spaces buckets)
 1. system-wide updates via `k8s-node-bootstrap.service`, which includes:
    * determining current kubernetes cluster version (when joining an existing cluster)
    * triggering a ContainerLinux update, via update-engine (optional)
