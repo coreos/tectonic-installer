@@ -1,7 +1,7 @@
 resource "openstack_networking_router_v2" "router" {
-  name             = "${var.tectonic_cluster_name}_router"
-  admin_state_up   = "true"
-  external_gateway = "${var.tectonic_openstack_external_gateway_id}"
+  name                = "${var.tectonic_cluster_name}_router"
+  admin_state_up      = "true"
+  external_network_id = "${var.tectonic_openstack_external_network_id}"
 }
 
 resource "openstack_networking_network_v2" "network" {
