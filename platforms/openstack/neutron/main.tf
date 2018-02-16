@@ -198,12 +198,12 @@ module "ignition_masters" {
   kubelet_debug_config      = "${var.tectonic_kubelet_debug_config}"
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
-  metadata_provider         = "openstack-metadata"
   nfs_config_file           = "${local._tectonic_nfs_config_file}"
   no_proxy                  = "${var.tectonic_no_proxy}"
   ntp_servers               = "${var.tectonic_ntp_servers}"
   proxy_exclusive_units     = "${var.tectonic_proxy_exclusive_units}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
+  use_metadata              = "false"
 }
 
 module "master_nodes" {
