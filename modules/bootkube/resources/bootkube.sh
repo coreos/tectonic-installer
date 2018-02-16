@@ -12,7 +12,7 @@ rm -rf /etc/kubernetes/manifests
 mkdir -p /etc/kubernetes/manifests/
 
 # Move optional self hosted etcd manifests into bootkube friendly locations
-if [ -d /opt/tectonic/etcd ]; then
+if [ -d /opt/tectonic/etcd/bootstrap-manifests ]; then
     mv /opt/tectonic/etcd/manifests/* /opt/tectonic/manifests/
     rm -r /opt/tectonic/etcd/manifests
     mv /opt/tectonic/etcd/bootstrap-manifests/* /opt/tectonic/bootstrap-manifests/
