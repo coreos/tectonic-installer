@@ -20,30 +20,34 @@ go_binary(
     name = "installer",
     embed = [":go_default_library"],
     importpath = "github.com/coreos/tectonic-installer/installer/cmd/installer",
+    visibility = ["//visibility:public"],
     # Use pure to build a pure-go binary.
     # This has the nice side effect of making the binary statically linked.
     pure = "on",
-    visibility = ["//visibility:public"],
 )
 
 go_binary(
-    name = "installer_darwin",
+    name = "darwin",
+    basename = "installer",
     embed = [":go_default_library"],
+    importpath = "github.com/coreos/tectonic-installer/installer/cmd/installer",
+    visibility = ["//visibility:public"],
+    # Use pure to build a pure-go binary.
+    # This has the nice side effect of making the binary statically linked.
+    pure = "on",
     goos = "darwin",
-    importpath = "github.com/coreos/tectonic-installer/installer/cmd/installer",
-    # Use pure to build a pure-go binary.
-    # This has the nice side effect of making the binary statically linked.
-    pure = "on",
-    visibility = ["//visibility:public"],
+    goarch = "amd64",
 )
 
 go_binary(
-    name = "installer_linux",
+    name = "linux",
+    basename = "installer",
     embed = [":go_default_library"],
-    goos = "linux",
     importpath = "github.com/coreos/tectonic-installer/installer/cmd/installer",
+    visibility = ["//visibility:public"],
     # Use pure to build a pure-go binary.
     # This has the nice side effect of making the binary statically linked.
     pure = "on",
-    visibility = ["//visibility:public"],
+    goos = "linux",
+    goarch = "amd64",
 )
