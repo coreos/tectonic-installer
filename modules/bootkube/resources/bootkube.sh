@@ -25,6 +25,11 @@ if [ -d /opt/tectonic/net-manifests ]; then
     rm -r /opt/tectonic/net-manifests
 fi
 
+mkdir -p /etc/kubernetes/bootstrap-secrets
+cp /opt/tectonic/tls/etcd-* /etc/kubernetes/bootstrap-secrets
+mkdir -p /etc/kubernetes/secrets
+cp /opt/tectonic/tls/etcd-* /etc/kubernetes/secrets
+
 # shellcheck disable=SC2154
 /usr/bin/docker run \
     --volume "$(pwd)":/assets \
