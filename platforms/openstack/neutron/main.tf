@@ -89,7 +89,7 @@ module "bootkube" {
 
   etcd_backup_size          = "${var.tectonic_etcd_backup_size}"
   etcd_backup_storage_class = "${var.tectonic_etcd_backup_storage_class}"
-  etcd_endpoints            = "${module.dns.etcd_a_nodes}"
+  etcd_endpoints            = "${data.template_file.etcd_hostname_list.*.rendered}"
   self_hosted_etcd          = "${var.tectonic_self_hosted_etcd}"
 
   master_count = "${var.tectonic_master_count}"
