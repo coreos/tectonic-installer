@@ -13,7 +13,7 @@ data:
       cloudProvider: ${platform}
   utility-config: |
     apiVersion: v1
-    kind: UtilityConfig
+    kind: TectonicUtilityOperatorConfig
     identityConfig:
       adminEmail: ${admin_email}
       adminPasswordHash: ${admin_password_hash}
