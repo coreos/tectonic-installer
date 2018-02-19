@@ -509,3 +509,25 @@ variable "tectonic_no_proxy" {
 Example: `["127.0.0.1","localhost",".example.com","10.3.0.1"]`
 EOF
 }
+
+variable "tectonic_additional_master_node_labels" {
+  type    = "list"
+  default = [""]
+
+  description = <<EOF
+Specifies additional node labels to be added to master nodes. This correlates to the --node-labels 
+kubelet flag. All labels required by Tectonic will still be present.
+Example: `["tier=app", "purpose=data"]`
+EOF
+}
+
+variable "tectonic_additional_worker_node_labels" {
+  type    = "list"
+  default = [""]
+
+  description = <<EOF
+Specifies additional node labels to be added to worker nodes. This translates to the --node-labels 
+kubelet flag. All labels required by Tectonic will still be present.
+Example: `["tier=app", "purpose=data"]`
+EOF
+}
