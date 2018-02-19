@@ -198,6 +198,7 @@ pipeline {
                     rm -fr frontend/tests_output
                     """
                     stash name: 'node-modules', includes: 'installer/frontend/node_modules/**'
+                    stash name: 'installer-binary', includes: 'installer/bin/linux/installer'
                   }
                 }
                 withDockerContainer(tectonicSmokeTestEnvImage) {
