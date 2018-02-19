@@ -30,7 +30,7 @@ class Cluster
     @tectonic_admin_password = ENV['TF_VAR_tectonic_admin_password'] || PasswordGenerator.generate_password
     save_console_creds(@name, @tectonic_admin_email, @tectonic_admin_password)
 
-    @build_path = File.join(File.dirname(ENV['RELEASE_TARBALL_PATH']), "tectonic/build/#{@name}")
+    @build_path = File.join(File.dirname(ENV['RELEASE_TARBALL_PATH']), 'tectonic/cluster-aws')
     @manifest_path = File.join(@build_path, 'generated')
     @kubeconfig = File.join(manifest_path, 'auth/kubeconfig')
     @tfstate_file = TFStateFile.new(@build_path)
@@ -38,12 +38,12 @@ class Cluster
     check_prerequisites
   end
 
-  def plan(terraform_options = nil)
-    env = env_variables
-    env['TF_PLAN_OPTIONS'] = terraform_options unless terraform_options.nil?
-    stdout, stderr, exit_status = Open3.capture3(env, 'make -C ../.. plan')
-    [stdout, stderr, exit_status]
-  end
+  #   def plan(terraform_options = nil)
+  #     env = env_variables
+  #     env['TF_PLAN_OPTIONS'] = terraform_options unless terraform_options.nil?
+  #     stdout, stderr, exit_status = Open3.capture3(env, 'make -C ../.. plan')
+  #     [stdout, stderr, exit_status]
+  #   end
 
   def start
     apply

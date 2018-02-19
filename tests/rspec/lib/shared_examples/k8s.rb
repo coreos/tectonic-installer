@@ -31,9 +31,9 @@ RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = f
     @exceptions = []
 
     @cluster = if exist_plat.nil? && exist_tf.nil?
-                 ClusterFactory.from_tf_vars(@tfvars_file)
+                 ClusterFactory.hard_coded_aws(@tfvars_file)
                else
-                 ClusterFactory.from_variable(exist_plat, exist_tf)
+                 ClusterFactory.hard_coded_aws(exist_plat, exist_tf)
                end
 
     @cluster.init

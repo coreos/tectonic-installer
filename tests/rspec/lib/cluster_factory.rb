@@ -14,6 +14,10 @@ module ClusterFactory
     Object.const_get(cluster_class).new(tf_vars_file)
   end
 
+  def self.hard_coded_aws(config)
+    AwsCluster.new(config)
+  end
+
   def self.from_variable(cluster_type, tf_vars_file)
     Object.const_get("#{cluster_type.downcase.capitalize}Cluster").new(tf_vars_file)
   end

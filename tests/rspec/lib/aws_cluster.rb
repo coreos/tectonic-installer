@@ -14,7 +14,9 @@ require 'tfstate_file'
 class AwsCluster < Cluster
   def initialize(tfvars_file)
     export_random_region_if_not_defined if Jenkins.environment?
-    @aws_region = tfvars_file.tectonic_aws_region
+    # TODO: Configure this value
+    # @aws_region = tfvars_file.tectonic_aws_region
+    @aws_region = 'eu-west-1'
     @role_credentials = nil
     @role_credentials = AWSIAM.assume_role(@aws_region) if ENV.key?('TECTONIC_INSTALLER_ROLE')
 
@@ -133,17 +135,82 @@ class AwsCluster < Cluster
     end
   end
 
-  private
+  # TODO: Remove once other platforms caught up
+
+  def init
+    ::Timeout.timeout(30 * 60) do # 30 minutes
+      3.times do
+        env = env_variables
+        env['TF_INIT_OPTIONS'] = '-no-color'
+
+        return run_command(env, 'init', '--config config.yaml')
+      end
+    end
+  rescue Timeout::Error
+    forensic(false)
+    raise 'Applying cluster failed'
+  end
+
+  def apply
+    ::Timeout.timeout(30 * 60) do # 30 minutes
+      3.times do
+        env = env_variables
+        env['TF_APPLY_OPTIONS'] = '-no-color'
+        env['TF_INIT_OPTIONS'] = '-no-color'
+
+        return run_command(env, 'install', "--dir #{@name}")
+      end
+    end
+  rescue Timeout::Error
+    forensic(false)
+    raise 'Applying cluster failed'
+  end
 
   def destroy
-    # For debugging purposes (see: https://github.com/terraform-providers/terraform-provider-aws/pull/1051)
     describe_network_interfaces
+    ::Timeout.timeout(30 * 60) do # 30 minutes
+      3.times do
+        env = env_variables
+        env['TF_DESTROY_OPTIONS'] = '-no-color'
+        env['TF_INIT_OPTIONS'] = '-no-color'
+        return run_command(env, 'destroy', "#{@name}")
+      end
+    end
 
-    super
-
-    # For debugging purposes (see: https://github.com/terraform-providers/terraform-provider-aws/pull/1051)
-    describe_network_interfaces
+    recover_from_failed_destroy
+    raise 'Destroying cluster failed'
+  rescue => e
+    recover_from_failed_destroy
+    raise e
   end
+
+  def run_command(env, cmd, flags = '')
+    tectonic_binary = File.join(File.dirname(ENV['RELEASE_TARBALL_PATH']), 'tectonic/tectonic-installer/linux/tectonic')
+    command = "#{tectonic_binary} #{cmd} #{flags} | tee terraform-#{cmd}.log"
+    Open3.popen3(env, "bash -coxe pipefail '#{command}'") do |_stdin, stdout, stderr, wait_thr|
+      while (line = stdout.gets)
+        puts line
+      end
+      while (line = stderr.gets)
+        puts line
+      end
+      exit_status = wait_thr.value
+      return exit_status.success?
+    end
+    false
+  end
+
+  private
+
+  # def destroy
+  #   # For debugging purposes (see: https://github.com/terraform-providers/terraform-provider-aws/pull/1051)
+  #   describe_network_interfaces
+
+  #   super
+
+  #   # For debugging purposes (see: https://github.com/terraform-providers/terraform-provider-aws/pull/1051)
+  #   describe_network_interfaces
+  # end
 
   def describe_network_interfaces
     puts 'describing network interfaces for debugging purposes'
