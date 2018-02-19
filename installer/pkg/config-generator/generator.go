@@ -1,15 +1,23 @@
 package configgenerator
 
 import (
+	"crypto/rand"
+	"encoding/base64"
+	"encoding/hex"
+	"errors"
+	"fmt"
+	"net"
 	"strings"
 
 	"github.com/coreos/tectonic-installer/installer/pkg/config"
 
+	"github.com/apparentlymart/go-cidr/cidr"
 	"github.com/coreos/tectonic-config/config/kube-addon"
 	"github.com/coreos/tectonic-config/config/kube-core"
 	"github.com/coreos/tectonic-config/config/tectonic-network"
 	"github.com/coreos/tectonic-config/config/tectonic-utility"
 	"github.com/ghodss/yaml"
+	"golang.org/x/crypto/bcrypt"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -44,26 +52,35 @@ func New(cluster config.Cluster) ConfigGenerator {
 // KubeSystem returns, if successful, a yaml string for the kube-system.
 func (c ConfigGenerator) KubeSystem() (string, error) {
 	return configMap("kube-system", genericData{
-		"core-config":    c.coreConfig(),
+		"kco-config":     c.coreConfig(),
 		"network-config": c.networkConfig(),
 	})
 }
 
 // TectonicSystem returns, if successful, a yaml string for the tectonic-system.
 func (c ConfigGenerator) TectonicSystem() (string, error) {
+	utilityConfig, err := c.utilityConfig()
+	if err != nil {
+		return "", err
+	}
 	return configMap("tectonic-system", genericData{
 		"addon-config":   c.addonConfig(),
-		"utility-config": c.utilityConfig(),
+		"utility-config": utilityConfig,
 	})
 }
 
 func (c ConfigGenerator) addonConfig() *kubeaddon.OperatorConfig {
-	return &kubeaddon.OperatorConfig{
+	addonConfig := kubeaddon.OperatorConfig{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: kubeaddon.APIVersion,
-			Kind:       kubeaddon.Kind,
+			// TODO: get Kind from kubeaddon.Kind
+			Kind: "AddonConfig",
 		},
 	}
+	cidrhost, _ := cidrhost(c.Cluster.Networking.ServiceCIDR, 10)
+	addonConfig.DNSConfig.ClusterIP = cidrhost
+	addonConfig.CloudProvider = c.Platform
+	return &addonConfig
 }
 
 func (c ConfigGenerator) coreConfig() *kubecore.OperatorConfig {
@@ -73,10 +90,36 @@ func (c ConfigGenerator) coreConfig() *kubecore.OperatorConfig {
 			Kind:       kubecore.Kind,
 		},
 	}
+	coreConfig.ClusterConfig.APIServerURL = fmt.Sprintf("%s-api.%s", c.Cluster.Name, c.Cluster.DNS.BaseDomain)
+	coreConfig.AuthConfig.OIDCClientID = "tectonic-kubectl"
+	coreConfig.AuthConfig.OIDCIssuerURL = fmt.Sprintf("%s.%s/identity", c.Cluster.Name, c.Cluster.DNS.BaseDomain)
+	coreConfig.AuthConfig.OIDCGroupsClaim = "groups"
+	coreConfig.AuthConfig.OIDCUsernameClaim = "email"
+
+	coreConfig.CloudProviderConfig.CloudConfigPath = ""
+	coreConfig.CloudProviderConfig.CloudProviderProfile = c.Cluster.Platform
+
+	coreConfig.ClusterConfig.APIServerURL = fmt.Sprintf("https://%s-api.%s:443", c.Cluster.Name, c.Cluster.DNS.BaseDomain)
+	coreConfig.AuthConfig.OIDCClientID = "tectonic-kubectl"
+	coreConfig.AuthConfig.OIDCIssuerURL = fmt.Sprintf("%s.%s/identity", c.Cluster.Name, c.Cluster.DNS.BaseDomain)
+	coreConfig.AuthConfig.OIDCGroupsClaim = "groups"
+	coreConfig.AuthConfig.OIDCUsernameClaim = "email"
+
+	coreConfig.CloudProviderConfig.CloudConfigPath = ""
+	coreConfig.CloudProviderConfig.CloudProviderProfile = c.Cluster.Platform
 
 	coreConfig.NetworkConfig.ClusterCIDR = c.Cluster.Networking.NodeCIDR
-	coreConfig.NetworkConfig.EtcdServers = strings.Join(c.Cluster.Etcd.ExternalServers, ",")
 	coreConfig.NetworkConfig.ServiceCIDR = c.Cluster.Networking.ServiceCIDR
+	coreConfig.NetworkConfig.AdvertiseAddress = "0.0.0.0"
+	if len(c.Cluster.Etcd.ExternalServers) > 0 {
+		coreConfig.NetworkConfig.EtcdServers = strings.Join(c.Cluster.Etcd.ExternalServers, ",")
+	} else {
+		var etcdServers []string
+		for i := 0; i < c.Etcd.NodeCount; i++ {
+			etcdServers = append(etcdServers, fmt.Sprintf("https://%s-etcd-%v.%s:2379", c.Cluster.Name, i, c.Cluster.DNS.BaseDomain))
+		}
+		coreConfig.NetworkConfig.EtcdServers = strings.Join(etcdServers, ",")
+	}
 
 	return &coreConfig
 }
@@ -91,19 +134,67 @@ func (c ConfigGenerator) networkConfig() *tectonicnetwork.OperatorConfig {
 
 	networkConfig.PodCIDR = c.Cluster.Networking.PodCIDR
 	networkConfig.CalicoConfig.MTU = c.Cluster.Networking.MTU
+	networkConfig.NetworkProfile = tectonicnetwork.NetworkType(c.Cluster.Networking.Type)
 
 	return &networkConfig
 }
 
-func (c ConfigGenerator) utilityConfig() *tectonicutility.OperatorConfig {
+func (c ConfigGenerator) utilityConfig() (*tectonicutility.OperatorConfig, error) {
 	utilityConfig := tectonicutility.OperatorConfig{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: tectonicutility.APIVersion,
-			Kind:       tectonicutility.Kind,
+			// TODO: get Kind from tectonicutility.Kind
+			Kind: "UtilityConfig",
 		},
 	}
 
-	return &utilityConfig
+	var err error
+	bytes, err := bcrypt.GenerateFromPassword([]byte(c.Console.AdminPassword), 12)
+	if err != nil {
+		return nil, err
+	}
+	hashedAdminPassword := string(bytes)
+	adminUserID, err := generateRandomId(16)
+	if err != nil {
+		return nil, err
+	}
+	consoleSecret, err := generateRandomId(16)
+	if err != nil {
+		return nil, err
+	}
+	KubectlSecret, err := generateRandomId(16)
+	if err != nil {
+		return nil, err
+	}
+	clusterId, err := generateClusterId(16)
+	if err != nil {
+		return nil, err
+	}
+	utilityConfig.IdentityConfig.AdminEmail = c.Console.AdminEmail
+	utilityConfig.IdentityConfig.AdminPasswordHash = hashedAdminPassword
+	utilityConfig.IdentityConfig.AdminUserID = adminUserID
+	utilityConfig.IdentityConfig.ConsoleClientID = "tectonic-console"
+	utilityConfig.IdentityConfig.ConsoleSecret = consoleSecret
+	utilityConfig.IdentityConfig.KubectlClientID = "tectonic-kubectl"
+	utilityConfig.IdentityConfig.KubectlSecret = KubectlSecret
+
+	utilityConfig.IngressConfig.ConsoleBaseHost = fmt.Sprintf("%s.%s", c.Cluster.Name, c.Cluster.DNS.BaseDomain)
+	utilityConfig.IngressConfig.IngressKind = "NodePort"
+
+	utilityConfig.StatsEmitterConfig.StatsURL = "https://stats-collector.tectonic.com"
+
+	utilityConfig.TectonicConfigMapConfig.BaseAddress = fmt.Sprintf("%s.%s", c.Cluster.Name, c.Cluster.DNS.BaseDomain)
+	utilityConfig.TectonicConfigMapConfig.CertificatesStrategy = "userProvidedCA"
+	// TODO: Consolidate ClusterID with the one genereated by terraform and and passed to the bootstrap step.
+	utilityConfig.TectonicConfigMapConfig.ClusterID = clusterId
+	utilityConfig.TectonicConfigMapConfig.ClusterName = c.Cluster.Name
+	utilityConfig.TectonicConfigMapConfig.IdentityAPIService = "tectonic-identity-api.tectonic-system.svc.cluster.local"
+	utilityConfig.TectonicConfigMapConfig.InstallerPlatform = c.Cluster.Platform
+	utilityConfig.TectonicConfigMapConfig.KubeAPIServerURL = fmt.Sprintf("https://%s-api.%s:443", c.Cluster.Name, c.Cluster.DNS.BaseDomain)
+	// TODO: Speficy what's a version in ut2 and set it here
+	utilityConfig.TectonicConfigMapConfig.TectonicVersion = "ut2"
+
+	return &utilityConfig, nil
 }
 
 func configMap(namespace string, unmarshaledData genericData) (string, error) {
@@ -143,4 +234,49 @@ func marshalYAML(obj interface{}) (string, error) {
 	}
 
 	return string(data), nil
+}
+
+func generateRandomId(byteLength int) (string, error) {
+	bytes := make([]byte, byteLength)
+
+	n, err := rand.Reader.Read(bytes)
+	if n != byteLength {
+		return "", errors.New("generated insufficient random bytes")
+	}
+	if err != nil {
+		return "", err
+	}
+
+	b64Str := base64.RawURLEncoding.EncodeToString(bytes)
+
+	return b64Str, nil
+}
+
+func generateClusterId(byteLength int) (string, error) {
+	randomId, err := generateRandomId(16)
+	if err != nil {
+		return "", err
+	}
+	bytes, err := base64.RawURLEncoding.DecodeString(randomId)
+	hexStr := hex.EncodeToString(bytes)
+	return fmt.Sprintf("%s-%s-%s-%s-%s",
+		hexStr[0:8],
+		hexStr[8:12],
+		hexStr[12:16],
+		hexStr[16:20],
+		hexStr[20:32]), nil
+}
+
+func cidrhost(iprange string, hostNum int) (string, error) {
+	_, network, err := net.ParseCIDR(iprange)
+	if err != nil {
+		return "", fmt.Errorf("invalid CIDR expression: %s", err)
+	}
+
+	ip, err := cidr.Host(network, hostNum)
+	if err != nil {
+		return "", err
+	}
+
+	return ip.String(), nil
 }
