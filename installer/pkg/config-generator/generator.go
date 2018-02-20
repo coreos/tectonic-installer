@@ -63,13 +63,17 @@ func (c ConfigGenerator) TectonicSystem() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	addonConfig, err := c.addonConfig()
+	if err != nil {
+		return "", err
+	}
 	return configMap("tectonic-system", genericData{
-		"addon-config":   c.addonConfig(),
+		"addon-config":   addonConfig,
 		"utility-config": utilityConfig,
 	})
 }
 
-func (c ConfigGenerator) addonConfig() *kubeaddon.OperatorConfig {
+func (c ConfigGenerator) addonConfig() (*kubeaddon.OperatorConfig, error) {
 	addonConfig := kubeaddon.OperatorConfig{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: kubeaddon.APIVersion,
@@ -77,10 +81,13 @@ func (c ConfigGenerator) addonConfig() *kubeaddon.OperatorConfig {
 			Kind: "AddonConfig",
 		},
 	}
-	cidrhost, _ := cidrhost(c.Cluster.Networking.ServiceCIDR, 10)
+	cidrhost, err := cidrhost(c.Cluster.Networking.ServiceCIDR, 10)
+	if err != nil {
+		return nil, err
+	}
 	addonConfig.DNSConfig.ClusterIP = cidrhost
 	addonConfig.CloudProvider = c.Platform
-	return &addonConfig
+	return &addonConfig, nil
 }
 
 func (c ConfigGenerator) coreConfig() *kubecore.OperatorConfig {
