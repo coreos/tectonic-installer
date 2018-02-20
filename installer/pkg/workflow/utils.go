@@ -19,10 +19,11 @@ import (
 )
 
 const (
+	stepsBaseDir   = "steps"
 	assetsStep     = "assets"
 	bootstrapStep  = "bootstrap"
-	configFileName = "config.yaml"
 	joinStep       = "joining"
+	configFileName = "config.yaml"
 	kubeConfigPath = "generated/auth/kubeconfig"
 	binaryPrefix   = "tectonic-installer"
 )
@@ -45,33 +46,25 @@ func copyFile(fromFilePath, toFilePath string) error {
 }
 
 func destroyCNAME(clusterDir string) error {
-	templatesPath, err := findTemplatesForStep(bootstrapStep)
+	templatesPath, err := findTemplates(bootstrapStep)
 	if err != nil {
 		return err
 	}
 	return terraformExec(clusterDir, "destroy", "-force", fmt.Sprintf("-state=%s.tfstate", bootstrapStep), "-target=aws_route53_record.tectonic_ncg", templatesPath)
 }
 
-func findTemplatesForStep(step string) (string, error) {
+func findTemplates(relativePath string) (string, error) {
 	base, err := baseLocation()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("unknown base path for '%s' templates: %s", relativePath, err)
 	}
-	base = filepath.Join(base, "steps")
+	base = filepath.Join(base, stepsBaseDir, relativePath)
 	stat, err := os.Stat(base)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("invalid path for '%s' templates: %s", base, err)
 	}
 	if !stat.IsDir() {
-		fmt.Errorf("invlid templates path: %s", base)
-	}
-	base = filepath.Join(base, step)
-	stat, err = os.Stat(base)
-	if err != nil {
-		return "", err
-	}
-	if !stat.IsDir() {
-		fmt.Errorf("invlid templates path: %s", base)
+		return "", fmt.Errorf("invalid path for '%s' templates", base)
 	}
 	return base, nil
 }
@@ -109,7 +102,7 @@ func generateClusterConfigStep(m *metadata) error {
 }
 
 func importAutoScalingGroup(m *metadata) error {
-	templatesPath, err := findTemplatesForStep(joinStep)
+	templatesPath, err := findTemplates(joinStep)
 	if err != nil {
 		return err
 	}
@@ -207,15 +200,15 @@ func writeFile(path, content string) error {
 func baseLocation() (string, error) {
 	ex, err := os.Executable()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("undetermined location of own executable: %s", err)
 	}
 	ex = path.Dir(ex)
 	if path.Base(ex) != runtime.GOOS {
-		return "", fmt.Errorf("invalid executable location: %s", err)
+		return "", fmt.Errorf("%s executable in unknown location: %s", path.Base(ex), err)
 	}
 	ex = path.Dir(ex)
 	if path.Base(ex) != binaryPrefix {
-		return "", fmt.Errorf("invalid executable location: %s", err)
+		return "", fmt.Errorf("%s executable in unknown location: %s", path.Base(ex), err)
 	}
 	return path.Dir(ex), nil
 }

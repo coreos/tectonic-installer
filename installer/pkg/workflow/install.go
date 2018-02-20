@@ -76,7 +76,7 @@ func installJoinStep(m *metadata) error {
 }
 
 func runInstallStep(clusterDir, step string) error {
-	templateDir, err := findTemplatesForStep(step)
+	templateDir, err := findTemplates(step)
 	if err != nil {
 		return err
 	}
