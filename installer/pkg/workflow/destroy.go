@@ -16,13 +16,37 @@ func NewDestroyWorkflow(clusterDir string) Workflow {
 }
 
 func destroyAssetsStep(m *metadata) error {
-	return tfDestroy(m.clusterDir, assetsStep, findTemplatesForStep(assetsStep))
+	if !hasStateFile(m.clusterDir, assetsStep) {
+		// there is no statefile, therefore nothing to destroy for this step
+		return nil
+	}
+	templateDir, err := findTemplatesForStep(assetsStep)
+	if err != nil {
+		return err
+	}
+	return tfDestroy(m.clusterDir, assetsStep, templateDir)
 }
 
 func destroyBootstrapStep(m *metadata) error {
-	return tfDestroy(m.clusterDir, bootstrapStep, findTemplatesForStep(bootstrapStep))
+	if !hasStateFile(m.clusterDir, bootstrapStep) {
+		// there is no statefile, therefore nothing to destroy for this step
+		return nil
+	}
+	templateDir, err := findTemplatesForStep(bootstrapStep)
+	if err != nil {
+		return err
+	}
+	return tfDestroy(m.clusterDir, bootstrapStep, templateDir)
 }
 
 func destroyJoinStep(m *metadata) error {
-	return tfDestroy(m.clusterDir, joinStep, findTemplatesForStep(joinStep))
+	if !hasStateFile(m.clusterDir, joinStep) {
+		// there is no statefile, therefore nothing to destroy for this step
+		return nil
+	}
+	templateDir, err := findTemplatesForStep(joinStep)
+	if err != nil {
+		return err
+	}
+	return tfDestroy(m.clusterDir, joinStep, templateDir)
 }
