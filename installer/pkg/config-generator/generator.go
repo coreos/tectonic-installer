@@ -161,19 +161,19 @@ func (c ConfigGenerator) utilityConfig() (*tectonicutility.OperatorConfig, error
 		return nil, err
 	}
 	hashedAdminPassword := string(bytes)
-	adminUserID, err := generateRandomId(16)
+	adminUserID, err := generateRandomID(16)
 	if err != nil {
 		return nil, err
 	}
-	consoleSecret, err := generateRandomId(16)
+	consoleSecret, err := generateRandomID(16)
 	if err != nil {
 		return nil, err
 	}
-	KubectlSecret, err := generateRandomId(16)
+	KubectlSecret, err := generateRandomID(16)
 	if err != nil {
 		return nil, err
 	}
-	clusterId, err := generateClusterId(16)
+	clusterID, err := generateClusterID(16)
 	if err != nil {
 		return nil, err
 	}
@@ -193,7 +193,7 @@ func (c ConfigGenerator) utilityConfig() (*tectonicutility.OperatorConfig, error
 	utilityConfig.TectonicConfigMapConfig.BaseAddress = fmt.Sprintf("%s.%s", c.Cluster.Name, c.Cluster.DNS.BaseDomain)
 	utilityConfig.TectonicConfigMapConfig.CertificatesStrategy = "userProvidedCA"
 	// TODO: Consolidate ClusterID with the one genereated by terraform and and passed to the bootstrap step.
-	utilityConfig.TectonicConfigMapConfig.ClusterID = clusterId
+	utilityConfig.TectonicConfigMapConfig.ClusterID = clusterID
 	utilityConfig.TectonicConfigMapConfig.ClusterName = c.Cluster.Name
 	utilityConfig.TectonicConfigMapConfig.IdentityAPIService = "tectonic-identity-api.tectonic-system.svc.cluster.local"
 	utilityConfig.TectonicConfigMapConfig.InstallerPlatform = c.Cluster.Platform
@@ -243,7 +243,7 @@ func marshalYAML(obj interface{}) (string, error) {
 	return string(data), nil
 }
 
-func generateRandomId(byteLength int) (string, error) {
+func generateRandomID(byteLength int) (string, error) {
 	bytes := make([]byte, byteLength)
 
 	n, err := rand.Reader.Read(bytes)
@@ -259,12 +259,12 @@ func generateRandomId(byteLength int) (string, error) {
 	return b64Str, nil
 }
 
-func generateClusterId(byteLength int) (string, error) {
-	randomId, err := generateRandomId(16)
+func generateClusterID(byteLength int) (string, error) {
+	randomID, err := generateRandomID(16)
 	if err != nil {
 		return "", err
 	}
-	bytes, err := base64.RawURLEncoding.DecodeString(randomId)
+	bytes, err := base64.RawURLEncoding.DecodeString(randomID)
 	hexStr := hex.EncodeToString(bytes)
 	return fmt.Sprintf("%s-%s-%s-%s-%s",
 		hexStr[0:8],
