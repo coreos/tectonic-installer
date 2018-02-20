@@ -185,19 +185,7 @@ pipeline {
 
                     cd $GO_PROJECT/
                     make structure-check
-                    make bin/smoke
-
-                    cd $GO_PROJECT/installer
-                    make clean
-                    make tools
-                    make build
-
-                    make dirtycheck
-                    make lint
-                    make test
-                    rm -fr frontend/tests_output
                     """
-                    stash name: 'node-modules', includes: 'installer/frontend/node_modules/**'
                   }
                 }
                 withDockerContainer(tectonicSmokeTestEnvImage) {
