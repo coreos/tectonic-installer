@@ -243,6 +243,8 @@ func marshalYAML(obj interface{}) (string, error) {
 	return string(data), nil
 }
 
+// generateRandomID reproduce tf random_id behaviour
+// TODO: re-evaluate solution
 func generateRandomID(byteLength int) (string, error) {
 	bytes := make([]byte, byteLength)
 
@@ -259,8 +261,11 @@ func generateRandomID(byteLength int) (string, error) {
 	return b64Str, nil
 }
 
+// generateClusterID reproduce tf cluster_id behaviour
+// https://github.com/coreos/tectonic-installer/blob/master/modules/tectonic/assets.tf#L81
+// TODO: re-evaluate solution
 func generateClusterID(byteLength int) (string, error) {
-	randomID, err := generateRandomID(16)
+	randomID, err := generateRandomID(byteLength)
 	if err != nil {
 		return "", err
 	}
@@ -277,6 +282,8 @@ func generateClusterID(byteLength int) (string, error) {
 // cidrhost takes an IP address range in CIDR notation
 // and creates an IP address with the given host number.
 // If given host number is negative, the count starts from the end of the range
+// Reproduces tf behaviour.
+// TODO: re-evaluate solution
 func cidrhost(iprange string, hostNum int) (string, error) {
 	_, network, err := net.ParseCIDR(iprange)
 	if err != nil {
