@@ -73,7 +73,7 @@ func (c ConfigGenerator) addonConfig() *kubeaddon.OperatorConfig {
 	addonConfig := kubeaddon.OperatorConfig{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: kubeaddon.APIVersion,
-			// TODO: get Kind from kubeaddon.Kind
+			// TODO: get Kind from kubeaddon.Kind. Operator doesn't like KubeAddonOperatorConfig
 			Kind: "AddonConfig",
 		},
 	}
@@ -143,7 +143,7 @@ func (c ConfigGenerator) utilityConfig() (*tectonicutility.OperatorConfig, error
 	utilityConfig := tectonicutility.OperatorConfig{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: tectonicutility.APIVersion,
-			// TODO: get Kind from tectonicutility.Kind
+			// TODO: get Kind from tectonicutility.Kind. Operator doesn't like TectonicUtilityOperatorConfig
 			Kind: "UtilityConfig",
 		},
 	}
