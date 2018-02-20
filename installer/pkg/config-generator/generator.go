@@ -267,6 +267,9 @@ func generateClusterId(byteLength int) (string, error) {
 		hexStr[20:32]), nil
 }
 
+// cidrhost takes an IP address range in CIDR notation
+// and creates an IP address with the given host number.
+// If given host number is negative, the count starts from the end of the range
 func cidrhost(iprange string, hostNum int) (string, error) {
 	_, network, err := net.ParseCIDR(iprange)
 	if err != nil {
