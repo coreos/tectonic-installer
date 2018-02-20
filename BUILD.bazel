@@ -127,7 +127,8 @@ genrule(
 pkg_tar(
     name = "tarball_terraform_configuration",
     mode = "0644",
-    srcs = ["config.tf", "modules", "platforms", "steps"],
+    srcs =  glob(["modules/**"]) + glob(["platforms/**"]) + glob(["steps/**"]) + ["config.tf"],
+    strip_prefix = ".",
 )
 
 pkg_tar(
