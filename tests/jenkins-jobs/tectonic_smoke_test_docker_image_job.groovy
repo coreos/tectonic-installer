@@ -11,6 +11,7 @@ job("builders/tectonic-smoke-env-docker-image") {
   parameters {
     stringParam('TECTONIC_SMOKE_TAG', '', 'Tectonic Smoke Docker tag')
     booleanParam('DRY_RUN', true, 'Just build the docker image')
+    stringParam('github_repo', 'coreos/tectonic-installer', 'Github repository')
   }
 
   wrappers {
@@ -24,7 +25,7 @@ job("builders/tectonic-smoke-env-docker-image") {
   scm {
     git {
       remote {
-        url('https://github.com/coreos/tectonic-installer')
+        url('https://github.com/\${github_repo}')
       }
       branch('origin/master')
     }
