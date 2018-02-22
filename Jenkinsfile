@@ -26,7 +26,7 @@ commonCreds = [
   ],
   [
     $class: 'StringBinding',
-    credentialsId: 'jrussell-github',
+    credentialsId: 'github-coreosbot',
     variable: 'GITHUB_CREDENTIALS'
   ]
 ]
