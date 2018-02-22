@@ -11,6 +11,8 @@ provider "aws" {
 
 data "aws_availability_zones" "azs" {}
 
+resource "aws_eip" "bootstrap_node" {}
+
 data "template_file" "etcd_hostname_list" {
   count    = "${var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(data.aws_availability_zones.azs.names) == 5 ? 5 : 3}"
   template = "${var.tectonic_cluster_name}-etcd-${count.index}.${var.tectonic_base_domain}"
@@ -109,7 +111,7 @@ module "masters" {
   container_linux_version      = "${module.container_linux.version}"
   ec2_type                     = "${var.tectonic_aws_master_ec2_type}"
   extra_tags                   = "${var.tectonic_aws_extra_tags}"
-  instance_count               = "1"
+  instance_count               = "0"
   master_iam_role              = "${var.tectonic_aws_master_iam_role_name}"
   master_sg_ids                = "${concat(var.tectonic_aws_master_extra_sg_ids, list(module.vpc.master_sg_id))}"
   private_endpoints            = "${var.tectonic_aws_private_endpoints}"
@@ -121,6 +123,7 @@ module "masters" {
   subnet_ids                   = "${module.vpc.master_subnet_ids}"
   ec2_ami                      = "${var.tectonic_aws_ec2_ami_override}"
   kubeconfig_content           = "${local.kubeconfig_kubelet_content}"
+  eip_bootstrap_id             = "${aws_eip.bootstrap_node.id}"
 }
 
 module "workers" {

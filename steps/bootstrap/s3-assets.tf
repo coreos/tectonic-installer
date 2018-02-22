@@ -16,6 +16,29 @@ resource "aws_s3_bucket" "tectonic" {
   }
 }
 
+resource "aws_s3_bucket_policy" "ignition_bootstrap" {
+  bucket = "${aws_s3_bucket.tectonic.id}"
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Id": "Ignition",
+  "Statement": [
+    {
+      "Sid": "IPAllow",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::${aws_s3_bucket.tectonic.bucket}/ignition",
+      "Condition": {
+         "IpAddress": {"aws:SourceIp": "${aws_eip.bootstrap_node.public_ip}/32"}
+      }
+    }
+  ]
+}
+POLICY
+}
+
 # Bootkube / Tectonic assets
 resource "aws_s3_bucket_object" "tectonic_assets" {
   bucket = "${aws_s3_bucket.tectonic.bucket}"
@@ -61,10 +84,8 @@ resource "aws_s3_bucket_object" "ignition_bootstrap" {
   bucket  = "${aws_s3_bucket.tectonic.bucket}"
   key     = "ignition"
   content = "${local.ignition_bootstrap}"
-  acl     = "public-read"
+  acl     = "private"
 
-  # TODO: Lock down permissions.
-  # At the minute this is pulic (so accessible via http) so joiners nodes can reach the NCG using the same url
   server_side_encryption = "AES256"
 
   tags = "${merge(map(

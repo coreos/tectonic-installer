@@ -109,3 +109,7 @@ variable "kubeconfig_content" {
   type    = "string"
   default = ""
 }
+
+variable "eip_bootstrap_id" {
+  type = "string"
+}
