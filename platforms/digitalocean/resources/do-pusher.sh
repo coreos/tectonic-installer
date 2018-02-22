@@ -17,7 +17,7 @@ filename=$(basename $${1})
 # shellcheck disable=SC2034,SC1083
 cp $${1} /tmp
 # A tool for interacting with DO's object storage: https://github.com/aknuds1/do-spaces-tool
-docker pull aknudsen/do-spaces-tool:0.2.0 > /dev/null
+docker pull aknudsen/do-spaces-tool:v0.2.1 > /dev/null
 # shellcheck disable=SC2034,SC1083
-docker run -t --net=host -e ACCESS_KEY_ID -e SECRET_ACCESS_KEY -e REGION -v /tmp:/spaces aknudsen/do-spaces-tool:0.2.0 upload /spaces/$${filename} $${2}
+docker run -t --net=host -e ACCESS_KEY_ID -e SECRET_ACCESS_KEY -e REGION -v /tmp:/spaces aknudsen/do-spaces-tool:v0.2.1 upload /spaces/$${filename} $${2}
 rm -f /tmp/$${filename}
