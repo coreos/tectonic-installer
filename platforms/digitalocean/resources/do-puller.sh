@@ -15,11 +15,11 @@ export REGION=${do_region}
 FILENAME_DEST=$(basename $${2})
 
 # A tool for interacting with DO's object storage: https://github.com/aknuds1/do-spaces-tool
-docker pull aknudsen/do-spaces-tool:0.2.0 > /dev/null
+docker pull aknudsen/do-spaces-tool:v0.2.1 > /dev/null
 
 do_pull() {
   # shellcheck disable=SC2034,SC1083
-  docker run --rm -e ACCESS_KEY_ID -e SECRET_ACCESS_KEY -e REGION -t --net=host -v /tmp:/spaces aknudsen/do-spaces-tool:0.2.0 download $${1} /spaces/$${2}
+  docker run --rm -e ACCESS_KEY_ID -e SECRET_ACCESS_KEY -e REGION -t --net=host -v /tmp:/spaces aknudsen/do-spaces-tool:v0.2.1 download $${1} /spaces/$${2}
 }
 
 until do_pull $$1 $$FILENAME_DEST; do
