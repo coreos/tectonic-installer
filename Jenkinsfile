@@ -142,10 +142,10 @@ pipeline {
     booleanParam(
       name: 'NOTIFY_SLACK',
       defaultValue: false,
-      description: 'Notify slack channel on failure'
+      description: 'Notify slack channel on failure.'
     )
     string(
-      name: 'slack_channel',
+      name: 'SLACK_CHANNEL',
       defaultValue: '#team-installer',
       description: 'Slack channel to notify on failure.'
     )
@@ -552,6 +552,6 @@ def notifyBuildSlack() {
 
   // Send notifications
   echo 'Sending notification to slack...'
-  slackSend(color: colorCode, message: summary, channel: params.slack_channel)
+  slackSend(color: colorCode, message: summary, channel: params.SLACK_CHANNEL)
   echo 'Slack notification sent.'
 }
