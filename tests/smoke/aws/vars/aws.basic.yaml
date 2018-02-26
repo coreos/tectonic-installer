@@ -1,14 +1,13 @@
 Clusters:
-  - Name: mxinden
+  - Name: aws-basic
     Platform: AWS
-    SSHKey: mxinden
     Networking:
       Type: canal
       MTU: 1480
       PodCIDR: 10.2.0.0/16
       ServiceCIDR: 10.3.0.0/16
     Masters:
-      NodeCount: 3
+      NodeCount: 2
       MachineType: foo
     Workers:
       NodeCount: 3
@@ -19,14 +18,12 @@ Clusters:
     ExternalTLSMaterials:
       ValidityPeriod: 26280
     Tectonic:
-# TODO: Define this
-      PullSecretPath: /home/mxinden/go/src/github.com/coreos/tectonic-installer/pull-secret.json
-# TODO: Define this
-      LicensePath: /home/mxinden/go/src/github.com/coreos/tectonic-installer/tectonic-license.txt
+      PullSecretPath: null
+      LicensePath: null
     DNS:
       BaseDomain: tectonic-ci.de
     ContainerLinux:
-      Channel: stable
+      Channel: beta
       Version: latest
     Update:
       Server: foo.bar
@@ -34,11 +31,11 @@ Clusters:
       AppID: 42-42-0
     Console:
       # TODO: Make this configurable
-      AdminEmail: test@coreos.com
-      AdminPassword: abc123
+      AdminEmail: null
+      AdminPassword: null
     AWS:
-      Region: eu-west-1
-      SSHKey: mxinden
+      Region: null
+      SSHKey: null
       VPCCIDRBlock: 10.0.0.0/16
       External:
       Etcd:

@@ -4,16 +4,21 @@ require 'yaml'
 
 PLATFORMS = %w[govcloud aws azure metal vmware gcp].freeze
 
-# ConfigFile represents a Tectonic cluster configuration file
+# ConfigFile represents a Terraform configuration file describing a Tectonic
+# cluster configuration
 class ConfigFile
+  attr_reader :path, :data
   def initialize(file_path)
     @path = file_path
     raise "file #{file_path} does not exist" unless file_exists?
-    @data = YAML.parse(File.read(path))
+  end
+
+  def data
+    YAML.safe_load(File.read(@path))
   end
 
   def networking
-    data['tectonic_networking']
+    data['Clusters'][0]['Networking']['Type']
   end
 
   def node_count
@@ -21,44 +26,80 @@ class ConfigFile
   end
 
   def master_count
-    count = if platform.eql?('metal')
-              data['tectonic_metal_controller_names'].count
-            else
-              data['tectonic_master_count'].to_i
-            end
-    count
+    data['Clusters'][0]['Masters']['NodeCount']
   end
 
   def worker_count
-    count = if platform.eql?('metal')
-              data['tectonic_metal_worker_names'].count
-            else
-              data['tectonic_worker_count'].to_i
-            end
-    count
+    data['Clusters'][0]['Workers']['NodeCount']
   end
 
   def etcd_count
-    data['tectonic_etcd_count'].to_i
+    data['Clusters'][0]['Etcd']['NodeCount']
   end
 
   def add_worker_node(node_count)
-    data['tectonic_worker_count'] = node_count.to_s
-    save
+    new_data = data
+    new_data['Clusters'][0]['Workers']['NodeCount'] = node_count
+    save(new_data)
   end
 
   def change_cluster_name(cluster_name)
-    data['tectonic_cluster_name'] = cluster_name
-    save
+    new_data = data
+    new_data['Clusters'][0]['Name'] = cluster_name
+    save(new_data)
   end
 
-  def change_dns_name(dns_name)
-    data['tectonic_dns_name'] = dns_name
-    save
+  def cluster_name
+    data['Clusters'][0]['Name']
   end
 
-  def region
-    data['tectonic_aws_region']
+  def change_aws_region(region)
+    new_data = data
+    new_data['Clusters'][0]['AWS']['Region'] = region
+    save(new_data)
+  end
+
+  def region(platform)
+    data['Clusters'][0][platform.upcase]['Region']
+  end
+
+  def change_license(license_path)
+    new_data = data
+    new_data['Clusters'][0]['Tectonic']['LicensePath'] = license_path
+    save(new_data)
+  end
+
+  def change_pull_secret(pull_secret_path)
+    new_data = data
+    new_data['Clusters'][0]['Tectonic']['PullSecretPath'] = pull_secret_path
+    save(new_data)
+  end
+
+  def change_base_domain(base_domain)
+    new_data = data
+    new_data['Clusters'][0]['DNS']['BaseDomain'] = base_domain
+    save(new_data)
+  end
+
+  def license
+    data['Clusters'][0]['Tectonic']['LicensePath']
+  end
+
+  def pull_secret
+    data['Clusters'][0]['Tectonic']['PullSecretPath']
+  end
+
+  def change_admin_credentials(admin_email, admin_passwd)
+    new_data = data
+    new_data['Clusters'][0]['Console']['AdminEmail'] = admin_email
+    new_data['Clusters'][0]['Console']['AdminPassword'] = admin_passwd
+    save(new_data)
+  end
+
+  def admin_credentials
+    admin_email = data['Clusters'][0]['Console']['AdminEmail']
+    admin_passwd = data['Clusters'][0]['Console']['AdminPassword']
+    [admin_email, admin_passwd]
   end
 
   def prefix
@@ -67,34 +108,27 @@ class ConfigFile
     prefix
   end
 
+  def change_ssh_key(platform, ssh_key)
+    new_data = data
+    new_data['Clusters'][0][platform.upcase]['SSHKey'] = ssh_key
+    save(new_data)
+  end
+
   def platform
-    PLATFORMS.each do |platform|
-      return platform if data.keys.any? do |key|
-        key.start_with?("tectonic_#{platform}")
-      end
+    PLATFORMS.each do |plat|
+      return plat if data['Clusters'][0]['Platform'].downcase.eql?(plat)
     end
   end
 
   private
 
-  def method_missing(method_name, *arguments, &block)
-    data.fetch(method_name.to_s)
-  rescue KeyError
-    return ENV["TF_VAR_#{method_name}"] if ENV.key?("TF_VAR_#{method_name}")
-    super
-  end
-
-  def respond_to_missing?(method_name, include_private = false)
-    data.keys.any? { |k| k == method_name.to_s } || super
-  end
-
   def file_exists?
     File.exist? path
   end
 
-  def save
+  def save(data)
     File.open(path, 'w+') do |f|
-      f << data.to_json
+      f << data.to_yaml
     end
   end
 end

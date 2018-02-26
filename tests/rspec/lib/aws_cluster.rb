@@ -12,11 +12,19 @@ require 'tfstate_file'
 
 # AWSCluster represents a k8s cluster on AWS cloud provider
 class AwsCluster < Cluster
-  def initialize(tfvars_file)
+  attr_reader :config_file, :kubeconfig, :manifest_path, :build_path,
+              :tectonic_admin_email, :tectonic_admin_password, :tfstate_file
+
+  def initialize(config_file)
+    @config_file = config_file
     export_random_region_if_not_defined if Jenkins.environment?
-    # TODO: Configure this value
-    # @aws_region = tfvars_file.tectonic_aws_region
-    @aws_region = 'eu-west-1'
+    @aws_region = ENV['TF_VAR_tectonic_aws_region']
+
+    @name = @config_file.cluster_name
+    @build_path = File.join(File.dirname(ENV['RELEASE_TARBALL_PATH']), "tectonic/#{@name}")
+    @manifest_path = File.join(@build_path, 'generated')
+    @kubeconfig = File.join(manifest_path, 'auth/kubeconfig')
+
     @role_credentials = nil
     @role_credentials = AWSIAM.assume_role(@aws_region) if ENV.key?('TECTONIC_INSTALLER_ROLE')
 
@@ -24,16 +32,28 @@ class AwsCluster < Cluster
       ENV['TF_VAR_tectonic_aws_ssh_key'] = AwsSupport.create_aws_key_pairs(@aws_region, @role_credentials)
     end
 
-    super(tfvars_file)
+    @config_file.change_aws_region(@aws_region)
+    @config_file.change_license(ENV['TF_VAR_tectonic_license_path'])
+    @config_file.change_pull_secret(ENV['TF_VAR_tectonic_pull_secret_path'])
+    @config_file.change_ssh_key(@config_file.platform, ENV['TF_VAR_tectonic_aws_ssh_key'])
+
+    @tectonic_admin_email = NameGenerator.generate_fake_email if @config_file.admin_credentials[0].nil?
+    @tectonic_admin_password = PasswordGenerator.generate_password if @config_file.admin_credentials[1].nil?
+    @config_file.change_admin_credentials(@tectonic_admin_email, @tectonic_admin_password)
+
+    @tfstate_file = TFStateFile.new(@build_path, 'bootstrap.tfstate')
   end
 
   def env_variables
     variables = super
     variables['PLATFORM'] = 'aws'
+    variables['TF_VAR_tectonic_cluster_name'] = @config_file.cluster_name
+    variables['CLUSTER'] = @config_file.cluster_name
 
     # Unless base domain is provided by the user:
     unless ENV.key?('TF_VAR_tectonic_base_domain')
       variables['TF_VAR_tectonic_base_domain'] = 'tectonic-ci.de'
+      @config_file.change_base_domain('tectonic-ci.de')
     end
 
     variables
@@ -123,8 +143,8 @@ class AwsCluster < Cluster
 
   def tectonic_console_url
     Dir.chdir(@build_path) do
-      ingress_ext = `echo module.dns.ingress_external_fqdn | terraform console ../../platforms/aws`.chomp
-      ingress_int = `echo module.dns.ingress_internal_fqdn | terraform console ../../platforms/aws`.chomp
+      ingress_ext = @tfstate_file.output('dns', 'ingress_external_fqdn')
+      ingress_int = @tfstate_file.output('dns', 'ingress_internal_fqdn')
       if ingress_ext.empty?
         if ingress_int.empty?
           raise 'failed to get the console url to use in the UI tests.'
@@ -143,7 +163,7 @@ class AwsCluster < Cluster
         env = env_variables
         env['TF_INIT_OPTIONS'] = '-no-color'
 
-        return run_command(env, 'init', '--config config.yaml')
+        return run_tectonic_cli(env, 'init', '--config=config.yaml')
       end
     end
   rescue Timeout::Error
@@ -158,7 +178,7 @@ class AwsCluster < Cluster
         env['TF_APPLY_OPTIONS'] = '-no-color'
         env['TF_INIT_OPTIONS'] = '-no-color'
 
-        return run_command(env, 'install', "--dir #{@name}")
+        return run_tectonic_cli(env, 'install', "--dir=#{@name}")
       end
     end
   rescue Timeout::Error
@@ -173,7 +193,7 @@ class AwsCluster < Cluster
         env = env_variables
         env['TF_DESTROY_OPTIONS'] = '-no-color'
         env['TF_INIT_OPTIONS'] = '-no-color'
-        return run_command(env, 'destroy', "#{@name}")
+        return run_tectonic_cli(env, 'destroy', @name)
       end
     end
 
@@ -184,9 +204,11 @@ class AwsCluster < Cluster
     raise e
   end
 
-  def run_command(env, cmd, flags = '')
-    tectonic_binary = File.join(File.dirname(ENV['RELEASE_TARBALL_PATH']), 'tectonic/tectonic-installer/linux/tectonic')
-    command = "#{tectonic_binary} #{cmd} #{flags} | tee terraform-#{cmd}.log"
+  def run_tectonic_cli(env, cmd, flags = '')
+    os = Gem::Platform.local.os
+    tectonic_binary = File.join(File.dirname(ENV['RELEASE_TARBALL_PATH']), "tectonic/tectonic-installer/#{os}/tectonic")
+    tectonic_logs = File.join(File.dirname(ENV['RELEASE_TARBALL_PATH']), "tectonic/#{@name}/terraform-#{cmd}.log")
+    command = "#{tectonic_binary} #{cmd} #{flags} | tee #{tectonic_logs}"
     Open3.popen3(env, "bash -coxe pipefail '#{command}'") do |_stdin, stdout, stderr, wait_thr|
       while (line = stdout.gets)
         puts line
@@ -198,6 +220,45 @@ class AwsCluster < Cluster
       return exit_status.success?
     end
     false
+  end
+
+  def wait_nodes_ready
+    from = Time.now
+    loop do
+      puts 'Waiting for nodes become in ready state after an update'
+      Retriable.with_retries(KubeCTL::KubeCTLCmdError, limit: 5, sleep: 10) do
+        nodes = describe_nodes
+        nodes_ready = Array.new(@config_file.node_count, false)
+        nodes['items'].each_with_index do |item, index|
+          item['status']['conditions'].each do |condition|
+            if condition['type'] == 'Ready' && condition['status'] == 'True'
+              nodes_ready[index] = true
+            end
+          end
+        end
+        if nodes_ready.uniq.length == 1 && nodes_ready.uniq.include?(true)
+          puts '**All nodes are Ready!**'
+          return true
+        end
+        puts "One or more nodes are not ready yet or missing nodes. Waiting...\n" \
+             "# of returned nodes #{nodes['items'].size}. Expected #{@config_file.node_count}"
+        elapsed = Time.now - from
+        raise 'waiting for all nodes to become ready timed out' if elapsed > 1200 # 20 mins timeout
+        sleep 20
+      end
+    end
+  end
+
+  # TODO: (carlos) remove this
+  def tf_var(v)
+    tf_value "var.#{v}"
+  end
+
+  # TODO: (carlos) remove this
+  def tf_value(v)
+    Dir.chdir(@build_path) do
+      `echo '#{v}' | terraform console ../steps/bootstrap`.chomp
+    end
   end
 
   private
