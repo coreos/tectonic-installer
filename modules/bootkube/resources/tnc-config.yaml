@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: bootkube-ut2
 kind: TectonicNodeControllerConfig
 HTTPProxy: "${http_proxy}"
 HTTPSProxy: "${https_proxy}"
