@@ -11,9 +11,9 @@ provider "aws" {
 
 resource "aws_autoscaling_group" "masters" {
   name                 = "${var.tectonic_cluster_name}-masters"
-  desired_capacity     = "${var.tectonic_master_count}"
-  max_size             = "${var.tectonic_master_count * 3}"
-  min_size             = "${var.tectonic_master_count}"
+  desired_capacity     = "${local.master_count}"
+  max_size             = "${local.master_count * 3}"
+  min_size             = "${local.master_count}"
   launch_configuration = "${local.aws_launch_configuration_masters}"
   vpc_zone_identifier  = ["${local.subnet_ids_masters}"]
 

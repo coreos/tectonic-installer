@@ -17,4 +17,7 @@ locals {
   private_zone_id                  = "${data.terraform_remote_state.bootstrap.private_zone_id}"
   ncg_elb_dns_name                 = "${data.terraform_remote_state.bootstrap.ncg_elb_dns_name}"
   ncg_elb_zone_id                  = "${data.terraform_remote_state.bootstrap.ncg_elb_zone_id}"
+
+  // The bootstrap node must be already running so remaining_masters = expected_masters - bootstrap_node
+  master_count = "${var.tectonic_master_count - 1}"
 }

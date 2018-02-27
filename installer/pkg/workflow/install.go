@@ -8,7 +8,8 @@ func NewInstallFullWorkflow(clusterDir string) Workflow {
 		steps: []Step{
 			readClusterConfigStep,
 			installAssetsStep,
-			generateClusterConfigStep,
+			// TODO(alberto): This can't be used until the clusterId generated here, gets passed to the tags instances
+			//generateClusterConfigStep,
 			installBootstrapStep,
 			installJoinStep,
 		},
@@ -23,7 +24,8 @@ func NewInstallAssetsWorkflow(clusterDir string) Workflow {
 		steps: []Step{
 			readClusterConfigStep,
 			installAssetsStep,
-			generateClusterConfigStep,
+			// TODO(alberto): This can't be used until the clusterId generated here, gets passed to the tags instances
+			//generateClusterConfigStep,
 		},
 	}
 }
