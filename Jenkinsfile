@@ -10,7 +10,6 @@ commonCreds = [
   file(credentialsId: 'tectonic-license', variable: 'TF_VAR_tectonic_license_path'),
   file(credentialsId: 'tectonic-pull', variable: 'TF_VAR_tectonic_pull_secret_path'),
   file(credentialsId: 'GCP-APPLICATION', variable: 'GOOGLE_APPLICATION_CREDENTIALS'),
-  string(credentialsId: 'AWS-TECTONIC-ROLE-NAME', variable: 'TF_VAR_tectonic_aws_installer_role'),
   usernamePassword(
     credentialsId: 'jenkins-log-analyzer-user',
     passwordVariable: 'LOG_ANALYZER_PASSWORD',
@@ -46,6 +45,9 @@ creds.push(
     credentialsId: 'TF-TECTONIC-JENKINS-NO-SESSION'
   ]
 )
+creds.push(
+  string(credentialsId: 'AWS-TECTONIC-ROLE-NAME', variable: 'TF_VAR_tectonic_aws_installer_role')
+)
 
 govcloudCreds = commonCreds.collect()
 govcloudCreds.push(
@@ -53,6 +55,9 @@ govcloudCreds.push(
       $class: 'AmazonWebServicesCredentialsBinding',
       credentialsId: 'TF-TECTONIC-INSTALLER-GOVCLOUD'
     ]
+)
+govcloudCreds.push(
+  string(credentialsId: 'GOVCLOUD-TECTONIC-ROLE-NAME', variable: 'TF_VAR_tectonic_aws_installer_role')
 )
 
 quayCreds = [

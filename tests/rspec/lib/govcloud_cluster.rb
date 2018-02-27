@@ -49,7 +49,8 @@ class GovcloudCluster < Cluster
     # Return the log output in a hash {ip => log}
     hash_log_ip = instances_id.map do |instance_id|
       {
-        instance_id_to_ip_address(instance_id) => AwsSupport.collect_ec2_console_logs(instance_id, @aws_region, @role_credentials)
+        instance_id_to_ip_address(instance_id) =>
+        AwsSupport.collect_ec2_console_logs(instance_id, @aws_region, @role_credentials)
       }
     end
     # convert the array to hash [{k1=>v1},{k2=>v2}] to {k1=>v1,k2=>v2}
