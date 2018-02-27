@@ -75,6 +75,14 @@ module "bootkube" {
   cloud_config_path   = ""
   tectonic_networking = "${var.tectonic_networking}"
   calico_mtu          = "1480"
+
+  # ignition bootstrapping variables
+  no_proxy                  = "${var.tectonic_no_proxy}"
+  http_proxy                = "${var.tectonic_http_proxy_address}"
+  https_proxy               = "${var.tectonic_https_proxy_address}"
+  image_re                  = "${var.tectonic_image_re}"
+  kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
+  kubelet_node_label        = "node-role.kubernetes.io/master"
 }
 
 module "tectonic" {

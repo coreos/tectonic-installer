@@ -120,6 +120,7 @@ data "template_file" "bootkube_sh" {
 
   vars {
     bootkube_image           = "${var.container_images["bootkube"]}"
+    tnc_bootstrap_image      = "${var.container_images["tnc_bootstrap"]}"
     kube_core_renderer_image = "${var.container_images["kube_core_renderer"]}"
   }
 }
@@ -150,3 +151,36 @@ data "ignition_systemd_unit" "bootkube_path_unit" {
   enabled = true
   content = "${data.template_file.bootkube_path_unit.rendered}"
 }
+
+# tnc-config.yaml (resources/generated/tnc-config.yaml)
+data "template_file" "tnc-config_yaml" {
+  template = "${file("${path.module}/resources/tnc-config.yaml")}"
+
+  vars {
+    http_proxy               = "${var.http_proxy}"
+    https_proxy              = "${var.https_proxy}"
+    no_proxy                 = "${join(",", var.no_proxy)}"
+    kubelet_image_url        = "${replace(var.container_images["hyperkube"],var.image_re,"$1")}"
+    kubelet_image_tag        = "${replace(var.container_images["hyperkube"],var.image_re,"$2")}"
+    iscsi_enabled            = "${var.iscsi_enabled}"
+    kubeconfig_fetch_cmd     = "${var.kubeconfig_fetch_cmd != "" ? "ExecStartPre=${var.kubeconfig_fetch_cmd}" : ""}"
+    tectonic_torcx_image_url = "${replace(var.container_images["tectonic_torcx"],var.image_re,"$1")}"
+    tectonic_torcx_image_tag = "${replace(var.container_images["tectonic_torcx"],var.image_re,"$2")}"
+    torcx_skip_setup         = "false"
+    torcx_store_url          = "${var.torcx_store_url}"
+    bootstrap_upgrade_cl     = "${var.bootstrap_upgrade_cl}"
+    node_label               = "${var.kubelet_node_label}"
+    node_taints_param        = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
+    cluster_dns_ip           = "${var.kube_dns_service_ip}"
+    cloud_provider           = "${var.cloud_provider}"
+    cloud_provider_config    = "${var.cloud_provider_config != "" ? "--cloud-config=/etc/kubernetes/cloud/config" : ""}"
+    debug_config             = "${var.kubelet_debug_config}"
+    cluster_name             = "${var.cluster_name}"
+  }
+}
+
+resource "local_file" "tnc-config_yaml" {
+  content  = "${data.template_file.tnc-config_yaml.rendered}"
+  filename = "./generated/tnc-config.yaml"
+}
+
