@@ -43,7 +43,8 @@ class GovcloudVPC
       'TF_VAR_tectonic_govcloud_external_worker_subnet_ids' => @worker_subnet_ids,
       'TF_VAR_tectonic_govcloud_dns_server_ip' => @vpc_dns,
       'TF_VAR_tectonic_govcloud_dns_server_api_url' => @dns_api_url,
-      'TF_VAR_tectonic_govcloud_dns_server_api_key' => @pdns_api_key
+      'TF_VAR_tectonic_govcloud_dns_server_api_key' => @pdns_api_key,
+      'TF_VAR_aws_role' => ENV['TF_VAR_tectonic_aws_installer_role']
     }
     vars.each do |key, value|
       ENV[key] = value
