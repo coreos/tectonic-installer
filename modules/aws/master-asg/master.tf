@@ -61,7 +61,7 @@ resource "aws_autoscaling_group" "masters" {
 
 data "ignition_config" "ncg_master" {
   append {
-    source = "http://${var.cluster_name}-ncg.${var.base_domain}/ignition?profile=master"
+    source = "http://${var.cluster_name}-ncg.${var.base_domain}/ign/v1/role/master"
   }
 
   files = ["${data.ignition_file.kubelet_master_kubeconfig.id}"]
