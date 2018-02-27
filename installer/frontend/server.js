@@ -7,10 +7,10 @@ import {
   RETRY,
   TECTONIC_LICENSE,
   getTectonicDomain,
-  toAWS_TF,
-  toBaremetal_TF,
+  toAwsConfig,
+  toMetalConfig,
 } from './cluster-config';
-import { clusterReadyActionTypes, configActions, loadFactsActionTypes, serverActionTypes, FORMS } from './actions';
+import { clusterReadyActionTypes, configActions, loadFactsActionTypes, serverActionTypes } from './actions';
 import { AWS_TF, BARE_METAL_TF } from './platforms';
 
 const { addIn, setIn } = configActions;
@@ -68,8 +68,8 @@ export const observeClusterStatus = (dispatch, getState) => {
 };
 
 const platformToFunc = {
-  [AWS_TF]: toAWS_TF,
-  [BARE_METAL_TF]: toBaremetal_TF,
+  [AWS_TF]: toAwsConfig,
+  [BARE_METAL_TF]: toMetalConfig,
 };
 
 let observeInterval;
@@ -90,7 +90,7 @@ export const commitToServer = (dryRun = false, retry = false) => (dispatch, getS
     throw Error(`unknown platform type "${state.clusterConfig[PLATFORM_TYPE]}"`);
   }
 
-  const body = f(state, FORMS);
+  const body = f(state);
   fetch('/terraform/apply', {
     credentials: 'same-origin',
     method: 'POST',

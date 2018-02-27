@@ -1,0 +1,40 @@
+AWS:
+  Etcd:
+    EC2Type: m4.large
+    RootVolume:
+      Size: 32
+      Type: gp2
+  Master:
+    EC2Type: m4.large
+    RootVolume:
+      Size: 32
+      Type: gp2
+  PrivateEndpoints: false
+  VPCCIDRBlock: 10.0.0.0/16
+  Worker:
+    EC2Type: m4.large
+    RootVolume:
+      Size: 32
+      Type: gp2
+Console:
+  AdminEmail: ~
+  AdminPassword: ~
+DNS:
+  BaseDomain: tectonic-ci.de
+  DNSName: aws-basic
+Etcd:
+  NodeCount: 3
+Masters:
+  NodeCount: 2
+Name: aws-basic
+Networking:
+  PodCIDR: 10.2.0.0/16
+  ServiceCIDR: 10.3.0.0/16
+Platform: aws
+StatsURL: https://stats-collector-staging.tectonic.com
+Tectonic:
+  LicensePath: ~
+  PullSecretPath: ~
+Version: "1.0"
+Workers:
+  NodeCount: 2
