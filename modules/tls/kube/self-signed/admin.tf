@@ -10,8 +10,13 @@ resource "tls_cert_request" "admin" {
   private_key_pem = "${tls_private_key.admin.private_key_pem}"
 
   subject {
-    common_name  = "admin"
-    organization = "system:masters"
+    common_name         = "admin"
+    organization        = "${uuid()}"
+    organizational_unit = "system:masters"
+  }
+
+  lifecycle {
+    ignore_changes = ["subject"]
   }
 }
 

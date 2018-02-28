@@ -8,7 +8,9 @@ resource "tls_cert_request" "ingress" {
   private_key_pem = "${tls_private_key.ingress.private_key_pem}"
 
   subject {
-    common_name = "${element(split(":", var.base_address), 0)}"
+    common_name         = "${element(split(":", var.base_address), 0)}"
+    organization        = "${uuid()}"
+    organizational_unit = "ingress"
   }
 
   # subject commonName is deprecated per RFC2818 in favor of
@@ -16,6 +18,10 @@ resource "tls_cert_request" "ingress" {
   dns_names = [
     "${element(split(":", var.base_address), 0)}",
   ]
+
+  lifecycle {
+    ignore_changes = ["subject"]
+  }
 }
 
 resource "tls_locally_signed_cert" "ingress" {
