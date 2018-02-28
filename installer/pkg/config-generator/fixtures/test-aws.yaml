@@ -1,4 +1,4 @@
-Clusters:
+clusters:
   - name: test
     baseDomain: cluster.com
     platform: AWS

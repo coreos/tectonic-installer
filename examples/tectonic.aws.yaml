@@ -299,6 +299,16 @@ clusters:
     name:
 
     networking:
+      # (optional) This declares the MTU used by Calico.
+      # mtu:
+
+      # (optional) This declares the IP range to assign Kubernetes pod IPs in CIDR notation.
+      # podCIDR: 10.2.0.0/16
+
+      # (optional) This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation.
+      # The maximum size of this IP range is /12
+      # serviceCIDR: 10.3.0.0/16
+
       # (optional) Configures the network to be used in Tectonic. One of the following values can be used:
       #
       # - "flannel": enables overlay networking only. This is implemented by flannel using VXLAN.
@@ -309,16 +319,6 @@ clusters:
       #
       # - "none": disables the installation of any Pod level networking layer provided by Tectonic. By setting this value, users are expected to deploy their own solution to enable network connectivity for Pods and Services.
       # type: canal
-
-      # (optional) This declares the MTU used by Calico.
-      # mtu:
-
-      # (optional) This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation.
-      # The maximum size of this IP range is /12
-      # serviceCIDR: 10.3.0.0/16
-
-      # (optional) This declares the IP range to assign Kubernetes pod IPs in CIDR notation.
-      # podCIDR: 10.2.0.0/16
 
     proxy:
       # (optional) HTTP proxy address.
