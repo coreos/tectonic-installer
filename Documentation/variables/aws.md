@@ -6,6 +6,7 @@ This document gives an overview of variables used in the AWS platform of the Tec
 
 | Name | Description | Type | Default |
 |------|-------------|:----:|:-----:|
+| custom_sg_cidrs | List of CIDRs to add to whitelist in security groups created by the installer. | list | `<list>` |
 | tectonic_autoscaling_group_extra_tags | (optional) Extra AWS tags to be applied to created autoscaling group resources. This is a list of maps having the keys `key`, `value` and `propagate_at_launch`.<br><br>Example: `[ { key = "foo", value = "bar", propagate_at_launch = true } ]` | list | `<list>` |
 | tectonic_aws_assets_s3_bucket_name | (optional) Unique name under which the Amazon S3 bucket will be created. Bucket name must start with a lower case name and is limited to 63 characters. The Tectonic Installer uses the bucket to store tectonic assets and kubeconfig. If name is not provided the installer will construct the name using "tectonic_cluster_name", current AWS region and "tectonic_base_domain" | string | `` |
 | tectonic_aws_config_version | (internal) This declares the version of the AWS configuration variables. It has no impact on generated assets but declares the version contract of the configuration. | string | `1.0` |

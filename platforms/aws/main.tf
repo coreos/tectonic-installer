@@ -21,6 +21,7 @@ module "container_linux" {
 module "vpc" {
   source = "../../modules/aws/vpc"
 
+  custom_sg_cidrs          = "${var.custom_sg_cidrs}"
   base_domain              = "${var.tectonic_base_domain}"
   cidr_block               = "${var.tectonic_aws_vpc_cidr_block}"
   cluster_id               = "${module.tectonic.cluster_id}"

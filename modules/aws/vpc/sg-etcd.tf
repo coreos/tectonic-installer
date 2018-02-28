@@ -18,7 +18,7 @@ resource "aws_security_group" "etcd" {
 
   ingress {
     protocol    = "icmp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = "${var.custom_sg_cidrs}"
     from_port   = 0
     to_port     = 0
   }

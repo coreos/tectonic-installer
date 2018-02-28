@@ -23,9 +23,59 @@ resource "aws_security_group_rule" "master_ingress_icmp" {
   security_group_id = "${aws_security_group.master.id}"
 
   protocol    = "icmp"
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks = "${var.custom_sg_cidrs}"
   from_port   = 0
   to_port     = 0
+}
+
+resource "aws_security_group_rule" "master_ingress_http_from_worker" {
+  type                     = "ingress"
+  security_group_id        = "${aws_security_group.master.id}"
+  source_security_group_id = "${aws_security_group.worker.id}"
+
+  protocol  = "tcp"
+  from_port = 80
+  to_port   = 80
+}
+
+resource "aws_security_group_rule" "master_ingress_https_from_worker" {
+  type                     = "ingress"
+  security_group_id        = "${aws_security_group.master.id}"
+  source_security_group_id = "${aws_security_group.worker.id}"
+
+  protocol  = "tcp"
+  from_port = 443
+  to_port   = 443
+}
+
+resource "aws_security_group_rule" "master_ingress_http_from_console" {
+  type                     = "ingress"
+  security_group_id        = "${aws_security_group.master.id}"
+  source_security_group_id = "${aws_security_group.console.id}"
+
+  protocol  = "tcp"
+  from_port = 80
+  to_port   = 80
+}
+
+resource "aws_security_group_rule" "master_ingress_https_from_console" {
+  type                     = "ingress"
+  security_group_id        = "${aws_security_group.master.id}"
+  source_security_group_id = "${aws_security_group.console.id}"
+
+  protocol  = "tcp"
+  from_port = 443
+  to_port   = 443
+}
+
+resource "aws_security_group_rule" "master_ingress_https_from_api" {
+  type                     = "ingress"
+  security_group_id        = "${aws_security_group.master.id}"
+  source_security_group_id = "${aws_security_group.api.id}"
+
+  protocol  = "tcp"
+  from_port = 443
+  to_port   = 443
 }
 
 resource "aws_security_group_rule" "master_ingress_ssh" {
@@ -33,7 +83,7 @@ resource "aws_security_group_rule" "master_ingress_ssh" {
   security_group_id = "${aws_security_group.master.id}"
 
   protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks = "${var.custom_sg_cidrs}"
   from_port   = 22
   to_port     = 22
 }
@@ -43,7 +93,7 @@ resource "aws_security_group_rule" "master_ingress_http" {
   security_group_id = "${aws_security_group.master.id}"
 
   protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks = "${var.custom_sg_cidrs}"
   from_port   = 80
   to_port     = 80
 }
@@ -53,7 +103,7 @@ resource "aws_security_group_rule" "master_ingress_https" {
   security_group_id = "${aws_security_group.master.id}"
 
   protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks = "${var.custom_sg_cidrs}"
   from_port   = 6443
   to_port     = 6443
 }
