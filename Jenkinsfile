@@ -77,7 +77,9 @@ pipeline {
   agent none
   environment {
     KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.4_coreos.0'
-    LOGSTASH_BUCKET= "log-analyzer-tectonic-installer"
+    TF_VAR_tectonic_aws_region = "${params.AWS_REGION}"
+    TF_VAR_tectonic_aws_base_domain = "${params.AWS_BASE_DOMAIN}"
+    TF_VAR_base_domain = "${params.AWS_BASE_DOMAIN}"
   }
   options {
     // Individual steps have stricter timeouts. 360 minutes should be never reached.
@@ -152,6 +154,21 @@ pipeline {
       name: 'SLACK_CHANNEL',
       defaultValue: '#team-installer',
       description: 'Slack channel to notify on failure.'
+    )
+    string(
+      name: 'AWS_REGION',
+      defaultValue: 'us-east-1',
+      description: 'AWS region to use'
+    )
+    string(
+      name: 'AWS_BASE_DOMAIN',
+      defaultValue: 'tectonic-ci.de',
+      description: 'Route53 base domain for Tectonic ingress and API'
+    )
+    string(
+      name: 'LOGSTASH_BUCKET',
+      defaultValue: 'log-analyzer-tectonic-installer',
+      description: 'S3 bucket target for logs, to be consumed by Logstash. Leave empty to skip uploading logs.'
     )
   }
 
@@ -377,22 +394,26 @@ pipeline {
   }
   post {
     always {
-      node('worker && ec2') {
-        forcefullyCleanWorkspace()
-        echo "Starting with streaming the logfile to the S3 bucket"
-        withDockerContainer(params.builder_image) {
-          withCredentials(credsUI) {
-            unstash 'clean-repo'
-            script {
-              try {
-                sh """#!/bin/bash -xe
-                export BUILD_RESULT=${currentBuild.currentResult}
-                ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh jenkins-logs
-                """
-              } catch (Exception e) {
-                notifyBuildSlack()
-              } finally {
-                cleanWs notFailBuild: true
+      script {
+        node('worker && ec2') {
+          forcefullyCleanWorkspace()
+          if (params.LOGSTASH_BUCKET != "") {
+            echo "Starting with streaming the logfile to the S3 bucket"
+            withDockerContainer(params.builder_image) {
+              withCredentials(credsUI) {
+                unstash 'clean-repo'
+                script {
+                  try {
+                    sh """#!/bin/bash -xe
+                    export BUILD_RESULT=${currentBuild.currentResult}
+                    ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh jenkins-logs
+                    """
+                  } catch (Exception e) {
+                    notifyBuildSlack()
+                  } finally {
+                    cleanWs notFailBuild: true
+                  }
+                }
               }
             }
           }
@@ -468,20 +489,22 @@ def runRSpecTest(testFilePath, dockerArgs, credentials) {
         reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
         step([$class: "TapPublisher", testResults: "templogfiles/*", outputTapToConsole: true, planRequired: false])
         archiveArtifacts allowEmptyArchive: true, artifacts: 'bazel-bin/tectonic/build/**/logs/**'
-        withDockerContainer(params.builder_image) {
-         withCredentials(credsUI) {
-          script {
-            try {
-              sh """#!/bin/bash -xe
-              ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
-              """
-            } catch (Exception e) {
-              notifyBuildSlack()
-            } finally {
-              cleanWs notFailBuild: true
+        if (params.LOGSTASH_BUCKET != "") {
+          withDockerContainer(params.builder_image) {
+            withCredentials(credsUI) {
+              script {
+                try {
+                  sh """#!/bin/bash -xe
+                  ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
+                  """
+                } catch (Exception e) {
+                  notifyBuildSlack()
+                } finally {
+                  cleanWs notFailBuild: true
+                }
+              }
             }
           }
-         }
         }
         cleanWs notFailBuild: true
       }
@@ -519,19 +542,21 @@ def runRSpecTestBareMetal(testFilePath, credentials) {
         reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
         step([$class: "TapPublisher", testResults: "../../templogfiles/*", outputTapToConsole: true, planRequired: false])
         archiveArtifacts allowEmptyArchive: true, artifacts: 'bazel-bin/tectonic/build/**/logs/**'
-        withCredentials(credsUI) {
-          script {
-            try {
-              sh """#!/bin/bash -xe
-              ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
-              """
-            } catch (Exception e) {
-              notifyBuildSlack()
-            } finally {
-              cleanWs notFailBuild: true
+        if (params.LOGSTASH_BUCKET != "") {
+          withCredentials(credsUI) {
+            script {
+              try {
+                sh """#!/bin/bash -xe
+                ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
+                """
+              } catch (Exception e) {
+                notifyBuildSlack()
+              } finally {
+                cleanWs notFailBuild: true
+              }
             }
           }
-         }
+        }
         cleanWs notFailBuild: true
       }
     }
