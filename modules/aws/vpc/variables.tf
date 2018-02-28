@@ -76,3 +76,8 @@ variable "custom_dns_name" {
   default     = ""
   description = "DNS prefix used to construct the console and API server endpoints."
 }
+
+variable "master_ssh_allowed_ips" {
+  description = "List of CIDR blocks of IPs allowed to SSH to master nodes"
+  default     = ["0.0.0.0/0"]
+}

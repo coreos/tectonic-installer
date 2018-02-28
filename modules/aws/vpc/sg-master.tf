@@ -33,7 +33,7 @@ resource "aws_security_group_rule" "master_ingress_ssh" {
   security_group_id = "${aws_security_group.master.id}"
 
   protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks = ["${var.master_ssh_allowed_ips}"]
   from_port   = 22
   to_port     = 22
 }

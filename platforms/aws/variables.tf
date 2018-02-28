@@ -280,6 +280,17 @@ Example:
 EOF
 }
 
+variable "tectonic_aws_master_ssh_allowed_ips" {
+  type    = "list"
+  default = ["0.0.0.0/0"]
+
+  description = <<EOF
+(optional) This configures trusted subnets for SSH access to the master nodes.
+
+Example: `"10.0.0.0/16"`
+EOF
+}
+
 variable "tectonic_aws_worker_custom_subnets" {
   type    = "map"
   default = {}
