@@ -87,6 +87,7 @@ module "masters" {
 
   ign_ca_cert_id_list                  = "${module.ignition_masters.ca_cert_id_list}"
   ign_update_ca_certificates_dropin_id = "${module.ignition_masters.update_ca_certificates_dropin_id}"
+  ign_bbr_kernel_module_id             = "${module.ignition_masters.bbr_kernel_module_id}"
   ign_bootkube_path_unit_id            = "${module.bootkube.systemd_path_unit_id}"
   ign_bootkube_service_id              = "${module.bootkube.systemd_service_id}"
   ign_docker_dropin_id                 = "${module.ignition_masters.docker_dropin_id}"
@@ -98,6 +99,7 @@ module "masters" {
   ign_locksmithd_service_id            = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id              = "${module.ignition_masters.max_user_watches_id}"
   ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.profile_env_id : ""}"
+  ign_sysctl_bbr_congestion_control_id = "${module.ignition_masters.sysctl_bbr_congestion_control_id}"
   ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_masters.systemd_default_env_id : ""}"
   ign_tectonic_path_unit_id            = "${module.tectonic.systemd_path_unit_id}"
   ign_tectonic_service_id              = "${module.tectonic.systemd_service_id}"
@@ -119,6 +121,7 @@ module "workers" {
   disk_size    = "${var.tectonic_gcp_worker_disk_size}"
   disk_type    = "${var.tectonic_gcp_worker_disktype}"
 
+  ign_bbr_kernel_module_id             = "${module.ignition_masters.bbr_kernel_module_id}"
   ign_ca_cert_id_list                  = "${module.ignition_masters.ca_cert_id_list}"
   ign_update_ca_certificates_dropin_id = "${module.ignition_workers.update_ca_certificates_dropin_id}"
   ign_docker_dropin_id                 = "${module.ignition_workers.docker_dropin_id}"
@@ -130,6 +133,7 @@ module "workers" {
   ign_locksmithd_service_id            = "${module.ignition_workers.locksmithd_service_id}"
   ign_max_user_watches_id              = "${module.ignition_workers.max_user_watches_id}"
   ign_profile_env_id                   = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.profile_env_id : ""}"
+  ign_sysctl_bbr_congestion_control_id = "${module.ignition_masters.sysctl_bbr_congestion_control_id}"
   ign_systemd_default_env_id           = "${local.tectonic_http_proxy_enabled ? module.ignition_workers.systemd_default_env_id : ""}"
   instance_count                       = "${var.tectonic_worker_count}"
   kubeconfig_content                   = "${module.bootkube.kubeconfig-kubelet}"

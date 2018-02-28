@@ -163,3 +163,19 @@ output "systemd_default_env_id" {
 output "systemd_default_env_rendered" {
   value = "${data.template_file.systemd_default_env.rendered}"
 }
+
+output "bbr_kernel_module_id" {
+  value = "${data.ignition_file.bbr_kernel_module.id}"
+}
+
+output "bbr_kernel_module_rendered" {
+  value = "${data.template_file.bbr_kernel_module.rendered}"
+}
+
+output "sysctl_bbr_congestion_control_id" {
+  value = "${data.ignition_file.sysctl_bbr_congestion_control.id}"
+}
+
+output "sysctl_bbr_congestion_control_rendered" {
+  value = "${data.template_file.sysctl_bbr_congestion_control.rendered}"
+}

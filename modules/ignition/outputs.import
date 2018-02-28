@@ -50,3 +50,11 @@ variable "ign_systemd_default_env_id" {
   type    = "string"
   default = ""
 }
+
+variable "ign_bbr_kernel_module_id" {
+  type = "string"
+}
+
+variable "ign_sysctl_bbr_congestion_control_id" {
+  type = "string"
+}

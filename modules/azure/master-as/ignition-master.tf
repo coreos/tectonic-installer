@@ -8,6 +8,8 @@ data "ignition_config" "master" {
     data.ignition_file.cloud_provider_config.id,
     var.ign_profile_env_id,
     var.ign_systemd_default_env_id,
+    var.ign_bbr_kernel_module_id,
+    var.ign_sysctl_bbr_congestion_control_id,
    ))}",
     "${var.ign_ca_cert_id_list}",
   ]
