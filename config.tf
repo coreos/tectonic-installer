@@ -113,7 +113,7 @@ variable "tectonic_versions" {
 
   default = {
     monitoring = "1.9.3"
-    tectonic   = "1.8.7-tectonic.2"
+    tectonic   = "1.9.3-tectonic.1"
     cluo       = "0.3.1"
     alm        = "0.3.1"
   }
