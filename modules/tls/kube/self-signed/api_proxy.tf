@@ -9,8 +9,13 @@ resource "tls_cert_request" "apiserver_proxy" {
   private_key_pem = "${tls_private_key.apiserver_proxy.private_key_pem}"
 
   subject {
-    common_name  = "kube-apiserver-proxy"
-    organization = "kube-master"
+    common_name         = "kube-apiserver-proxy"
+    organization        = "${uuid()}"
+    organizational_unit = "kube-master"
+  }
+
+  lifecycle {
+    ignore_changes = ["subject"]
   }
 }
 

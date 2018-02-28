@@ -9,8 +9,9 @@ resource "tls_cert_request" "apiserver" {
   private_key_pem = "${tls_private_key.apiserver.private_key_pem}"
 
   subject {
-    common_name  = "kube-apiserver"
-    organization = "kube-master"
+    common_name         = "kube-apiserver"
+    organization        = "${uuid()}"
+    organizational_unit = "kube-master"
   }
 
   dns_names = [
@@ -24,6 +25,10 @@ resource "tls_cert_request" "apiserver" {
   ip_addresses = [
     "${cidrhost(var.service_cidr, 1)}",
   ]
+
+  lifecycle {
+    ignore_changes = ["subject"]
+  }
 }
 
 resource "tls_locally_signed_cert" "apiserver" {
