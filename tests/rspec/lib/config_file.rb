@@ -7,8 +7,9 @@ PLATFORMS = %w[govcloud aws azure metal vmware gcp].freeze
 # ConfigFile represents a Terraform configuration file describing a Tectonic
 # cluster configuration
 class ConfigFile
-  attr_reader :path, :data
-  def initialize(file_path)
+  attr_reader :path
+  def initialize(f
+    ile_path)
     @path = file_path
     raise "file #{file_path} does not exist" unless file_exists?
   end
@@ -65,7 +66,7 @@ class ConfigFile
 
   def change_license(license_path)
     new_data = data
-    new_data['Clusters'][0]['licensePath'] = license_path
+    new_data['clusters'][0]['licensePath'] = license_path
     save(new_data)
   end
 
