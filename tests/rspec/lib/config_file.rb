@@ -55,12 +55,12 @@ class ConfigFile
 
   def change_aws_region(region)
     new_data = data
-    new_data['clusters'][0]['AWS']['region'] = region
+    new_data['clusters'][0]['aws']['region'] = region
     save(new_data)
   end
 
   def region(platform)
-    data['clusters'][0][platform.upcase]['region']
+    data['clusters'][0][platform]['region']
   end
 
   def change_license(license_path)
@@ -110,7 +110,7 @@ class ConfigFile
 
   def change_ssh_key(platform, ssh_key)
     new_data = data
-    new_data['clusters'][0][platform.upcase]['sshKey'] = ssh_key
+    new_data['clusters'][0][platform]['sshKey'] = ssh_key
     save(new_data)
   end
 
