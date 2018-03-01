@@ -8,8 +8,7 @@ PLATFORMS = %w[govcloud aws azure metal vmware gcp].freeze
 # cluster configuration
 class ConfigFile
   attr_reader :path
-  def initialize(f
-    ile_path)
+  def initialize(file_path)
     @path = file_path
     raise "file #{file_path} does not exist" unless file_exists?
   end
