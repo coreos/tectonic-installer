@@ -320,6 +320,9 @@ clusters:
       # - "none": disables the installation of any Pod level networking layer provided by Tectonic. By setting this value, users are expected to deploy their own solution to enable network connectivity for Pods and Services.
       # type: canal
 
+    # The platform used for deploying.
+    platform: AWS
+
     proxy:
       # (optional) HTTP proxy address.
       #
