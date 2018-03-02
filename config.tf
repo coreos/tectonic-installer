@@ -72,7 +72,7 @@ variable "tectonic_container_images" {
     gcloudsdk                            = "google/cloud-sdk:178.0.0-alpine"
     bootkube                             = "quay.io/coreos/bootkube:v0.10.0"
     etcd                                 = "quay.io/coreos/etcd:v3.2.14"
-    hyperkube                            = "quay.io/coreos/hyperkube:v1.9.1_coreos.0"
+    hyperkube                            = "quay.io/coreos/hyperkube:v1.9.3_coreos.0"
     kube_core_renderer                   = "quay.io/coreos/kube-core-renderer-dev:6c49ce4da9fc36966812381891b4f558aa53097b"
     kube_core_operator                   = "quay.io/coreos/kube-core-operator:beryllium-m1"
     tectonic_channel_operator            = "quay.io/coreos/tectonic-channel-operator:0.6.2"
