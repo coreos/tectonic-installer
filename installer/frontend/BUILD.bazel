@@ -15,7 +15,7 @@ filegroup(
 
 # This genrule maintains a Bazel-managed node_modules that is completely
 # independent from the on-host node_modules.
-# TODO(squat): replace this with auto-managed dependencies, which 
+# TODO(squat): replace this with auto-managed dependencies, which
 # currently does not work because of: https://github.com/bazelbuild/rules_nodejs/issues/77.
 genrule(
     name = "node_dependencies",
@@ -54,7 +54,7 @@ genrule(
             + "export PATH=$$(pwd)/$$(dirname $$3):$$PATH\n"
             + "cp -RL $$(dirname $$2)/.. $$TMPDIR/installer"
             + "&& $$1 --cwd $$TMPDIR/$$(dirname $$2)/.. run test"
-          + "'> $@",
+            + "'> $@",
     testonly = 1,
 )
 
@@ -62,6 +62,26 @@ sh_test(
     name = "unit",
     size = "small",
     srcs = [":frontend_test_sh"],
+    args = ["$(location @yarn//:yarn)", "$(location :packagejson)", "$(location @nodejs//:node)"],
+    data = ["@yarn//:yarn", ":node_dependencies", ":packagejson", ":files", "@nodejs//:node"],
+)
+
+genrule(
+    name = "frontend_lint_sh",
+    outs = ["frontend_lint.sh"],
+    cmd = "printf '"
+            + "#!/bin/bash -e\n"
+            + "export PATH=$$(pwd)/$$(dirname $$3):$$PATH\n"
+            + "cp -RL $$(dirname $$2)/.. $$TMPDIR/installer"
+            + "&& $$1 --cwd $$TMPDIR/$$(dirname $$2)/.. run lint"
+            + "'> $@",
+    testonly = 1,
+)
+
+sh_test(
+    name = "lint",
+    size = "small",
+    srcs = [":frontend_lint_sh"],
     args = ["$(location @yarn//:yarn)", "$(location :packagejson)", "$(location @nodejs//:node)"],
     data = ["@yarn//:yarn", ":node_dependencies", ":packagejson", ":files", "@nodejs//:node"],
 )

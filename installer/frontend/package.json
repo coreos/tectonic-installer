@@ -10,7 +10,7 @@
     "yarn": ">=0.20.x"
   },
   "scripts": {
-    "lint": "./node_modules/.bin/eslint --ext .js,.jsx .",
+    "lint": "./node_modules/eslint/bin/eslint.js --ext .js,.jsx .",
     "build": "export OUT=${OUT:-../assets/frontend/scripts/app-bundle.js} && mkdir -p $(dirname $OUT) && ./node_modules/.bin/browserify --extension=.jsx app.jsx -o $OUT -t [ babelify ]",
     "dev": "mkdir -p ../assets/frontend/scripts && ./node_modules/.bin/watchify --extension=.jsx app.jsx --verbose -d -o ../assets/frontend/scripts/app-bundle.js -t [ babelify ]",
     "postinstall": "./check-versions.js",
