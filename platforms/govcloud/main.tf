@@ -19,7 +19,7 @@ module "container_linux" {
 }
 
 module "vpc" {
-  source = "../../modules/aws/vpc"
+  source = "../../modules/govcloud/vpc"
 
   base_domain              = "${var.tectonic_base_domain}"
   cidr_block               = "${var.tectonic_govcloud_vpc_cidr_block}"
