@@ -113,7 +113,8 @@ case "${action}" in
     ;;
 
   "jenkins-logs")
-    curl -u  "${LOG_ANALYZER_USER}:${LOG_ANALYZER_PASSWORD}" "${BUILD_URL}consoleText" >> "${jenkins_filename}"
+    # We use --insecure to support development Jenkins instances without a valid SSL cert.
+    curl --insecure --user  "${LOG_ANALYZER_USER}:${LOG_ANALYZER_PASSWORD}" "${BUILD_URL}consoleText" >> "${jenkins_filename}"
     ;;
 esac
 
