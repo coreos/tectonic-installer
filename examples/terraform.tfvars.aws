@@ -150,6 +150,14 @@ tectonic_aws_worker_ec2_type = "t2.medium"
 //  * Role Name = tectonic-installer
 // tectonic_aws_worker_iam_role_name = ""
 
+// (optional) List of IAM policies (ARNs) to attach to the Tectonic default's worker role
+// or the one set in `tectonic_aws_worker_iam_role_name`.
+//
+// Example:
+//   To attach the AWS managed policy "ECR read-only access", set:
+//      tectonic_aws_worker_iam_role_policy_attachments = ["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"]
+// tectonic_aws_worker_iam_role_policy_attachments = ""
+
 // (optional) List of ELBs to attach all worker instances to.
 // This is useful for exposing NodePort services via load-balancers managed separately from the cluster.
 // 

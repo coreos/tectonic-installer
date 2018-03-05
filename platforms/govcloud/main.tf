@@ -233,6 +233,7 @@ module "workers" {
   subnet_ids                           = "${module.vpc.worker_subnet_ids}"
   vpc_id                               = "${module.vpc.vpc_id}"
   worker_iam_role                      = "${var.tectonic_govcloud_worker_iam_role_name}"
+  worker_iam_role_policy_attachments   = "${var.tectonic_aws_worker_iam_role_policy_attachments}"
   dns_server_ip                        = "${var.tectonic_govcloud_dns_server_ip}"
 }
 

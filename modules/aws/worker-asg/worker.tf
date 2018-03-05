@@ -191,3 +191,14 @@ resource "aws_iam_role_policy" "worker_policy" {
 }
 EOF
 }
+
+resource "aws_iam_role_policy_attachment" "worker_role_policy_attachments" {
+  count = "${length(var.worker_iam_role_policy_attachments)}"
+
+  role = "${var.worker_iam_role == ""
+      ? join("|", aws_iam_role.worker_role.*.name)
+      : join("|", data.aws_iam_role.worker_role.*.name)
+  }"
+
+  policy_arn = "${var.worker_iam_role_policy_attachments[count.index]}"
+}
