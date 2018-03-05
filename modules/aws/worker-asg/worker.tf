@@ -30,6 +30,10 @@ data "ignition_config" "ncg_worker" {
     source = "http://${var.cluster_name}-ncg.${var.base_domain}/ignition?profile=worker"
   }
 
+  append {
+    source = "${format("s3://%s/custom-ign-worker", var.s3_bucket)}"
+  }
+
   files = ["${data.ignition_file.kubelet_worker_kubeconfig.id}"]
 }
 

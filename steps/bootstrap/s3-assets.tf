@@ -89,3 +89,39 @@ resource "aws_s3_bucket_object" "ignition_etcd" {
       "tectonicClusterID", "${local.cluster_id}"
     ), var.tectonic_aws_extra_tags)}"
 }
+
+# Custom Ignition
+locals {
+  custom_ignition_master_file = "${var.tectonic_aws_master_custom_ignition_file == "" ? "${path.module}/../assets/resources/custom-ign-master" : var.tectonic_aws_master_custom_ignition_file}"
+  custom_ignition_worker_file = "${var.tectonic_aws_worker_custom_ignition_file == "" ? "${path.module}/../assets/resources/custom-ign-worker" : var.tectonic_aws_worker_custom_ignition_file }"
+}
+
+resource "aws_s3_bucket_object" "custom_ignition_master" {
+  bucket  = "${aws_s3_bucket.tectonic.bucket}"
+  key     = "custom-ign-master"
+  content = "${file(local.custom_ignition_master_file)}"
+  acl     = "private"
+
+  server_side_encryption = "AES256"
+
+  tags = "${merge(map(
+      "Name", "${var.tectonic_cluster_name}-ignition-master",
+      "KubernetesCluster", "${var.tectonic_cluster_name}",
+      "tectonicClusterID", "${local.cluster_id}"
+    ), var.tectonic_aws_extra_tags)}"
+}
+
+resource "aws_s3_bucket_object" "custom_ignition_worker" {
+  bucket  = "${aws_s3_bucket.tectonic.bucket}"
+  key     = "custom-ign-worker"
+  content = "${file(local.custom_ignition_worker_file)}"
+  acl     = "private"
+
+  server_side_encryption = "AES256"
+
+  tags = "${merge(map(
+      "Name", "${var.tectonic_cluster_name}-ignition-worker",
+      "KubernetesCluster", "${var.tectonic_cluster_name}",
+      "tectonicClusterID", "${local.cluster_id}"
+    ), var.tectonic_aws_extra_tags)}"
+}

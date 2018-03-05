@@ -109,3 +109,7 @@ variable "kubeconfig_content" {
   type    = "string"
   default = ""
 }
+
+variable "s3_bucket" {
+  type = "string"
+}

@@ -64,6 +64,10 @@ data "ignition_config" "ncg_master" {
     source = "http://${var.cluster_name}-ncg.${var.base_domain}/ignition?profile=master"
   }
 
+  append {
+    source = "${format("s3://%s/custom-ign-master", var.s3_bucket)}"
+  }
+
   files = ["${data.ignition_file.kubelet_master_kubeconfig.id}"]
 }
 
