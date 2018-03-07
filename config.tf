@@ -80,7 +80,7 @@ variable "tectonic_container_images" {
     flannel                      = "quay.io/coreos/flannel:v0.8.0-amd64"
     flannel_cni                  = "quay.io/coreos/flannel-cni:v0.2.0"
     heapster                     = "gcr.io/google_containers/heapster:v1.4.1"
-    hyperkube                    = "quay.io/coreos/hyperkube:v1.8.7_coreos.0"
+    hyperkube                    = "quay.io/coreos/hyperkube-private:20180307_1.8"
     identity                     = "quay.io/coreos/dex:v2.8.1"
     ingress_controller           = "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.9.0-beta.17"
     kenc                         = "quay.io/coreos/kenc:0.0.2"
