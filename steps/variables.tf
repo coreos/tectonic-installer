@@ -364,3 +364,27 @@ Example:
  * `["ingress-nginx"]`
 EOF
 }
+
+variable "tectonic_aws_master_custom_ignition_file" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) Path to a file containing a valid ignition config.
+
+Example:
+ * https://coreos.com/ignition/docs/latest/configuration-v2_1.html
+EOF
+}
+
+variable "tectonic_aws_worker_custom_ignition_file" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) Path to a file containing a valid ignition config.
+
+Example:
+ * https://coreos.com/ignition/docs/latest/configuration-v2_1.html
+EOF
+}

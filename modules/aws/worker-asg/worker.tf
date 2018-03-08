@@ -30,6 +30,10 @@ data "ignition_config" "tnc_worker" {
     source = "http://${var.cluster_name}-tnc.${var.base_domain}/ign/v1/role/worker"
   }
 
+  append {
+    source = "${format("s3://%s/custom-ign-worker", var.s3_bucket)}"
+  }
+
   files = ["${data.ignition_file.kubelet_worker_kubeconfig.id}"]
 }
 

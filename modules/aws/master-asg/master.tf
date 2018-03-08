@@ -64,6 +64,10 @@ data "ignition_config" "tnc_master" {
     source = "http://${var.cluster_name}-tnc.${var.base_domain}/ign/v1/role/master"
   }
 
+  append {
+    source = "${format("s3://%s/custom-ign-master", var.s3_bucket)}"
+  }
+
   files = ["${data.ignition_file.kubelet_master_kubeconfig.id}"]
 }
 
