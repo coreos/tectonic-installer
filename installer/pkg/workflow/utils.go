@@ -2,7 +2,6 @@ package workflow
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -19,14 +18,15 @@ import (
 )
 
 const (
-	stepsBaseDir   = "steps"
-	assetsStep     = "assets"
-	bootstrapStep  = "bootstrap"
-	joinStep       = "joining"
-	configFileName = "config.yaml"
-	kubeConfigPath = "generated/auth/kubeconfig"
-	binaryPrefix   = "tectonic-installer"
-	tncDaemonSet   = "tectonic-node-controller"
+	stepsBaseDir          = "steps"
+	assetsStep            = "assets"
+	bootstrapStep         = "bootstrap"
+	joinStep              = "joining"
+	bootstrapTearDownStep = "bootstrap-tear-down"
+	configFileName        = "config.yaml"
+	kubeConfigPath        = "generated/auth/kubeconfig"
+	binaryPrefix          = "tectonic-installer"
+	tncDaemonSet          = "tectonic-node-controller"
 )
 
 func copyFile(fromFilePath, toFilePath string) error {
@@ -44,14 +44,6 @@ func copyFile(fromFilePath, toFilePath string) error {
 
 	_, err = io.Copy(to, from)
 	return err
-}
-
-func destroyCNAME(clusterDir string) error {
-	templatesPath, err := findTemplates(bootstrapStep)
-	if err != nil {
-		return err
-	}
-	return terraformExec(clusterDir, "destroy", "-force", fmt.Sprintf("-state=%s.tfstate", bootstrapStep), "-target=aws_route53_record.tectonic_tnc", templatesPath)
 }
 
 func findTemplates(relativePath string) (string, error) {
@@ -102,29 +94,18 @@ func generateClusterConfigStep(m *metadata) error {
 	return writeFile(tectonicSystemConfigFilePath, tectonicSystem)
 }
 
-func importAutoScalingGroup(m *metadata) error {
-	templatesPath, err := findTemplates(joinStep)
+func importAutoScalingGroup(m *metadata, step string, name string) error {
+	templatesPath, err := findTemplates(step)
 	if err != nil {
 		return err
 	}
-	err = terraformExec(
+	return terraformExec(
 		m.clusterDir,
 		"import",
-		fmt.Sprintf("-state=%s.tfstate", joinStep),
+		fmt.Sprintf("-state=%s.tfstate", step),
 		fmt.Sprintf("-config=%s", templatesPath),
-		"aws_autoscaling_group.masters",
-		fmt.Sprintf("%s-masters", m.cluster.Name))
-	if err != nil {
-		return err
-	}
-	err = terraformExec(
-		m.clusterDir,
-		"import",
-		fmt.Sprintf("-state=%s.tfstate", joinStep),
-		fmt.Sprintf("-config=%s", templatesPath),
-		"aws_autoscaling_group.workers",
-		fmt.Sprintf("%s-workers", m.cluster.Name))
-	return err
+		fmt.Sprintf("aws_autoscaling_group.%s", name),
+		fmt.Sprintf("%s-%s", m.cluster.Name, name))
 }
 
 func readClusterConfig(configFilePath string) (*config.Cluster, error) {
@@ -155,7 +136,7 @@ func readClusterConfigStep(m *metadata) error {
 	return nil
 }
 
-func waitForTNC(m *metadata) error {
+func waitForTNC(m *metadata, expectedInstancesReady int) error {
 	config, err := clientcmd.BuildConfigFromFlags("", filepath.Join(m.clusterDir, kubeConfigPath))
 	if err != nil {
 		return err
@@ -172,14 +153,14 @@ func waitForTNC(m *metadata) error {
 		// client will error until api sever is up
 		ds, _ := client.DaemonSets("kube-system").Get(tncDaemonSet)
 		log.Printf("Waiting for TNC to be running, this might take a while...")
-		if ds.Status.NumberReady >= 1 {
+		if ds.Status.NumberReady >= int32(expectedInstancesReady) {
 			return nil
 		}
 		time.Sleep(time.Second * time.Duration(wait))
 		retries--
 	}
 
-	return errors.New("TNC is not running")
+	return fmt.Errorf("TNC is not running, expected %d instances", expectedInstancesReady)
 }
 
 func writeFile(path, content string) error {
