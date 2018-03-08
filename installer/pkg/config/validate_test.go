@@ -176,7 +176,7 @@ func TestUnmatchedNodePool(t *testing.T) {
 				Etcd: etcd{
 					NodePools: []string{"etcd"},
 				},
-				NodePools: nodePools{
+				NodePools: NodePools{
 					{
 						Name:  "master",
 						Count: 1,
@@ -204,7 +204,7 @@ func TestUnmatchedNodePool(t *testing.T) {
 				Etcd: etcd{
 					NodePools: []string{"etcd"},
 				},
-				NodePools: nodePools{
+				NodePools: NodePools{
 					{
 						Name:  "master",
 						Count: 1,
