@@ -109,7 +109,7 @@ module "masters" {
   container_linux_version      = "${module.container_linux.version}"
   ec2_type                     = "${var.tectonic_aws_master_ec2_type}"
   extra_tags                   = "${var.tectonic_aws_extra_tags}"
-  instance_count               = "1"
+  instance_count               = "0"
   master_iam_role              = "${var.tectonic_aws_master_iam_role_name}"
   master_sg_ids                = "${concat(var.tectonic_aws_master_extra_sg_ids, list(module.vpc.master_sg_id))}"
   private_endpoints            = "${var.tectonic_aws_private_endpoints}"
@@ -120,6 +120,7 @@ module "masters" {
   ssh_key                      = "${var.tectonic_aws_ssh_key}"
   subnet_ids                   = "${module.vpc.master_subnet_ids}"
   ec2_ami                      = "${var.tectonic_aws_ec2_ami_override}"
+  s3_bucket                    = "${aws_s3_bucket.tectonic.bucket}"
   kubeconfig_content           = "${local.kubeconfig_kubelet_content}"
 }
 
@@ -161,13 +162,15 @@ module "dns" {
   cluster_name                   = "${var.tectonic_cluster_name}"
   console_elb_dns_name           = "${module.vpc.aws_console_dns_name}"
   console_elb_zone_id            = "${module.vpc.aws_elb_console_zone_id}"
+  tnc_elb_dns_name               = "${module.vpc.aws_elb_tnc_dns_name}"
+  tnc_elb_zone_id                = "${module.vpc.aws_elb_tnc_zone_id}"
   custom_dns_name                = "${var.tectonic_dns_name}"
   elb_alias_enabled              = true
   etcd_count                     = "${length(data.template_file.etcd_hostname_list.*.id)}"
   etcd_ip_addresses              = "${module.etcd.ip_addresses}"
   external_endpoints             = ["${compact(var.tectonic_etcd_servers)}"]
   master_count                   = "${var.tectonic_master_count}"
-  tectonic_external_private_zone = "${join("", aws_route53_zone.tectonic_int.*.zone_id)}"
+  tectonic_external_private_zone = "${var.tectonic_aws_external_private_zone}"
   tectonic_external_vpc_id       = "${module.vpc.vpc_id}"
   tectonic_extra_tags            = "${var.tectonic_aws_extra_tags}"
   tectonic_private_endpoints     = "${var.tectonic_aws_private_endpoints}"

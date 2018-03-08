@@ -165,3 +165,13 @@ variable "console_elb_zone_id" {
   description = "Console's ELB Zone ID"
   type        = "string"
 }
+
+variable "tnc_elb_dns_name" {
+  description = "Console's ELB DNS name"
+  type        = "string"
+}
+
+variable "tnc_elb_zone_id" {
+  description = "Console's ELB Zone ID"
+  type        = "string"
+}

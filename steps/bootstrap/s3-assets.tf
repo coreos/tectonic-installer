@@ -61,10 +61,8 @@ resource "aws_s3_bucket_object" "ignition_bootstrap" {
   bucket  = "${aws_s3_bucket.tectonic.bucket}"
   key     = "ign/v1/role/master"
   content = "${local.ignition_bootstrap}"
-  acl     = "public-read"
+  acl     = "private"
 
-  # TODO: Lock down permissions.
-  # At the minute this is pulic (so accessible via http) so joiners nodes can reach the TNC using the same url
   server_side_encryption = "AES256"
 
   tags = "${merge(map(
