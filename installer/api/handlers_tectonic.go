@@ -337,16 +337,18 @@ func tectonicFactsHandler(w http.ResponseWriter, req *http.Request, ctx *Context
 		dir = filepath.Dir(ex)
 	}
 
-	license, err := ioutil.ReadFile(filepath.Join(dir, "license.txt"))
+	licensePath := filepath.Join(dir, "license.txt")
+	license, err := ioutil.ReadFile(licensePath)
 	if err != nil {
 		license = nil
-		log.Warningf("Tectonic license not found in %s", dir)
+		log.Infof("Tectonic license not found at %s", licensePath)
 	}
 
-	pullSecret, err := ioutil.ReadFile(filepath.Join(dir, "pull_secret.json"))
+	pullSecretPath := filepath.Join(dir, "pull_secret.json")
+	pullSecret, err := ioutil.ReadFile(pullSecretPath)
 	if err != nil {
 		pullSecret = nil
-		log.Warningf("Pull secret not found in %s", dir)
+		log.Infof("Pull secret not found at %s", pullSecretPath)
 	}
 
 	type response struct {
