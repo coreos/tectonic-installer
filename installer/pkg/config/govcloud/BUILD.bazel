@@ -7,9 +7,4 @@ go_library(
     ],
     importpath = "github.com/coreos/tectonic-installer/installer/pkg/config/govcloud",
     visibility = ["//visibility:public"],
-    deps = [
-        "//installer/pkg/config/govcloud/etcd:go_default_library",
-        "//installer/pkg/config/govcloud/master:go_default_library",
-        "//installer/pkg/config/govcloud/worker:go_default_library",
-    ],
 )

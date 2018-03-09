@@ -8,8 +8,8 @@ import (
 	"github.com/coreos/tectonic-installer/installer/pkg/config"
 )
 
-// NewInitWorkflow creates new instances of the 'init' workflow,
-// responsible for initializing a new cluster.
+// NewConvertWorkflow creates new instances of the 'convert' workflow,
+// responsible for converting an old cluster config.
 func NewConvertWorkflow(configFilePath string) Workflow {
 	return Workflow{
 		metadata: metadata{configFilePath: configFilePath},
