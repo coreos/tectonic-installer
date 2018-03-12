@@ -109,3 +109,8 @@ variable "kubeconfig_content" {
   type    = "string"
   default = ""
 }
+
+variable "user_ign" {
+  type    = "string"
+  default = ""
+}

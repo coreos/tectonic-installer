@@ -65,6 +65,10 @@ data "ignition_config" "tnc_master" {
   }
 
   files = ["${data.ignition_file.kubelet_master_kubeconfig.id}"]
+
+  append {
+    source = "data:text/plain;charset=utf-8;base64,${base64encode(var.user_ign)}"
+  }
 }
 
 data "ignition_file" "kubelet_master_kubeconfig" {
