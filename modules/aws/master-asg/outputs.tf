@@ -2,6 +2,10 @@ output "aws_launch_configuration" {
   value = "${aws_launch_configuration.master_conf.id}"
 }
 
+output "aws_launch_configuration_master_bootstrap" {
+  value = "${aws_launch_configuration.master_bootstrap_conf.id}"
+}
+
 output "subnet_ids" {
   value = "${var.subnet_ids}"
 }

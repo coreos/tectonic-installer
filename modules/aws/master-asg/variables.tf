@@ -105,6 +105,10 @@ variable "dns_server_ip" {
   default = ""
 }
 
+variable "s3_bucket" {
+  type = "string"
+}
+
 variable "kubeconfig_content" {
   type    = "string"
   default = ""

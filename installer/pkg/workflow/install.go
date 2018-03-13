@@ -11,6 +11,7 @@ func NewInstallFullWorkflow(clusterDir string) Workflow {
 			generateClusterConfigStep,
 			installBootstrapStep,
 			installJoinStep,
+			installBootstrapTearDownStep,
 		},
 	}
 }
@@ -48,6 +49,7 @@ func NewInstallJoinWorkflow(clusterDir string) Workflow {
 		steps: []Step{
 			readClusterConfigStep,
 			installJoinStep,
+			installBootstrapTearDownStep,
 		},
 	}
 }
@@ -61,18 +63,23 @@ func installBootstrapStep(m *metadata) error {
 		return err
 	}
 
-	if err := waitForTNC(m); err != nil {
-		return err
-	}
-
-	return destroyCNAME(m.clusterDir)
+	return waitForTNC(m, 1)
 }
 
 func installJoinStep(m *metadata) error {
 	// TODO: import will fail after a first run, error is ignored for now
-	importAutoScalingGroup(m)
+	importAutoScalingGroup(m, joinStep, "masters")
+	importAutoScalingGroup(m, joinStep, "workers")
 
 	return runInstallStep(m.clusterDir, joinStep)
+}
+
+func installBootstrapTearDownStep(m *metadata) error {
+	if err := waitForTNC(m, m.cluster.Master.Count+1); err != nil {
+		return err
+	}
+	importAutoScalingGroup(m, bootstrapTearDownStep, "master-bootstrap")
+	return runInstallStep(m.clusterDir, bootstrapTearDownStep)
 }
 
 func runInstallStep(clusterDir, step string) error {

@@ -15,7 +15,7 @@ locals {
 }
 
 resource "aws_route53_zone" "tectonic_int" {
-  count         = "0"
+  count         = "${var.tectonic_private_endpoints ? "${var.tectonic_external_private_zone == "" ? 1 : 0 }" : 0}"
   vpc_id        = "${var.tectonic_external_vpc_id}"
   name          = "${var.base_domain}"
   force_destroy = true
@@ -93,6 +93,18 @@ resource "aws_route53_record" "tectonic_ingress_private" {
   alias {
     name                   = "${var.console_elb_dns_name}"
     zone_id                = "${var.console_elb_zone_id}"
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "tectonic_tnc_private" {
+  zone_id = "${local.private_zone_id}"
+  name    = "${var.cluster_name}-tnc.${var.base_domain}"
+  type    = "A"
+
+  alias {
+    name                   = "${var.tnc_elb_dns_name}"
+    zone_id                = "${var.tnc_elb_zone_id}"
     evaluate_target_health = true
   }
 }
