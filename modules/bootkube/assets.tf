@@ -26,7 +26,6 @@ resource "template_dir" "bootkube" {
     cluster_cidr          = "${var.cluster_cidr}"
     tectonic_networking   = "${var.tectonic_networking}"
 
-    root_ca_cert                   = "${base64encode(var.root_ca_cert_pem)}"
     aggregator_ca_cert             = "${base64encode(var.aggregator_ca_cert_pem)}"
     kube_ca_cert                   = "${base64encode(var.kube_ca_cert_pem)}"
     kube_ca_key                    = "${base64encode(var.kube_ca_key_pem)}"
@@ -52,7 +51,7 @@ data "template_file" "kubeconfig" {
   template = "${file("${path.module}/resources/kubeconfig")}"
 
   vars {
-    root_ca_cert = "${base64encode(var.root_ca_cert_pem)}"
+    kube_ca_cert = "${base64encode(var.kube_ca_cert_pem)}"
     admin_cert   = "${base64encode(var.admin_cert_pem)}"
     admin_key    = "${base64encode(var.admin_key_pem)}"
     server       = "${var.kube_apiserver_url}"
@@ -70,7 +69,7 @@ data "template_file" "kubeconfig-kubelet" {
   template = "${file("${path.module}/resources/kubeconfig-kubelet")}"
 
   vars {
-    root_ca_cert                   = "${base64encode(var.root_ca_cert_pem)}"
+    kube_ca_cert                   = "${base64encode(var.kube_ca_cert_pem)}"
     kubelet_bootstrap_token_id     = "${random_string.kubelet_bootstrap_token_id.result}"
     kubelet_bootstrap_token_secret = "${random_string.kubelet_bootstrap_token_secret.result}"
     server                         = "${var.kube_apiserver_url}"
