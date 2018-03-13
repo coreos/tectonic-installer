@@ -44,13 +44,8 @@ variable "ca_generated" {
   type        = "string"
 }
 
-variable "identity_client_ca_cert" {
-  description = "A PEM-encoded CA bundle, used to verify identity server."
-  type        = "string"
-}
-
-variable "identity_server_ca_cert" {
-  description = "A PEM-encoded CA certificate, used to authenticate identity client."
+variable "ca_cert" {
+  description = "Contents of a PEM-encoded CA certificate, used to generate Tectonic Console's server certificate. Leave blank to generate a new CA."
   type        = "string"
 }
 
