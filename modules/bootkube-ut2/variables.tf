@@ -255,3 +255,8 @@ EOF
 
   type = "string"
 }
+
+variable "update_server_url" {
+  description = "(optional) URL for the Container Linux update server. Leave empty to use the default CoreOS update server."
+  type        = "string"
+}
