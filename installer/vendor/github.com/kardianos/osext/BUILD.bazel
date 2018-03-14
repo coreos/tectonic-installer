@@ -1,0 +1,54 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "osext.go",
+    ] + select({
+        "@io_bazel_rules_go//go/platform:android": [
+            "osext_go18.go",
+            "osext_procfs.go",
+        ],
+        "@io_bazel_rules_go//go/platform:darwin": [
+            "osext_go18.go",
+            "osext_sysctl.go",
+        ],
+        "@io_bazel_rules_go//go/platform:dragonfly": [
+            "osext_go18.go",
+            "osext_procfs.go",
+        ],
+        "@io_bazel_rules_go//go/platform:freebsd": [
+            "osext_go18.go",
+            "osext_sysctl.go",
+        ],
+        "@io_bazel_rules_go//go/platform:linux": [
+            "osext_go18.go",
+            "osext_procfs.go",
+        ],
+        "@io_bazel_rules_go//go/platform:nacl": [
+            "osext_go18.go",
+        ],
+        "@io_bazel_rules_go//go/platform:netbsd": [
+            "osext_go18.go",
+            "osext_procfs.go",
+        ],
+        "@io_bazel_rules_go//go/platform:openbsd": [
+            "osext_sysctl.go",
+        ],
+        "@io_bazel_rules_go//go/platform:plan9": [
+            "osext_go18.go",
+            "osext_plan9.go",
+        ],
+        "@io_bazel_rules_go//go/platform:solaris": [
+            "osext_go18.go",
+            "osext_procfs.go",
+        ],
+        "@io_bazel_rules_go//go/platform:windows": [
+            "osext_go18.go",
+            "osext_windows.go",
+        ],
+        "//conditions:default": [],
+    }),
+    importpath = "github.com/kardianos/osext",
+    visibility = ["//visibility:public"],
+)

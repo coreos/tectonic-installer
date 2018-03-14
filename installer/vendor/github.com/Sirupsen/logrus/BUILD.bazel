@@ -1,6 +1,5 @@
 # gazelle:ignore
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
-
 go_library(
     name = "go_default_library",
     srcs = [
@@ -12,13 +11,13 @@ go_library(
         "json_formatter.go",
         "logger.go",
         "logrus.go",
-        "text_formatter.go",
-        "writer.go",
         "terminal_bsd.go",
-        "terminal_notwindows.go",
         "terminal_linux.go",
+        "terminal_notwindows.go",
         "terminal_solaris.go",
         "terminal_windows.go",
+        "text_formatter.go",
+        "writer.go",
     ],
     importpath = "github.com/Sirupsen/logrus",
     visibility = ["//visibility:public"],
