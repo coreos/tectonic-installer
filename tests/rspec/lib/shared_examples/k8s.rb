@@ -48,15 +48,18 @@ RSpec.shared_examples 'withRunningCluster' do |tf_vars_path|
     expect(ContainerLinux.channel(@cluster)).to eq(@cluster.tf_var('tectonic_container_linux_channel'))
   end
 
+  # Disable console tests other branches follow the same
   describe 'Interact with tectonic console' do
     before(:all) do
+      # Using skip, it will not run the examples.
+      skip 'Skipping this tests.'
       @driver = WebdriverHelpers.start_webdriver
       @login = Login.new(@driver)
       @console_url = @cluster.tectonic_console_url
     end
 
     after(:all) do
-      WebdriverHelpers.stop_webdriver(@driver)
+      WebdriverHelpers.stop_webdriver(@driver) if defined? @driver
     end
 
     it 'can login in the tectonic console', :ui, retry: 3, retry_wait: 10 do
