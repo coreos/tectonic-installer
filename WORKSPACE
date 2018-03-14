@@ -4,6 +4,8 @@ terrafom_version = "0.11.2"
 
 provider_matchbox_version = "0.2.2"
 
+gometalinter_version="2.0.5"
+
 supported_platforms = [
     "linux",
     "darwin",
@@ -53,4 +55,15 @@ visibility = ["//visibility:public"]
 )""",
     strip_prefix = "terraform-provider-matchbox-v%s-%s-amd64/" % (provider_matchbox_version, platform),
     url = "https://github.com/coreos/terraform-provider-matchbox/releases/download/v%s/terraform-provider-matchbox-v%s-%s-amd64.tar.gz" % (provider_matchbox_version, provider_matchbox_version, platform),
+) for platform in supported_platforms]
+
+[new_http_archive(
+    name = "gometalinter_runtime_%s" % platform,
+    build_file_content = """exports_files(
+["gometalinter", "golint", "govet", "gocyclo", "misspell", "dupl"],
+visibility = ["//visibility:public"]
+)""",
+    strip_prefix = "gometalinter-%s-%s-amd64/" % (gometalinter_version, platform),
+    type = "tar.gz",
+    url = "https://github.com/alecthomas/gometalinter/releases/download/v%s/gometalinter-%s-%s-amd64.tar.gz" % (gometalinter_version, gometalinter_version, platform),
 ) for platform in supported_platforms]

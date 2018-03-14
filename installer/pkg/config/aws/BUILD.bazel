@@ -8,3 +8,11 @@ go_library(
     importpath = "github.com/coreos/tectonic-installer/installer/pkg/config/aws",
     visibility = ["//visibility:public"],
 )
+
+filegroup(
+    name = "go_files",
+    visibility = ["//visibility:public"],
+    srcs = glob([
+        "*.go",
+    ]),
+)

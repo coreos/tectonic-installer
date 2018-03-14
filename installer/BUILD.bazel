@@ -7,3 +7,133 @@ test_suite(
         "//installer/pkg/workflow:go_default_test",
     ],
 )
+
+genrule(
+    name = "gometalinter_runtime",
+    srcs = select({
+        "//:darwin": ["@gometalinter_runtime_darwin//:gometalinter"],
+        "//:linux": ["@gometalinter_runtime_linux//:gometalinter"],
+    }),
+    outs = ["bin/gometalinter"],
+    cmd = "cp $(<) $(@)",
+    executable = True,
+    output_to_bindir = 1,
+)
+
+genrule(
+    name = "golint_runtime",
+    srcs = select({
+        "//:darwin": ["@gometalinter_runtime_darwin//:golint"],
+        "//:linux": ["@gometalinter_runtime_linux//:golint"],
+    }),
+    outs = ["bin/golint"],
+    cmd = "cp $(<) $(@)",
+    executable = True,
+    output_to_bindir = 1,
+)
+
+genrule(
+    name = "govet_runtime",
+    srcs = select({
+        "//:darwin": ["@gometalinter_runtime_darwin//:govet"],
+        "//:linux": ["@gometalinter_runtime_linux//:govet"],
+    }),
+    outs = ["bin/govet"],
+    cmd = "cp $(<) $(@)",
+    executable = True,
+    output_to_bindir = 1,
+)
+
+genrule(
+    name = "gocyclo_runtime",
+    srcs = select({
+        "//:darwin": ["@gometalinter_runtime_darwin//:gocyclo"],
+        "//:linux": ["@gometalinter_runtime_linux//:gocyclo"],
+    }),
+    outs = ["bin/gocyclo"],
+    cmd = "cp $(<) $(@)",
+    executable = True,
+    output_to_bindir = 1,
+)
+
+genrule(
+    name = "misspell_runtime",
+    srcs = select({
+        "//:darwin": ["@gometalinter_runtime_darwin//:misspell"],
+        "//:linux": ["@gometalinter_runtime_linux//:misspell"],
+    }),
+    outs = ["bin/misspell"],
+    cmd = "cp $(<) $(@)",
+    executable = True,
+    output_to_bindir = 1,
+)
+
+genrule(
+    name = "dupl_runtime",
+    srcs = select({
+        "//:darwin": ["@gometalinter_runtime_darwin//:dupl"],
+        "//:linux": ["@gometalinter_runtime_linux//:dupl"],
+    }),
+    outs = ["bin/dupl"],
+    cmd = "cp $(<) $(@)",
+    executable = True,
+    output_to_bindir = 1,
+)
+
+genrule(
+    name = "gometalinter_sh",
+    outs = ["gometalinter.sh"],
+    cmd = "printf '" + '\n'.join([
+            "#!/bin/bash -ex",
+            "export PATH=./installer/bin",
+            "export HOME=test",
+            "./installer/bin/gometalinter --deadline=240s --disable-all \
+            --exclude=\"pkg\\/config\\/validate.*\\.go.*\\(dupl\\)$$\" \
+            --cyclo-over=20 \
+            --enable=golint \
+            --enable=vet \
+            --enable=gocyclo \
+            --enable=misspell \
+            --enable=dupl \
+            installer/cmd/tectonic \
+            installer/pkg/config \
+            installer/pkg/config/aws \
+            installer/pkg/config/azure \
+            installer/pkg/config/gcp \
+            installer/pkg/config/govcloud \
+            installer/pkg/config/metal \
+            installer/pkg/config/openstack \
+            installer/pkg/config/vmware \
+            installer/pkg/config-generator \
+            installer/pkg/terraform-generator \
+            installer/pkg/workflow",
+          ]) + "' > $@",
+    testonly = 1,
+)
+
+sh_test(
+    name    = "cli_gometalinter",
+    size    = "large",
+    srcs    = [":gometalinter_sh"],
+    data    = [
+        "//installer/cmd/tectonic:go_files",
+        "//installer/pkg/config:go_files",
+        "//installer/pkg/config/aws:go_files",
+        "//installer/pkg/config/azure:go_files",
+        "//installer/pkg/config/gcp:go_files",
+        "//installer/pkg/config/govcloud:go_files",
+        "//installer/pkg/config/metal:go_files",
+        "//installer/pkg/config/openstack:go_files",
+        "//installer/pkg/config/vmware:go_files",
+        "//installer/pkg/config-generator:go_files",
+        "//installer/pkg/terraform-generator:go_files",
+        "//installer/pkg/workflow:go_files",
+        "//installer:gometalinter_runtime",
+        "//installer:golint_runtime",
+        "//installer:govet_runtime",
+        "//installer:gocyclo_runtime",
+        "//installer:misspell_runtime",
+        "//installer:dupl_runtime",
+    ],
+)
+
