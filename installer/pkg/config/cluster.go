@@ -57,6 +57,7 @@ func (c Cluster) NodeCount(names []string) int {
 	return count
 }
 
+// TFVars will return the config for the cluster in tfvars format.
 func (c *Cluster) TFVars() (string, error) {
 	c.Etcd.Count = c.NodeCount(c.Etcd.NodePools)
 	c.Master.Count = c.NodeCount(c.Master.NodePools)

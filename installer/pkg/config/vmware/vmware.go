@@ -1,5 +1,6 @@
 package vmware
 
+// Etcd converts etcd related config.
 type Etcd struct {
 	Clusters     string `json:"tectonic_vmware_etcd_clusters,omitempty" yaml:"clusters,omitempty"`
 	Datacenters  string `json:"tectonic_vmware_etcd_datacenters,omitempty" yaml:"datacenters,omitempty"`
@@ -13,6 +14,7 @@ type Etcd struct {
 	VCPU         string `json:"tectonic_vmware_etcd_vcpu,omitempty" yaml:"vCPU,omitempty"`
 }
 
+// Master converts master related config.
 type Master struct {
 	Clusters     string `json:"tectonic_vmware_master_clusters,omitempty" yaml:"clusters,omitempty"`
 	Datacenters  string `json:"tectonic_vmware_master_datacenters,omitempty" yaml:"datacenters,omitempty"`
@@ -26,16 +28,19 @@ type Master struct {
 	VCPU         string `json:"tectonic_vmware_master_vcpu,omitempty" yaml:"vCPU,omitempty"`
 }
 
+// SSH converts ssh related config.
 type SSH struct {
 	AuthorizedKey  string `json:"tectonic_vmware_ssh_authorized_key,omitempty" yaml:"authorizedKey,omitempty"`
 	PrivateKeyPath string `json:"tectonic_vmware_ssh_private_key_path,omitempty" yaml:"privateKeyPath,omitempty"`
 }
 
+// VM converts vm related config.
 type VM struct {
 	Template       string `json:"tectonic_vmware_vm_template,omitempty" yaml:"template,omitempty"`
 	TemplateFolder string `json:"tectonic_vmware_vm_template_folder,omitempty" yaml:"templateFolder,omitempty"`
 }
 
+// VMware converts VMware related config.
 type VMware struct {
 	ControllerDomain string `json:"tectonic_vmware_controller_domain,omitempty" yaml:"controllerDomain,omitempty"`
 	Etcd             `json:",inline" yaml:"etcd,omitempty"`
@@ -51,6 +56,7 @@ type VMware struct {
 	Worker           `json:",inline" yaml:"worker,omitempty"`
 }
 
+// Worker converts worker related config.
 type Worker struct {
 	Clusters     string `json:"tectonic_vmware_worker_clusters,omitempty" yaml:"clusters,omitempty"`
 	Datacenters  string `json:"tectonic_vmware_worker_datacenters,omitempty" yaml:"datacenters,omitempty"`
