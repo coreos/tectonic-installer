@@ -27,11 +27,8 @@ func readTFVarsConfigStep(m *metadata) error {
 	}
 
 	m.cluster = config.Cluster{}
-	if err := json.Unmarshal([]byte(data), &m.cluster); err != nil {
-		return err
-	}
 
-	return nil
+	return json.Unmarshal([]byte(data), &m.cluster)
 }
 
 func generateYAMLConfigStep(m *metadata) error {
