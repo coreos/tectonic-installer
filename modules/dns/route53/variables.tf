@@ -83,7 +83,7 @@ variable "tectonic_extra_tags" {
   description = "(optional) Extra tags to be applied to created resources."
 }
 
-variable "custom_dns_name" {
+variable "dns_name" {
   type        = "string"
   default     = ""
   description = "DNS prefix used to construct the console and API server endpoints."

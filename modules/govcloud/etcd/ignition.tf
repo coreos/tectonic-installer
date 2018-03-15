@@ -31,7 +31,7 @@ Environment=REBOOT_STRATEGY=etcd-lock
 Environment="LOCKSMITHD_ETCD_CAFILE=/etc/ssl/etcd/ca.crt"
 Environment="LOCKSMITHD_ETCD_KEYFILE=/etc/ssl/etcd/client.key"
 Environment="LOCKSMITHD_ETCD_CERTFILE=/etc/ssl/etcd/client.crt"
-Environment="LOCKSMITHD_ENDPOINT=https://${var.cluster_name}-etcd-${count.index}.${var.base_domain}:2379"
+Environment="LOCKSMITHD_ENDPOINT=https://${var.dns_name}-etcd-${count.index}.${var.base_domain}:2379"
 EOF
     },
   ]

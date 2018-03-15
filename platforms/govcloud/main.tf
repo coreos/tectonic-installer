@@ -66,6 +66,7 @@ module "etcd" {
   ssh_key                    = "${var.tectonic_govcloud_ssh_key}"
   subnets                    = "${module.vpc.worker_subnet_ids}"
   dns_server_ip              = "${var.tectonic_govcloud_dns_server_ip}"
+  dns_name = "${var.tectonic_dns_name}"
 }
 
 module "ignition_masters" {
@@ -223,7 +224,7 @@ module "dns" {
   cluster_name                   = "${var.tectonic_cluster_name}"
   console_elb_dns_name           = "${module.vpc.aws_console_dns_name}"
   console_elb_zone_id            = "${module.vpc.aws_elb_console_zone_id}"
-  custom_dns_name                = "${var.tectonic_dns_name}"
+  dns_name                = "${var.tectonic_dns_name}"
   elb_alias_enabled              = true
   etcd_count                     = "${length(data.template_file.etcd_hostname_list.*.id)}"
   etcd_ip_addresses              = "${module.etcd.ip_addresses}"

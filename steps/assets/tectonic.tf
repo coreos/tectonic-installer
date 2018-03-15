@@ -10,8 +10,8 @@ provider "aws" {
 }
 
 locals {
-  ingress_internal_fqdn = "${var.tectonic_cluster_name}.${var.tectonic_base_domain}"
-  api_internal_fqdn     = "${var.tectonic_cluster_name}-api.${var.tectonic_base_domain}"
+  ingress_internal_fqdn = "${var.tectonic_dns_name}.${var.tectonic_base_domain}"
+  api_internal_fqdn     = "${var.tectonic_dns_name}-api.${var.tectonic_base_domain}"
   bucket_name           = "${var.tectonic_cluster_name}-tnc.${var.tectonic_base_domain}"
   bucket_assets_key     = "assets.zip"
 }
@@ -20,7 +20,7 @@ data "aws_availability_zones" "azs" {}
 
 data "template_file" "etcd_hostname_list" {
   count    = "${var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(data.aws_availability_zones.azs.names) == 5 ? 5 : 3}"
-  template = "${var.tectonic_cluster_name}-etcd-${count.index}.${var.tectonic_base_domain}"
+  template = "${var.tectonic_dns_name}-etcd-${count.index}.${var.tectonic_base_domain}"
 }
 
 module "bootkube" {

@@ -1,3 +1,7 @@
+locals {
+  dns_name = "${var.tectonic_dns_name == "" ? var.tectonic_cluster_name : var.tectonic_dns_name}"
+}
+
 data "template_file" "etcd_hostname_list" {
   count    = "${var.tectonic_etcd_count > 0 ? var.tectonic_etcd_count : length(data.aws_availability_zones.azs.names) == 5 ? 5 : 3}"
   template = "${var.tectonic_cluster_name}-etcd-${count.index}.${var.tectonic_base_domain}"
@@ -59,7 +63,9 @@ module "tectonic" {
 
   cluster_name = "${var.tectonic_cluster_name}"
 
+  # TODO: base_address == dns_name.base_domain Could be refactored
   base_address       = "${module.dns.ingress_internal_fqdn}"
+  dns_name = "${local.dns_name}"
   kube_apiserver_url = "https://${module.dns.api_internal_fqdn}:443"
   service_cidr       = "${var.tectonic_service_cidr}"
 

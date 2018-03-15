@@ -109,3 +109,8 @@ variable "kubeconfig_content" {
   type    = "string"
   default = ""
 }
+
+variable "dns_name" {
+  type    = "string"
+  default = ""
+}
