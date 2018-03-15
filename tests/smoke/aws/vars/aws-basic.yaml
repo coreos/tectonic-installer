@@ -19,7 +19,6 @@ clusters:
   baseDomain: tectonic-ci.de
   containerLinux:
     channel: beta
-  dnsName: aws-basic
   etcd:
     nodePools:
       - etcd
