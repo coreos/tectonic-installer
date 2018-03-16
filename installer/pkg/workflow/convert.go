@@ -15,7 +15,7 @@ func NewConvertWorkflow(configFilePath string) Workflow {
 		metadata: metadata{configFilePath: configFilePath},
 		steps: []Step{
 			readTFVarsConfigStep,
-			generateYAMLConfigStep,
+			printYAMLConfigStep,
 		},
 	}
 }
@@ -31,7 +31,7 @@ func readTFVarsConfigStep(m *metadata) error {
 	return json.Unmarshal([]byte(data), &m.cluster)
 }
 
-func generateYAMLConfigStep(m *metadata) error {
+func printYAMLConfigStep(m *metadata) error {
 	config := config.Config{
 		Clusters: []config.Cluster{m.cluster},
 	}
