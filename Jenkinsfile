@@ -106,11 +106,6 @@ pipeline {
       defaultValue: true,
       description: ''
     )
-    booleanParam(
-      name: 'RUN_GUI_TESTS',
-      defaultValue: true,
-      description: ''
-    )
     string(
       name: 'COMPONENT_TEST_IMAGES',
       defaultValue: '',
