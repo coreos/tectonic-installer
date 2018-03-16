@@ -84,6 +84,15 @@ variable "worker_iam_role" {
   description = "IAM role to use for the instance profiles of worker nodes."
 }
 
+variable "worker_iam_role_policy_attachments" {
+  type    = "list"
+  default = []
+
+  description = <<EOF
+    IAM policies (ARNs) to attach to the internally configured worker role or the one set in `worker_iam_role`
+  EOF
+}
+
 variable "base_domain" {
   type        = "string"
   description = "Domain on which the ELB records will be created"

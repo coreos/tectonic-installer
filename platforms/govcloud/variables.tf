@@ -302,6 +302,21 @@ Example:
 EOF
 }
 
+variable "tectonic_govcloud_worker_iam_role_policy_attachments" {
+  type    = "list"
+  default = []
+
+  description = <<EOF
+(optional) List of IAM policies (ARNs) to attach to the Tectonic default's worker role
+or the one set in `tectonic_govcloud_worker_iam_role_name`.
+
+Example:
+  To attach the AWS managed policy "ECR read-only access", set:
+
+       tectonic_govcloud_worker_iam_role_policy_attachments = ["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"]
+EOF
+}
+
 variable "tectonic_govcloud_worker_load_balancers" {
   type    = "list"
   default = []
