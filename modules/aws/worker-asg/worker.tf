@@ -31,6 +31,10 @@ data "ignition_config" "tnc_worker" {
   }
 
   files = ["${data.ignition_file.kubelet_worker_kubeconfig.id}"]
+
+  append {
+    source = "data:text/plain;charset=utf-8;base64,${base64encode(var.user_ign)}"
+  }
 }
 
 data "ignition_file" "kubelet_worker_kubeconfig" {

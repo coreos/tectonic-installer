@@ -96,6 +96,7 @@ module "masters" {
   subnet_ids                   = "${module.vpc.master_subnet_ids}"
   ec2_ami                      = "${var.tectonic_aws_ec2_ami_override}"
   kubeconfig_content           = "${local.kubeconfig_kubelet_content}"
+  user_ign                     = "${data.template_file.user_ign_master.rendered}"
 }
 
 module "workers" {
@@ -121,6 +122,15 @@ module "workers" {
   ec2_ami                      = "${var.tectonic_aws_ec2_ami_override}"
   base_domain                  = "${var.tectonic_base_domain}"
   kubeconfig_content           = "${local.kubeconfig_kubelet_content}"
+  user_ign                     = "${data.template_file.user_ign_worker.rendered}"
+}
+
+data "template_file" "user_ign_master" {
+  template = "${file("${path.module}/../assets/resources/ignition-master.ign")}"
+}
+
+data "template_file" "user_ign_worker" {
+  template = "${file("${path.module}/../assets/resources/ignition-worker.ign")}"
 }
 
 module "dns" {
