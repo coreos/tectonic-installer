@@ -89,6 +89,7 @@ genrule(
             "export HOME=test",
             "./installer/bin/gometalinter --deadline=240s --disable-all \
             --exclude=\"pkg\\/config\\/validate.*\\.go.*\\(dupl\\)$$\" \
+            --exclude=\"pkg\\/validate.*\\.go.*\\(dupl\\)$$\" \
             --cyclo-over=20 \
             --enable=golint \
             --enable=vet \
@@ -96,6 +97,7 @@ genrule(
             --enable=misspell \
             --enable=dupl \
             installer/cmd/tectonic \
+            installer/pkg/validate \
             installer/pkg/config \
             installer/pkg/config/aws \
             installer/pkg/config/azure \
@@ -105,18 +107,18 @@ genrule(
             installer/pkg/config/openstack \
             installer/pkg/config/vmware \
             installer/pkg/config-generator \
-            installer/pkg/terraform-generator \
             installer/pkg/workflow",
           ]) + "' > $@",
     testonly = 1,
 )
 
 sh_test(
-    name    = "cli_gometalinter",
-    size    = "large",
+    name    = "gometalinter",
+    size    = "small",
     srcs    = [":gometalinter_sh"],
     data    = [
         "//installer/cmd/tectonic:go_files",
+        "//installer/pkg/validate:go_files",
         "//installer/pkg/config:go_files",
         "//installer/pkg/config/aws:go_files",
         "//installer/pkg/config/azure:go_files",
@@ -126,7 +128,6 @@ sh_test(
         "//installer/pkg/config/openstack:go_files",
         "//installer/pkg/config/vmware:go_files",
         "//installer/pkg/config-generator:go_files",
-        "//installer/pkg/terraform-generator:go_files",
         "//installer/pkg/workflow:go_files",
         "//installer:gometalinter_runtime",
         "//installer:golint_runtime",
