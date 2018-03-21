@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "client.go",
+        "useragent.go",
+    ],
+    importpath = "github.com/hashicorp/terraform/httpclient",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//installer/vendor/github.com/hashicorp/go-cleanhttp:go_default_library",
+        "//installer/vendor/github.com/hashicorp/terraform/version:go_default_library",
+    ],
+)

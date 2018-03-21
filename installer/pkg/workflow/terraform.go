@@ -3,18 +3,31 @@ package workflow
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
+
+	"github.com/coreos/tectonic-installer/installer/pkg/terraform"
 )
 
 func terraformExec(clusterDir string, args ...string) error {
-	tf := exec.Command("terraform", args...)
-	tf.Dir = clusterDir
-	tf.Stdin = os.Stdin
-	tf.Stdout = os.Stdout
-	tf.Stderr = os.Stderr
+	// Get the path of the currently running binary
+	executionPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		return err
+	}
 
-	return tf.Run()
+	// Create an executor
+	ex, err := terraform.NewExecutor(executionPath)
+	if err != nil {
+		fmt.Printf("Could not create Terraform executor")
+		return err
+	}
+
+	err = ex.Execute(clusterDir, args...)
+	if err != nil {
+		fmt.Printf("Failed to run Terraform: %s", err)
+		return err
+	}
+	return nil
 }
 
 func tfApply(clusterDir, state, templateDir string) error {
