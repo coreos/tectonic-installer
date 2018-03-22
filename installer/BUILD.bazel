@@ -91,6 +91,7 @@ genrule(
             --exclude=\"pkg\\/config\\/validate.*\\.go.*\\(dupl\\)$$\" \
             --exclude=\"pkg\\/validate.*\\.go.*\\(dupl\\)$$\" \
             --cyclo-over=20 \
+            --dupl-threshold=75 \
             --enable=golint \
             --enable=vet \
             --enable=gocyclo \
@@ -107,7 +108,8 @@ genrule(
             installer/pkg/config/openstack \
             installer/pkg/config/vmware \
             installer/pkg/config-generator \
-            installer/pkg/workflow",
+            installer/pkg/workflow, \
+            tests/smoke",
           ]) + "' > $@",
     testonly = 1,
 )
@@ -129,6 +131,7 @@ sh_test(
         "//installer/pkg/config/vmware:go_files",
         "//installer/pkg/config-generator:go_files",
         "//installer/pkg/workflow:go_files",
+        "//tests/smoke:go_files",
         "//installer:gometalinter_runtime",
         "//installer:golint_runtime",
         "//installer:govet_runtime",

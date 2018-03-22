@@ -26,6 +26,7 @@ go_test(
         "//tests/smoke/vendor/k8s.io/client-go/tools/clientcmd:go_default_library",
         "//tests/smoke/vendor/k8s.io/kubernetes/pkg/kubectl/cmd/util:go_default_library",
         "//tests/smoke/vendor/k8s.io/kubernetes/pkg/kubectl/resource:go_default_library",
+        "//tests/smoke/vendor/k8s.io/client-go/rest:go_default_library",
     ],
 )
 
@@ -52,6 +53,7 @@ go_test(
         "//tests/smoke/vendor/k8s.io/client-go/tools/clientcmd:go_default_library",
         "//tests/smoke/vendor/k8s.io/kubernetes/pkg/kubectl/cmd/util:go_default_library",
         "//tests/smoke/vendor/k8s.io/kubernetes/pkg/kubectl/resource:go_default_library",
+        "//tests/smoke/vendor/k8s.io/client-go/rest:go_default_library",
     ],
 )
 
@@ -62,4 +64,12 @@ filegroup(
         "bare-metal/vars/metal.tfvars.json",
     ],
     visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "go_files",
+    visibility = ["//visibility:public"],
+    srcs = glob([
+        "*.go",
+    ]),
 )

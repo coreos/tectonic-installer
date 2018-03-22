@@ -24,6 +24,7 @@ import (
 	"k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/pkg/apis/extensions/v1beta1"
 	rbacv1beta1 "k8s.io/client-go/pkg/apis/rbac/v1beta1"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	cmdutil "k8s.io/kubernetes/pkg/kubectl/cmd/util"
 	"k8s.io/kubernetes/pkg/kubectl/resource"
@@ -396,6 +397,26 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 `)
 
+func nginxIsReachable(t *testing.T, nginx *testworkload.Nginx) error {
+	return wait.Poll(10*time.Second, 2*time.Minute, func() (bool, error) {
+		if err := nginx.IsReachable(); err != nil {
+			t.Logf("error not reachable %s: %v", nginx.Name, err)
+			return false, nil
+		}
+		return true, nil
+	})
+}
+
+func nginxIsUnReachable(t *testing.T, nginx *testworkload.Nginx) error {
+	return wait.Poll(10*time.Second, 2*time.Minute, func() (bool, error) {
+		if err := nginx.IsUnReachable(); err != nil {
+			t.Logf("error still reachable %s: %v", nginx.Name, err)
+			return false, nil
+		}
+		return true, nil
+	})
+}
+
 // testNetworkPolicy permforms 3 tests:
 // * first ping test to check if network is setup correctly and reachable.
 // * second ping test after setting `default-deny` policy on `network-policy-test` namespace
@@ -455,18 +476,26 @@ func testNetworkPolicy(t *testing.T) {
 	}
 	defer nginx.Delete()
 
-	if err := wait.Poll(10*time.Second, 2*time.Minute, func() (bool, error) {
-		if err := nginx.IsReachable(); err != nil {
-			t.Logf("error not reachable %s: %v", nginx.Name, err)
-			return false, nil
-		}
-		return true, nil
-	}); err != nil {
+	if err := nginxIsReachable(t, nginx); err != nil {
 		t.Fatalf("network not set up correctly: %v", err)
 	}
 
 	t.Run("DefaultDeny", func(t *testing.T) { testDefaultDenyNetworkPolicy(t, client, namespace, nginx) })
 	t.Run("NetworkPolicy", func(t *testing.T) { testAllowNetworkPolicy(t, client, namespace, nginx) })
+}
+
+func cleanNetworkPolicies(t *testing.T, httpRestClient rest.Interface, namespace string, np *v1beta1.NetworkPolicy) {
+	uri := fmt.Sprintf("/apis/%s/%s/namespaces/%s/%s/%s",
+		strings.ToLower("extensions"),
+		strings.ToLower("v1beta1"),
+		strings.ToLower(namespace),
+		strings.ToLower("NetworkPolicies"),
+		strings.ToLower(np.ObjectMeta.Name))
+
+	result := httpRestClient.Delete().RequestURI(uri).Do()
+	if result.Error() != nil {
+		t.Fatal(result.Error())
+	}
 }
 
 func testDefaultDenyNetworkPolicy(t *testing.T, client kubernetes.Interface, namespace string, nginx *testworkload.Nginx) {
@@ -498,28 +527,9 @@ spec:
 	if result.Error() != nil {
 		t.Fatal(result.Error())
 	}
-	defer func() {
-		uri = fmt.Sprintf("/apis/%s/%s/namespaces/%s/%s/%s",
-			strings.ToLower("extensions"),
-			strings.ToLower("v1beta1"),
-			strings.ToLower(namespace),
-			strings.ToLower("NetworkPolicies"),
-			strings.ToLower(np.ObjectMeta.Name))
+	defer cleanNetworkPolicies(t, httpRestClient, namespace, np)
 
-		result = httpRestClient.Delete().RequestURI(uri).Do()
-		if result.Error() != nil {
-			t.Fatal(result.Error())
-		}
-
-	}()
-
-	if err := wait.Poll(10*time.Second, 2*time.Minute, func() (bool, error) {
-		if err := nginx.IsUnReachable(); err != nil {
-			t.Logf("error still reachable %s: %v", nginx.Name, err)
-			return false, nil
-		}
-		return true, nil
-	}); err != nil {
+	if err := nginxIsUnReachable(t, nginx); err != nil {
 		t.Fatalf("default deny failed: %v", err)
 	}
 }
@@ -561,28 +571,9 @@ spec:
 	if result.Error() != nil {
 		t.Fatal(result.Error())
 	}
-	defer func() {
-		uri = fmt.Sprintf("/apis/%s/%s/namespaces/%s/%s/%s",
-			strings.ToLower("extensions"),
-			strings.ToLower("v1beta1"),
-			strings.ToLower(namespace),
-			strings.ToLower("NetworkPolicies"),
-			strings.ToLower(np.ObjectMeta.Name))
+	defer cleanNetworkPolicies(t, httpRestClient, namespace, np)
 
-		result = httpRestClient.Delete().RequestURI(uri).Do()
-		if result.Error() != nil {
-			t.Fatal(result.Error())
-		}
-
-	}()
-
-	if err := wait.Poll(10*time.Second, 2*time.Minute, func() (bool, error) {
-		if err := nginx.IsReachable(); err != nil {
-			t.Logf("error not reachable %s: %v", nginx.Name, err)
-			return false, nil
-		}
-		return true, nil
-	}); err != nil {
+	if err := nginxIsReachable(t, nginx); err != nil {
 		t.Fatalf("allow nginx network policy failed: %v", err)
 	}
 }
