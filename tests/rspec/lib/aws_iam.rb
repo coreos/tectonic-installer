@@ -6,8 +6,10 @@ require 'aws-sdk-iam'
 module AWSIAM
   def self.assume_role(aws_region)
     role_name = ENV['TECTONIC_INSTALLER_ROLE']
+    role_name = ENV['TECTONIC_INSTALLER_GOVCLOUD_ROLE'] if aws_region == 'us-gov-west-1'
+
     if role_name.to_s.empty?
-      raise 'TECTONIC_INSTALLER_ROLE environment variable not set'
+      raise 'TECTONIC_INSTALLER_ROLE/TECTONIC_INSTALLER_GOVCLOUD_ROLE environment variable not set'
     end
 
     client = Aws::IAM::Client.new(region: aws_region)
