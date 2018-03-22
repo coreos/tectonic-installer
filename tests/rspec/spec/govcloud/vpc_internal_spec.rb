@@ -14,7 +14,7 @@ RSpec.describe 'govcloud-vpc' do
 
   before(:all) do
     @role_credentials = nil
-    @role_credentials = AWSIAM.assume_role('us-gov-west-1') if ENV.key?('TECTONIC_INSTALLER_ROLE')
+    @role_credentials = AWSIAM.assume_role('us-gov-west-1') if ENV.key?('TECTONIC_GOVCLOUD_INSTALLER_ROLE')
     @ssh_key = ENV['TF_VAR_tectonic_govcloud_ssh_key'] || AwsSupport.create_aws_key_pairs('us-gov-west-1',
                                                                                           @role_credentials)
     ENV['TF_VAR_tectonic_govcloud_ssh_key'] = @ssh_key
