@@ -15,7 +15,7 @@ class GovcloudCluster < Cluster
   def initialize(tfvars_file)
     @aws_region = ENV['TF_VAR_tectonic_aws_region'] = 'us-gov-west-1'
     @role_credentials = nil
-    @role_credentials = AWSIAM.assume_role(@aws_region) if ENV.key?('TECTONIC_INSTALLER_ROLE')
+    @role_credentials = AWSIAM.assume_role(@aws_region) if ENV.key?('TECTONIC_INSTALLER_GOVCLOUD_ROLE')
 
     unless ssh_key_defined?
       ENV['TF_VAR_tectonic_govcloud_ssh_key'] = AwsSupport.create_aws_key_pairs(@aws_region, @role_credentials)

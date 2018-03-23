@@ -251,6 +251,7 @@ pipeline {
       }
       environment {
         TECTONIC_INSTALLER_ROLE = 'tf-tectonic-installer-track-2'
+        TECTONIC_INSTALLER_GOVCLOUD_ROLE = 'tf-tectonic-installer'
         GRAFITI_DELETER_ROLE = 'tf-grafiti'
         TF_VAR_tectonic_container_images = "${params.hyperkube_image}"
         TF_VAR_tectonic_kubelet_debug_config = "--minimum-container-ttl-duration=8h --maximum-dead-containers-per-container=9999 --maximum-dead-containers=9999"
