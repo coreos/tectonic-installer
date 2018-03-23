@@ -27,12 +27,13 @@ module "resource_group" {
 module "vnet" {
   source = "../../modules/azure/vnet"
 
-  location            = "${var.tectonic_azure_location}"
-  resource_group_name = "${module.resource_group.name}"
-  cluster_name        = "${var.tectonic_cluster_name}"
-  cluster_id          = "${module.tectonic.cluster_id}"
-  base_domain         = "${var.tectonic_base_domain}"
-  vnet_cidr_block     = "${var.tectonic_azure_vnet_cidr_block}"
+  location                           = "${var.tectonic_azure_location}"
+  resource_group_name                = "${module.resource_group.name}"
+  cluster_name                       = "${var.tectonic_cluster_name}"
+  cluster_id                         = "${module.tectonic.cluster_id}"
+  base_domain                        = "${var.tectonic_base_domain}"
+  vnet_cidr_block                    = "${var.tectonic_azure_vnet_cidr_block}"
+  vnet_cidr_block_subnet_extend_bits = "${var.vnet_cidr_block_subnet_extend_bits}"
 
   etcd_count           = "${local.etcd_count}"
   master_count         = "${var.tectonic_master_count}"

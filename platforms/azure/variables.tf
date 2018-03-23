@@ -129,6 +129,15 @@ service range or a private datacenter connected via ExpressRoute."
 EOF
 }
 
+variable "tectonic_azure_vnet_cidr_block" {
+  type    = "string"
+  default = "4"
+
+  description = <<EOF
+(optional) Bits to extend the given Virtual Network CIDR block prefix to split into the master and worker subnets.
+EOF
+}
+
 variable "tectonic_azure_external_vnet_id" {
   type    = "string"
   default = ""

@@ -28,6 +28,10 @@ variable "vnet_cidr_block" {
   type = "string"
 }
 
+variable "vnet_cidr_block_subnet_extend_bits" {
+  type = "string"
+}
+
 variable "location" {
   type = "string"
 }
