@@ -61,7 +61,7 @@ resource "aws_autoscaling_group" "masters" {
 
 data "ignition_config" "tnc_master" {
   append {
-    source = "http://${var.cluster_name}-tnc.${var.base_domain}/ign/v1/role/master"
+    source = "http://${var.dns_name}-tnc.${var.base_domain}/ign/v1/role/master"
   }
 
   files = ["${data.ignition_file.kubelet_master_kubeconfig.id}"]

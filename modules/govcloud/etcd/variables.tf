@@ -101,3 +101,8 @@ variable "ign_systemd_default_env_id" {
   type    = "string"
   default = ""
 }
+
+variable "dns_name" {
+  type    = "string"
+  default = ""
+}
