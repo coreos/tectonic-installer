@@ -81,6 +81,7 @@ module "bootkube" {
   kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   kubelet_master_node_label = "node-role.kubernetes.io/master"
   kubelet_worker_node_label = "node-role.kubernetes.io/worker"
+  cl_update_server_url      = "http://tectonic-clu.tectonic-system.svc.${local.ingress_internal_fqdn}"
 }
 
 module "tectonic" {

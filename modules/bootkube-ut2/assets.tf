@@ -184,5 +184,6 @@ data "template_file" "tnc_config" {
     cloud_provider           = "${var.cloud_provider}"
     debug_config             = "${var.kubelet_debug_config}"
     cluster_name             = "${var.cluster_name}"
+    cl_update_server_url     = "${var.cl_update_server_url}"
   }
 }
