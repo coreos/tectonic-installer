@@ -34,8 +34,19 @@ creds = commonCreds.collect()
 creds.push(
   [
     $class: 'AmazonWebServicesCredentialsBinding',
-    credentialsId: 'tectonic-jenkins-installer'
+    credentialsId: 'TF-TECTONIC-JENKINS-NO-SESSION'
   ],
+)
+creds.push(
+  string(credentialsId: 'AWS-TECTONIC-ROLE-NAME', variable: 'TF_VAR_tectonic_aws_installer_role')
+)
+
+credsUI = commonCreds.collect()
+credsUI.push(
+  [
+    $class: 'AmazonWebServicesCredentialsBinding',
+    credentialsId: 'TF-TECTONIC-JENKINS'
+  ]
 )
 
 govcloudCreds = commonCreds.collect()
@@ -56,7 +67,7 @@ quayCreds = [
 ]
 
 defaultBuilderImage = 'quay.io/coreos/tectonic-builder:v1.43'
-tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.14'
+tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.16'
 originalCommitId = 'UNKNOWN'
 
 pipeline {
@@ -207,7 +218,7 @@ pipeline {
                 node('worker && ec2') {
                   timeout(time: 10, unit: 'MINUTES') {
                     forcefullyCleanWorkspace()
-                    withCredentials(creds) {
+                    withCredentials(credsUI) {
                       withDockerContainer(params.builder_image) {
                         ansiColor('xterm') {
                           unstash 'clean-repo'
@@ -229,7 +240,7 @@ pipeline {
                 node('worker && ec2') {
                   timeout(time: 10, unit: 'MINUTES') {
                     forcefullyCleanWorkspace()
-                    withCredentials(creds) {
+                    withCredentials(credsUI) {
                       withDockerContainer(image: params.builder_image, args: '-u root') {
                         ansiColor('xterm') {
                           unstash 'clean-repo'
@@ -281,7 +292,7 @@ pipeline {
         }
       }
       environment {
-        TECTONIC_INSTALLER_ROLE = 'tectonic-installer'
+        TECTONIC_INSTALLER_ROLE = 'tf-tectonic-installer'
         GRAFITI_DELETER_ROLE = 'grafiti-deleter'
         TF_VAR_tectonic_container_images = "${params.hyperkube_image}"
         TF_VAR_tectonic_kubelet_debug_config = "--minimum-container-ttl-duration=8h --maximum-dead-containers-per-container=9999 --maximum-dead-containers=9999"

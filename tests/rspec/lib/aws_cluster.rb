@@ -19,8 +19,11 @@ class AwsCluster < Cluster
     end
     @aws_region = tfvars_file.tectonic_aws_region
 
+    @role_credentials = nil
+    @role_credentials = AWSIAM.assume_role(@aws_region) if ENV.key?('TECTONIC_INSTALLER_ROLE')
+
     unless ssh_key_defined?
-      ENV['TF_VAR_tectonic_aws_ssh_key'] = AwsSupport.create_aws_key_pairs(@aws_region)
+      ENV['TF_VAR_tectonic_aws_ssh_key'] = AwsSupport.create_aws_key_pairs(@aws_region, @role_credentials)
     end
 
     super(tfvars_file)
@@ -40,26 +43,15 @@ class AwsCluster < Cluster
 
   def stop
     if ENV['TF_VAR_tectonic_aws_ssh_key'].include?('rspec-')
-      AwsSupport.delete_aws_key_pairs(ENV['TF_VAR_tectonic_aws_ssh_key'], @aws_region)
+      AwsSupport.delete_aws_key_pairs(ENV['TF_VAR_tectonic_aws_ssh_key'], @aws_region, @role_credentials)
     end
 
     super
   end
 
   def master_ip_addresses
-    ssh_master_ip_addresses = []
-    Dir.chdir(@build_path) do
-      terraform_state = `terraform state show module.masters.aws_autoscaling_group.masters`.chomp.split("\n")
-      terraform_state.each do |value|
-        attributes = value.split('=')
-        next unless attributes[0].strip.eql?('id')
-        instances_id = AwsSupport.sorted_auto_scaling_instances(attributes[1].strip.chomp, @aws_region)
-        instances_id.each do |instance_id|
-          ssh_master_ip_addresses.push AwsSupport.preferred_instance_ip_address(instance_id, @aws_region)
-        end
-      end
-    end
-    ssh_master_ip_addresses
+    instances_id = retrieve_instances_ids('module.masters.aws_autoscaling_group.masters')
+    instances_id.map { |instance_id| AwsSupport.instance_ip_address(instance_id, @aws_region, @role_credentials) }
   end
 
   def master_ip_address
