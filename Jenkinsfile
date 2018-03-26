@@ -405,7 +405,7 @@ pipeline {
         forcefullyCleanWorkspace()
         echo "Starting with streaming the logfile to the S3 bucket"
         withDockerContainer(params.builder_image) {
-          withCredentials(creds) {
+          withCredentials(credsUI) {
             unstash 'clean-repo'
             sh """#!/bin/bash -xe
             export BUILD_RESULT=${currentBuild.currentResult}
