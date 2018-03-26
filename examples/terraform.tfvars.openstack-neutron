@@ -182,7 +182,7 @@ tectonic_openstack_dns_nameservers = ""
 // tectonic_openstack_etcd_flavor_name = ""
 
 // The ID of the network to be used as the external internet gateway as given in `openstack network list`.
-tectonic_openstack_external_gateway_id = ""
+tectonic_openstack_external_network_id = ""
 
 // The name name of the floating IP pool
 // as given in `openstack floating ip list`.

@@ -1,5 +1,5 @@
 provider "openstack" {
-  version = "1.0.0"
+  version = "1.2.0"
 }
 
 data "template_file" "etcd_hostname_list" {
@@ -89,7 +89,7 @@ module "bootkube" {
 
   etcd_backup_size          = "${var.tectonic_etcd_backup_size}"
   etcd_backup_storage_class = "${var.tectonic_etcd_backup_storage_class}"
-  etcd_endpoints            = "${module.dns.etcd_a_nodes}"
+  etcd_endpoints            = "${data.template_file.etcd_hostname_list.*.rendered}"
   self_hosted_etcd          = "${var.tectonic_self_hosted_etcd}"
 
   master_count = "${var.tectonic_master_count}"
@@ -198,12 +198,12 @@ module "ignition_masters" {
   kubelet_debug_config      = "${var.tectonic_kubelet_debug_config}"
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
-  metadata_provider         = "openstack-metadata"
   nfs_config_file           = "${local._tectonic_nfs_config_file}"
   no_proxy                  = "${var.tectonic_no_proxy}"
   ntp_servers               = "${var.tectonic_ntp_servers}"
   proxy_exclusive_units     = "${var.tectonic_proxy_exclusive_units}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
+  use_metadata              = "false"
 }
 
 module "master_nodes" {
