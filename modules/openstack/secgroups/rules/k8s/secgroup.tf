@@ -8,11 +8,11 @@ resource "openstack_networking_secgroup_rule_v2" "https" {
   security_group_id = "${var.secgroup_id}"
 }
 
-resource "openstack_networking_secgroup_rule_v2" "cAdvisor" {
+resource "openstack_networking_secgroup_rule_v2" "cluster" {
   direction         = "ingress"
   ethertype         = "IPv4"
-  port_range_min    = 4194
-  port_range_max    = 4194
+  port_range_min    = 1
+  port_range_max    = 65535
   protocol          = "tcp"
   remote_ip_prefix  = "${var.cluster_cidr}"
   security_group_id = "${var.secgroup_id}"
