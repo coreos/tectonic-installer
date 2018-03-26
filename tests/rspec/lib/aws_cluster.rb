@@ -58,6 +58,11 @@ class AwsCluster < Cluster
     master_ip_addresses[0]
   end
 
+  def retrieve_instances_ids(auto_scaling_groups)
+    aws_autoscaling_group_master = @tfstate_file.value(auto_scaling_groups, 'id')
+    AwsSupport.sorted_auto_scaling_instances(aws_autoscaling_group_master, @aws_region, @role_credentials)
+  end
+
   def check_prerequisites
     raise 'AWS credentials not defined' unless credentials_defined?
     raise 'TF_VAR_tectonic_aws_ssh_key is not defined' unless ssh_key_defined?

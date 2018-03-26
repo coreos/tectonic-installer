@@ -466,7 +466,7 @@ def runRSpecTest(testFilePath, dockerArgs, credentials) {
         reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
         archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
         withDockerContainer(params.builder_image) {
-         withCredentials(creds) {
+         withCredentials(credsUI) {
            sh """#!/bin/bash -xe
            ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
            """
@@ -509,7 +509,7 @@ def runRSpecTestBareMetal(testFilePath, credentials) {
       } finally {
         reportStatusToGithub((err == null) ? 'success' : 'failure', testFilePath, originalCommitId)
         archiveArtifacts allowEmptyArchive: true, artifacts: 'build/**/logs/**'
-        withCredentials(credentials) {
+        withCredentials(credsUI) {
           sh """#!/bin/bash -xe
           ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
            """
