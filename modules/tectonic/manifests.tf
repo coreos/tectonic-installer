@@ -17,6 +17,7 @@ variable "manifest_names" {
     "secrets/ingress-tls.yaml",
     "secrets/license.json",
     "secrets/pull.json",
+    "security/priviledged-scc-tectonic.yaml",
     "updater/app-version-kind.yaml",
     "updater/app_versions/app-version-kube-core.yaml",
     "updater/app_versions/app-version-kubernetes-addon.yaml",
@@ -86,9 +87,12 @@ data "template_file" "manifest_file_list" {
 
     base_address = "${var.base_address}"
 
-    ingress_ca_cert  = "${base64encode(var.ingress_ca_cert_pem)}"
-    ingress_tls_cert = "${base64encode(var.ingress_cert_pem)}"
-    ingress_tls_key  = "${base64encode(var.ingress_key_pem)}"
+    ingress_kind            = "${var.ingress_kind}"
+    ingress_status_password = "${random_string.ingress_status_password.result}"
+    ingress_ca_cert         = "${base64encode(var.ingress_ca_cert_pem)}"
+    ingress_tls_cert        = "${base64encode(var.ingress_cert_pem)}"
+    ingress_tls_key         = "${base64encode(var.ingress_key_pem)}"
+    ingress_tls_bundle      = "${base64encode(var.ingress_bundle_pem)}"
 
     identity_server_tls_cert = "${base64encode(var.identity_server_cert_pem)}"
     identity_server_tls_key  = "${base64encode(var.identity_server_key_pem)}"

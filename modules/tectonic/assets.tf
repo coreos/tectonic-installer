@@ -3,6 +3,12 @@ resource "random_id" "cluster_id" {
   byte_length = 16
 }
 
+resource "random_string" "ingress_status_password" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
 # tectonic.sh (/opt/tectonic/tectonic.sh)
 data "template_file" "tectonic_sh" {
   // TODO: This doesn't need to be a template anymore
@@ -28,7 +34,7 @@ data "template_file" "tectonic_wrapper_sh" {
   template = "${file("${path.module}/resources/tectonic-wrapper.sh")}"
 
   vars {
-    hyperkube_image = "${var.container_images["hyperkube"]}"
+    hyperkube_image = "${var.container_images["openshift"]}"
   }
 }
 

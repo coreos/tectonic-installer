@@ -22,6 +22,14 @@ output "apiserver_key_pem" {
   value = "${tls_private_key.apiserver.private_key_pem}"
 }
 
+output "openshift_apiserver_cert_pem" {
+  value = "${data.template_file.openshift_apiserver_cert.rendered}"
+}
+
+output "openshift_apiserver_key_pem" {
+  value = "${tls_private_key.openshift_apiserver.private_key_pem}"
+}
+
 output "apiserver_proxy_cert_pem" {
   value = "${tls_locally_signed_cert.apiserver_proxy.cert_pem}"
 }
@@ -34,6 +42,8 @@ output "ignition_file_id_list" {
   value = [
     "${data.ignition_file.apiserver_key.id}",
     "${data.ignition_file.apiserver_cert.id}",
+    "${data.ignition_file.openshift_apiserver_key.id}",
+    "${data.ignition_file.openshift_apiserver_cert.id}",
     "${data.ignition_file.apiserver_proxy_key.id}",
     "${data.ignition_file.apiserver_proxy_cert.id}",
     "${data.ignition_file.admin_key.id}",
@@ -48,6 +58,8 @@ output "id" {
   ${join(" ",
     list(local_file.apiserver_key.id,
     local_file.apiserver_cert.id,
+    local_file.openshift_apiserver_key.id,
+    local_file.openshift_apiserver_cert.id,
     local_file.apiserver_proxy_key.id,
     local_file.apiserver_proxy_cert.id,
     local_file.admin_key.id,

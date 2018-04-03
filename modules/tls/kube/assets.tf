@@ -34,6 +34,42 @@ data "ignition_file" "apiserver_cert" {
   path = "/opt/tectonic/tls/apiserver.crt"
 }
 
+resource "local_file" "openshift_apiserver_key" {
+  content  = "${tls_private_key.openshift_apiserver.private_key_pem}"
+  filename = "./generated/tls/openshift-apiserver.key"
+}
+
+data "ignition_file" "openshift_apiserver_key" {
+  filesystem = "root"
+  mode       = "0600"
+
+  content {
+    content = "${tls_private_key.openshift_apiserver.private_key_pem}"
+  }
+
+  path = "/opt/tectonic/tls/openshift-apiserver.key"
+}
+
+data "template_file" "openshift_apiserver_cert" {
+  template = "${join("", list(tls_locally_signed_cert.openshift_apiserver.cert_pem, var.aggregator_ca_cert_pem))}"
+}
+
+data "ignition_file" "openshift_apiserver_cert" {
+  filesystem = "root"
+  mode       = "0644"
+
+  content {
+    content = "${data.template_file.openshift_apiserver_cert.rendered}"
+  }
+
+  path = "/opt/tectonic/tls/openshift-apiserver.crt"
+}
+
+resource "local_file" "openshift_apiserver_cert" {
+  content  = "${data.template_file.openshift_apiserver_cert.rendered}"
+  filename = "./generated/tls/openshift-apiserver.crt"
+}
+
 resource "local_file" "apiserver_proxy_key" {
   content  = "${tls_private_key.apiserver_proxy.private_key_pem}"
   filename = "./generated/tls/apiserver-proxy.key"

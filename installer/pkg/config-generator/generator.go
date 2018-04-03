@@ -30,7 +30,7 @@ const (
 	identityConfigConsoleClientID = "tectonic-console"
 	identityConfigKubectlClientID = "tectonic-kubectl"
 	statsEmitterConfigStatsURL    = "https://stats-collector.tectonic.com"
-	ingressConfigIngressKind      = "NodePort"
+	ingressConfigIngressKind      = "haproxy-router"
 	certificatesStrategy          = "userProvidedCA"
 	identityAPIService            = "tectonic-identity-api.tectonic-system.svc.cluster.local"
 )
@@ -69,9 +69,13 @@ func (c ConfigGenerator) KubeSystem() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	coreConfig, err := c.coreConfig()
+	if err != nil {
+		return "", err
+	}
 
 	return configMap("kube-system", genericData{
-		"kco-config":     c.coreConfig(),
+		"kco-config":     coreConfig,
 		"network-config": c.networkConfig(),
 		"tnco-config":    tncoConfig,
 	})
@@ -95,7 +99,11 @@ func (c ConfigGenerator) TectonicSystem() (string, error) {
 
 // CoreConfig returns, if successful, a yaml string for the on-disk kco-config.
 func (c ConfigGenerator) CoreConfig() (string, error) {
-	return marshalYAML(c.coreConfig())
+	coreConfig, err := c.coreConfig()
+	if err != nil {
+		return "", err
+	}
+	return marshalYAML(coreConfig)
 }
 
 // TncoConfig returns, if successful, a yaml string for the on-disk tnco-config.
@@ -114,16 +122,12 @@ func (c ConfigGenerator) addonConfig() (*kubeaddon.OperatorConfig, error) {
 			Kind:       kubeaddon.Kind,
 		},
 	}
-	cidrhost, err := cidrhost(c.Cluster.Networking.ServiceCIDR, 10)
-	if err != nil {
-		return nil, err
-	}
-	addonConfig.DNSConfig.ClusterIP = cidrhost
 	addonConfig.CloudProvider = c.Platform
+	addonConfig.ClusterConfig.APIServerURL = c.getAPIServerURL()
 	return &addonConfig, nil
 }
 
-func (c ConfigGenerator) coreConfig() *kubecore.OperatorConfig {
+func (c ConfigGenerator) coreConfig() (*kubecore.OperatorConfig, error) {
 	coreConfig := kubecore.OperatorConfig{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: kubecore.APIVersion,
@@ -136,15 +140,23 @@ func (c ConfigGenerator) coreConfig() *kubecore.OperatorConfig {
 	coreConfig.AuthConfig.OIDCGroupsClaim = authConfigOIDCGroupsClaim
 	coreConfig.AuthConfig.OIDCUsernameClaim = authConfigOIDCUsernameClaim
 
+	cidrhost, err := cidrhost(c.Cluster.Networking.ServiceCIDR, 10)
+	if err != nil {
+		return nil, err
+	}
+	coreConfig.DNSConfig.ClusterIP = cidrhost
+
 	coreConfig.CloudProviderConfig.CloudConfigPath = ""
 	coreConfig.CloudProviderConfig.CloudProviderProfile = strings.ToLower(c.Cluster.Platform)
+
+	coreConfig.RoutingConfig.Subdomain = c.getBaseAddress()
 
 	coreConfig.NetworkConfig.ClusterCIDR = c.Cluster.Networking.PodCIDR
 	coreConfig.NetworkConfig.ServiceCIDR = c.Cluster.Networking.ServiceCIDR
 	coreConfig.NetworkConfig.AdvertiseAddress = networkConfigAdvertiseAddress
 	coreConfig.NetworkConfig.EtcdServers = c.getEtcdServersURLs()
 
-	return &coreConfig
+	return &coreConfig, nil
 }
 
 func (c ConfigGenerator) networkConfig() *tectonicnetwork.OperatorConfig {
