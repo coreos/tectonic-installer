@@ -29,12 +29,17 @@ resource "template_dir" "bootkube" {
 
     root_ca_cert                   = "${base64encode(var.root_ca_cert_pem)}"
     aggregator_ca_cert             = "${base64encode(var.aggregator_ca_cert_pem)}"
+    aggregator_ca_key              = "${base64encode(var.aggregator_ca_key_pem)}"
     kube_ca_cert                   = "${base64encode(var.kube_ca_cert_pem)}"
     kube_ca_key                    = "${base64encode(var.kube_ca_key_pem)}"
+    service_serving_ca_cert        = "${base64encode(var.service_serving_ca_cert_pem)}"
+    service_serving_ca_key         = "${base64encode(var.service_serving_ca_key_pem)}"
     kubelet_bootstrap_token_id     = "${random_string.kubelet_bootstrap_token_id.result}"
     kubelet_bootstrap_token_secret = "${random_string.kubelet_bootstrap_token_secret.result}"
     apiserver_key                  = "${base64encode(var.apiserver_key_pem)}"
     apiserver_cert                 = "${base64encode(var.apiserver_cert_pem)}"
+    openshift_apiserver_key        = "${base64encode(var.openshift_apiserver_key_pem)}"
+    openshift_apiserver_cert       = "${base64encode(var.openshift_apiserver_cert_pem)}"
     apiserver_proxy_key            = "${base64encode(var.apiserver_proxy_key_pem)}"
     apiserver_proxy_cert           = "${base64encode(var.apiserver_proxy_cert_pem)}"
     oidc_ca_cert                   = "${base64encode(var.oidc_ca_cert)}"
@@ -42,6 +47,8 @@ resource "template_dir" "bootkube" {
     serviceaccount_pub             = "${base64encode(tls_private_key.service_account.public_key_pem)}"
     serviceaccount_key             = "${base64encode(tls_private_key.service_account.private_key_pem)}"
     kube_dns_service_ip            = "${cidrhost(var.service_cidr, 10)}"
+
+    openshift_loopback_kubeconfig = "${base64encode(data.template_file.kubeconfig.rendered)}"
 
     etcd_ca_cert     = "${base64encode(var.etcd_ca_cert_pem)}"
     etcd_client_cert = "${base64encode(var.etcd_client_cert_pem)}"
@@ -102,12 +109,15 @@ data "template_file" "kco-config_yaml" {
 
     etcd_servers = "${join(",", formatlist("https://%s:2379", var.etcd_endpoints))}"
 
-    service_cidr = "${var.service_cidr}"
+    service_cidr        = "${var.service_cidr}"
+    kube_dns_service_ip = "${cidrhost(var.service_cidr, 10)}"
 
     oidc_client_id      = "${var.oidc_client_id}"
     oidc_groups_claim   = "${var.oidc_groups_claim}"
     oidc_issuer_url     = "${var.oidc_issuer_url}"
     oidc_username_claim = "${var.oidc_username_claim}"
+
+    routing_subdomain = "${var.routing_subdomain}"
   }
 }
 

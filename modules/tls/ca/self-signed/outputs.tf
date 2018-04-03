@@ -26,6 +26,18 @@ output "aggregator_ca_key_pem" {
   value = "${tls_private_key.aggregator_ca.private_key_pem}"
 }
 
+output "service_serving_ca_cert_pem" {
+  value = "${tls_locally_signed_cert.service_serving_ca.cert_pem}"
+}
+
+output "service_serving_ca_key_alg" {
+  value = "${tls_locally_signed_cert.service_serving_ca.ca_key_algorithm}"
+}
+
+output "service_serving_ca_key_pem" {
+  value = "${tls_private_key.service_serving_ca.private_key_pem}"
+}
+
 output "etcd_ca_cert_pem" {
   value = "${tls_locally_signed_cert.etcd_ca.cert_pem}"
 }
@@ -46,6 +58,8 @@ output "id" {
     local_file.kube_ca_cert.id,
     local_file.aggregator_ca_key.id,
     local_file.aggregator_ca_cert.id,
+    local_file.service_serving_ca_key.id,
+    local_file.service_serving_ca_cert.id,
     local_file.etcd_ca_cert.id)
     )}
   ")}"

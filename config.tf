@@ -74,17 +74,18 @@ variable "tectonic_container_images" {
     tnc_bootstrap                        = "quay.io/coreos/tectonic-node-controller-bootstrap-dev:7d341df4713a58cdd00e06541f4ebbbb1abefb40"
     etcd                                 = "quay.io/coreos/etcd:v3.2.14"
     hyperkube                            = "quay.io/coreos/hyperkube:v1.9.1_coreos.0"
-    kube_core_renderer                   = "quay.io/coreos/kube-core-renderer-dev:4ed85ee12e167da71e7d5f06ffdb94d1ce21f540"
+    openshift                            = "openshift/origin:latest"
+    kube_core_renderer                   = "quay.io/coreos/kube-core-renderer-dev:010985e979a78aa555ce4e8cb2ebce821f453ff5"
     kube_core_operator                   = "quay.io/coreos/kube-core-operator:beryllium-m1"
     tectonic_channel_operator            = "quay.io/coreos/tectonic-channel-operator:0.6.2"
     tectonic_prometheus_operator         = "quay.io/coreos/tectonic-prometheus-operator:v1.9.3"
     tectonic_cluo_operator               = "quay.io/coreos/tectonic-cluo-operator:v0.3.1"
     tectonic_torcx                       = "quay.io/coreos/tectonic-torcx:v0.2.1"
-    kubernetes_addon_operator            = "quay.io/coreos/kubernetes-addon-operator:beryllium-m1"
+    kubernetes_addon_operator            = "quay.io/coreos/kube-addon-operator-dev:3e30da0da85e4474c9c082f3db5bb3c75614d6de"
     tectonic_alm_operator                = "quay.io/coreos/tectonic-alm-operator:v0.3.1"
-    tectonic_ingress_controller_operator = "quay.io/coreos/tectonic-ingress-controller-operator:f96287f555b7366af14dfcbb02f9a6529dd24b99"
+    tectonic_ingress_controller_operator = "quay.io/coreos/tectonic-ingress-controller-operator-dev:352aae451128d064ae22455d800f75132b1af914"
     tectonic_utility_operator            = "quay.io/coreos/tectonic-utility-operator:7884c5c9b6cf738e3bda2731449c5c2ead54b390"
-    tectonic_network_operator            = "quay.io/coreos/tectonic-network-operator:beryllium-m1"
+    tectonic_network_operator            = "quay.io/coreos/tectonic-network-operator-dev:74862d268d2d4b669c7f9e0c9e7027d1a000e02d"
   }
 }
 

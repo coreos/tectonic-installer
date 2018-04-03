@@ -1,5 +1,5 @@
 output "kubeconfig_kubelet_content" {
-  value = "${module.bootkube.kubeconfig-kubelet}"
+  value = "${module.bootkube.kubeconfig}" ## TODO(abhinav): TLS boostrapping using service account
 }
 
 output "ignition_bootstrap" {

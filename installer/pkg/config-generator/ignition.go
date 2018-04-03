@@ -24,7 +24,7 @@ var (
 )
 
 const (
-	kubeconfigKubeletPath = "generated/auth/kubeconfig-kubelet"
+	kubeconfigKubeletPath = "generated/auth/kubeconfig" //TODO(abhinav): switch back to TLS bootstrap
 )
 
 func (c ConfigGenerator) poolToRoleMap() map[string]string {

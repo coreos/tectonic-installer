@@ -23,6 +23,16 @@ resource "local_file" "aggregator_ca_cert" {
   filename = "./generated/tls/aggregator-ca.crt"
 }
 
+resource "local_file" "service_serving_ca_key" {
+  content  = "${tls_private_key.service_serving_ca.private_key_pem}"
+  filename = "./generated/tls/service-serving-ca.key"
+}
+
+resource "local_file" "service_serving_ca_cert" {
+  content  = "${tls_locally_signed_cert.service_serving_ca.cert_pem}"
+  filename = "./generated/tls/service-serving-ca.crt"
+}
+
 resource "local_file" "etcd_ca_cert" {
   content  = "${tls_locally_signed_cert.etcd_ca.cert_pem}"
   filename = "./generated/tls/etcd-client-ca.crt"

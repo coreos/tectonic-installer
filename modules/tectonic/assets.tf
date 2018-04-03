@@ -3,6 +3,12 @@ resource "random_id" "cluster_id" {
   byte_length = 16
 }
 
+resource "random_string" "ingress_status_password" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
 # Kubernetes Manifests (resources/generated/manifests/)
 resource "template_dir" "tectonic" {
   source_dir      = "${path.module}/resources/manifests"
@@ -61,10 +67,12 @@ resource "template_dir" "tectonic" {
     prometheus_callback   = "https://${var.base_address}/prometheus/auth/callback"
     grafana_callback      = "https://${var.base_address}/grafana/auth/callback"
 
-    ingress_kind     = "${var.ingress_kind}"
-    ingress_ca_cert  = "${base64encode(var.ingress_ca_cert_pem)}"
-    ingress_tls_cert = "${base64encode(var.ingress_cert_pem)}"
-    ingress_tls_key  = "${base64encode(var.ingress_key_pem)}"
+    ingress_kind            = "${var.ingress_kind}"
+    ingress_status_password = "${random_string.ingress_status_password.result}"
+    ingress_ca_cert         = "${base64encode(var.ingress_ca_cert_pem)}"
+    ingress_tls_cert        = "${base64encode(var.ingress_cert_pem)}"
+    ingress_tls_key         = "${base64encode(var.ingress_key_pem)}"
+    ingress_tls_bundle      = "${base64encode(var.ingress_bundle_pem)}"
 
     identity_server_tls_cert = "${base64encode(var.identity_server_cert_pem)}"
     identity_server_tls_key  = "${base64encode(var.identity_server_key_pem)}"
@@ -111,7 +119,7 @@ data "template_file" "tectonic_wrapper" {
   template = "${file("${path.module}/resources/tectonic-wrapper.sh")}"
 
   vars {
-    hyperkube_image = "${var.container_images["hyperkube"]}"
+    hyperkube_image = "${var.container_images["openshift"]}"
   }
 }
 

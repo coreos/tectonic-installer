@@ -136,6 +136,10 @@ variable "ingress_key_pem" {
   type = "string"
 }
 
+variable "ingress_bundle_pem" {
+  type = "string"
+}
+
 variable "identity_server_cert_pem" {
   type = "string"
 }

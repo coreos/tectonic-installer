@@ -13,6 +13,16 @@ variable "apiserver_key_pem" {
   description = "The API server key in PEM format."
 }
 
+variable "openshift_apiserver_cert_pem" {
+  type        = "string"
+  description = "The Openshift API server certificate in PEM format."
+}
+
+variable "openshift_apiserver_key_pem" {
+  type        = "string"
+  description = "The Openshift API server key in PEM format."
+}
+
 variable "apiserver_proxy_cert_pem" {
   type        = "string"
   description = "The API server proxy certificate in PEM format."
@@ -103,6 +113,11 @@ variable "aggregator_ca_cert_pem" {
   description = "The Aggregated API Server CA in PEM format."
 }
 
+variable "aggregator_ca_key_pem" {
+  type        = "string"
+  description = "The Aggregated API Server CA key in PEM format."
+}
+
 variable "kube_ca_cert_pem" {
   type        = "string"
   description = "The Kubernetes CA in PEM format."
@@ -111,6 +126,16 @@ variable "kube_ca_cert_pem" {
 variable "kube_ca_key_pem" {
   type        = "string"
   description = "The Kubernetes CA key in PEM format."
+}
+
+variable "service_serving_ca_cert_pem" {
+  type        = "string"
+  description = "The Service Serving CA in PEM format."
+}
+
+variable "service_serving_ca_key_pem" {
+  type        = "string"
+  description = "The Service Serving CA key in PEM format."
 }
 
 variable "admin_cert_pem" {
@@ -269,4 +294,8 @@ variable "etcd_metadata_env" {
 variable "etcd_metadata_deps" {
   type        = "string"
   description = "The cluster base domain"
+}
+
+variable "routing_subdomain" {
+  type = "string"
 }

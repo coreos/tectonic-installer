@@ -11,6 +11,7 @@ set -e
 
 mkdir -p /etc/kubernetes/manifests/
 mv /opt/tectonic/manifests/tectonic-node-controller-pod.yaml /etc/kubernetes/manifests/
+cp -r $(pwd)/bootstrap-configs /etc/kubernetes/bootstrap-configs
 
 # shellcheck disable=SC2154
 /usr/bin/docker run \

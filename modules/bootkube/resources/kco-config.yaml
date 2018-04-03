@@ -2,11 +2,15 @@ apiVersion: v1
 kind: KubeCoreOperatorConfig
 clusterConfig:
   apiserver_url: ${kube_apiserver_url}
+dnsConfig:
+    clusterIP: ${kube_dns_service_ip}
 authConfig:
   oidc_client_id: ${oidc_client_id}
   oidc_issuer_url: ${oidc_issuer_url}
   oidc_groups_claim: ${oidc_groups_claim}
   oidc_username_claim: ${oidc_username_claim}
+routingConfig:
+  subdomain: ${routing_subdomain}
 cloudProviderConfig:
   cloud_config_path: ${cloud_config_path}
   cloud_provider_profile: ${cloud_provider_profile}

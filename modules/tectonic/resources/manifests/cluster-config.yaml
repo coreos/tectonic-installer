@@ -7,9 +7,8 @@ data:
   addon-config: |
       apiVersion: v1
       kind: KubeAddonOperatorConfig
-      heapsterConfig:
-      dnsConfig:
-          clusterIP: ${kube_dns_service_ip}
+      clusterConfig:
+        apiserver_url: ${kube_apiserver_url}
       cloudProvider: ${platform}
   utility-config: |
     apiVersion: v1
