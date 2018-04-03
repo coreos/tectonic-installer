@@ -1,8 +1,6 @@
 package kubeaddon
 
-import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-)
+import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 const (
 	// Kind is the TypeMeta.Kind for the OperatorConfig.
@@ -14,12 +12,11 @@ const (
 // OperatorConfig contains configuration for KAO managed add-ons
 type OperatorConfig struct {
 	metav1.TypeMeta `json:",inline"`
-	DNSConfig       `json:"dnsConfig,omitempty"`
+	ClusterConfig   `json:"clusterConfig,omitempty"`
 	CloudProvider   string `json:"cloudProvider,omitempty"`
 }
 
-// DNSConfig options for the dns configuration
-type DNSConfig struct {
-	// ClusterIP ip address of the cluster
-	ClusterIP string `json:"clusterIP"`
+// ClusterConfig holds global/general information about the cluster.
+type ClusterConfig struct {
+	APIServerURL string `json:"apiserver_url"`
 }
