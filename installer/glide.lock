@@ -1,5 +1,5 @@
-hash: 2ba24ef17bcfbb896b307c0ec12e0719260dd507597116beb7d97a78a44696ac
-updated: 2018-04-13T15:52:21.684246693-07:00
+hash: e11a860e94ea134078308f8ba86c0cfcd2c43d5606b771b6415c2d467addfc2b
+updated: 2018-04-19T09:49:35.916009494-07:00
 imports:
 - name: github.com/ajeddeloh/go-json
   version: 73d058cf8437a1989030afe571eeab9f90eebbbd
@@ -8,7 +8,7 @@ imports:
   subpackages:
   - parse
 - name: github.com/alecthomas/units
-  version: 2efee857e7cfd4f3d0138cc3cbb1b4966962b93a
+  version: 6b4e7dc5e3143b85ea77909c72caf89416fc2915
 - name: github.com/apparentlymart/go-cidr
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
   subpackages:
@@ -37,7 +37,7 @@ imports:
   - config/validate/astnode
   - config/validate/report
 - name: github.com/coreos/tectonic-config
-  version: 22c2fde25b6bd804166bb9dea5e62c16ef2e4900
+  version: 34c251c34ab57c4fa9198b125212623647a974a7
   subpackages:
   - config/kube-addon
   - config/kube-core
