@@ -150,3 +150,42 @@ resource "tls_locally_signed_cert" "aggregator_ca" {
     "cert_signing",
   ]
 }
+
+# Intermediate service serving CA (resources/generated/tls/{service-serving-ca.crt,service-serving-ca.key})
+resource "tls_private_key" "service_serving_ca" {
+  algorithm = "RSA"
+  rsa_bits  = "2048"
+}
+
+resource "tls_cert_request" "service_serving_ca" {
+  key_algorithm   = "${tls_private_key.service_serving_ca.algorithm}"
+  private_key_pem = "${tls_private_key.service_serving_ca.private_key_pem}"
+
+  subject {
+    common_name         = "service-serving"
+    organization        = "${uuid()}"
+    organizational_unit = "bootkube"
+  }
+
+  lifecycle {
+    ignore_changes = ["subject"]
+  }
+}
+
+resource "tls_locally_signed_cert" "service_serving_ca" {
+  cert_request_pem = "${tls_cert_request.service_serving_ca.cert_request_pem}"
+
+  ca_key_algorithm   = "${var.root_ca_cert_pem == "" ? join("", tls_self_signed_cert.root_ca.*.key_algorithm) : var.root_ca_key_alg}"
+  ca_private_key_pem = "${var.root_ca_cert_pem == "" ? join("", tls_private_key.root_ca.*.private_key_pem) : var.root_ca_key_pem}"
+  ca_cert_pem        = "${var.root_ca_cert_pem == "" ? join("", tls_self_signed_cert.root_ca.*.cert_pem) : var.root_ca_cert_pem}"
+  is_ca_certificate  = true
+
+  # intermediate certs are valid for 3 years.
+  validity_period_hours = "26280"
+
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "cert_signing",
+  ]
+}

@@ -5,7 +5,7 @@ KUBECONFIG="$1"
 ASSETS_PATH="$2"
 
 # Setup API Authentication
-KUBECTL="/kubectl --kubeconfig=$KUBECONFIG"
+KUBECTL="oc --config=$KUBECONFIG"
 
 # Setup helper functions
 
@@ -117,7 +117,7 @@ cd "$ASSETS_PATH/tectonic"
 set +e
 i=0
 echo "Waiting for Kubernetes API..."
-until $KUBECTL cluster-info; do
+until $KUBECTL status; do
   i=$((i+1))
   echo "Cluster not available yet, waiting for 5 seconds ($i)"
   sleep 5
@@ -150,6 +150,7 @@ kubectl create -f secrets/identity-grpc-server.yaml
 kubectl create -f ingress/pull.json
 
 echo "Creating Operators"
+kubectl create -f security/priviledged-scc-tectonic.yaml
 kubectl create -f updater/tectonic-channel-operator-kind.yaml
 kubectl create -f updater/app-version-kind.yaml
 kubectl create -f updater/migration-status-kind.yaml

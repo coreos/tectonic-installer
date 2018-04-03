@@ -75,17 +75,18 @@ variable "tectonic_container_images" {
     etcd_cert_signer                     = "quay.io/coreos/kube-etcd-signer-server:678cc8e6841e2121ebfdb6e2db568fce290b67d6"
     etcd                                 = "quay.io/coreos/etcd:v3.2.14"
     hyperkube                            = "quay.io/coreos/hyperkube:v1.9.1_coreos.0"
-    kube_core_renderer                   = "quay.io/coreos/kube-core-renderer-dev:a23a6980a5747ea004eaed1b0ca9cfab39e72ecc"
+    openshift                            = "openshift/origin:v3.10.0"
+    kube_core_renderer                   = "quay.io/coreos/kube-core-renderer-dev:a86615e856bf2d64a74a4ba92c5039c808fea728"
     kube_core_operator                   = "quay.io/coreos/kube-core-operator:beryllium-m1"
     tectonic_channel_operator            = "quay.io/coreos/tectonic-channel-operator:0.6.2"
     tectonic_prometheus_operator         = "quay.io/coreos/tectonic-prometheus-operator:v1.9.3"
     tectonic_cluo_operator               = "quay.io/coreos/tectonic-cluo-operator:v0.3.1"
     tectonic_torcx                       = "quay.io/coreos/tectonic-torcx:v0.2.1"
-    kubernetes_addon_operator            = "quay.io/coreos/kubernetes-addon-operator:beryllium-m1"
+    kubernetes_addon_operator            = "quay.io/coreos/kube-addon-operator-dev:3e30da0da85e4474c9c082f3db5bb3c75614d6de"
     tectonic_alm_operator                = "quay.io/coreos/tectonic-alm-operator:v0.3.1"
-    tectonic_ingress_controller_operator = "quay.io/coreos/tectonic-ingress-controller-operator:f96287f555b7366af14dfcbb02f9a6529dd24b99"
+    tectonic_ingress_controller_operator = "quay.io/coreos/tectonic-ingress-controller-operator-dev:352aae451128d064ae22455d800f75132b1af914"
     tectonic_utility_operator            = "quay.io/coreos/tectonic-utility-operator:7884c5c9b6cf738e3bda2731449c5c2ead54b390"
-    tectonic_network_operator            = "quay.io/coreos/tectonic-network-operator:beryllium-m1"
+    tectonic_network_operator            = "quay.io/coreos/tectonic-network-operator-dev:74862d268d2d4b669c7f9e0c9e7027d1a000e02d"
   }
 }
 
