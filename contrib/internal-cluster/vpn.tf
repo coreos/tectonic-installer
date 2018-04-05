@@ -19,7 +19,7 @@ data "aws_ami" "openvpn_ami" {
 
   filter {
     name   = "owner-id"
-    values = ["573553919781"]
+    values = ["679593333241"]
   }
 }
 
