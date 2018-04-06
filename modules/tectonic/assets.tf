@@ -1,8 +1,3 @@
-# Unique Cluster ID (uuid)
-resource "random_id" "cluster_id" {
-  byte_length = 16
-}
-
 # Kubernetes Manifests (resources/generated/manifests/)
 resource "template_dir" "tectonic" {
   source_dir      = "${path.module}/resources/manifests"
@@ -79,8 +74,6 @@ resource "template_dir" "tectonic" {
     kube_apiserver_url = "${var.kube_apiserver_url}"
     stats_url          = "${var.stats_url}"
 
-    # TODO: We could also patch https://www.terraform.io/docs/providers/random/ to add an UUID resource.
-    cluster_id   = "${format("%s-%s-%s-%s-%s", substr(random_id.cluster_id.hex, 0, 8), substr(random_id.cluster_id.hex, 8, 4), substr(random_id.cluster_id.hex, 12, 4), substr(random_id.cluster_id.hex, 16, 4), substr(random_id.cluster_id.hex, 20, 12))}"
     cluster_name = "${var.cluster_name}"
 
     platform              = "${var.platform}"
@@ -90,54 +83,4 @@ resource "template_dir" "tectonic" {
     image_re            = "${var.image_re}"
     kube_dns_service_ip = "${cidrhost(var.service_cidr, 10)}"
   }
-}
-
-# tectonic.sh (resources/generated/tectonic.sh)
-data "template_file" "tectonic" {
-  template = "${file("${path.module}/resources/tectonic.sh")}"
-
-  vars {
-    ingress_kind = "${var.ingress_kind}"
-  }
-}
-
-resource "local_file" "tectonic" {
-  content  = "${data.template_file.tectonic.rendered}"
-  filename = "./generated/tectonic.sh"
-}
-
-# tectonic.sh (resources/generated/tectonic-wrapper.sh)
-data "template_file" "tectonic_wrapper" {
-  template = "${file("${path.module}/resources/tectonic-wrapper.sh")}"
-
-  vars {
-    hyperkube_image = "${var.container_images["hyperkube"]}"
-  }
-}
-
-resource "local_file" "tectonic_wrapper" {
-  content  = "${data.template_file.tectonic_wrapper.rendered}"
-  filename = "./generated/tectonic-wrapper.sh"
-}
-
-# tectonic.service (available as output variable)
-data "template_file" "tectonic_service" {
-  template = "${file("${path.module}/resources/tectonic.service")}"
-}
-
-data "ignition_systemd_unit" "tectonic_service" {
-  name    = "tectonic.service"
-  enabled = false
-  content = "${data.template_file.tectonic_service.rendered}"
-}
-
-# tectonic.path (available as output variable)
-data "template_file" "tectonic_path" {
-  template = "${file("${path.module}/resources/tectonic.path")}"
-}
-
-data "ignition_systemd_unit" "tectonic_path" {
-  name    = "tectonic.path"
-  enabled = true
-  content = "${data.template_file.tectonic_path.rendered}"
 }

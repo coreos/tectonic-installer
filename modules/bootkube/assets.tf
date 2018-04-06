@@ -116,43 +116,6 @@ resource "local_file" "kco-config_yaml" {
   filename = "./generated/kco-config.yaml"
 }
 
-# bootkube.sh (resources/generated/bootkube.sh)
-data "template_file" "bootkube_sh" {
-  template = "${file("${path.module}/resources/bootkube.sh")}"
-
-  vars {
-    bootkube_image           = "${var.container_images["bootkube"]}"
-    kube_core_renderer_image = "${var.container_images["kube_core_renderer"]}"
-  }
-}
-
-resource "local_file" "bootkube_sh" {
-  content  = "${data.template_file.bootkube_sh.rendered}"
-  filename = "./generated/bootkube.sh"
-}
-
-# bootkube.service (available as output variable)
-data "template_file" "bootkube_service" {
-  template = "${file("${path.module}/resources/bootkube.service")}"
-}
-
-data "ignition_systemd_unit" "bootkube_service" {
-  name    = "bootkube.service"
-  enabled = false
-  content = "${data.template_file.bootkube_service.rendered}"
-}
-
-# bootkube.path (available as output variable)
-data "template_file" "bootkube_path_unit" {
-  template = "${file("${path.module}/resources/bootkube.path")}"
-}
-
-data "ignition_systemd_unit" "bootkube_path_unit" {
-  name    = "bootkube.path"
-  enabled = true
-  content = "${data.template_file.bootkube_path_unit.rendered}"
-}
-
 # TNC
 resource "local_file" "tnc_pod_config" {
   content  = "${data.template_file.tnc_config.rendered}"
@@ -185,7 +148,7 @@ data "template_file" "tnc_config" {
     master_node_label         = "${var.kubelet_master_node_label}"
     worker_node_label         = "${var.kubelet_worker_node_label}"
     node_taints_param         = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
-    cluster_dns_ip            = "${var.kube_dns_service_ip}"
+    cluster_dns_ip            = "${cidrhost(var.service_cidr, 10)}"
     cloud_provider            = "${var.cloud_provider}"
     debug_config              = "${var.kubelet_debug_config}"
     cluster_name              = "${var.cluster_name}"

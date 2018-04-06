@@ -71,7 +71,6 @@ module "masters" {
   ssh_key                      = "${var.tectonic_aws_ssh_key}"
   subnet_ids                   = "${module.vpc.master_subnet_ids}"
   ec2_ami                      = "${var.tectonic_aws_ec2_ami_override}"
-  kubeconfig_content           = "${local.kubeconfig_kubelet_content}"
   user_data_ign                = "${file("${path.cwd}/${var.tectonic_ignition_master}")}"
 }
 
@@ -97,7 +96,6 @@ module "workers" {
   worker_iam_role              = "${var.tectonic_aws_worker_iam_role_name}"
   ec2_ami                      = "${var.tectonic_aws_ec2_ami_override}"
   base_domain                  = "${var.tectonic_base_domain}"
-  kubeconfig_content           = "${local.kubeconfig_kubelet_content}"
   user_data_ign                = "${file("${path.cwd}/${var.tectonic_ignition_worker}")}"
 }
 

@@ -78,7 +78,6 @@ module "bootkube" {
   http_proxy                = "${var.tectonic_http_proxy_address}"
   https_proxy               = "${var.tectonic_https_proxy_address}"
   image_re                  = "${var.tectonic_image_re}"
-  kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   kubelet_master_node_label = "node-role.kubernetes.io/master"
   kubelet_worker_node_label = "node-role.kubernetes.io/worker"
   base_domain               = "${var.tectonic_base_domain}"

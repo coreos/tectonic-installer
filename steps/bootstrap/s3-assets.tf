@@ -60,7 +60,7 @@ data "archive_file" "assets" {
 resource "aws_s3_bucket_object" "ignition_bootstrap" {
   bucket  = "${aws_s3_bucket.tectonic.bucket}"
   key     = "config/master"
-  content = "${local.ignition_bootstrap}"
+  content = "${file("${path.cwd}/${var.tectonic_ignition_bootstrap}")}"
   acl     = "public-read"
 
   # TODO: Lock down permissions.
