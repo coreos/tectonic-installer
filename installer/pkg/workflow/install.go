@@ -82,7 +82,7 @@ func installJoinStep(m *metadata) error {
 }
 
 func runInstallStep(clusterDir, step string) error {
-	templateDir, err := findTemplates(step)
+	templateDir, err := findTemplates(stepsBaseDir, step)
 	if err != nil {
 		return err
 	}
@@ -94,6 +94,10 @@ func runInstallStep(clusterDir, step string) error {
 }
 
 func generateIgnConfigStep(m *metadata) error {
+	ignTemplatesPath, err := findTemplates(configgenerator.IgnTemplatesBaseDir, "")
+	if err != nil {
+		return err
+	}
 	c := configgenerator.New(m.cluster)
-	return c.GenerateIgnConfig(m.clusterDir)
+	return c.GenerateIgnConfig(m.clusterDir, ignTemplatesPath)
 }

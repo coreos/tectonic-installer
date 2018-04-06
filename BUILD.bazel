@@ -80,6 +80,7 @@ genrule(
         ":tarball_terraform_provider_matchbox_darwin",
         ":tarball_terraform_provider_matchbox_linux",
         ":tarball_examples",
+        ":tarball_ign_templates"
     ],
     outs = ["tectonic.tar.gz"],
     cmd = '\n'.join([
@@ -94,6 +95,14 @@ genrule(
             "tar -C $$TMPDIR --create --gzip --file $@ $$DIR"
     ]),
     output_to_bindir = 1,
+)
+
+pkg_tar(
+    name = "tarball_ign_templates",
+    mode = "0644",
+    package_dir = "ign-templates",
+    strip_prefix = "/installer/pkg/config-generator/templates",
+    srcs =  ["//installer/pkg/config-generator:templates"],
 )
 
 pkg_tar(

@@ -51,19 +51,19 @@ func copyFile(fromFilePath, toFilePath string) error {
 }
 
 func destroyCNAME(clusterDir string) error {
-	templatesPath, err := findTemplates(bootstrapStep)
+	templatesPath, err := findTemplates(stepsBaseDir, bootstrapStep)
 	if err != nil {
 		return err
 	}
 	return terraformExec(clusterDir, "destroy", "-force", fmt.Sprintf("-state=%s.tfstate", bootstrapStep), "-target=aws_route53_record.tectonic_tnc", templatesPath)
 }
 
-func findTemplates(relativePath string) (string, error) {
+func findTemplates(baseDir string, relativePath string) (string, error) {
 	base, err := baseLocation()
 	if err != nil {
 		return "", fmt.Errorf("unknown base path for '%s' templates: %s", relativePath, err)
 	}
-	base = filepath.Join(base, stepsBaseDir, relativePath)
+	base = filepath.Join(base, baseDir, relativePath)
 	stat, err := os.Stat(base)
 	if err != nil {
 		return "", fmt.Errorf("invalid path for '%s' templates: %s", base, err)
@@ -107,7 +107,7 @@ func generateKubeConfigStep(m *metadata) error {
 }
 
 func importAutoScalingGroup(m *metadata) error {
-	templatesPath, err := findTemplates(joinStep)
+	templatesPath, err := findTemplates(stepsBaseDir, joinStep)
 	if err != nil {
 		return err
 	}

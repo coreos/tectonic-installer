@@ -23,6 +23,7 @@
   "tectonic_aws_worker_root_volume_iops": 100,
   "tectonic_aws_worker_root_volume_size": 30,
   "tectonic_aws_worker_root_volume_type": "gp2",
+  "tectonic_ignition_bootstrap": "ignition-bootstrap.ign",
   "tectonic_ignition_master": "ignition-master.ign",
   "tectonic_ignition_worker": "ignition-worker.ign",
   "tectonic_ignition_etcd": "ignition-etcd.ign"

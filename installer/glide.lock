@@ -1,8 +1,10 @@
-hash: b4b5aa74af489768595978bcdeb72ff062fae8df72325c3e9293a763d8ba75d8
-updated: 2018-03-23T11:31:29.662155125+01:00
+hash: 1cfa9e0e57411b95fc625e7d353255eb5d424b88a1b3005389f03919d43e1fd8
+updated: 2018-04-04T17:18:20.803707+02:00
 imports:
 - name: github.com/ajeddeloh/go-json
   version: 73d058cf8437a1989030afe571eeab9f90eebbbd
+- name: github.com/ajeddeloh/yaml
+  version: 6b94386aeefd8c4b8470aee72bfca084c2f91da9
 - name: github.com/alecthomas/template
   version: a0175ee3bccc567396460bf5acd36800cb10c49c
   subpackages:
@@ -13,8 +15,18 @@ imports:
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
   subpackages:
   - cidr
+- name: github.com/coreos/container-linux-config-transpiler
+  version: 90d21c6c8e51e38198fd5e6517e961bd7b885832
+  subpackages:
+  - config
+  - config/astyaml
+  - config/platform
+  - config/templating
+  - config/types
+  - config/types/util
+  - internal/util
 - name: github.com/coreos/go-semver
-  version: 294930c1e79c64e7dbe360054274fdad492c8cf5
+  version: 5e3acbb5668c4c3deb4842615c4098eb61fb6b1e
   subpackages:
   - semver
 - name: github.com/coreos/go-systemd
@@ -31,6 +43,8 @@ imports:
   - config/v1/types
   - config/v2_0
   - config/v2_0/types
+  - config/v2_1
+  - config/v2_1/types
   - config/v2_3_experimental/types
   - config/validate
   - config/validate/astjson
@@ -73,7 +87,7 @@ imports:
   - ptypes/duration
   - ptypes/timestamp
 - name: github.com/google/btree
-  version: e89373fe6b4a7413d7acd6da1725b83ef713e6e4
+  version: 7d79101e329e5a3adf994758c578dab82b90c017
 - name: github.com/google/gofuzz
   version: 44d81051d367757e1c7c6a5a86423ece9afcf63c
 - name: github.com/googleapis/gnostic
@@ -83,7 +97,7 @@ imports:
   - compiler
   - extensions
 - name: github.com/gregjones/httpcache
-  version: 9cad4c3443a7200dd6400aef47183728de563a38
+  version: 787624de3eb7bd915c329cba748687a3b22666a6
   subpackages:
   - diskcache
 - name: github.com/howeyc/gopass
@@ -93,7 +107,7 @@ imports:
 - name: github.com/json-iterator/go
   version: 36b14963da70d11297d313183d7e6388c8510e1e
 - name: github.com/juju/ratelimit
-  version: 59fac5042749a5afb9af70e813da1dd5474f0167
+  version: 5b9ff866471762aa2ab2dced63c9fb6f53921342
 - name: github.com/mailru/easyjson
   version: 2f5df55504ebc322e4d52d34df6a1f5b503bf26d
   subpackages:
@@ -101,7 +115,7 @@ imports:
   - jlexer
   - jwriter
 - name: github.com/peterbourgon/diskv
-  version: 0646ccaebea1ed1539efcab30cae44019090093f
+  version: 5f041e8faa004a95c88a202771f4cc3e991971e6
 - name: github.com/PuerkitoBio/purell
   version: 8a290539e2e8629dbc4e6bad948158f790ec31f4
 - name: github.com/PuerkitoBio/urlesc

@@ -227,11 +227,6 @@ variable "kubelet_node_taints" {
   default     = ""
 }
 
-variable "kube_dns_service_ip" {
-  type        = "string"
-  description = "Service IP used to reach kube-dns"
-}
-
 variable "kubelet_debug_config" {
   type        = "string"
   default     = ""

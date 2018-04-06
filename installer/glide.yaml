@@ -18,3 +18,9 @@ import:
   version: 5dc8cb4b8a8eb076cbb5a06bc3b8682c15bdbbd3
 - package: github.com/coreos/ignition
   version: v0.23.0
+- package: github.com/coreos/container-linux-config-transpiler
+  version: v0.7.0
+# go-semver version used by container-linux-transpiler
+# If not specified ignition will download a ct non compatible version
+- package: github.com/coreos/go-semver
+  version: 5e3acbb5668c4c3deb4842615c4098eb61fb6b1e
