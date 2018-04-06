@@ -1,0 +1,9 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["templating.go"],
+    importpath = "github.com/coreos/container-linux-config-transpiler/config/templating",
+    visibility = ["//visibility:public"],
+    deps = ["//installer/vendor/github.com/coreos/container-linux-config-transpiler/config/platform:go_default_library"],
+)
