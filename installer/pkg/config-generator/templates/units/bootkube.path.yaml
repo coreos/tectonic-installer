@@ -1,0 +1,10 @@
+name: "bootkube.path"
+enabled: true
+contents: |
+    [Unit]
+    Description=Trigger for bootkube.service
+    [Path]
+    PathExists=/opt/tectonic/bootkube.sh
+    Unit=bootkube.service
+    [Install]
+    WantedBy=multi-user.target

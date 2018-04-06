@@ -15,6 +15,8 @@ import (
 )
 
 const (
+	IgnitionBootstrap = "ignition-bootstrap.ign"
+	// IgnitionWorker is the relative path to the ign worker cfg from the tf working directory
 	// IgnitionMaster is the relative path to the ign master cfg from the tf working directory
 	IgnitionMaster = "ignition-master.ign"
 	// IgnitionWorker is the relative path to the ign worker cfg from the tf working directory
@@ -52,6 +54,7 @@ type Cluster struct {
 	metal.Metal         `json:",inline" yaml:"metal,omitempty"`
 	openstack.OpenStack `json:",inline" yaml:"openstack,omitempty"`
 	vmware.VMware       `json:",inline" yaml:"vmware,omitempty"`
+	IgnitionBootstrap   string `json:"tectonic_ignition_bootstrap,omitempty" yaml:"-"`
 	IgnitionMaster      string `json:"tectonic_ignition_master,omitempty" yaml:"-"`
 	IgnitionWorker      string `json:"tectonic_ignition_worker,omitempty" yaml:"-"`
 	IgnitionEtcd        string `json:"tectonic_ignition_etcd,omitempty" yaml:"-"`
@@ -78,6 +81,7 @@ func (c *Cluster) TFVars() (string, error) {
 	c.Master.Count = c.NodeCount(c.Master.NodePools)
 	c.Worker.Count = c.NodeCount(c.Worker.NodePools)
 
+	c.IgnitionBootstrap = IgnitionBootstrap
 	c.IgnitionMaster = IgnitionMaster
 	c.IgnitionWorker = IgnitionWorker
 	c.IgnitionEtcd = IgnitionEtcd

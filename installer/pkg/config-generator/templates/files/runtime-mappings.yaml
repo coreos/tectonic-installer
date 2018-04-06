@@ -1,0 +1,10 @@
+filesystem: "root"
+path: "/etc/kubernetes/installer/runtime-mappings.yaml"
+mode: 0644
+contents:
+    inline: |
+        kind: VersionManifestV1
+        versions:
+          k8s:
+            1.9:
+                docker: [ "17.03", "1.12"]

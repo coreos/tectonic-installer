@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	ignconfig "github.com/coreos/ignition/config/v2_0"
+	ignconfig "github.com/coreos/ignition/config/v2_1"
 )
 
 // ErrUnmatchedNodePool is returned when a nodePool was specified but not found in the nodePools list.

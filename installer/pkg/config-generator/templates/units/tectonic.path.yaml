@@ -1,0 +1,10 @@
+name: "tectonic.path"
+enabled: true
+contents: |
+    [Unit]
+    Description=Trigger for tectonic.service
+    [Path]
+    PathExists=/opt/tectonic/tectonic-wrapper.sh
+    Unit=tectonic.service
+    [Install]
+    WantedBy=multi-user.target

@@ -32,6 +32,7 @@ const (
 	ingressConfigIngressKind      = "NodePort"
 	certificatesStrategy          = "userProvidedCA"
 	identityAPIService            = "tectonic-identity-api.tectonic-system.svc.cluster.local"
+	initAssets                    = "assets.zip"
 )
 
 // ConfigGenerator defines the cluster config generation for a cluster.
@@ -93,7 +94,7 @@ func (c ConfigGenerator) addonConfig() (*kubeaddon.OperatorConfig, error) {
 			Kind:       kubeaddon.Kind,
 		},
 	}
-	cidrhost, err := cidrhost(c.Cluster.Networking.ServiceCIDR, 10)
+	cidrhost, err := c.getClusterDNSIP()
 	if err != nil {
 		return nil, err
 	}
@@ -257,6 +258,18 @@ func (c ConfigGenerator) getBaseAddress() string {
 
 func (c ConfigGenerator) getOicdIssuerURL() string {
 	return fmt.Sprintf("%s.%s/identity", c.Cluster.Name, c.Cluster.BaseDomain)
+}
+
+func (c ConfigGenerator) getTNCHostname() string {
+	return fmt.Sprintf("%s-tnc.%s", c.Cluster.Name, c.Cluster.BaseDomain)
+}
+
+func (c ConfigGenerator) getInitAssetsLocation() string {
+	return fmt.Sprintf("%s/%s", c.getTNCHostname(), initAssets)
+}
+
+func (c ConfigGenerator) getClusterDNSIP() (string, error) {
+	return cidrhost(c.Cluster.Networking.ServiceCIDR, 10)
 }
 
 // generateRandomID reproduce tf random_id behaviour

@@ -1,0 +1,7 @@
+name: "docker.service"
+enabled: true
+dropins:
+  - name: "10-dockeropts.conf"
+    contents: |
+      [Service]
+      Environment="DOCKER_OPTS=--log-opt max-size=50m --log-opt max-file=3

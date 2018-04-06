@@ -35,7 +35,7 @@ func runDestroyStep(clusterDir, step string) error {
 		// there is no statefile, therefore nothing to destroy for this step
 		return nil
 	}
-	templateDir, err := findTemplates(step)
+	templateDir, err := findTemplates(stepsBaseDir, step)
 	if err != nil {
 		return err
 	}
