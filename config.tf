@@ -128,9 +128,9 @@ variable "tectonic_versions" {
 
   default = {
     etcd          = "3.1.8"
-    kubernetes    = "1.8.9+tectonic.1"
+    kubernetes    = "1.8.9+tectonic.2"
     monitoring    = "1.9.5"
-    tectonic      = "1.8.9-tectonic.1"
+    tectonic      = "1.8.9-tectonic.2"
     tectonic-etcd = "0.0.1"
     cluo          = "0.3.1"
     alm           = "0.3.0"
