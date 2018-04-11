@@ -6,6 +6,14 @@ output "admin_key_pem" {
   value = "${tls_private_key.admin.private_key_pem}"
 }
 
+output "kubelet_cert_pem" {
+  value = "${tls_locally_signed_cert.kubelet.cert_pem}"
+}
+
+output "kubelet_key_pem" {
+  value = "${tls_private_key.kubelet.private_key_pem}"
+}
+
 output "apiserver_cert_pem" {
   value = "${data.template_file.apiserver_cert.rendered}"
 }
