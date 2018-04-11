@@ -29,6 +29,7 @@ module "ignition_bootstrap" {
 
 data "ignition_config" "bootstrap" {
   files = ["${compact(list(
+    data.ignition_file.bootstrap_kubeconfig.id,
     data.ignition_file.init_assets.id,
     data.ignition_file.rm_assets.id,
     module.ignition_bootstrap.installer_kubelet_env_id,
@@ -56,6 +57,16 @@ data "ignition_config" "bootstrap" {
     module.ignition_bootstrap.update_ca_certificates_dropin_id,
     module.ignition_bootstrap.iscsi_service_id,
    ))}"]
+}
+
+data "ignition_file" "bootstrap_kubeconfig" {
+  filesystem = "root"
+  path       = "/etc/kubernetes/kubeconfig"
+  mode       = 0644
+
+  content {
+    content = "${module.bootkube.kubeconfig-kubelet}"
+  }
 }
 
 data "template_file" "init_assets" {
