@@ -19,6 +19,7 @@ resource "template_dir" "bootkube" {
   vars {
     tectonic_network_operator_image = "${var.container_images["tectonic_network_operator"]}"
     tnc_operator_image              = "${var.container_images["tnc_operator"]}"
+    etcd_cert_signer_image          = "${var.container_images["etcd_cert_signer"]}"
 
     cloud_provider_config = "${var.cloud_provider_config}"
 
@@ -41,6 +42,7 @@ resource "template_dir" "bootkube" {
     etcd_ca_cert     = "${base64encode(var.etcd_ca_cert_pem)}"
     etcd_client_cert = "${base64encode(var.etcd_client_cert_pem)}"
     etcd_client_key  = "${base64encode(var.etcd_client_key_pem)}"
+    etcd_cluster     = "${join(",", data.template_file.initial_cluster.*.rendered)}"
   }
 }
 
@@ -88,6 +90,8 @@ data "template_file" "bootkube_sh" {
     bootkube_image           = "${var.container_images["bootkube"]}"
     kube_core_renderer_image = "${var.container_images["kube_core_renderer"]}"
     tnc_operator_image       = "${var.container_images["tnc_operator"]}"
+    etcd_cert_signer_image   = "${var.container_images["etcd_cert_signer"]}"
+    etcd_cluster             = "${join(",", data.template_file.initial_cluster.*.rendered)}"
   }
 }
 
@@ -116,4 +120,9 @@ data "ignition_systemd_unit" "bootkube_path_unit" {
   name    = "bootkube.path"
   enabled = true
   content = "${data.template_file.bootkube_path_unit.rendered}"
+}
+
+data "template_file" "initial_cluster" {
+  count    = "${length(var.etcd_endpoints)}"
+  template = "https://${var.etcd_endpoints[count.index]}:2379"
 }
