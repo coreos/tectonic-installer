@@ -1,5 +1,5 @@
 module "ignition_bootstrap" {
-  source = "../../modules/ignition"
+  source = "../../../modules/ignition"
 
   assets_location           = "${local.bucket_name}/${local.bucket_assets_key}"
   base_domain               = "${var.tectonic_base_domain}"

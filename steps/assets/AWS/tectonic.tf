@@ -24,7 +24,7 @@ data "template_file" "etcd_hostname_list" {
 }
 
 module "bootkube" {
-  source = "../../modules/bootkube"
+  source = "../../../modules/bootkube"
 
   cluster_name       = "${var.tectonic_cluster_name}"
   kube_apiserver_url = "https://${local.api_internal_fqdn}:443"
@@ -54,7 +54,7 @@ module "bootkube" {
 }
 
 module "tectonic" {
-  source   = "../../modules/tectonic"
+  source   = "../../../modules/tectonic"
   platform = "aws"
 
   base_address = "${local.ingress_internal_fqdn}"
