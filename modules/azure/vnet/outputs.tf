@@ -14,6 +14,10 @@ output "worker_subnet_name" {
   value = "${var.external_vnet_id == "" ?  element(concat(azurerm_subnet.worker_subnet.*.name, list("")), 0) : replace(var.external_vnet_id, var.const_id_to_group_name_regex, "$2")}"
 }
 
+output "vnet_resource_group" {
+  value = "${var.external_vnet_id == "" ?  "" : replace(var.external_vnet_id, var.const_id_to_group_name_regex, "$1")}"
+}
+
 # TODO: Allow user to provide their own network
 output "etcd_cidr" {
   value = "${element(concat(azurerm_subnet.master_subnet.*.address_prefix, list("")), 0)}"
