@@ -21,10 +21,10 @@ type AWS struct {
 
 // External converts external related config.
 type External struct {
-	MasterSubnetIDs string `json:"tectonic_aws_external_master_subnet_ids,omitempty" yaml:"masterSubnetIDs,omitempty"`
+	MasterSubnetIDs []string `json:"tectonic_aws_external_master_subnet_ids,omitempty" yaml:"masterSubnetIDs,omitempty"`
 	PrivateZone     string `json:"tectonic_aws_external_private_zone,omitempty" yaml:"privateZone,omitempty"`
 	VPCID           string `json:"tectonic_aws_external_vpc_id,omitempty" yaml:"vpcID,omitempty"`
-	WorkerSubnetIDs string `json:"tectonic_aws_external_worker_subnet_ids,omitempty" yaml:"workerSubnetIDs,omitempty"`
+	WorkerSubnetIDs []string `json:"tectonic_aws_external_worker_subnet_ids,omitempty" yaml:"workerSubnetIDs,omitempty"`
 }
 
 // Etcd converts etcd related config.
