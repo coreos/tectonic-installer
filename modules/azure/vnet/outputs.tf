@@ -1,5 +1,5 @@
 output "vnet_id" {
-  value = "${var.external_vnet_id == "" ? element(concat(azurerm_virtual_network.tectonic_vnet.*.name, list("")), 0) : var.external_vnet_id}"
+  value = "${var.external_vnet_id == "" ? element(concat(azurerm_virtual_network.tectonic_vnet.*.name, list("")), 0) : replace(var.external_vnet_id, var.const_id_to_group_name_regex, "$2")}"
 }
 
 output "master_subnet" {
@@ -11,7 +11,7 @@ output "worker_subnet" {
 }
 
 output "worker_subnet_name" {
-  value = "${var.external_vnet_id == "" ?  element(concat(azurerm_subnet.worker_subnet.*.name, list("")), 0) : replace(var.external_vnet_id, var.const_id_to_group_name_regex, "$2")}"
+  value = "${var.external_vnet_id == "" ?  element(concat(azurerm_subnet.worker_subnet.*.name, list("")), 0) : replace(var.external_worker_subnet_id, var.const_id_to_subnet_name_regex, "$1")}"
 }
 
 # TODO: Allow user to provide their own network
