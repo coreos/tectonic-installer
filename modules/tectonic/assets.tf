@@ -34,7 +34,7 @@ data "template_file" "tectonic_wrapper_sh" {
   template = "${file("${path.module}/resources/tectonic-wrapper.sh")}"
 
   vars {
-    hyperkube_image = "${var.container_images["openshift"]}"
+    hyperkube_image = "${var.container_images["hyperkube"]}"
   }
 }
 

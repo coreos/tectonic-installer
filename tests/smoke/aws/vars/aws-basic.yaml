@@ -20,7 +20,7 @@ aws:
       type: gp2
 baseDomain: tectonic-ci.de
 containerLinux:
-  channel: beta
+  channel: stable
 etcd:
   nodePools:
     - etcd
