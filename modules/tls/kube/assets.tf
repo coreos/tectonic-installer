@@ -31,3 +31,13 @@ resource "local_file" "admin_cert" {
   content  = "${tls_locally_signed_cert.admin.cert_pem}"
   filename = "./generated/tls/admin.crt"
 }
+
+resource "local_file" "kubelet_key" {
+  content  = "${tls_private_key.kubelet.private_key_pem}"
+  filename = "./generated/tls/kubelet.key"
+}
+
+resource "local_file" "kubelet_cert" {
+  content  = "${tls_locally_signed_cert.kubelet.cert_pem}"
+  filename = "./generated/tls/kubelet.crt"
+}

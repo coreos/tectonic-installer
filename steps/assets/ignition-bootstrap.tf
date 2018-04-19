@@ -14,10 +14,6 @@ module "ignition_bootstrap" {
   etcd_client_key_pem       = "${module.etcd_certs.etcd_client_key_pem}"
   etcd_count                = "${length(data.template_file.etcd_hostname_list.*.id)}"
   etcd_initial_cluster_list = "${data.template_file.etcd_hostname_list.*.rendered}"
-  etcd_peer_crt_pem         = "${module.etcd_certs.etcd_peer_cert_pem}"
-  etcd_peer_key_pem         = "${module.etcd_certs.etcd_peer_key_pem}"
-  etcd_server_crt_pem       = "${module.etcd_certs.etcd_server_cert_pem}"
-  etcd_server_key_pem       = "${module.etcd_certs.etcd_server_key_pem}"
   http_proxy                = "${var.tectonic_http_proxy_address}"
   https_proxy               = "${var.tectonic_https_proxy_address}"
   image_re                  = "${var.tectonic_image_re}"
@@ -33,6 +29,7 @@ module "ignition_bootstrap" {
 
 data "ignition_config" "bootstrap" {
   files = ["${compact(list(
+    data.ignition_file.bootstrap_kubeconfig.id,
     data.ignition_file.init_assets.id,
     data.ignition_file.rm_assets.id,
     module.ignition_bootstrap.installer_kubelet_env_id,
@@ -60,6 +57,16 @@ data "ignition_config" "bootstrap" {
     module.ignition_bootstrap.update_ca_certificates_dropin_id,
     module.ignition_bootstrap.iscsi_service_id,
    ))}"]
+}
+
+data "ignition_file" "bootstrap_kubeconfig" {
+  filesystem = "root"
+  path       = "/etc/kubernetes/kubeconfig"
+  mode       = 0644
+
+  content {
+    content = "${module.bootkube.kubeconfig-kubelet}"
+  }
 }
 
 data "template_file" "init_assets" {
