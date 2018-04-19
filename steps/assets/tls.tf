@@ -35,11 +35,3 @@ module "ingress_certs" {
   ca_key_alg   = "${module.ca_certs.kube_ca_key_alg}"
   ca_key_pem   = "${module.ca_certs.kube_ca_key_pem}"
 }
-
-module "identity_certs" {
-  source = "../../modules/tls/identity"
-
-  kube_ca_cert_pem = "${module.ca_certs.kube_ca_cert_pem}"
-  kube_ca_key_alg  = "${module.ca_certs.kube_ca_key_alg}"
-  kube_ca_key_pem  = "${module.ca_certs.kube_ca_key_pem}"
-}
