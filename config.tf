@@ -405,6 +405,16 @@ This field is mandatory if `tectonic_ca_cert` is set.
 EOF
 }
 
+variable "tectonic_cert_chain" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+PEM-encoded certificatte chain that will be added to generated certs.
+Use this if you use a intermediate CA with multiple certificates in the chain.
+EOF
+}
+
 variable "tectonic_tls_validity_period" {
   type    = "string"
   default = "26280"

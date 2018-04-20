@@ -4,6 +4,7 @@ module "kube_certs" {
   ca_cert_pem        = "${var.tectonic_ca_cert}"
   ca_key_alg         = "${var.tectonic_ca_key_alg}"
   ca_key_pem         = "${var.tectonic_ca_key}"
+  cert_chain         = "${var.tectonic_cert_chain}"
   kube_apiserver_url = "https://${var.tectonic_aws_private_endpoints ? module.dns.api_internal_fqdn : module.dns.api_external_fqdn}:443"
   service_cidr       = "${var.tectonic_service_cidr}"
   validity_period    = "${var.tectonic_tls_validity_period}"
@@ -27,6 +28,7 @@ module "ingress_certs" {
   ca_cert_pem     = "${module.kube_certs.ca_cert_pem}"
   ca_key_alg      = "${module.kube_certs.ca_key_alg}"
   ca_key_pem      = "${module.kube_certs.ca_key_pem}"
+  cert_chain      = "${module.kube_certs.cert_chain}"
   validity_period = "${var.tectonic_tls_validity_period}"
 }
 
@@ -36,5 +38,6 @@ module "identity_certs" {
   ca_cert_pem     = "${module.kube_certs.ca_cert_pem}"
   ca_key_alg      = "${module.kube_certs.ca_key_alg}"
   ca_key_pem      = "${module.kube_certs.ca_key_pem}"
+  cert_chain      = "${module.kube_certs.cert_chain}"
   validity_period = "${var.tectonic_tls_validity_period}"
 }

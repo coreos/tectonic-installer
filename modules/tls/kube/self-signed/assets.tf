@@ -1,10 +1,15 @@
+locals {
+  apiserver_crt_chain = "${tls_locally_signed_cert.apiserver.cert_pem}${var.cert_chain}"
+  kubelet_crt_hain    = "${tls_locally_signed_cert.kubelet.cert_pem}${var.cert_chain}"
+}
+
 resource "local_file" "apiserver_key" {
   content  = "${tls_private_key.apiserver.private_key_pem}"
   filename = "./generated/tls/apiserver.key"
 }
 
 resource "local_file" "apiserver_crt" {
-  content  = "${tls_locally_signed_cert.apiserver.cert_pem}"
+  content  = "${var.cert_chain == "" ? tls_locally_signed_cert.apiserver.cert_pem : local.apiserver_crt_chain}"
   filename = "./generated/tls/apiserver.crt"
 }
 
@@ -24,6 +29,6 @@ resource "local_file" "kubelet_key" {
 }
 
 resource "local_file" "kubelet_crt" {
-  content  = "${tls_locally_signed_cert.kubelet.cert_pem}"
+  content  = "${var.cert_chain == "" ? tls_locally_signed_cert.kubelet.cert_pem : local.kubelet_crt_hain}"
   filename = "./generated/tls/kubelet.crt"
 }
