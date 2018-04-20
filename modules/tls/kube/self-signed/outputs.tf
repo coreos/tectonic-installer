@@ -11,7 +11,7 @@ output "ca_key_pem" {
 }
 
 output "kubelet_cert_pem" {
-  value = "${tls_locally_signed_cert.kubelet.cert_pem}"
+  value = "${var.cert_chain == "" ? tls_locally_signed_cert.kubelet.cert_pem : local.kubelet_crt_hain}"
 }
 
 output "kubelet_key_pem" {
@@ -19,7 +19,7 @@ output "kubelet_key_pem" {
 }
 
 output "apiserver_cert_pem" {
-  value = "${tls_locally_signed_cert.apiserver.cert_pem}"
+  value = "${var.cert_chain == "" ? tls_locally_signed_cert.apiserver.cert_pem : local.apiserver_crt_chain}"
 }
 
 output "apiserver_key_pem" {
