@@ -8,31 +8,30 @@ import (
 	"github.com/coreos/tectonic-installer/installer/pkg/config"
 )
 
-// NewConvertWorkflow creates new instances of the 'convert' workflow,
-// responsible for converting an old cluster config.
-func NewConvertWorkflow(configFilePath string) Workflow {
-	return Workflow{
-		metadata: metadata{configFilePath: configFilePath},
-		steps: []Step{
-			readTFVarsConfigStep,
-			printYAMLConfigStep,
-		},
-	}
-}
-
-func readTFVarsConfigStep(m *metadata) error {
-	data, err := ioutil.ReadFile(m.configFilePath)
+func TF2YAML(configFilePath string) error {
+	config, err := readTFVarsConfig(configFilePath)
 	if err != nil {
 		return err
 	}
-
-	m.cluster = config.Cluster{}
-
-	return json.Unmarshal([]byte(data), &m.cluster)
+	return printYAMLConfig(*config)
 }
 
-func printYAMLConfigStep(m *metadata) error {
-	yaml, err := m.cluster.YAML()
+func readTFVarsConfig(configFilePath string) (*config.Cluster, error) {
+	data, err := ioutil.ReadFile(configFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	config := &config.Cluster{}
+
+	if err := json.Unmarshal([]byte(data), config); err != nil {
+		return nil, err
+	}
+	return config, nil
+}
+
+func printYAMLConfig(config config.Cluster) error {
+	yaml, err := config.YAML()
 	if err != nil {
 		return err
 	}

@@ -5,6 +5,7 @@
   "tectonic_container_linux_channel": "beta",
   "tectonic_container_linux_version": "latest",
   "tectonic_etcd_count": 3,
+  "tectonic_cluster_id": "212ebd0d-bb69-7f4a-883d-40f2856bae25",
   "tectonic_master_count": 2,
   "tectonic_cluster_name": "aws-basic",
   "tectonic_networking": "canal",

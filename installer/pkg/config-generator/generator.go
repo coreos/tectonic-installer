@@ -7,6 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/apparentlymart/go-cidr/cidr"
@@ -33,6 +35,14 @@ const (
 	ingressConfigIngressKind      = "NodePort"
 	certificatesStrategy          = "userProvidedCA"
 	identityAPIService            = "tectonic-identity-api.tectonic-system.svc.cluster.local"
+
+	generatedPath          = "generated"
+	kcoConfigFileName      = "kco-config.yaml"
+	tncoConfigFileName     = "tnco-config.yaml"
+	kubeSystemPath         = "generated/manifests"
+	kubeSystemFileName     = "cluster-config.yaml"
+	tectonicSystemPath     = "generated/tectonic"
+	tectonicSystemFileName = "cluster-config.yaml"
 )
 
 // ConfigGenerator defines the cluster config generation for a cluster.
@@ -288,6 +298,62 @@ func marshalYAML(obj interface{}) (string, error) {
 	}
 
 	return string(data), nil
+}
+
+// GenerateClusterConfigMaps returns, if successful, the cluster kubernetes configMaps
+func (c ConfigGenerator) GenerateClusterConfigMaps(workspace string) error {
+	clusterGeneratedPath := filepath.Join(workspace, generatedPath)
+	if err := os.MkdirAll(clusterGeneratedPath, os.ModeDir|0755); err != nil {
+		return fmt.Errorf("Failed to create cluster generated directory at %s", clusterGeneratedPath)
+	}
+
+	kcoConfig, err := c.CoreConfig()
+	if err != nil {
+		return err
+	}
+
+	kcoConfigFilePath := filepath.Join(clusterGeneratedPath, kcoConfigFileName)
+	if err := writeFile(kcoConfigFilePath, kcoConfig); err != nil {
+		return err
+	}
+
+	tncoConfig, err := c.TncoConfig()
+	if err != nil {
+		return err
+	}
+
+	tncoConfigFilePath := filepath.Join(clusterGeneratedPath, tncoConfigFileName)
+	if err := writeFile(tncoConfigFilePath, tncoConfig); err != nil {
+		return err
+	}
+
+	kubeSystem, err := c.KubeSystem()
+	if err != nil {
+		return err
+	}
+
+	kubePath := filepath.Join(workspace, kubeSystemPath)
+	if err := os.MkdirAll(kubePath, os.ModeDir|0755); err != nil {
+		return fmt.Errorf("Failed to create manifests directory at %s", kubePath)
+	}
+
+	kubeSystemConfigFilePath := filepath.Join(kubePath, kubeSystemFileName)
+	if err := writeFile(kubeSystemConfigFilePath, kubeSystem); err != nil {
+		return err
+	}
+
+	tectonicSystem, err := c.TectonicSystem()
+	if err != nil {
+		return err
+	}
+
+	tectonicPath := filepath.Join(workspace, tectonicSystemPath)
+	if err := os.MkdirAll(tectonicPath, os.ModeDir|0755); err != nil {
+		return fmt.Errorf("Failed to create tectonic directory at %s", tectonicPath)
+	}
+
+	tectonicSystemConfigFilePath := filepath.Join(tectonicPath, tectonicSystemFileName)
+	return writeFile(tectonicSystemConfigFilePath, tectonicSystem)
 }
 
 func (c ConfigGenerator) getEtcdServersURLs() string {

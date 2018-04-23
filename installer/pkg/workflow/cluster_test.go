@@ -1,8 +1,6 @@
 package workflow
 
 import (
-	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -12,21 +10,10 @@ import (
 	"github.com/coreos/tectonic-installer/installer/pkg/config"
 )
 
-func initTestCluster(file string) (*config.Cluster, error) {
-	testConfig, err := config.ParseConfigFile(file)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse test config: %v", err)
-	}
-	if len(testConfig.Validate()) != 0 {
-		return nil, errors.New("failed to validate test conifg")
-	}
-	return testConfig, nil
-}
-
-func TestGenerateTerraformVariablesStep(t *testing.T) {
-	expectedTfVarsFilePath := "./fixtures/terraform.tfvars"
-	clusterDir := "."
-	gotTfVarsFilePath := filepath.Join(clusterDir, terraformVariablesFileName)
+func TestNewCluster(t *testing.T) {
+	expectedTfVarsFilePath := "./fixtures/expected.terraform.tfvars"
+	workspace := "./fixtures"
+	gotTfVarsFilePath := filepath.Join(workspace, terraformVariablesFileName)
 
 	// clean up
 	defer func() {
@@ -35,17 +22,11 @@ func TestGenerateTerraformVariablesStep(t *testing.T) {
 		}
 	}()
 
-	cluster, err := initTestCluster("./fixtures/aws.basic.yaml")
+	_, err := NewCluster(workspace)
 	if err != nil {
 		t.Errorf("failed to init cluster: %v", err)
 	}
 
-	m := &metadata{
-		cluster:    *cluster,
-		clusterDir: clusterDir,
-	}
-
-	generateTerraformVariablesStep(m)
 	gotData, err := ioutil.ReadFile(gotTfVarsFilePath)
 	if err != nil {
 		t.Errorf("failed to load generated tf vars file: %v", err)
@@ -63,7 +44,7 @@ func TestGenerateTerraformVariablesStep(t *testing.T) {
 	}
 }
 
-func TestBuildInternalStep(t *testing.T) {
+func TestBuildInternalConfig(t *testing.T) {
 	testClusterDir := "."
 	internalFilePath := filepath.Join(testClusterDir, internalFileName)
 
@@ -74,28 +55,15 @@ func TestBuildInternalStep(t *testing.T) {
 		}
 	}()
 
-	metaNoClusterDir := &metadata{
-		cluster: config.Cluster{
-			Name: "test",
-		},
-	}
-
-	meta := &metadata{
-		clusterDir: testClusterDir,
-		cluster: config.Cluster{
-			Name: "test",
-		},
-	}
-
 	errorTestCases := []struct {
 		test     string
 		got      string
 		expected string
 	}{
 		{
-			test:     "no clusterDir exists",
-			got:      buildInternalStep(metaNoClusterDir).Error(),
-			expected: "no clusterDir path set in metadata",
+			test:     "no workspace exists",
+			got:      buildInternalConfig("").Error(),
+			expected: "no workspace dir given for building internal config",
 		},
 	}
 
@@ -105,7 +73,7 @@ func TestBuildInternalStep(t *testing.T) {
 		}
 	}
 
-	if err := buildInternalStep(meta); err != nil {
+	if err := buildInternalConfig(testClusterDir); err != nil {
 		t.Errorf("failed to run buildInternalStep, %v", err)
 	}
 

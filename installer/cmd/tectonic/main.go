@@ -10,18 +10,19 @@ import (
 )
 
 var (
-	clusterInitCommand    = kingpin.Command("init", "Initialize a new Tectonic cluster")
-	clusterInitConfigFlag = clusterInitCommand.Flag("config", "Cluster specification file").Required().ExistingFile()
+	clusterInitCommand           = kingpin.Command("init", "Initialize a new Tectonic cluster")
+	clusterInitConfigFlag        = clusterInitCommand.Flag("config", "Cluster specification file").Required().ExistingFile()
+	clusterInitWorkspaceNameFlag = clusterInitCommand.Flag("workspace", "Workspace folder name").Required().String()
 
 	clusterInstallCommand          = kingpin.Command("install", "Create a new Tectonic cluster")
 	clusterInstallAssetsCommand    = clusterInstallCommand.Command("assets", "Generate Tectonic assets.")
 	clusterInstallBootstrapCommand = clusterInstallCommand.Command("bootstrap", "Create a single bootstrap node Tectonic cluster.")
 	clusterInstallFullCommand      = clusterInstallCommand.Command("full", "Create a new Tectonic cluster").Default()
 	clusterInstallJoinCommand      = clusterInstallCommand.Command("join", "Create master and worker nodes to join an exisiting Tectonic cluster.")
-	clusterInstallDirFlag          = clusterInstallCommand.Flag("dir", "Cluster directory").Default(".").ExistingDir()
+	clusterInstallWorkspaceFlag    = clusterInstallCommand.Flag("workspace", "Workspace directory").Default(".").ExistingDir()
 
-	clusterDestroyCommand = kingpin.Command("destroy", "Destroy an existing Tectonic cluster")
-	clusterDestroyDirFlag = clusterDestroyCommand.Flag("dir", "Cluster directory").Default(".").ExistingDir()
+	clusterDestroyCommand       = kingpin.Command("destroy", "Destroy an existing Tectonic cluster")
+	clusterDestroyWorkspaceFlag = clusterDestroyCommand.Flag("workspace", "Workspace directory").Default(".").ExistingDir()
 
 	convertCommand    = kingpin.Command("convert", "Convert a tfvars.json to a Tectonic config.yaml")
 	convertConfigFlag = convertCommand.Flag("config", "tfvars.json file").Required().ExistingFile()
@@ -30,33 +31,48 @@ var (
 )
 
 func main() {
-	var w workflow.Workflow
+	var c *workflow.Cluster
+	var err error
+
+	newCluster := func(clusterInstallDirFlag string) *workflow.Cluster {
+		l, err := log.ParseLevel(*logLevel)
+		if err != nil {
+			// By definition we should never enter this condition since kingpin should be guarding against incorrect values.
+			log.Fatalf("invalid log-level: %v", err)
+		}
+		log.SetLevel(l)
+
+		c, err = workflow.NewCluster(clusterInstallDirFlag)
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+		return c
+	}
 
 	switch kingpin.Parse() {
 	case clusterInitCommand.FullCommand():
-		w = workflow.NewInitWorkflow(*clusterInitConfigFlag)
+		err = workflow.InitWorkspace(*clusterInitConfigFlag, *clusterInitWorkspaceNameFlag)
 	case clusterInstallFullCommand.FullCommand():
-		w = workflow.NewInstallFullWorkflow(*clusterInstallDirFlag)
+		c = newCluster(*clusterInstallWorkspaceFlag)
+		err = c.Install()
 	case clusterInstallAssetsCommand.FullCommand():
-		w = workflow.NewInstallAssetsWorkflow(*clusterInstallDirFlag)
+		c = newCluster(*clusterInstallWorkspaceFlag)
+		err = c.Assets()
 	case clusterInstallBootstrapCommand.FullCommand():
-		w = workflow.NewInstallBootstrapWorkflow(*clusterInstallDirFlag)
+		c = newCluster(*clusterInstallWorkspaceFlag)
+		err = c.Bootstrap()
 	case clusterInstallJoinCommand.FullCommand():
-		w = workflow.NewInstallJoinWorkflow(*clusterInstallDirFlag)
+		c = newCluster(*clusterInstallWorkspaceFlag)
+		err = c.Scale()
 	case clusterDestroyCommand.FullCommand():
-		w = workflow.NewDestroyWorkflow(*clusterDestroyDirFlag)
+		c = newCluster(*clusterInstallWorkspaceFlag)
+		err = c.Destroy()
 	case convertCommand.FullCommand():
-		w = workflow.NewConvertWorkflow(*convertConfigFlag)
+		err = workflow.TF2YAML(*convertConfigFlag)
 	}
 
-	l, err := log.ParseLevel(*logLevel)
 	if err != nil {
-		// By definition we should never enter this condition since kingpin should be guarding against incorrect values.
-		log.Fatalf("invalid log-level: %v", err)
-	}
-	log.SetLevel(l)
-
-	if err := w.Execute(); err != nil {
 		log.Fatal(err)
 		os.Exit(1)
 	}

@@ -166,7 +166,9 @@ class AwsCluster < Cluster
       env = env_variables
       env['TF_INIT_OPTIONS'] = '-no-color'
 
-      run_tectonic_cli(env, 'init', '--config=config.yaml')
+      run_tectonic_cli(env, 'init', "--config=config.yaml --workspace=#{@name}")
+      # The config within the build folder is the source of truth after init
+      @config_file = ConfigFile.new(File.expand_path("#{@name}/config.yaml"))
     end
   rescue Timeout::Error
     forensic(false)
@@ -180,7 +182,7 @@ class AwsCluster < Cluster
         env['TF_APPLY_OPTIONS'] = '-no-color'
         env['TF_INIT_OPTIONS'] = '-no-color'
 
-        run_tectonic_cli(env, 'install', "--dir=#{@name}")
+        run_tectonic_cli(env, 'install', "--workspace=#{@name}")
       end
     end
   rescue Timeout::Error
@@ -195,7 +197,7 @@ class AwsCluster < Cluster
         env = env_variables
         env['TF_DESTROY_OPTIONS'] = '-no-color'
         env['TF_INIT_OPTIONS'] = '-no-color'
-        run_tectonic_cli(env, 'destroy', "--dir=#{@name}")
+        run_tectonic_cli(env, 'destroy', "--workspace=#{@name}")
       end
     end
 
