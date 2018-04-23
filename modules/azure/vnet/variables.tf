@@ -1,7 +1,7 @@
 // This var is for internal use only.
 // It is to be considered a constant, because Terraform can't acutally define constants.
 variable "const_id_to_group_name_regex" {
-  default     = "//subscriptions/[-\\w]+/resourceGroups/([-\\w]+)/providers/[.\\w]+/[.\\w]+/([.\\w-]+)/"
+  default     = "/^/subscriptions/[-\\w]+/resourceGroups/([\\w()-\\.]+)/providers/[.\\w]+/[.\\w]+/([.\\w-]+)$/"
   type        = "string"
   description = "(internal) A regular expression that parses Azure resource IDs into component identifiers."
 }
