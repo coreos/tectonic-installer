@@ -36,3 +36,11 @@ go_library(
         "//installer/vendor/k8s.io/client-go/tools/clientcmd:go_default_library",
     ],
 )
+
+filegroup(
+    name = "go_files",
+    visibility = ["//visibility:public"],
+    srcs = glob([
+        "*.go",
+    ]),
+)
