@@ -145,8 +145,6 @@ kubectl create -f secrets/pull.json
 kubectl create -f secrets/license.json
 kubectl create -f secrets/ingress-tls.yaml
 kubectl create -f secrets/ca-cert.yaml
-kubectl create -f secrets/identity-grpc-client.yaml
-kubectl create -f secrets/identity-grpc-server.yaml
 kubectl create -f ingress/pull.json
 
 echo "Creating Operators"
@@ -154,15 +152,12 @@ kubectl create -f security/priviledged-scc-tectonic.yaml
 kubectl create -f updater/tectonic-channel-operator-kind.yaml
 kubectl create -f updater/app-version-kind.yaml
 kubectl create -f updater/migration-status-kind.yaml
-kubectl create -f updater/tectonic-monitoring-config.yaml
 
 wait_for_crd tectonic-system channeloperatorconfigs.tco.coreos.com
 kubectl create -f updater/tectonic-channel-operator-config.yaml
 
 kubectl create -f updater/operators/kube-core-operator.yaml
 kubectl create -f updater/operators/tectonic-channel-operator.yaml
-kubectl create -f updater/operators/tectonic-prometheus-operator.yaml
-kubectl create -f updater/operators/tectonic-cluo-operator.yaml
 kubectl create -f updater/operators/kubernetes-addon-operator.yaml
 kubectl create -f updater/operators/tectonic-alm-operator.yaml
 kubectl create -f updater/operators/tectonic-utility-operator.yaml
@@ -171,8 +166,6 @@ kubectl create -f updater/operators/tectonic-ingress-controller-operator.yaml
 wait_for_crd tectonic-system appversions.tco.coreos.com
 kubectl create -f updater/app_versions/app-version-tectonic-cluster.yaml
 kubectl create -f updater/app_versions/app-version-kube-core.yaml
-kubectl create -f updater/app_versions/app-version-tectonic-monitoring.yaml
-kubectl create -f updater/app_versions/app-version-tectonic-cluo.yaml
 kubectl create -f updater/app_versions/app-version-kubernetes-addon.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-alm.yaml
 kubectl create -f updater/app_versions/app-version-tectonic-utility.yaml

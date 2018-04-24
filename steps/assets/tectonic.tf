@@ -75,25 +75,14 @@ module "tectonic" {
   license_path     = "${pathexpand(var.tectonic_license_path)}"
   pull_secret_path = "${pathexpand(var.tectonic_pull_secret_path)}"
 
-  admin_email = "${var.tectonic_admin_email}"
-
   update_channel = "${var.tectonic_update_channel}"
   update_app_id  = "${var.tectonic_update_app_id}"
   update_server  = "${var.tectonic_update_server}"
-
-  ca_generated = "${var.tectonic_ca_cert == "" ? false : true}"
 
   ingress_ca_cert_pem = "${module.ingress_certs.ca_cert_pem}"
   ingress_cert_pem    = "${module.ingress_certs.cert_pem}"
   ingress_key_pem     = "${module.ingress_certs.key_pem}"
   ingress_bundle_pem  = "${module.ingress_certs.bundle_pem}"
-
-  identity_client_ca_cert  = "${module.ca_certs.root_ca_cert_pem}"
-  identity_client_cert_pem = "${module.identity_certs.client_cert_pem}"
-  identity_client_key_pem  = "${module.identity_certs.client_key_pem}"
-  identity_server_ca_cert  = "${module.ca_certs.kube_ca_cert_pem}"
-  identity_server_cert_pem = "${module.identity_certs.server_cert_pem}"
-  identity_server_key_pem  = "${module.identity_certs.server_key_pem}"
 
   ingress_kind = "haproxy-router"
 }
