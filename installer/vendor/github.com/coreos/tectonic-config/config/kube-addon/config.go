@@ -11,9 +11,10 @@ const (
 
 // OperatorConfig contains configuration for KAO managed add-ons
 type OperatorConfig struct {
-	metav1.TypeMeta `json:",inline"`
-	ClusterConfig   `json:"clusterConfig,omitempty"`
-	CloudProvider   string `json:"cloudProvider,omitempty"`
+	metav1.TypeMeta    `json:",inline"`
+	ClusterConfig      `json:"clusterConfig,omitempty"`
+	CloudProvider      string `json:"cloudProvider,omitempty"`
+	RegistryHTTPSecret string `json:"registryHTTPSecret,omitempty"`
 }
 
 // ClusterConfig holds global/general information about the cluster.

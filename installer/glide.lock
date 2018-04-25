@@ -1,5 +1,5 @@
-hash: e11a860e94ea134078308f8ba86c0cfcd2c43d5606b771b6415c2d467addfc2b
-updated: 2018-04-19T09:49:35.916009494-07:00
+hash: 18e2f3e1c8ad8c9a4074f9edb8c17f718bdeefe6494be25251a1d6fe7699e7bb
+updated: 2018-04-24T11:40:46.009047718-07:00
 imports:
 - name: github.com/ajeddeloh/go-json
   version: 73d058cf8437a1989030afe571eeab9f90eebbbd
@@ -37,7 +37,7 @@ imports:
   - config/validate/astnode
   - config/validate/report
 - name: github.com/coreos/tectonic-config
-  version: 34c251c34ab57c4fa9198b125212623647a974a7
+  version: 3981d02b2affc9c9a3c190111596718e46efa19b
   subpackages:
   - config/kube-addon
   - config/kube-core
@@ -89,9 +89,6 @@ imports:
   - errorutil
 - name: golang.org/x/crypto
   version: 5dc8cb4b8a8eb076cbb5a06bc3b8682c15bdbbd3
-  subpackages:
-  - bcrypt
-  - blowfish
 - name: golang.org/x/net
   version: 1c05540f6879653db88113bc4a2b70aec4bd491f
   subpackages:

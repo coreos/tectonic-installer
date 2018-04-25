@@ -1,4 +1,3 @@
-# gazelle:ignore
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
@@ -14,12 +13,39 @@ go_library(
         "logrus.go",
         "text_formatter.go",
         "writer.go",
-        "terminal_bsd.go",
-        "terminal_notwindows.go",
-        "terminal_linux.go",
-        "terminal_solaris.go",
-        "terminal_windows.go",
-    ],
+    ] + select({
+        "@io_bazel_rules_go//go/platform:darwin": [
+            "terminal_bsd.go",
+            "terminal_notwindows.go",
+        ],
+        "@io_bazel_rules_go//go/platform:dragonfly": [
+            "terminal_bsd.go",
+            "terminal_notwindows.go",
+        ],
+        "@io_bazel_rules_go//go/platform:freebsd": [
+            "terminal_bsd.go",
+            "terminal_notwindows.go",
+        ],
+        "@io_bazel_rules_go//go/platform:linux": [
+            "terminal_linux.go",
+            "terminal_notwindows.go",
+        ],
+        "@io_bazel_rules_go//go/platform:netbsd": [
+            "terminal_bsd.go",
+            "terminal_notwindows.go",
+        ],
+        "@io_bazel_rules_go//go/platform:openbsd": [
+            "terminal_bsd.go",
+            "terminal_notwindows.go",
+        ],
+        "@io_bazel_rules_go//go/platform:solaris": [
+            "terminal_solaris.go",
+        ],
+        "@io_bazel_rules_go//go/platform:windows": [
+            "terminal_windows.go",
+        ],
+        "//conditions:default": [],
+    }),
     importpath = "github.com/Sirupsen/logrus",
     visibility = ["//visibility:public"],
     deps = select({
