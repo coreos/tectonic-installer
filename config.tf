@@ -88,15 +88,15 @@ variable "tectonic_container_images" {
     kubednsmasq                  = "gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.8"
     kubedns_sidecar              = "gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.8"
     kube_version                 = "quay.io/coreos/kube-version:0.1.0"
-    kube_version_operator        = "quay.io/coreos/kube-version-operator:v1.8.9-kvo.2"
+    kube_version_operator        = "quay.io/coreos/kube-version-operator:v1.9.6-kvo.3"
     node_agent                   = "quay.io/coreos/node-agent:cd69b4a0f65b0d3a3b30edfce3bb184fd2a22c26"
     pod_checkpointer             = "quay.io/coreos/pod-checkpointer:e22cc0e3714378de92f45326474874eb602ca0ac"
     stats_emitter                = "quay.io/coreos/tectonic-stats:6e882361357fe4b773adbf279cddf48cb50164c1"
     stats_extender               = "quay.io/coreos/tectonic-stats-extender:487b3da4e175da96dabfb44fba65cdb8b823db2e"
-    tectonic_channel_operator    = "quay.io/coreos/tectonic-channel-operator:0.6.2"
+    tectonic_channel_operator    = "quay.io/coreos/tectonic-channel-operator:0.6.4"
     tectonic_etcd_operator       = "quay.io/coreos/tectonic-etcd-operator:v0.0.2"
     tectonic_prometheus_operator = "quay.io/coreos/tectonic-prometheus-operator:v1.9.5"
-    tectonic_cluo_operator       = "quay.io/coreos/tectonic-cluo-operator:v0.3.1"
+    tectonic_cluo_operator       = "quay.io/coreos/tectonic-cluo-operator:v0.3.2"
     tectonic_torcx               = "quay.io/coreos/tectonic-torcx:v0.2.0"
     tectonic_alm_operator        = "quay.io/coreos/tectonic-alm-operator:v0.3.0"
   }
@@ -132,7 +132,7 @@ variable "tectonic_versions" {
     monitoring    = "1.9.5"
     tectonic      = "1.9.6-tectonic.1"
     tectonic-etcd = "0.0.1"
-    cluo          = "0.3.1"
+    cluo          = "0.3.2"
     alm           = "0.3.0"
   }
 }
