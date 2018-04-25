@@ -123,6 +123,11 @@ func (c ConfigGenerator) addonConfig() (*kubeaddon.OperatorConfig, error) {
 	}
 	addonConfig.CloudProvider = c.Platform
 	addonConfig.ClusterConfig.APIServerURL = c.getAPIServerURL()
+	registrySecret, err := generateRandomID(16)
+	if err != nil {
+		return nil, err
+	}
+	addonConfig.RegistryHTTPSecret = registrySecret
 	return &addonConfig, nil
 }
 
