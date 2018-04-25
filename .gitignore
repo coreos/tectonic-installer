@@ -11,6 +11,7 @@ terraform.tfstate*
 terraform.tfvars
 build/
 bin/
+clusters/
 bin_test/
 matchbox/
 /contrib/govcloud/vpn.conf
