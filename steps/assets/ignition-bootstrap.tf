@@ -99,6 +99,16 @@ data "ignition_file" "bootstrap_kubeconfig" {
   }
 }
 
+data "ignition_file" "kubelet_kubeconfig" {
+  filesystem = "root"
+  path       = "/var/lib/kubelet/kubeconfig"
+  mode       = 0644
+
+  content {
+    content = "${module.bootkube.kubeconfig-kubelet}"
+  }
+}
+
 data "ignition_config" "bootstrap" {
   files = ["${compact(flatten(list(
     list(
@@ -108,6 +118,7 @@ data "ignition_config" "bootstrap" {
       data.ignition_file.kco_config.id,
       data.ignition_file.rm_assets_sh.id,
       data.ignition_file.bootstrap_kubeconfig.id,
+      data.ignition_file.kubelet_kubeconfig.id,
     ),
     module.ignition_bootstrap.ignition_file_id_list,
     module.bootkube.ignition_file_id_list,

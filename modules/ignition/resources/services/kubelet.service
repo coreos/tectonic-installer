@@ -37,7 +37,8 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --cni-bin-dir=/var/lib/cni/bin \
   --cni-conf-dir=/etc/kubernetes/cni/net.d \
   --exit-on-lock-contention \
-  --kubeconfig=/etc/kubernetes/kubeconfig \
+  --bootstrap-kubeconfig=/etc/kubernetes/kubeconfig \
+  --kubeconfig=/var/lib/kubelet/kubeconfig \
   --lock-file=/var/run/lock/kubelet.lock \
   --minimum-container-ttl-duration=6m0s \
   --network-plugin=cni \
