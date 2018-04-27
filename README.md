@@ -55,24 +55,24 @@ These instructions can be used for AWS:
     export PATH=$(pwd)/installer:$PATH
     ```
 
-4. Edit Tectonic configuration file including the $CLUSTER_NAME
+4. Edit Tectonic configuration file including
     ```shell
     $EDITOR examples/tectonic.aws.yaml
     ```
 
 5. Init Tectonic CLI
     ```shell
-    tectonic init --config=examples/tectonic.aws.yaml
+    tectonic init --config=examples/tectonic.aws.yaml --workspace=example
     ```
 
 6. Install Tectonic cluster
     ```shell
-    tectonic install --dir=$CLUSTER_NAME
+    tectonic install --workspace=example
     ```
 
 7. Teardown Tectonic cluster
     ```shell
-    tectonic destroy --dir=$CLUSTER_NAME
+    tectonic destroy --workspace=example
     ```
 
 #### Tests
