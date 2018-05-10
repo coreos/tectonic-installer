@@ -258,12 +258,10 @@ class AwsCluster < Cluster
     end
   end
 
-  # TODO: (carlos) remove this
   def tf_var(v)
     tf_value "var.#{v}"
   end
 
-  # TODO: (carlos) remove this
   def tf_value(v)
     Dir.chdir(@build_path) do
       `echo '#{v}' | terraform console ../steps/bootstrap/aws`.chomp
@@ -285,14 +283,7 @@ class AwsCluster < Cluster
   def describe_network_interfaces
     puts 'describing network interfaces for debugging purposes'
     vpc_id = @tfstate_file.value('module.vpc.aws_vpc.cluster_vpc', 'id')
-    filter = "--filters=Name=vpc-id,Values=#{vpc_id}"
-    region = "--region #{@aws_region}"
-
-    # TODO: use aws sdk instead of command line
-    success = system("aws ec2 describe-network-interfaces #{filter}  #{region}")
-    raise 'failed to describe network interfaces by vpc' unless success
-
-  # Do not fail build. This is only for debugging purposes
+    AwsSupport.describe_network_interfaces(vpc_id, @aws_region, @role_credentials) unless vpc_id.nil?
   rescue => e
     puts e
   end

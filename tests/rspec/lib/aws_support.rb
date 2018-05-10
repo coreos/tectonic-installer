@@ -94,4 +94,14 @@ module AwsSupport
     end
     options
   end
+
+  def self.describe_network_interfaces(vpc_id, aws_region, role_credentials)
+    options = define_options(aws_region, role_credentials)
+    client = Aws::EC2::Client.new(options)
+
+    Retriable.with_retries(Aws::EC2::Errors::RequestLimitExceeded, limit: 3, sleep: 10) do
+      resp = client.describe_network_interfaces(filters: [{ name: 'vpc-id', values: vpc_id }], dry_run: false)
+      puts resp.to_json
+    end
+  end
 end
