@@ -6,10 +6,8 @@ require 'smoke_test'
 require 'cluster_factory'
 require 'container_linux'
 require 'operators'
-require 'pages/login_page'
 require 'name_generator'
 require 'password_generator'
-require 'webdriver_helpers'
 require 'test_container'
 require 'with_retries'
 require 'jenkins'
@@ -125,32 +123,6 @@ RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = f
   # https://github.com/coreos-inc/tectonic-operators/pull/333
   xit 'installs the correct Container Linux channel' do
     expect(ContainerLinux.channel(@cluster)).to eq(@cluster.tf_var('tectonic_container_linux_channel'))
-  end
-
-  # Disabled because it is causing some invalid results. Need some investigation
-  xdescribe 'Interact with tectonic console' do
-    before(:all) do
-      @driver = WebdriverHelpers.start_webdriver
-      @login = Login.new(@driver)
-      @console_url = @cluster.tectonic_console_url
-    end
-
-    after(:all) do
-      WebdriverHelpers.stop_webdriver(@driver) if defined? @driver
-    end
-
-    it 'can login in the tectonic console', :ui, retry: 3, retry_wait: 10 do
-      @login.login_page "https://#{@console_url}"
-      @login.with(@cluster.tectonic_admin_email, @cluster.tectonic_admin_password)
-      expect(@login.success_login?).to be_truthy
-      @login.logout
-    end
-
-    it 'fail to login with wrong credentials', :ui, retry: 3, retry_wait: 10 do
-      @login.login_page "https://#{@console_url}"
-      @login.with(NameGenerator.generate_fake_email, PasswordGenerator.generate_password)
-      expect(@login.fail_to_login?).to be_truthy
-    end
   end
 
   # Disabled because the new flow using CLI does not support scale up for now

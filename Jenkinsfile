@@ -49,8 +49,8 @@ quayCreds = [
 ]
 
 defaultBuilderImage = 'quay.io/coreos/tectonic-builder:v1.45'
-tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.16'
-tectonicBazelImage = 'quay.io/coreos/tectonic-builder:bazel-v0.3'
+tectonicSmokeTestEnvImage = 'quay.io/coreos/tectonic-smoke-test-env:v5.17'
+tectonicBazelImage = 'quay.io/coreos/tectonic-builder:bazel-v0.4'
 originalCommitId = 'UNKNOWN'
 
 pipeline {
@@ -83,11 +83,6 @@ pipeline {
     )
     booleanParam(
       name: 'RUN_SMOKE_TESTS',
-      defaultValue: true,
-      description: ''
-    )
-    booleanParam(
-      name: 'RUN_GUI_TESTS',
       defaultValue: true,
       description: ''
     )

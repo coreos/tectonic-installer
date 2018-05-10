@@ -9,7 +9,7 @@ COPY ./tests/rspec/Gemfile* /tmp/app/
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
-    curl make unzip jq awscli wget xvfb xauth ssh openvpn build-essential ruby-full zlib1g-dev bundler gnupg && \
+    curl make unzip jq awscli wget ssh openvpn build-essential ruby-full zlib1g-dev bundler gnupg && \
     apt-get clean
 
 # Install gcloud
@@ -28,14 +28,6 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s
 
 # Install Terraform
 RUN curl -L https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip | funzip > /usr/local/bin/terraform && chmod +x /usr/local/bin/terraform
-
-# Install Chrome for installer gui tests
-# Use Chrome beta because v60 or higher is needed for headless mode
-RUN wget --quiet -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
-    apt-get update && \
-    apt-get install --no-install-recommends -y -q \
-    google-chrome-beta ca-certificates
 
 # Install container linux config transpiler
 RUN curl -L https://github.com/coreos/container-linux-config-transpiler/releases/download/v${CT_VERSION}/ct-v${CT_VERSION}-x86_64-unknown-linux-gnu -o ct && \

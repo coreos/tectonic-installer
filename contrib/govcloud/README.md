@@ -57,7 +57,7 @@ Once the infrastructure is ready, Terraform will output an `ovpn_url` variable c
 
 Once all the infrastructure is provisioned and the VPN connection is available, a Tectonic cluster can be installed in the VPC. When running the Tectonic installer, be sure to:
 
-* Install Tectonic in the provisioned VPC by selecting the "Existing VPC" option and selecting the appropriate VPC ID in the GUI or by setting the `TF_VAR_tectonic_aws_external_vpc_id` environment variable.
+* Install Tectonic in the provisioned VPC by setting the `TF_VAR_tectonic_aws_external_vpc_id` environment variable.
 
 
 ### Tear Down
