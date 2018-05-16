@@ -46,9 +46,7 @@ class AWSVPC
     Dir.chdir(File.join(ENV['RSPEC_PATH'], '../../contrib/internal-cluster')) do
       succeeded = system(env_variables, 'terraform init')
       raise 'could not init Terraform to create VPC' unless succeeded
-      succeeded = system(env_variables, 'terraform apply -auto-approve')
-      raise 'could not create vpc with Terraform' unless succeeded
-
+      apply
       parse_terraform_output
       wait_for_vpn_access_server
 
@@ -58,6 +56,17 @@ class AWSVPC
 
     set_nameserver
     export_tfvars
+  end
+
+  def apply
+    ::Timeout.timeout(30 * 60) do # 30 minutes
+      Retriable.with_retries(limit: 3) do
+        succeeded = system(env_variables, 'terraform apply -auto-approve')
+        raise 'could not create vpc with Terraform' unless succeeded
+      end
+    end
+  rescue Timeout::Error
+    raise 'Creating VPC failed after timeout'
   end
 
   def parse_terraform_output
