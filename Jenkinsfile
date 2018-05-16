@@ -69,12 +69,14 @@ pipeline {
     string(
       name: 'builder_image',
       defaultValue: defaultBuilderImage,
-      description: 'tectonic-builder docker image to use for builds'
+      description: 'tectonic-builder docker image to use for builds',
+      trim: true,
     )
     string(
       name: 'hyperkube_image',
       defaultValue: '',
-      description: 'Hyperkube image. Please define the param like: {hyperkube="<HYPERKUBE_IMAGE>"}'
+      description: 'Hyperkube image. Please define the param like: {hyperkube="<HYPERKUBE_IMAGE>"}',
+      trim: true,
     )
     booleanParam(
       name: 'RUN_CONFORMANCE_TESTS',
@@ -94,7 +96,8 @@ pipeline {
     string(
       name: 'COMPONENT_TEST_IMAGES',
       defaultValue: '',
-      description: 'List of container images for component tests to run (comma-separated)'
+      description: 'List of container images for component tests to run (comma-separated)',
+      trim: true,
     )
     booleanParam(
       name: 'PLATFORM/AWS',
@@ -109,12 +112,14 @@ pipeline {
     string(
       name: 'SLACK_CHANNEL',
       defaultValue: '#team-installer',
-      description: 'Slack channel to notify on failure.'
+      description: 'Slack channel to notify on failure.',
+      trim: true,
     )
     string(
       name: 'GITHUB_REPO',
       defaultValue: 'coreos/tectonic-installer',
-      description: 'Github repository'
+      description: 'Github repository',
+      trim: true,
     )
     string(
       name: 'SPECIFIC_GIT_COMMIT',
