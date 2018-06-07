@@ -27,4 +27,4 @@ jobs:
       # Installer unit tests
     - script: "chmod 0777 $PWD && docker run -v $PWD:$PWD:rw -w $PWD $BAZEL_IMG bazel test installer:cli_units --test_output=all"
     - stage: Build
-      script: "chmod 0777 $PWD && docker run -v $PWD:$PWD:rw -w $PWD $BAZEL_IMG bazel --output_base=.cache build tarball"
+      script: "chmod 0777 $PWD && docker run -v $PWD:$PWD:rw -w $PWD $BAZEL_IMG bazel build tarball"
