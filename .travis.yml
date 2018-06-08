@@ -13,7 +13,7 @@ jobs:
   include:
     - stage: Lint & Test
       # Terraform lint
-      script: docker run -v $(pwd):/data -t wata727/tflint
+      script: docker run -v $(pwd):/data -t quay.io/coreos/tflint
       # YAML lint
     - script: >
         docker run -t -v $(pwd):/workdir 
