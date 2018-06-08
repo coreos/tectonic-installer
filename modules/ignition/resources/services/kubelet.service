@@ -11,7 +11,11 @@ Environment="RKT_RUN_ARGS=--uuid-file-save=/var/cache/kubelet-pod.uuid \
   --volume var-lib-kubelet,kind=host,source=/var/lib/kubelet \
   --mount volume=var-lib-kubelet,target=/var/lib/kubelet \
   --volume var-log,kind=host,source=/var/log \
-  --mount volume=var-log,target=/var/log"
+  --mount volume=var-log,target=/var/log \
+  --volume iscsiadm,kind=host,source=/usr/sbin/iscsiadm \
+  --mount volume=iscsiadm,target=/usr/sbin/iscsiadm \
+  --volume iscsi-etc,kind=host,source=/etc/iscsi \
+  --mount volume=iscsi-etc,target=/etc/iscsi"
 
 ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests
 ExecStartPre=/bin/mkdir -p /srv/kubernetes/manifests
