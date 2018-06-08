@@ -134,7 +134,7 @@ class Cluster
     master_ip_addresses.each do |master_ip|
       save_docker_logs(master_ip, @name)
 
-      ['bootkube', 'tectonic', 'kubelet', 'k8s-node-bootstrap'].each do |service|
+      ['bootkube', 'tectonic', 'kubelet'].each do |service|
         print_service_logs(master_ip, service, @name)
       end
     end
