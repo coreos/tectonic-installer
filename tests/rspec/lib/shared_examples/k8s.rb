@@ -1,43 +1,21 @@
 # frozen_string_literal: true
 
 require 'shared_examples/build_folder_setup'
-require 'shared_examples/tls_setup'
 require 'smoke_test'
-require 'cluster_factory'
-require 'container_linux'
+require 'aws_cluster'
 require 'operators'
-require 'pages/login_page'
 require 'name_generator'
 require 'password_generator'
-require 'webdriver_helpers'
 require 'test_container'
 require 'with_retries'
 require 'jenkins'
-
-RSpec.shared_examples 'withRunningCluster' do |tf_vars_path, vpn_tunnel = false|
-  include_examples('withBuildFolderSetup', tf_vars_path)
-  include_examples('withRunningClusterExistingBuildFolder', vpn_tunnel)
-end
-
-RSpec.shared_examples 'withRunningClusterWithCustomTLS' do |tf_vars_path, domain, vpn_tunnel = false|
-  include_examples('withBuildFolderSetup', tf_vars_path)
-  include_examples('withTLSSetup', domain)
-  include_examples('withRunningClusterExistingBuildFolder', vpn_tunnel)
-end
 
 RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = false, exist_plat = nil, exist_cfg_file = nil|
   before(:all) do
     # See https://stackoverflow.com/a/45936219/4011134
     @exceptions = []
 
-    @cluster = if exist_plat.nil? && exist_cfg_file.nil? && @config_file.nil?
-                 ClusterFactory.from_tf_vars(@tfvars_file)
-               elsif @config_file.platform.include?('aws') && @tfvars_file.nil?
-                 ClusterFactory.from_config_file(@config_file)
-               else
-                 ClusterFactory.hard_coded_aws(exist_plat, exist_cfg_file)
-               end
-
+    @cluster = AwsCluster.new(@config_file)
     @cluster.init
     @cluster.start if exist_plat.nil? && exist_cfg_file.nil?
   end
@@ -100,68 +78,8 @@ RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = f
     end
   end
 
-  # Disabled because we are not idempotent
-  xit 'terraform plan after a terraform apply is an idempotent operation (does not suggest further changes)' do
-    # https://www.terraform.io/docs/commands/plan.html#detailed-exitcode
-    options = '-detailed-exitcode'
-    stdout, stderr, exit_status = @cluster.plan(options)
-    puts stdout, stderr unless exit_status.eql?(0)
-    expect(exit_status).to eq(0)
-  end
-
   it 'succeeds with the golang test suit', :smoke_tests do
     expect { SmokeTest.run(@cluster) }.to_not raise_error
-  end
-
-  it 'installs the correct Container Linux version' do
-    version = @cluster.tf_var('tectonic_container_linux_version')
-    # version = @cluster.tf_value('module.container_linux.version') if version == 'latest'
-    version = @cluster.tfstate['masters'].output('container_linux', 'version') if version == 'latest'
-    expect(ContainerLinux.version(@cluster)).to eq(version)
-  end
-
-  # Disabled until bootstrap node and other nodes CL version gets consolidated
-  # https://github.com/coreos/tectonic-config/pull/16
-  # https://github.com/coreos-inc/tectonic-operators/pull/333
-  xit 'installs the correct Container Linux channel' do
-    expect(ContainerLinux.channel(@cluster)).to eq(@cluster.tf_var('tectonic_container_linux_channel'))
-  end
-
-  # Disabled because it is causing some invalid results. Need some investigation
-  xdescribe 'Interact with tectonic console' do
-    before(:all) do
-      @driver = WebdriverHelpers.start_webdriver
-      @login = Login.new(@driver)
-      @console_url = @cluster.tectonic_console_url
-    end
-
-    after(:all) do
-      WebdriverHelpers.stop_webdriver(@driver) if defined? @driver
-    end
-
-    it 'can login in the tectonic console', :ui, retry: 3, retry_wait: 10 do
-      @login.login_page "https://#{@console_url}"
-      @login.with(@cluster.tectonic_admin_email, @cluster.tectonic_admin_password)
-      expect(@login.success_login?).to be_truthy
-      @login.logout
-    end
-
-    it 'fail to login with wrong credentials', :ui, retry: 3, retry_wait: 10 do
-      @login.login_page "https://#{@console_url}"
-      @login.with(NameGenerator.generate_fake_email, PasswordGenerator.generate_password)
-      expect(@login.fail_to_login?).to be_truthy
-    end
-  end
-
-  describe 'scale up worker cluster' do
-    before(:all) do
-      skip 'Skipping this tests. running locally' unless Jenkins.environment?
-    end
-
-    it 'can scale up nodes by 1 worker' do
-      @cluster.config_file.add_worker_node(@cluster.config_file.worker_count + 1)
-      expect { @cluster.update_cluster }.to_not raise_error
-    end
   end
 
   it 'passes the k8s conformance tests', :conformance_tests do
@@ -182,22 +100,5 @@ RSpec.shared_examples 'withRunningClusterExistingBuildFolder' do |vpn_tunnel = f
       )
       expect { test_container.run }.to_not raise_error
     end
-  end
-end
-
-RSpec.shared_examples 'withPlannedCluster' do |tf_vars_path|
-  before(:all) do
-    @cluster = ClusterFactory.from_tf_vars(TFVarsFile.new(tf_vars_path))
-  end
-
-  it 'terraform plan succeeds' do
-    stdout, stderr, exit_status = @cluster.plan
-    puts "Terrform plan stdout:\n#{stdout}"
-    puts "Terrform plan stderr:\n#{stderr}"
-    expect(exit_status).to eq(0)
-  end
-
-  after(:all) do
-    @cluster.stop
   end
 end
