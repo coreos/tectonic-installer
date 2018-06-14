@@ -27,8 +27,9 @@ spec:
       containers:
       - name: tectonic-alm-operator
         image: ${tectonic_alm_operator_image}
-        args:
-        - --manifest-dir=/manifests
-        - --operator-name=tectonic-alm-operator
-        - --appversion-name=tectonic-alm-operator
-        - --v=2
+        command:
+        - /app/x-operator/cmd/xoperator/xoperator
+        - '--operator-name=tectonic-alm-operator'
+        - '--appversion-name=tectonic-alm-operator'
+        - '--v=2'
+        - '-manifest-dir=/manifests'
