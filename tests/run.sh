@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash
 #shellcheck disable=SC2155
 
 # This should be executed from top-level directory not from `tests` directory
@@ -6,7 +6,7 @@
 # 1) LICENSE_PATH - path to tectonic license file
 # 2) PULL_SECRET_PATH - path to pull secret file
 
-set -o pipefail
+set -eo pipefail
 
 SMOKE_TEST_OUTPUT="Never executed. Problem with one of previous stages"
 [ -z ${LICENSE_PATH+x} ] && (echo "Please set LICENSE_PATH"; exit 1)
