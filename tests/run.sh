@@ -82,5 +82,4 @@ export SMOKE_NETWORKING="canal"
 export SMOKE_NODE_COUNT="7"  # Sum of all nodes (etcd + master + worker)
 export SMOKE_MANIFEST_PATHS="$(pwd)/$CLUSTER_NAME/generated"
 exec 5>&1
-# SMOKE_TEST_OUTPUT=$(./smoke -test.v --cluster | tee >(cat - >&5))
-SMOKE_TEST_OUTPUT=$(curl http://asd | tee >(cat - >&5))
+SMOKE_TEST_OUTPUT=$(./smoke -test.v --cluster | tee >(cat - >&5))
