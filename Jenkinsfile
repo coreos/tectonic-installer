@@ -93,7 +93,7 @@ pipeline {
         withDockerContainer(tectonicSmokeTestEnvImage) {
           withCredentials(creds) {
             ansiColor('xterm') {
-              sh """#!/bin/bash
+              sh """#!/bin/bash -e
                    export HOME=/home/jenkins
                    ./tests/run.sh
                    cp bazel-bin/tectonic-dev.tar.gz .
