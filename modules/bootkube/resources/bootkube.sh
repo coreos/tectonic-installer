@@ -46,18 +46,18 @@ signer_id=$(/usr/bin/docker run -d \
 
 # Wait for the etcd cluster to come up.
 export ETCDCTL_API=3
-# shellcheck disable=SC2154
+# shellcheck disable=SC2154,SC2086
 /usr/bin/etcdctl \
     --dial-timeout=10m \
     --cacert=/opt/tectonic/tls/etcd-client-ca.crt \
     --cert=/opt/tectonic/tls/etcd-client.crt \
     --key=/opt/tectonic/tls/etcd-client.key \
-    --endpoints="${etcd_cluster}" \
+    --endpoints=${etcd_cluster} \
     endpoint health
 export ETCDCTL_API=
 
-# shellcheck disable=SC2154
-/usr/bin/docker kill "${signer_id}"
+# shellcheck disable=SC2154,SC1083
+/usr/bin/docker kill $${signer_id}
 rm /etc/kubernetes/manifests/tectonic-node-controller-pod.yaml
 
 cp -r "$(pwd)/bootstrap-configs" /etc/kubernetes/bootstrap-configs
