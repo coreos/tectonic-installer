@@ -24,8 +24,8 @@ function destroy() {
   echo -e "\\e[36m Finished! Smoke test output:\\e[0m ${SMOKE_TEST_OUTPUT}"
   echo -e "\\e[34m So Long, and Thanks for All the Fish\\e[0m"
 }
-trap destroy EXIT
 
+trap destroy EXIT
 
 echo -e "\\e[36m Starting build process...\\e[0m"
 bazel build tarball tests/smoke
