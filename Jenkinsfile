@@ -89,6 +89,7 @@ pipeline {
                    ./tests/run.sh
                    cp bazel-bin/tectonic-dev.tar.gz .
                  """
+              // Produce an artifact which can be downloaded via web UI
               stash name: 'tectonic-tarball', includes: 'tectonic-dev.tar.gz'
             }
           }
