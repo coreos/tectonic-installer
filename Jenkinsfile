@@ -72,8 +72,9 @@ pipeline {
   stages {
     stage("Smoke Tests") {
       when {
-        expression {
-          return params.RUN_SMOKE_TESTS
+        anyOf {
+          branch "master"
+          expression { return params.RUN_SMOKE_TESTS }
         }
       }
       options {
