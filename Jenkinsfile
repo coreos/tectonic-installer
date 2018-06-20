@@ -112,7 +112,6 @@ pipeline {
             cleanWs notFailBuild: true
           }
         }
-        forcefullyCleanWorkspace()
       }
     }
 
