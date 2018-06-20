@@ -49,12 +49,12 @@ pipeline {
   parameters {
     booleanParam(
       name: 'RUN_SMOKE_TESTS',
-      defaultValue: true,
+      defaultValue: false,
       description: ''
     )
     booleanParam(
       name: 'PLATFORM/AWS',
-      defaultValue: true,
+      defaultValue: false,
       description: ''
     )
     booleanParam(
