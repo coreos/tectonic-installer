@@ -29,7 +29,6 @@ spec:
     - --kubelet-client-certificate=/etc/kubernetes/secrets/apiserver.crt
     - --kubelet-client-key=/etc/kubernetes/secrets/apiserver.key
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
-    - --runtime-config=""
     - --secure-port=443
     - --service-account-key-file=/etc/kubernetes/secrets/service-account.pub
     - --service-cluster-ip-range=${service_cidr}
