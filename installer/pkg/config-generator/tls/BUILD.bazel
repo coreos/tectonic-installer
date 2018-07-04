@@ -1,0 +1,14 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "ca.go",
+        "utils.go",
+    ],
+    importpath = "github.com/coreos/tectonic-installer/installer/pkg/config-generator/tls",
+    visibility = ["//visibility:public"],
+    deps = [
+    "//installer/pkg/tls:go_default_library",
+    ],
+)
