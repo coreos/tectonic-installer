@@ -96,6 +96,7 @@ data "null_data_source" "cloud_provider" {
     "subscriptionId"             = "${data.azurerm_client_config.current.subscription_id}"
     "tenantId"                   = "${data.azurerm_client_config.current.tenant_id}"
     "vnetName"                   = "${module.vnet.vnet_id}"
+    "vnetResourceGroup"          = "${module.vnet.vnet_resource_group}"
   }
 }
 
