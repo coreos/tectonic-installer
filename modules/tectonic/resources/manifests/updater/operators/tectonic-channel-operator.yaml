@@ -20,9 +20,7 @@ spec:
       nodeSelector:
         node-role.kubernetes.io/master: ""
       tolerations:
-      - key: "node-role.kubernetes.io/master"
-        operator: "Exists"
-        effect: "NoSchedule"
+      - operator: "Exists"
       containers:
       - name: tectonic-channel-operator
         image: ${tectonic_channel_operator_image}

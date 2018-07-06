@@ -22,6 +22,8 @@ spec:
       labels:
         k8s-app: tectonic-alm-operator
     spec:
+      tolerations:
+      - operator: "Exists"
       imagePullSecrets:
         - name: coreos-pull-secret
       containers:

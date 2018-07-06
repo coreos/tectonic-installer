@@ -17,6 +17,8 @@ spec:
         k8s-app: tectonic-etcd-operator
         tectonic-app-version-name: tectonic-etcd
     spec:
+      tolerations:
+      - operator: "Exists"
       containers:
       - image: ${tectonic_etcd_operator_image}
         name: tectonic-etcd-operator
