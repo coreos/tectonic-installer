@@ -144,6 +144,10 @@ tectonic_base_domain = ""
 // This field is mandatory if `tectonic_ca_cert` is set.
 // tectonic_ca_key_alg = "RSA"
 
+// PEM-encoded certificatte chain that will be added to generated certs.
+// Use this if you use a intermediate CA with multiple certificates in the chain.
+tectonic_cert_chain = ""
+
 // (optional) This declares the IP range to assign Kubernetes pod IPs in CIDR notation.
 // tectonic_cluster_cidr = "10.2.0.0/16"
 
