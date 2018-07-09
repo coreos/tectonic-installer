@@ -1,21 +1,29 @@
+locals {
+  # A regular expression that parses a Azure subnet id to extract subnet name.
+  const_id_to_subnet_name_regex = "/^/subscriptions/[-\\w]+/resourceGroups/[-\\w]+/providers/Microsoft.Network/virtualNetworks/[.\\w]+/subnets/([.\\w-]+)$/"
+
+  # A regular expression that parses Azure resource IDs into component identifiers
+  const_id_to_group_name_regex = "/^/subscriptions/[-\\w]+/resourceGroups/([\\w()-\\.]+)/providers/[.\\w]+/[.\\w]+/([.\\w-]+)$/"
+}
+
 output "vnet_id" {
-  value = "${var.external_vnet_id == "" ? element(concat(azurerm_virtual_network.tectonic_vnet.*.name, list("")), 0) : var.external_vnet_id}"
+  value = "${var.external_vnet_id == "" ? element(concat(azurerm_virtual_network.tectonic_vnet.*.name, list("")), 0) : replace(var.external_vnet_id, local.const_id_to_group_name_regex, "$2")}"
 }
 
 output "master_subnet" {
-  value = "${var.external_vnet_id == "" ?  element(concat(azurerm_subnet.master_subnet.*.id, list("")), 0) : var.external_master_subnet_id}"
+  value = "${var.external_master_subnet_id == "" ?  element(concat(azurerm_subnet.master_subnet.*.id, list("")), 0) : var.external_master_subnet_id}"
 }
 
 output "worker_subnet" {
-  value = "${var.external_vnet_id == "" ?  element(concat(azurerm_subnet.worker_subnet.*.id, list("")), 0) : var.external_worker_subnet_id}"
+  value = "${var.external_worker_subnet_id == "" ?  element(concat(azurerm_subnet.worker_subnet.*.id, list("")), 0) : var.external_worker_subnet_id}"
 }
 
 output "worker_subnet_name" {
-  value = "${var.external_vnet_id == "" ?  element(concat(azurerm_subnet.worker_subnet.*.name, list("")), 0) : replace(var.external_vnet_id, var.const_id_to_group_name_regex, "$2")}"
+  value = "${var.external_worker_subnet_id == "" ?  element(concat(azurerm_subnet.worker_subnet.*.name, list("")), 0) : replace(var.external_worker_subnet_id, local.const_id_to_subnet_name_regex, "$1")}"
 }
 
 output "vnet_resource_group" {
-  value = "${var.external_vnet_id == "" ?  "" : replace(var.external_vnet_id, var.const_id_to_group_name_regex, "$1")}"
+  value = "${var.external_vnet_id == "" ?  "" : replace(var.external_vnet_id, local.const_id_to_group_name_regex, "$1")}"
 }
 
 # TODO: Allow user to provide their own network
