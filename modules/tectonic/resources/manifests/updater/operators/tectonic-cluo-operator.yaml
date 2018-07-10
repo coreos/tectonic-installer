@@ -18,6 +18,8 @@ spec:
       labels:
         k8s-app: tectonic-cluo-operator
     spec:
+      tolerations:
+      - operator: "Exists"
       containers:
       - name: tectonic-cluo-operator
         image: ${tectonic_cluo_operator_image}
