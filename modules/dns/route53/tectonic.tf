@@ -1,5 +1,6 @@
 data "aws_route53_zone" "tectonic" {
   name = "${var.base_domain}"
+  private_zone = true
 }
 
 locals {
