@@ -149,8 +149,7 @@ data "template_file" "installer_kubelet_env" {
   template = "${file("${path.module}/resources/kubernetes/kubelet.env")}"
 
   vars {
-    kubelet_image_url = "${replace(var.container_images["hyperkube"],var.image_re,"$1")}"
-    kubelet_image_tag = "${replace(var.container_images["hyperkube"],var.image_re,"$2")}"
+    kubelet_image = "${var.container_images["hyperkube"]}"
   }
 }
 
