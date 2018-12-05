@@ -32,6 +32,8 @@ resource "aws_autoscaling_group" "masters" {
   min_size             = "${var.instance_count}"
   launch_configuration = "${aws_launch_configuration.master_conf.id}"
   vpc_zone_identifier  = ["${var.subnet_ids}"]
+  metrics_granularity  = "1Minute"
+  enabled_metrics      = ["GroupMinSize", "GroupMaxSize", "GroupDesiredCapacity", "GroupInServiceInstances", "GroupPendingInstances", "GroupStandbyInstances", "GroupTerminatingInstances", "GroupTotalInstances"]
 
   load_balancers = ["${var.aws_lbs}"]
 
