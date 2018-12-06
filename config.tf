@@ -80,7 +80,7 @@ variable "tectonic_container_images" {
     flannel                      = "quay.io/coreos/flannel:v0.8.0-amd64"
     flannel_cni                  = "quay.io/coreos/flannel-cni:v0.2.0"
     heapster                     = "gcr.io/google_containers/heapster:v1.4.1"
-    hyperkube                    = "quay.io/coreos/hyperkube:v1.9.6_coreos.0"
+    hyperkube                    = "quay.io/coreos/hyperkube:v1.9.6_coreos.1"
     identity                     = "quay.io/coreos/dex:v2.8.1"
     ingress_controller           = "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.9.0-beta.17"
     kenc                         = "quay.io/coreos/kenc:0.0.2"
@@ -88,7 +88,7 @@ variable "tectonic_container_images" {
     kubednsmasq                  = "gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.8"
     kubedns_sidecar              = "gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.8"
     kube_version                 = "quay.io/coreos/kube-version:0.1.0"
-    kube_version_operator        = "quay.io/coreos/kube-version-operator:v1.9.6-kvo.5"
+    kube_version_operator        = "quay.io/coreos/kube-version-operator:v1.9.6-kvo.6"
     node_agent                   = "quay.io/coreos/node-agent:cd69b4a0f65b0d3a3b30edfce3bb184fd2a22c26"
     pod_checkpointer             = "quay.io/coreos/pod-checkpointer:e22cc0e3714378de92f45326474874eb602ca0ac"
     stats_emitter                = "quay.io/coreos/tectonic-stats:6e882361357fe4b773adbf279cddf48cb50164c1"
@@ -128,7 +128,7 @@ variable "tectonic_versions" {
 
   default = {
     etcd          = "3.1.8"
-    kubernetes    = "1.9.6+tectonic.1"
+    kubernetes    = "1.9.6+tectonic.2"
     monitoring    = "1.9.5"
     tectonic      = "1.9.6-tectonic.2"
     tectonic-etcd = "0.0.1"
