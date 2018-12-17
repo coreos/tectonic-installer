@@ -51,14 +51,16 @@ resource "aws_launch_configuration" "worker_conf" {
 }
 
 resource "aws_autoscaling_group" "workers" {
-  name                 = "${var.cluster_name}-workers"
-  desired_capacity     = "${var.instance_count}"
-  max_size             = "${var.instance_count * 3}"
-  min_size             = "${var.instance_count}"
+  name             = "${var.cluster_name}-workers"
+  desired_capacity = "${var.instance_count}"
+  max_size         = "${var.instance_count_max}"
+  min_size         = "${var.instance_count_min}"
+
   launch_configuration = "${aws_launch_configuration.worker_conf.id}"
-  vpc_zone_identifier  = ["${var.subnet_ids}"]
-  metrics_granularity  = "1Minute"
-  enabled_metrics      = ["GroupMinSize", "GroupMaxSize", "GroupDesiredCapacity", "GroupInServiceInstances", "GroupPendingInstances", "GroupStandbyInstances", "GroupTerminatingInstances", "GroupTotalInstances"]
+
+  vpc_zone_identifier = ["${var.subnet_ids}"]
+  metrics_granularity = "1Minute"
+  enabled_metrics     = ["GroupMinSize", "GroupMaxSize", "GroupDesiredCapacity", "GroupInServiceInstances", "GroupPendingInstances", "GroupStandbyInstances", "GroupTerminatingInstances", "GroupTotalInstances"]
 
   tags = [
     {

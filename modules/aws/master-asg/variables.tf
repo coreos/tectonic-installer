@@ -54,8 +54,19 @@ variable "ec2_ami" {
   default = ""
 }
 
+variable "instance_count_min" {
+  type        = "string"
+  description = "Minimum instances"
+}
+
 variable "instance_count" {
-  type = "string"
+  type        = "string"
+  description = "Desired number instances"
+}
+
+variable "instance_count_max" {
+  type        = "string"
+  description = "Maximum number instances"
 }
 
 variable "master_iam_role" {

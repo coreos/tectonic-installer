@@ -28,8 +28,8 @@ data "aws_ami" "coreos_ami" {
 resource "aws_autoscaling_group" "masters" {
   name                 = "${var.cluster_name}-masters"
   desired_capacity     = "${var.instance_count}"
-  max_size             = "${var.instance_count * 3}"
-  min_size             = "${var.instance_count}"
+  max_size             = "${var.instance_count_max}"
+  min_size             = "${var.instance_count_min}"
   launch_configuration = "${aws_launch_configuration.master_conf.id}"
   vpc_zone_identifier  = ["${var.subnet_ids}"]
   metrics_granularity  = "1Minute"

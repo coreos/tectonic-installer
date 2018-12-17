@@ -154,12 +154,42 @@ variable "tectonic_cluster_cidr" {
   description = "(optional) This declares the IP range to assign Kubernetes pod IPs in CIDR notation."
 }
 
-variable "tectonic_master_count" {
+variable "tectonic_master_count_min" {
   type    = "string"
-  default = "1"
+  default = "3"
 
   description = <<EOF
-The number of master nodes to be created.
+The number of min master nodes to be created.
+This applies only to cloud platforms.
+EOF
+}
+
+variable "tectonic_master_count" {
+  type    = "string"
+  default = "3"
+
+  description = <<EOF
+The number of desired master nodes to be created.
+This applies only to cloud platforms.
+EOF
+}
+
+variable "tectonic_master_count_max" {
+  type    = "string"
+  default = "3"
+
+  description = <<EOF
+The number of max master nodes to be created.
+This applies only to cloud platforms.
+EOF
+}
+
+variable "tectonic_worker_count_min" {
+  type    = "string"
+  default = "3"
+
+  description = <<EOF
+The number of min worker nodes to be created.
 This applies only to cloud platforms.
 EOF
 }
@@ -169,7 +199,17 @@ variable "tectonic_worker_count" {
   default = "3"
 
   description = <<EOF
-The number of worker nodes to be created.
+The number of desired worker nodes to be created.
+This applies only to cloud platforms.
+EOF
+}
+
+variable "tectonic_worker_count_max" {
+  type    = "string"
+  default = "3"
+
+  description = <<EOF
+The number of max worker nodes to be created.
 This applies only to cloud platforms.
 EOF
 }
