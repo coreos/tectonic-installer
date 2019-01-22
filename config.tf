@@ -70,27 +70,28 @@ variable "tectonic_container_images" {
     addon_resizer                = "gcr.io/google_containers/addon-resizer:2.1"
     awscli                       = "quay.io/coreos/awscli:025a357f05242fdad6a81e8a6b520098aa65a600"
     gcloudsdk                    = "google/cloud-sdk:178.0.0-alpine"
-    bootkube                     = "quay.io/coreos/bootkube:v0.8.1"
-    calico                       = "quay.io/calico/node:v2.6.1"
-    calico_cni                   = "quay.io/calico/cni:v1.11.0"
+    bootkube                     = "quay.io/coreos/bootkube:v0.13.0"
+    calico                       = "quay.io/calico/node:v2.6.7"
+    calico_cni                   = "quay.io/calico/cni:v1.11.4"
     console                      = "quay.io/coreos/tectonic-console:v4.0.1"
     error_server                 = "quay.io/coreos/tectonic-error-server:1.1"
-    etcd                         = "quay.io/coreos/etcd:v3.1.8"
+    etcd                         = "quay.io/coreos/etcd:v3.2.17"
     etcd_operator                = "quay.io/coreos/etcd-operator:v0.5.0"
-    flannel                      = "quay.io/coreos/flannel:v0.8.0-amd64"
+    flannel                      = "quay.io/coreos/flannel:v0.10.0-amd64"
     flannel_cni                  = "quay.io/coreos/flannel-cni:v0.2.0"
-    heapster                     = "gcr.io/google_containers/heapster:v1.4.1"
-    hyperkube                    = "quay.io/coreos/hyperkube:v1.8.7_coreos.0"
+    heapster                     = "k8s.gcr.io/heapster-amd64:v1.6.0-beta.1"
+    hyperkube                    = "gcr.io/google-containers/hyperkube:v1.12.4"
     identity                     = "quay.io/coreos/dex:v2.8.1"
     ingress_controller           = "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.9.0-beta.17"
     kenc                         = "quay.io/coreos/kenc:0.0.2"
-    kubedns                      = "gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.5"
-    kubednsmasq                  = "gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.5"
-    kubedns_sidecar              = "gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.5"
+    kubedns                      = "gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.10"
+    kubednsmasq                  = "gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.10"
+    kubedns_sidecar              = "gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.10"
     kube_version                 = "quay.io/coreos/kube-version:0.1.0"
     kube_version_operator        = "quay.io/coreos/kube-version-operator:v1.8.7-kvo.8"
     node_agent                   = "quay.io/coreos/node-agent:cd69b4a0f65b0d3a3b30edfce3bb184fd2a22c26"
     pod_checkpointer             = "quay.io/coreos/pod-checkpointer:e22cc0e3714378de92f45326474874eb602ca0ac"
+    pod_checkpointer             = "quay.io/coreos/pod-checkpointer:9dc83e1ab3bc36ca25c9f7c18ddef1b91d4a0558"
     stats_emitter                = "quay.io/coreos/tectonic-stats:6e882361357fe4b773adbf279cddf48cb50164c1"
     stats_extender               = "quay.io/coreos/tectonic-stats-extender:487b3da4e175da96dabfb44fba65cdb8b823db2e"
     tectonic_channel_operator    = "quay.io/coreos/tectonic-channel-operator:0.6.2"
@@ -127,8 +128,8 @@ variable "tectonic_versions" {
   type        = "map"
 
   default = {
-    etcd          = "3.1.8"
-    kubernetes    = "1.8.7+tectonic.1"
+    etcd          = "3.2.17"
+    kubernetes    = "1.12.4+conde.1"
     monitoring    = "1.9.2"
     tectonic      = "1.8.7-tectonic.1"
     tectonic-etcd = "0.0.1"
@@ -156,40 +157,30 @@ variable "tectonic_cluster_cidr" {
 
 variable "tectonic_master_count_min" {
   type    = "string"
-  default = "3"
+  default = "1"
 
   description = <<EOF
-The number of min master nodes to be created.
-This applies only to cloud platforms.
-EOF
-}
-
-variable "tectonic_master_count" {
-  type    = "string"
-  default = "3"
-
-  description = <<EOF
-The number of desired master nodes to be created.
+The min number of master nodes to be created.
 This applies only to cloud platforms.
 EOF
 }
 
 variable "tectonic_master_count_max" {
   type    = "string"
-  default = "3"
+  default = "5"
 
   description = <<EOF
-The number of max master nodes to be created.
+The max number of master nodes to be created.
 This applies only to cloud platforms.
 EOF
 }
 
-variable "tectonic_worker_count_min" {
+variable "tectonic_master_count" {
   type    = "string"
-  default = "3"
+  default = "1"
 
   description = <<EOF
-The number of min worker nodes to be created.
+The number of master nodes to be created.
 This applies only to cloud platforms.
 EOF
 }
@@ -199,17 +190,27 @@ variable "tectonic_worker_count" {
   default = "3"
 
   description = <<EOF
-The number of desired worker nodes to be created.
+The number of worker nodes to be created.
+This applies only to cloud platforms.
+EOF
+}
+
+variable "tectonic_worker_count_min" {
+  type    = "string"
+  default = "3"
+
+  description = <<EOF
+The min number of worker nodes to be created.
 This applies only to cloud platforms.
 EOF
 }
 
 variable "tectonic_worker_count_max" {
   type    = "string"
-  default = "3"
+  default = "10"
 
   description = <<EOF
-The number of max worker nodes to be created.
+The max number of worker nodes to be created.
 This applies only to cloud platforms.
 EOF
 }

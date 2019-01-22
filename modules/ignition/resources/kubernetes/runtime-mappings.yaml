@@ -1,7 +1,9 @@
 kind: VersionManifestV1
 versions:
   k8s:
-    1.10:
-        docker: [ "17.03", "1.12"]
     1.11:
         docker: [ "18.03", "17.03", "1.12"]
+    1.12:
+        docker: [ "18.06", "18.03"]
+    1.13:
+        docker: [ "18.06", "18.03"]
