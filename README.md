@@ -6,7 +6,7 @@ Tectonic is built on pure-upstream Kubernetes but has an opinion on the best way
 
 - Test branch in kubernetes dev environment
 - Create a PR to master
-- Create a Tag / Release with the version name (1.13.5)
+- Create a Tag / Release with the version name (eg. 1.13.5-conde.1, the `x.xx.x` is the kubernetes version `-conde.x` is the conde version)
 - Update [Makefile](https://github.com/conde-nast-international/cnid-infrastructure-core-platform/blob/master/Makefile#L2) to the new release
 
 ## Getting Started
