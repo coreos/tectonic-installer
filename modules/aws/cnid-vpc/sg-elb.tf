@@ -17,7 +17,7 @@ resource "aws_security_group" "api" {
 
   ingress {
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = "${var.master_sg_ingress_cidr}"
     from_port   = 443
     to_port     = 443
   }
@@ -42,14 +42,14 @@ resource "aws_security_group" "console" {
 
   ingress {
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = "${var.master_sg_ingress_cidr}"
     from_port   = 80
     to_port     = 80
   }
 
   ingress {
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = "${var.master_sg_ingress_cidr}"
     from_port   = 443
     to_port     = 443
   }

@@ -1,0 +1,23 @@
+[Unit]
+Description=Datadog Agent
+
+[Service]
+KillMode=none
+TimeoutStartSec=0
+TimeoutStopSec=360
+EnvironmentFile=/etc/environment
+Environment=INSTANCE=%i
+ExecStartPre=/usr/bin/bash -c "/usr/bin/docker stop dd-agent || true"
+ExecStartPre=/usr/bin/bash -c "/usr/bin/docker rm dd-agent || true"
+ExecStart=/usr/bin/docker run --name dd-agent \
+            -v /var/run/docker.sock:/var/run/docker.sock:ro \
+            -v /proc/:/host/proc/:ro \
+            -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro \
+            -e DD_API_KEY=${datadog_api_key} \
+            datadog/agent:6.10.2
+ExecStop=/usr/bin/docker stop dd-agent
+Restart=on-failure
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

@@ -150,6 +150,7 @@ data "template_file" "installer_kubelet_env" {
 
   vars {
     kubelet_image = "${var.container_images["hyperkube"]}"
+    kubelet_image_tag = "${replace(var.container_images["hyperkube"],var.image_re,"$2")}"
   }
 }
 

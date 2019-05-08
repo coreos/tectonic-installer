@@ -82,3 +82,15 @@ variable "master_sg_ingress_cidr" {
   default     = []
   type        = "list"
 }
+
+variable "master_sg_ssh_ingress_cidr" {
+  description = "A list of whitelisted ingress CIDRs to masters"
+  default     = []
+  type        = "list"
+}
+
+variable "worker_sg_ssh_ingress_cidr" {
+  description = "A list of whitelisted ingress CIDRs to workers"
+  default     = []
+  type        = "list"
+}

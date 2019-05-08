@@ -81,6 +81,7 @@ module "etcd" {
   ign_ntp_dropin_id          = "${length(var.tectonic_ntp_servers) > 0 ? module.ignition_masters.ntp_dropin_id : ""}"
   ign_profile_env_id         = "${module.ignition_masters.profile_env_id}"
   ign_systemd_default_env_id = "${module.ignition_masters.systemd_default_env_id}"
+  ign_etcd_datadog_id        = "${module.ignition_masters.etcd_datadog_service_id}"
   instance_count             = "${length(data.template_file.etcd_hostname_list.*.id)}"
   root_volume_iops           = "${var.tectonic_aws_etcd_root_volume_iops}"
   root_volume_size           = "${var.tectonic_aws_etcd_root_volume_size}"
@@ -131,6 +132,7 @@ module "ignition_masters" {
   ntp_servers               = "${var.tectonic_ntp_servers}"
   proxy_exclusive_units     = "${var.tectonic_proxy_exclusive_units}"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
+  datadog_api_key           = "${var.datadog_api_key}"
 }
 
 module "masters" {

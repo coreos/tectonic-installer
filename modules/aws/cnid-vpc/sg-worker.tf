@@ -33,9 +33,10 @@ resource "aws_security_group_rule" "worker_ingress_ssh" {
   security_group_id = "${aws_security_group.worker.id}"
 
   protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
-  from_port   = 22
-  to_port     = 22
+  cidr_blocks = ["${var.worker_sg_ssh_ingress_cidr}"]
+
+  from_port = 22
+  to_port   = 22
 }
 
 resource "aws_security_group_rule" "worker_ingress_http" {

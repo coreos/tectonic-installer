@@ -4,6 +4,7 @@ data "ignition_config" "etcd" {
   systemd = [
     "${data.ignition_systemd_unit.locksmithd.*.id[count.index]}",
     "${var.ign_etcd_dropin_id_list[count.index]}",
+    "${var.ign_etcd_datadog_id}",
   ]
 
   files = ["${compact(list(

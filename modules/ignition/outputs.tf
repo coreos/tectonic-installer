@@ -179,3 +179,7 @@ output "nfs_config_id" {
 output "nfs_config_rendered" {
   value = "${file(var.nfs_config_file)}"
 }
+
+output "etcd_datadog_service_id" {
+  value = "${data.ignition_systemd_unit.etcd_datadog_agent.id}"
+}

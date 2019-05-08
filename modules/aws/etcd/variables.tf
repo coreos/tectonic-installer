@@ -109,3 +109,7 @@ variable "ign_systemd_default_env_id" {
 variable "ign_ntp_dropin_id" {
   type = "string"
 }
+
+variable "ign_etcd_datadog_id" {
+  type = "string"
+}

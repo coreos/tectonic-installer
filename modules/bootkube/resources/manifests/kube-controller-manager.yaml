@@ -65,6 +65,8 @@ spec:
         - name: ssl-host
           mountPath: /etc/ssl/certs
           readOnly: true
+        - mountPath: /var/run/kubernetes
+          name: var-run-kubernetes
       nodeSelector:
         node-role.kubernetes.io/master: ""
       securityContext:
@@ -84,4 +86,6 @@ spec:
       - name: ssl-host
         hostPath:
           path: /etc/ssl/certs
+      - name: var-run-kubernetes
+        emptyDir: {}
       dnsPolicy: Default # Don't use cluster DNS.

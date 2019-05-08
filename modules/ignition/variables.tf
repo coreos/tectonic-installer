@@ -196,3 +196,9 @@ variable "nfs_config_file" {
 variable "proxy_exclusive_units" {
   type = "string"
 }
+
+variable "datadog_api_key" {
+  type        = "string"
+  description = "API key for pushing metrics to DataDog via the agent"
+  default     = ""
+}

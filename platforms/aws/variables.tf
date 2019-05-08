@@ -345,3 +345,8 @@ Example:
  * `["ingress-nginx"]`
 EOF
 }
+
+variable "datadog_api_key" {
+  type        = "string"
+  description = "DataDog API key used by the DataDog agent"
+}

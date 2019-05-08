@@ -136,6 +136,14 @@ spec:
         # the master to communicate with pods.
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
+        # Tolerate this effect so the pods will be schedulable at all times
+        - effect: NoSchedule
+          operator: Exists
+        # Mark the pod as a critical add-on for rescheduling.
+        - key: "CriticalAddonsOnly"
+          operator: "Exists"
+        - effect: NoExecute
+          operator: Exists
       containers:
         # Runs calico/node container on each Kubernetes node.  This
         # container programs network policy and routes on each

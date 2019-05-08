@@ -57,6 +57,14 @@ data "template_file" "etcd" {
   }
 }
 
+data "template_file" "etcd_datadog_agent" {
+  template = "${file("${path.module}/resources/services/dd-agent.service")}"
+
+  vars = {
+    datadog_api_key = "${var.datadog_api_key}"
+  }
+}
+
 data "ignition_systemd_unit" "etcd" {
   count   = "${var.etcd_count}"
   name    = "etcd-member.service"
@@ -68,6 +76,12 @@ data "ignition_systemd_unit" "etcd" {
       content = "${data.template_file.etcd.*.rendered[count.index]}"
     },
   ]
+}
+
+data "ignition_systemd_unit" "etcd_datadog_agent" {
+  name    = "dd-agent.service"
+  enabled = true
+  content = "${data.template_file.etcd_datadog_agent.rendered}"
 }
 
 data "ignition_file" "etcd_ca" {

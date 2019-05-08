@@ -41,9 +41,7 @@ resource "aws_security_group_rule" "master_ingress_ssh" {
 
   protocol = "tcp"
 
-  cidr_blocks = [
-    "${var.master_sg_ingress_cidr}",
-  ]
+  cidr_blocks = ["${var.master_sg_ssh_ingress_cidr}"]
 
   from_port = 22
   to_port   = 22
