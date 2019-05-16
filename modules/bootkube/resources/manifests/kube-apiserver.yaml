@@ -40,7 +40,6 @@ spec:
         ${etcd_ca_flag}
         ${etcd_cert_flag}
         ${etcd_key_flag}
-        - --etcd-quorum-read=true
         - --storage-backend=etcd3
         - --allow-privileged=true
         - --service-cluster-ip-range=${service_cidr}
